@@ -6,7 +6,7 @@ const USERNAME_RULE = /^[A-Za-z0-9_.-]{3,20}$/;
 const PASSWORD_MIN = 8;
 const EMAIL_RULE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const OFFLINE_NOTE = 'The school database is not connected yet. Accounts and posts will open soon.';
-const MONSTER_NAMES: Record<string, string> = { none: 'Monster in training', fangs: 'Vampire', bat: 'Vampire', wolf: 'Werewolf', fins: 'Sea monster', bolts: 'Stitched together', wraps: 'Mummy', horns: 'Little devil', stitches: 'Stitched together' };
+const MONSTER_NAMES: Record<string, string> = { none: 'Monster in training', fangs: 'Vampire', bat: 'Vampire', wolf: 'Werewolf', fins: 'Sea monster', bolts: 'Stitched together', wraps: 'Mummy', horns: 'Little devil', stitches: 'Stitched together', cat: 'Were-cat', fox: 'Fox spirit', bunny: 'Were-bunny', dragon: 'Dragon', ghost: 'Ghost', zombie: 'Zombie', scales: 'Sea monster', elf: 'Elf', alien: 'Alien', cyclops: 'Third eye', snakes: 'Gorgon', pumpkin: 'Pumpkin kid', skeleton: 'Skeleton', antlers: 'Forest spirit', unicorn: 'Unicorn', spidereyes: 'Spider', gills: 'Sea monster', tentacles: 'Deep sea monster', tusks: 'Ogre', ram: 'Little devil', shark: 'Were-shark' };
 const STUDENT_LINES = [
   'Fresh off the hearse and already late for Biteology.',
   'Has opinions about the creepateria and will share them.',

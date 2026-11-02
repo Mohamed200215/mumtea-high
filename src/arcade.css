@@ -198,3 +198,19 @@
 nav.tabs{gap:8px}
 nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-spacing:.04em}
 @media (max-width:520px){nav.tabs button{font-size:18px;padding:10px 13px 9px}}
+
+/* writing a post happens on a sheet of note paper */
+.composer:has(.notepaper){width:min(620px,calc(100vw - 20px));padding:14px 16px 16px}
+.notepaper{--rule:32px;--lines:rgba(106,31,134,.24);position:relative;margin:18px 2px 16px;background:linear-gradient(90deg,transparent 46px,var(--pink) 46px,var(--pink) 48px,transparent 48px),repeating-linear-gradient(to bottom,transparent 0 31px,var(--lines) 31px 32px),#fdf0e6;color:#2a1430;box-shadow:6px 6px 0 #000}
+.notepaper::before{content:"";position:absolute;top:-13px;left:50%;width:124px;height:26px;margin-left:-62px;background:repeating-linear-gradient(45deg,rgba(255,31,143,.9) 0 8px,rgba(240,143,180,.9) 8px 16px);transform:rotate(1.5deg);z-index:2;pointer-events:none}
+.notepaper input{display:block;width:100%;height:calc(var(--rule)*2);box-sizing:border-box;margin:0;padding:24px 78px 2px 58px;background:transparent;border:0;border-radius:0;box-shadow:none;color:#2a1430;font:400 27px/34px var(--display);letter-spacing:.02em}
+.notepaper textarea{display:block;width:100%;height:calc(var(--rule)*9);box-sizing:border-box;margin:0;padding:6px 14px 0 58px;border:0;border-radius:0;box-shadow:none;resize:none;color:#2a1430;font:18px/32px "Segoe Print","Bradley Hand","Comic Sans MS",cursive;background:linear-gradient(90deg,transparent 46px,var(--pink) 46px,var(--pink) 48px,transparent 48px) scroll,repeating-linear-gradient(to bottom,transparent 0 31px,var(--lines) 31px 32px) local,#fdf0e6}
+.notepaper input::placeholder,.notepaper textarea::placeholder{color:rgba(42,20,48,.48);opacity:1}
+.notepaper input:focus,.notepaper textarea:focus{outline:none}
+.notepaper input:focus{background:linear-gradient(to top,rgba(255,31,143,.16),transparent 62%)}
+.notepaper textarea:focus{box-shadow:inset 5px 0 0 var(--pink)}
+.notefoot{position:relative;height:calc(var(--rule)*3);overflow:hidden}
+.notepaper .teacount{position:absolute;left:58px;bottom:38px;color:#6a1f86;font:800 13px/1 var(--body)}
+.notedoodle{position:absolute;top:1px;right:8px;width:62px;height:62px;pointer-events:none}
+.notecat{position:absolute;right:8px;bottom:0;width:112px;height:96px;pointer-events:none}
+@media (max-width:520px){.notepaper input{font-size:22px}.notepaper textarea{height:calc(var(--rule)*7)}}

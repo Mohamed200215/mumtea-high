@@ -76,6 +76,9 @@ function fillSlide(): void {
 }
 
 /* ---------- the pop-up for writing a post ---------- */
+const NOTE_STAR = 'M0-9Q1-1 9 0Q1 1 0 9Q-1 1-9 0Q-1-1 0-9z';
+const NOTE_SKULL = '<svg viewBox="0 0 90 90" width="100%" height="100%"><g fill="none" stroke="#2a1430" stroke-width="3.400" stroke-linecap="round" stroke-linejoin="round"><path d="M40 24C22 24 14 38 15 51c1 9 7 14 13 17l1 10 24 1 1-11c7-3 13-9 14-18C68 37 58 24 40 24z" fill="#fdf0e6"/><path d="M34 72v6M42 72v7M50 72v6M38 58l3-5 3 5"/></g><circle cx="30" cy="46" r="6" fill="#2a1430"/><circle cx="52" cy="46" r="6" fill="#2a1430"/><path d="M41 22L26 12q-4 10 2 15zM41 22l15-10q4 10-2 15z" fill="#ff1f8f" stroke="#2a1430" stroke-width="2.600" stroke-linejoin="round"/><path transform="translate(77 30)" d="' + NOTE_STAR + '" fill="none" stroke="#2a1430" stroke-width="2.600"/><path transform="translate(80 58) scale(.7)" d="' + NOTE_STAR + '" fill="none" stroke="#2a1430" stroke-width="3"/></svg>';
+const NOTE_CAT = '<svg viewBox="0 0 112 96" width="100%" height="100%"><path transform="translate(16 28)" d="' + NOTE_STAR + '" fill="none" stroke="#14101a" stroke-width="2.600"/><path transform="translate(26 70) scale(.75)" d="' + NOTE_STAR + '" fill="none" stroke="#14101a" stroke-width="3"/><path d="M40 96C40 76 36 58 40 44L34 6L58 24Q72 20 86 24L108 6L104 44C108 58 106 76 106 96Z" fill="#14101a"/><path d="M47 42Q56 34 66 44Q56 52 47 42zM80 44Q90 34 99 42Q90 52 80 44z" fill="#fff6fb"/><ellipse cx="57" cy="43" rx="2.600" ry="6" fill="#ff1f8f"/><ellipse cx="89" cy="43" rx="2.600" ry="6" fill="#ff1f8f"/><path d="M69 56h8l-4 4z" fill="#ff1f8f"/><path d="M64 62l3 7 3-5zM82 62l-3 7-3-5z" fill="#fff6fb"/><path d="M44 54L28 50M44 60H26M102 54l10-4M102 60h10" stroke="#14101a" stroke-width="1.600" stroke-linecap="round"/></svg>';
 const composer = el('dialog', { cls: 'composer', 'aria-labelledby': 'composerTitle' }) as HTMLDialogElement;
 function openComposer(): void {
   composer.textContent = '';
@@ -94,17 +97,18 @@ function openComposer(): void {
     composer.showModal();
     return;
   }
-  const title = el('input', { id: 'teaTitle', maxlength: 100 }) as HTMLInputElement;
-  const body = el('textarea', { id: 'teaBody', maxlength: POST_LIMIT, rows: 7, required: '' }) as HTMLTextAreaElement;
+  const title = el('input', { id: 'teaTitle', maxlength: 100, placeholder: 'Title', 'aria-label': 'Title (optional)' }) as HTMLInputElement;
+  const body = el('textarea', { id: 'teaBody', maxlength: POST_LIMIT, required: '', placeholder: 'What are you thinking?', 'aria-label': 'What are you thinking?' }) as HTMLTextAreaElement;
   const count = el('span', { cls: 'teacount' }), note = el('p', { cls: 'accountnote', role: 'status' });
   const submit = el('button', { cls: 'pill', type: 'submit' }, 'Post it');
   const draft = store.get<{ t: string; b: string } | null>('draft', null);
   title.value = draft?.t || ''; body.value = draft?.b || '';
   const update = () => { count.textContent = body.value.length + ' / ' + POST_LIMIT; store.set('draft', { t: title.value, b: body.value }); };
   title.addEventListener('input', update); body.addEventListener('input', update); update();
+  const doodle = el('span', { cls: 'notedoodle', 'aria-hidden': 'true' }), cat = el('span', { cls: 'notecat', 'aria-hidden': 'true' });
+  doodle.innerHTML = NOTE_SKULL; cat.innerHTML = NOTE_CAT;
   const form = el('form', { cls: 'stack' },
-    el('label', { for: 'teaBody' }, 'What are you thinking?', body), count,
-    el('label', { for: 'teaTitle' }, 'Title (optional)', title),
+    el('div', { cls: 'notepaper' }, title, doodle, body, el('div', { cls: 'notefoot' }, count, cat)),
     el('div', { cls: 'row' }, submit, el('button', { cls: 'pill ghost', type: 'button', onclick: close }, 'Not yet')), note);
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -124,7 +128,7 @@ function openComposer(): void {
   });
   composer.append(heading, form);
   composer.showModal();
-  body.focus();
+  (title.value ? body : title).focus();
 }
 (function () {
   $('#root').append(composer);
