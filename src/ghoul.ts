@@ -90,9 +90,9 @@ const GLOVE_SHORT = ['short', 'biker', 'frill', 'driving', 'spiked', 'wraps', 'm
 const NAILS: Record<string, string> = { nails: '', french: '#fff6fb', ombre: '', stilettos: '', glitter: '', rainbownails: '#ff1f8f|#f4d35e|#35dcc8|#6a1f86', gothnails: '#14101a', claws: '#14101a', henna: '#8a3324' };
 /* Eye shapes: white of the eye, upper lid, lower lid, iris height, iris size, lash shift. */
 const EYE_SHAPES: Record<string, [string, string, string, number, number, number]> = {
-  almond: ['M-25 4Q-8-22 24-9Q10 20-25 4Z', 'M-27 5Q-9-24 25-10L40-19', 'M-20 8Q4 16 22-4', -3, 13.5, 0],
-  round: ['M-24 0C-24-26 24-26 24 0C24 20-24 20-24 0Z', 'M-26 1C-25-27 25-27 26-1', 'M-20 11Q0 20 20 11', -1, 14, -5],
-  doll: ['M-28 0C-28-34 28-34 28 0C28 26-28 26-28 0Z', 'M-30 1C-29-36 29-36 30-1', 'M-24 14Q0 26 24 14', 0, 18, -11],
+  almond: ['M-27 6C-22-17 4-27 29-11C24 9 0 23-27 6Z', 'M-29 7C-23-19 4-29 30-12L38-15', 'M-21 11Q4 22 25-2', -3, 16, 0],
+  round: ['M-26 2C-26-28 26-28 26 0C26 24-26 24-26 2Z', 'M-28 3C-27-30 27-30 28-1', 'M-21 14Q0 24 21 13', -1, 16, 0],
+  doll: ['M-30 2C-30-36 30-36 30 0C30 28-30 28-30 2Z', 'M-32 3C-31-38 31-38 32-1', 'M-25 16Q0 30 25 15', 0, 20, -6],
   cat: ['M-25 8Q-6-16 30-20Q16 16-25 8Z', 'M-27 9Q-6-18 30-21L44-30', 'M-20 12Q8 16 26-12', -3, 12.5, 0],
   doe: ['M-24-6Q0-24 26 6Q4 18-24-6Z', 'M-26-6Q0-27 28 8', 'M-20 1Q6 18 24 8', -2, 13, -2],
   wide: ['M-31 2Q0-22 31-2Q0 19-31 2Z', 'M-33 3Q0-25 33-2L42-8', 'M-26 8Q0 19 26 4', -2, 13.5, -1],
@@ -112,6 +112,7 @@ const EYES: Array<{ id: string; name: string; shape?: string; pupil?: string; la
   { id: 'glow', name: 'Glowing', pupil: 'glow', lash: 'none' }, { id: 'blackout', name: 'Demon black', shape: 'cat', pupil: 'blackout' }, { id: 'button', name: 'Button eyes', shape: 'round', pupil: 'button', lash: 'none' }, { id: 'sparkle', name: 'Sparkly', shape: 'doll', pupil: 'sparkle' }, { id: 'mismatch', name: 'Two colours', pupil: 'mismatch' },
 ];
 const BROW_COLOURS = ['#17101c', '#3f2412', '#5a2c17', '#8b5a2b', '#a0392a', '#d98a3d', '#f4d35e', '#9aa0ac', '#f6f0ff', '#ff1f8f', '#f08fb4', '#6a1f86', '#19b7e8', '#35dcc8', '#2f8f4e', '#c0392b'];
+const LEG_IN = 4, SLIM = .82;
 const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
 const WARDROBE: WardrobePage[] = [
@@ -173,7 +174,7 @@ function shade(hex: string, amount: number): string {
 }
 const contrast = (hex: string): string => (parseInt(hex.slice(1, 3), 16) * .3 + parseInt(hex.slice(3, 5), 16) * .59 + parseInt(hex.slice(5, 7), 16) * .11 > 140 ? INK : '#fff6fb');
 const strokeLine = (d: string, width: number, colour: string, extra = '') => `<path d="${d}" fill="none" stroke="${colour}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
-const shape = (d: string, fill: string, extra = '') => `<path d="${d}" fill="${fill}" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round" ${extra}/>`;
+const shape = (d: string, fill: string, extra = '') => `<path d="${d}" fill="${fill}" stroke="${INK}" stroke-width="3.2" stroke-linejoin="round" ${extra}/>`;
 let ghoulCounter = 0;
 
 /* A hand from the wrist outward, drawn pointing down its own +y. */
@@ -234,11 +235,11 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   const hair = o.hair, hairD = shade(hair, -.22), hairL = shade(hair, .24);
 
   /* ---------- legs: drawn once, mirrored for the other side ---------- */
-  const LEG = 'M118 378C112 430 120 480 127 524C124 566 130 612 135 654L151 654C154 612 158 566 155 524C162 470 166 420 162 384Z';
+  const LEG = 'M122 378C115 430 124 482 131 522C127 566 133 612 137 654L149 654C152 612 156 566 152 522C160 470 163 420 159 384Z';
   const clipId = uid + 'c';
   defs += `<clipPath id="${clipId}k"><rect x="90" y="522" width="100" height="200"/></clipPath><clipPath id="${clipId}t"><rect x="90" y="446" width="100" height="280"/></clipPath>`;
   defs += `<clipPath id="${clipId}o"><rect x="90" y="480" width="100" height="240"/></clipPath><clipPath id="${clipId}s"><rect x="90" y="570" width="100" height="150"/></clipPath><clipPath id="${clipId}a"><rect x="-200" y="600" width="700" height="200"/></clipPath><clipPath id="${clipId}w"><rect x="-200" y="545" width="700" height="100"/></clipPath><clipPath id="${clipId}u"><rect x="-200" y="200" width="700" height="332"/></clipPath><clipPath id="${clipId}d"><rect x="-200" y="518" width="700" height="300"/></clipPath>`;
-  const oneLeg = (inner: string, [hip, knee]: [number, number]) => '<g transform="rotate(' + hip + ' 140 380)">' + (knee
+  const oneLeg = (inner: string, [hip, knee]: [number, number]) => '<g transform="translate(' + LEG_IN + ' 0) rotate(' + hip + ' 140 380)">' + (knee
     ? '<g clip-path="url(#' + clipId + 'u)">' + inner + '</g><g transform="rotate(' + knee + ' 140 524)"><g clip-path="url(#' + clipId + 'd)">' + inner + '</g></g>'
     : inner) + '</g>';
   const legsSide = (inner: string) => oneLeg(inner, pose.legL || [3, 0]) + '<g transform="translate(320 0) scale(-1 1)">' + oneLeg(inner, pose.legR || [3, 0]) + '</g>';
@@ -251,7 +252,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     rainbow: () => texture('rainbow', '', '', 'l'), overknee: () => texture('stripes', o.legsC, legPale, 'l'), laces: () => S, wraps: () => '#fff6e0',
   };
   const wearFill = wearMakers[o.legs]?.();
-  parts.legs = legsSide(shape(LEG, S) + strokeLine('M128 524q14 6 26 0', 1.6, SD));
+  parts.legs = legsSide(shape(LEG, S) + strokeLine('M131 522q10 6 20 0', 2, SD));
   if (wearFill) {
     const clipFor: Record<string, string> = { knee: 'k', thigh: 't', lacetop: 't', garter: 't', ankle: 'a', frills: 'a', warmers: 'w', overknee: 'o', slouch: 's', laces: 'k' };
     const clip = clipFor[o.legs] ? `clip-path="url(#${clipId}${clipFor[o.legs]})"` : '';
@@ -417,7 +418,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     /* ---------- gloves and bracelets, measured along this forearm ---------- */
     const along = (t: number): [number, number] => [ex + (wx - ex) * t, ey + (wy - ey) * t];
     const normal: [number, number] = [-(wy - ey) / 77, (wx - ex) / 77];
-    const across = (t: number, half: number) => { const [x, y] = along(t); return 'M' + f(x + normal[0] * half) + ' ' + f(y + normal[1] * half) + 'L' + f(x - normal[0] * half) + ' ' + f(y - normal[1] * half); };
+    const across = (t: number, wide: number) => { const [x, y] = along(t), half = wide * .72; return 'M' + f(x + normal[0] * half) + ' ' + f(y + normal[1] * half) + 'L' + f(x - normal[0] * half) + ' ' + f(y - normal[1] * half); };
     const wband = (t: number, half: number, c: string, w = 6) => strokeLine(across(t, half), w + 2.6, INK) + strokeLine(across(t, half), w, c);
     const beadband = (t: number, half: number, c: string, size = 6, gap = 7) => strokeLine(across(t, half), size + 2, INK, 'stroke-dasharray="0 ' + gap + '"') + strokeLine(across(t, half), size, c, 'stroke-dasharray="0 ' + gap + '"');
     const blob = (t: number, off: number, r: number, c: string) => { const [x, y] = along(t); return '<circle cx="' + f(x + normal[0] * off) + '" cy="' + f(y + normal[1] * off) + '" r="' + r + '" fill="' + c + '" stroke="' + INK + '" stroke-width="1.500"/>'; };
@@ -469,9 +470,9 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       batgloves: () => { const a = along(.2), b = along(.98), s2 = side; return ['<path d="M' + f(a[0]) + ' ' + f(a[1]) + 'Q' + f(a[0] + s2 * 22) + ' ' + f((a[1] + b[1]) / 2) + ' ' + f(b[0]) + ' ' + f(b[1]) + 'Z" fill="' + o.gloveC + '" stroke="' + INK + '" stroke-width="2"/>', '']; },
     };
     const [gloveArm, gloveHand] = gloveBits[o.gloves]?.() || ['', ''];
-    let skin = arm(path, 15, S);
+    let skin = arm(path, 11, S);
     const gloveColour = gFill || o.gloveC, sheer = o.gloves === 'mesh';
-    const coverArm = (d: string) => (sheer ? arm(d, 15.5, S) + strokeLine(d, 15.5, gloveColour) : arm(d, 15.5, gloveColour));
+    const coverArm = (d: string) => (sheer ? arm(d, 11.5, S) + strokeLine(d, 11.5, gloveColour) : arm(d, 11.5, gloveColour));
     if (longGlove) skin += coverArm(forearm);
     if (shortGlove) skin += coverArm('M' + f(midX) + ' ' + f(midY) + 'L' + f(wx) + ' ' + f(wy));
     skin += gloveArm;
@@ -484,15 +485,15 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       boxing: '<ellipse cx="-16" cy="18" rx="7" ry="10" fill="' + gloveColour + '" stroke="' + INK + '" stroke-width="2.200"/><circle cx="0" cy="22" r="19" fill="' + gloveColour + '" stroke="' + INK + '" stroke-width="2.400"/>' + strokeLine('M-8 3h16', 7, o.trim) + strokeLine('M-8 16q5-6 14-4', 2.400, '#fff6fb', 'opacity=".7"'),
       paws: '<circle cx="0" cy="18" r="14" fill="' + gloveColour + '" stroke="' + INK + '" stroke-width="2.200"/>' + [[-10, 28], [-3.500, 32], [3.500, 32], [10, 28]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="4.500" fill="' + gloveColour + '" stroke="' + INK + '" stroke-width="1.800"/><path d="M' + (x - 1.500) + ' ' + (y + 3) + 'l1.500 6 1.500-6z" fill="#14101a"/>').join('') + '<ellipse cx="0" cy="18" rx="6" ry="5" fill="#f7b8cf"/>',
     } as Record<string, string>)[o.gloves];
-    const handTurn = 'translate(' + f(wx) + ' ' + f(wy) + ') rotate(' + f(angle) + ') scale(' + (side < 0 ? 1.18 : -1.18) + ' 1.18)';
+    const handTurn = 'translate(' + f(wx) + ' ' + f(wy) + ') rotate(' + f(angle) + ') scale(' + (side < 0 ? 1.02 : -1.02) + ' 1.1)';
     const hand = '<g transform="' + handTurn + '">' + (wholeHand || drawHand(handShape, digits, palm, tips, tipStyle)) + (wholeHand ? '' : gloveHand) + '</g>';
     const wristBits = wristArm + (wristHand && !wholeHand ? '<g transform="' + handTurn + '">' + wristHand + '</g>' : '');
     let sleeves = '';
-    if (sleeve === 'long' || sleeve === 'fat') sleeves = arm(path, sleeve === 'fat' ? 27 : 21, topFill) + cuff(wx, wy, sleeve === 'fat' ? 15 : 12, o.trim);
+    if (sleeve === 'long' || sleeve === 'fat') sleeves = arm(path, sleeve === 'fat' ? 21 : 15, topFill) + cuff(wx, wy, sleeve === 'fat' ? 12 : 9, o.trim);
     else if (sleeve === 'wide') sleeves = '<path d="M' + f(sx) + ' ' + (sy - 10) + 'L' + f(ex) + ' ' + f(ey) + 'L' + f(wx) + ' ' + f(wy) + 'L' + f(sx - side * 4) + ' ' + (sy + 62) + 'Z" fill="' + topFill + '" stroke="' + INK + '" stroke-width="2.6" stroke-linejoin="round"/>';
-    else if (sleeve === 'short') { const hx = sx + (ex - sx) * .58, hy = sy + (ey - sy) * .58; sleeves = arm('M' + f(sx) + ' ' + sy + 'L' + f(hx) + ' ' + f(hy), 22, topFill); }
+    else if (sleeve === 'short') { const hx = sx + (ex - sx) * .58, hy = sy + (ey - sy) * .58; sleeves = arm('M' + f(sx) + ' ' + sy + 'L' + f(hx) + ' ' + f(hy), 16, topFill); }
     else if (sleeve === 'puff') {
-      const x = side < 0 ? 110 : 210, y = 262;
+      const x = side < 0 ? 118 : 202, y = 260;
       sleeves = '<ellipse cx="' + x + '" cy="' + y + '" rx="24" ry="22" fill="' + topFill + '" stroke="' + INK + '" stroke-width="2.6"/>' + strokeLine('M' + (x - 12) + ' ' + (y - 14) + 'Q' + x + ' ' + y + ' ' + (x - 10) + ' ' + (y + 14) + 'M' + (x + 10) + ' ' + (y - 15) + 'Q' + x + ' ' + y + ' ' + (x + 11) + ' ' + (y + 13), 1.6, INK, 'opacity=".55"') + strokeLine('M' + (x - 16) + ' ' + (y + 18) + 'q16 8 32 0', 5, o.trim);
     }
     if (wx < 16 || wx > 304) needsRoom = true;
@@ -514,8 +515,10 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       let p: [number, number] = [140, 380 + arc];
       if (arc > 144) p = turn(p, 140, 524, knee);
       p = turn(p, 140, 380, hip);
+      p = [p[0] + LEG_IN, p[1]];
       if (side > 0) p = [320 - p[0], p[1]];
-      return turn(p, 160, 385, -tilted);
+      p = turn(p, 160, 385, -tilted);
+      return [160 + (p[0] - 160) / SLIM, p[1]];
     };
     const room = (y: number) => 24 + (hw - 24) * (Math.min(hem, Math.max(332, y)) - 332) / (hem - 332);
     const n = (v: number) => v.toFixed(1);
@@ -744,16 +747,16 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
 } as Record<string, string>)[o.eyewear] || '';
 
   /* ---------- head and face ---------- */
-  parts.head = `<ellipse cx="100" cy="134" rx="9" ry="15" fill="${SD}" stroke="${INK}" stroke-width="2.4"/><ellipse cx="220" cy="134" rx="9" ry="15" fill="${SD}" stroke="${INK}" stroke-width="2.4"/>`
-    + shape('M100 112Q100 44 160 44Q220 44 220 112Q220 162 182 192Q160 208 138 192Q100 162 100 112Z', S);
+  parts.head = `<ellipse cx="96" cy="136" rx="8" ry="14" fill="${SD}" stroke="${INK}" stroke-width="2.6"/><ellipse cx="224" cy="136" rx="8" ry="14" fill="${SD}" stroke="${INK}" stroke-width="2.6"/>`
+    + shape('M94 112Q94 42 160 42Q226 42 226 112Q226 146 200 172Q178 194 160 212Q142 194 120 172Q94 146 94 112Z', S)
+    + `<path d="M226 112Q226 146 200 172Q178 194 160 212Q172 190 190 168Q212 142 214 104Z" fill="${SD}" opacity=".55"/>`;
   const scarfOn = HIJABS.some(h => h.id === o.hairStyle);
   const browColour = o.browC || shade(scarfOn ? '#17101c' : hair, -.3);
   const eyeSpec = EYES.find(e => e.id === o.eyeStyle) || EYES[0];
-  const LASHES = 'M-20-7l-7-8M-9-14l-4-9M4-16l1-9M16-13l6-8';
+  const LASHES = 'M12-19l4-9M20-16l7-8M27-12l9-6M30-7l10-3';
   const eyeInner = (flip: number): string => {
-    if (eyeSpec.id === 'classic') return '<path d="M-26-2Q-10-30 26-16L36-22L30-6Q6 0-26-2Z" fill="' + o.shadow + '" opacity=".78"/><path d="M-25 4Q-8-22 24-9Q10 20-25 4Z" fill="#fff"/><circle cx="1" cy="-3" r="13.5" fill="' + o.eye + '"/><circle cx="1" cy="-3" r="13.5" fill="none" stroke="' + shade(o.eye, -.45) + '" stroke-width="2.4"/><circle cx="1" cy="-2" r="6.8" fill="#0d0710"/><circle cx="6" cy="-8" r="4" fill="#fff"/><circle cx="-4" cy="3" r="2" fill="#fff"/><path d="M-27 5Q-9-24 25-10L40-19" fill="none" stroke="' + INK + '" stroke-width="5.4" stroke-linecap="round"/><path d="' + LASHES + '" stroke="' + INK + '" stroke-width="2.6" stroke-linecap="round"/><path d="M-20 8Q4 16 22-4" fill="none" stroke="' + INK + '" stroke-width="1.5"/>';
     const shut = eyeSpec.pupil === 'shut' || (eyeSpec.pupil === 'wink' && flip > 0);
-    if (shut) return strokeLine('M-24 -6Q0 -18 28 -8', 11, o.shadow, 'opacity=".7"') + strokeLine('M-26 0Q0 12 26 -4', 5.4, INK) + strokeLine('M-18 6l-5 8M-6 9l-2 9M8 9l2 9M19 4l6 7', 2.6, INK);
+    if (shut) return '<path d="M-16-8C-4-26 22-28 40-14L30 0C14-10-2-10-16-8Z" fill="' + o.shadow + '" opacity=".85"/>' + strokeLine('M-26 0Q0 12 26 -4', 5.4, INK) + strokeLine('M-18 6l-5 8M-6 9l-2 9M8 9l2 9M19 4l6 7', 2.6, INK);
     if (eyeSpec.pupil === 'arc') return strokeLine('M-24 2Q0 -24 24 0', 12, o.shadow, 'opacity=".55" transform="translate(0 -6)"') + strokeLine('M-24 5Q0 -18 24 3', 5.4, INK) + strokeLine('M-16 -7l-5-7M-2 -11l-1-9M13 -8l5-8', 2.6, INK);
     const [sc, lid, low, iy, ir, dy] = EYE_SHAPES[eyeSpec.shape || 'almond'];
     const clip = uid + 'e' + (flip > 0 ? 'r' : 'l');
@@ -775,15 +778,15 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       button: () => '<circle cx="1" cy="' + iy + '" r="' + (ir + 3) + '" fill="#14101a"/><circle cx="1" cy="' + iy + '" r="' + (ir - 2) + '" fill="none" stroke="' + colour + '" stroke-width="1.800"/>' + strokeLine('M-4 ' + (iy - 5) + 'l10 10M6 ' + (iy - 5) + 'l-10 10', 2.600, '#fff6fb'),
     } as Record<string, () => string>)[kind]?.() || iris + '<circle cx="1" cy="' + (iy + 1) + '" r="' + (ir * .5).toFixed(1) + '" fill="' + BLACK + '"/>' + glints;
     const lash = eyeSpec.lash || 'classic', up = 'transform="translate(0 ' + dy + ')"';
-    const lashes = lash === 'none' ? '' : lash === 'long' ? strokeLine('M-20-7l-11-13M-9-14l-7-15M4-16l1-15M16-13l10-13', 2.800, INK, up) : lash === 'thick' ? strokeLine(LASHES, 4, INK, up) : lash === 'bottom' ? strokeLine(LASHES, 2.600, INK, up) + strokeLine('M-14 13l-4 8M-3 15l-1 9M9 13l3 8M18 7l6 6', 2.200, INK) : strokeLine(LASHES, 2.600, INK, up);
-    const shadow = strokeLine(lid, 11, o.shadow, 'opacity=".72" transform="translate(0 -5)"');
-    const wing = lash === 'wing' ? '<path d="M18 -14L50 -30L30 -4Z" fill="' + INK + '"/>' : '';
-    return shadow + '<path d="' + sc + '" fill="' + (kind === 'blackout' ? BLACK : '#fff') + '"/><g clip-path="url(#' + clip + ')">' + middle + '</g>' + strokeLine(lid, lash === 'thick' ? 8 : 5.4, INK) + wing + lashes + strokeLine(low, lash === 'thick' ? 3 : 1.5, INK);
+    const lashes = lash === 'none' ? '' : lash === 'long' ? strokeLine('M8-21l2-15M16-18l7-14M24-14l12-11M29-9l15-6', 2.800, INK, up) : lash === 'thick' ? strokeLine(LASHES, 4, INK, up) : lash === 'bottom' ? strokeLine(LASHES, 2.600, INK, up) + strokeLine('M-14 15l-4 8M-3 18l-1 9M9 16l3 8M18 9l6 6', 2.200, INK) : strokeLine(LASHES, 2.600, INK, up);
+    const shadow = '<path transform="translate(0 ' + (dy * .6) + ')" d="M-16-14C-4-38 22-42 44-26L34-8C16-24-2-22-16-14Z" fill="' + o.shadow + '" opacity=".85"/>';
+    const wing = lash === 'wing' ? '<path d="M22 -16L50 -28L30 -6Z" fill="' + INK + '"/>' : '';
+    return shadow + '<path d="' + sc + '" fill="' + (kind === 'blackout' ? BLACK : '#fff') + '"/><g clip-path="url(#' + clip + ')">' + middle + '</g>' + strokeLine(lid, lash === 'thick' ? 9 : 6.5, '#0d0710') + wing + lashes + strokeLine(low, lash === 'thick' ? 3 : 1.5, INK);
   };
   /* Brows are drawn on the outside-going line, so one drawing suits both sides. */
   const brow = (flip: number): string => {
-    const c = browColour, line = (d: string, w = 4.2, extra = '') => strokeLine(d, w, c, extra);
-    const ARCH = 'M-26-30Q2-46 36-30';
+    const c = browColour, line = (d: string, w = 3.4, extra = '') => strokeLine(d, w, c, extra);
+    const ARCH = 'M-26-38Q6-58 42-36';
     return ({
       arch: () => line(ARCH),
       high: () => line('M-26-32Q4-58 36-34'),
@@ -817,14 +820,13 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       short: () => line('M-10-38Q6-46 22-38', 6),
     } as Record<string, () => string>)[o.brow]?.() || line(ARCH);
   };
-  const eye = (cx: number, flip: number) => '<g transform="translate(' + cx + ' 128) scale(' + (flip * .8) + ' .86)">' + eyeInner(flip) + brow(flip) + '</g>';
-  parts.face = eye(128, -1) + eye(192, 1)
-    + `<ellipse cx="116" cy="158" rx="12" ry="6" fill="#ff1f8f" opacity=".2"/><ellipse cx="204" cy="158" rx="12" ry="6" fill="#ff1f8f" opacity=".2"/>`
-    + strokeLine('M156 159q4 4 8 0', 2.2, INK)
-    + `<path d="M140 174q10-7 16-4 4 2 8 0 6-3 16 4-10 4-20 4t-20-4z" fill="${shade(o.lip, .12)}" stroke="${INK}" stroke-width="1.8"/><path d="M140 174q20 7 40 0-5 15-20 15t-20-15z" fill="${o.lip}" stroke="${INK}" stroke-width="1.8"/><ellipse cx="160" cy="182" rx="8" ry="2.4" fill="#fff" opacity=".65"/>`;
+  const eye = (cx: number, flip: number) => '<g transform="translate(' + cx + ' 128) scale(' + (flip * .78) + ' .9)">' + eyeInner(flip) + '<g transform="translate(0 -6)">' + brow(flip) + '</g></g>';
+  parts.face = eye(124, -1) + eye(196, 1)
+    + strokeLine('M155 163q2 3 4 2M165 163q-2 3-4 2', 2, INK)
+    + `<path d="M134 178q12-11 20-8 6 3 12 0 8-3 20 8-13 5-26 5t-26-5z" fill="${shade(o.lip, -.12)}" stroke="${INK}" stroke-width="2.200" stroke-linejoin="round"/><path d="M134 178q26 8 52 0-5 20-26 20t-26-20z" fill="${o.lip}" stroke="${INK}" stroke-width="2.200" stroke-linejoin="round"/><path d="M146 186q14 5 28 0-4 7-14 7t-14-7z" fill="#fff" opacity=".6"/><path d="M134 178q26 8 52 0" fill="none" stroke="#0d0710" stroke-width="2.400"/>`;
 
   /* ---------- monster side ---------- */
-  const fang = `<path d="M148 177l3 10 4-9zM172 177l-3 10-4-9z" fill="#fff" stroke="${INK}" stroke-width="1.2"/>`;
+  const fang = `<path d="M146 181l3 11 5-9zM174 181l-3 11-5-9z" fill="#fff" stroke="${INK}" stroke-width="1.2"/>`;
   parts.monster = ({
     fangs: fang,
     bat: fang,
@@ -866,135 +868,145 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   const shine = (d: string) => strokeLine(d, 4, hairL, 'opacity=".75"');
   const SWEPT = 'M100 122C92 62 128 34 162 36C204 34 230 66 222 122C214 96 198 78 172 64C158 92 124 108 100 122Z';
   const BANGS = 'M98 118C94 60 126 34 160 34C194 34 226 60 222 118L212 96L198 108L184 90L170 108L156 90L142 108L128 92L114 106Z';
+  const STRAND_DARK: Array<[number, number]> = [[-20, 22], [42, 26], [100, 18], [150, 10], [176, 12], [226, 18], [282, 26], [342, 22]];
+  const STRAND_LIGHT: Array<[number, number]> = [[12, 7], [72, 9], [128, 5], [202, 5], [252, 9], [312, 7]];
+  const strand = ([x, w]: [number, number], c: string) => '<path d="M' + (160 + (x - 160) * .16) + ' 22C' + (x - w) + ' 160 ' + (x - w) + ' 320 ' + x + ' 540C' + (x + w) + ' 320 ' + (x + w) + ' 160 ' + (160 + (x - 160) * .16) + ' 22Z" fill="' + c + '"/>';
+  const hairDark = shade(hair, -.68);
+  let lockCount = 0;
+  const locks = (d: string): string => {
+    const id = uid + 'h' + (++lockCount);
+    defs += '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath>';
+    return '<path d="' + d + '" fill="' + hair + '"/><g clip-path="url(#' + id + ')">' + STRAND_DARK.map(t => strand(t, hairDark)).join('') + STRAND_LIGHT.map(t => strand(t, hairL)).join('') + '</g><path d="' + d + '" fill="none" stroke="' + INK + '" stroke-width="3.200" stroke-linejoin="round"/>';
+  };
   const mirror = (inner: string) => `${inner}<g transform="translate(320 0) scale(-1 1)">${inner}</g>`;
   ({
     long() {
-      parts.hairBack = shape('M160 24C80 24 74 92 82 150C90 250 60 340 72 436Q104 452 124 410L196 410Q216 452 248 436C260 340 230 250 238 150C246 92 240 24 160 24Z', hair) + streak('M92 170C94 260 72 340 84 424') + shine('M228 170C226 260 246 340 236 420');
-      parts.hairFront = shape(SWEPT, hair) + streak('M176 68C190 80 208 96 216 116', 7) + shine('M122 62C136 48 150 44 164 44');
+      parts.hairBack = locks('M160 20C70 20 62 96 68 160C72 260 36 360 22 470C52 452 72 462 84 492C98 462 112 446 128 410L192 410C208 446 222 462 236 492C248 462 268 452 298 470C284 360 248 260 252 160C258 96 250 20 160 20Z') + streak('M92 170C94 260 72 340 84 424') + shine('M228 170C226 260 246 340 236 420');
+      parts.hairFront = locks(SWEPT) + streak('M176 68C190 80 208 96 216 116', 7) + shine('M122 62C136 48 150 44 164 44');
     },
     pony() {
-      parts.hairBack = shape('M176 44C236 -6 290 70 276 170C268 230 286 300 256 360C236 300 228 220 224 150C222 100 204 66 176 44Z', hair) + streak('M236 44C262 90 258 170 258 240C258 280 262 310 258 340') + shape('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z', hair);
-      parts.hairFront = shape(SWEPT, hair) + shape('M168 28l22-8 8 14-22 8z', o.streak) + shine('M122 60C136 46 150 42 164 42');
+      parts.hairBack = locks('M176 44C236 -6 290 70 276 170C268 230 286 300 256 360C236 300 228 220 224 150C222 100 204 66 176 44Z') + streak('M236 44C262 90 258 170 258 240C258 280 262 310 258 340') + locks('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z');
+      parts.hairFront = locks(SWEPT) + shape('M168 28l22-8 8 14-22 8z', o.streak) + shine('M122 60C136 46 150 42 164 42');
     },
     twins() {
-      parts.hairBack = mirror(shape('M104 66C58 76 34 170 44 268C50 330 30 370 48 424C84 376 102 280 104 186Z', hair) + streak('M72 100C54 170 54 260 60 330C60 360 54 384 54 400')) + shape('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z', hair);
-      parts.hairFront = shape(BANGS, hair) + mirror(shape('M96 58l14-10 8 14-14 10z', o.streak)) + shine('M126 56C142 44 170 42 190 54');
+      parts.hairBack = mirror(locks('M108 52C44 44 -14 120 -6 230C-2 300 -8 356 -44 408C24 412 76 372 92 296C102 240 100 190 112 140Z') + streak('M52 96C18 150 16 230 24 300C26 330 10 366 -14 392', 6)) + locks('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z');
+      parts.hairFront = locks(BANGS) + mirror(shape('M96 58l14-10 8 14-14 10z', o.streak)) + shine('M126 56C142 44 170 42 190 54');
     },
     bob() {
-      parts.hairBack = shape('M160 24C84 24 72 92 80 152C84 194 72 214 80 238Q110 250 122 216L198 216Q210 250 240 238C248 214 236 194 240 152C248 92 236 24 160 24Z', hair) + streak('M90 150C92 186 84 212 88 230') + shine('M232 150C230 186 238 210 234 228');
-      parts.hairFront = shape(BANGS, hair) + streak('M198 60C206 74 210 86 212 96', 7) + shine('M126 56C142 44 170 42 190 54');
+      parts.hairBack = locks('M160 24C84 24 72 92 80 152C84 194 72 214 80 238Q110 250 122 216L198 216Q210 250 240 238C248 214 236 194 240 152C248 92 236 24 160 24Z') + streak('M90 150C92 186 84 212 88 230') + shine('M232 150C230 186 238 210 234 228');
+      parts.hairFront = locks(BANGS) + streak('M198 60C206 74 210 86 212 96', 7) + shine('M126 56C142 44 170 42 190 54');
     },
     curls() {
       const blobs: Array<[number, number, number]> = [[160, 40, 44], [106, 58, 36], [214, 58, 36], [76, 112, 34], [244, 112, 34], [66, 174, 34], [254, 174, 34], [78, 238, 34], [242, 238, 34], [92, 296, 30], [228, 296, 30], [112, 346, 24], [208, 346, 24]];
       parts.hairBack = blobs.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${hair}" stroke="${INK}" stroke-width="2.6"/>`).join('') + blobs.filter((_, i) => i % 2).map(([x, y, r]) => strokeLine(`M${x - r * .5} ${y - r * .2}q${r * .5}-${r * .6} ${r}-${r * .1}`, 5, o.streak)).join('');
-      parts.hairFront = shape('M102 118C98 76 120 50 138 46C146 34 174 34 182 46C200 50 222 76 218 118C208 100 196 88 184 78C176 88 160 92 150 80C136 92 116 100 102 118Z', hair) + shine('M128 60q18-12 36-6');
+      parts.hairFront = locks('M102 118C98 76 120 50 138 46C146 34 174 34 182 46C200 50 222 76 218 118C208 100 196 88 184 78C176 88 160 92 150 80C136 92 116 100 102 118Z') + shine('M128 60q18-12 36-6');
     },
     side() {
-      parts.hairBack = shape('M160 24C84 24 70 92 74 160C76 260 40 360 58 470Q96 470 114 410L170 200L226 240C242 200 244 180 240 150C248 92 236 24 160 24Z', hair) + streak('M84 180C84 270 58 360 70 452') + shine('M104 210C100 280 92 340 88 400');
-      parts.hairFront = shape('M222 118C226 62 192 32 156 36C112 38 92 72 98 136C106 110 118 92 136 82C166 92 202 92 222 118Z', hair) + streak('M132 62C150 72 182 78 210 98', 7) + shine('M110 86C120 64 140 48 160 46');
+      parts.hairBack = locks('M160 24C84 24 70 92 74 160C76 260 40 360 58 470Q96 470 114 410L170 200L226 240C242 200 244 180 240 150C248 92 236 24 160 24Z') + streak('M84 180C84 270 58 360 70 452') + shine('M104 210C100 280 92 340 88 400');
+      parts.hairFront = locks('M222 118C226 62 192 32 156 36C112 38 92 72 98 136C106 110 118 92 136 82C166 92 202 92 222 118Z') + streak('M132 62C150 72 182 78 210 98', 7) + shine('M110 86C120 64 140 48 160 46');
     },
     buns() {
-      parts.hairBack = mirror(`<circle cx="92" cy="40" r="34" fill="${hair}" stroke="${INK}" stroke-width="2.6"/>` + strokeLine('M72 34q20-22 40-2', 6, o.streak)) + shape('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z', hair);
-      parts.hairFront = shape(SWEPT, hair) + shine('M122 60C136 46 150 42 164 42');
+      parts.hairBack = mirror(`<circle cx="92" cy="40" r="34" fill="${hair}" stroke="${INK}" stroke-width="2.6"/>` + strokeLine('M72 34q20-22 40-2', 6, o.streak)) + locks('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z');
+      parts.hairFront = locks(SWEPT) + shine('M122 60C136 46 150 42 164 42');
     },
     afro() {
       parts.hairBack = '<circle cx="160" cy="92" r="96" fill="' + hair + '" stroke="' + INK + '" stroke-width="2.6"/>' + strokeLine('M86 92q8-52 54-68M234 92q-8-52-54-68', 5, o.streak, 'opacity=".8"');
-      parts.hairFront = shape('M100 112C104 66 130 46 160 46C190 46 216 66 220 112C206 84 186 72 160 72C134 72 114 84 100 112Z', hair);
+      parts.hairFront = locks('M100 112C104 66 130 46 160 46C190 46 216 66 220 112C206 84 186 72 160 72C134 72 114 84 100 112Z');
     },
     braids() {
       const braid = '<g>' + [130, 170, 210, 250, 290, 330, 370, 410].map((y, i) => '<ellipse cx="' + (72 + (i % 2) * 8) + '" cy="' + y + '" rx="17" ry="24" fill="' + (i % 2 ? hair : hairD) + '" stroke="' + INK + '" stroke-width="2.4"/>').join('') + '</g>' + shape('M64 430h24l-4 30h-16z', o.streak);
-      parts.hairBack = mirror(braid) + shape('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z', hair);
-      parts.hairFront = shape(SWEPT, hair) + shine('M122 60C136 46 150 42 164 42');
+      parts.hairBack = mirror(braid) + locks('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z');
+      parts.hairFront = locks(SWEPT) + shine('M122 60C136 46 150 42 164 42');
     },
     waves() {
-      parts.hairBack = shape('M160 24C80 24 72 92 78 150C60 190 96 220 74 262C54 300 92 330 70 374C60 410 84 440 104 444C126 420 116 400 130 380L190 380C204 400 194 420 216 444C236 440 260 410 250 374C228 330 266 300 246 262C224 220 260 190 242 150C248 92 240 24 160 24Z', hair) + streak('M90 170C74 200 106 226 86 262C70 300 102 330 84 372') + shine('M230 170C246 200 214 226 234 262C250 300 218 330 236 372');
-      parts.hairFront = shape(SWEPT, hair) + streak('M176 68C190 80 208 96 216 116', 7);
+      parts.hairBack = locks('M160 20C72 20 60 92 66 150C36 196 84 226 54 270C22 316 72 342 34 392C14 428 44 466 84 470C70 440 96 410 130 380L190 380C224 410 250 440 236 470C276 466 306 428 286 392C248 342 298 316 266 270C236 226 284 196 254 150C260 92 248 20 160 20Z') + streak('M90 170C74 200 106 226 86 262C70 300 102 330 84 372') + shine('M230 170C246 200 214 226 234 262C250 300 218 330 236 372');
+      parts.hairFront = locks(SWEPT) + streak('M176 68C190 80 208 96 216 116', 7);
     },
     pixie() {
-      parts.hairBack = shape('M160 26C96 26 86 84 92 142L104 170L216 170L228 142C234 84 224 26 160 26Z', hair);
-      parts.hairFront = shape('M98 126C94 62 130 34 164 36C204 36 228 66 222 118L206 100L188 96L176 74L150 92L124 96L112 112Z', hair) + streak('M178 62L204 94', 6);
+      parts.hairBack = locks('M160 26C96 26 86 84 92 142L104 170L216 170L228 142C234 84 224 26 160 26Z');
+      parts.hairFront = locks('M98 126C94 62 130 34 164 36C204 36 228 66 222 118L206 100L188 96L176 74L150 92L124 96L112 112Z') + streak('M178 62L204 94', 6);
     },
     mohawk() {
       parts.hairBack = '<path d="M122 62L104 18L136 38L146 2L164 32L184 2L188 38L218 18L198 62Z" fill="' + o.streak + '" stroke="' + INK + '" stroke-width="2.6" stroke-linejoin="round"/>';
-      parts.hairFront = shape('M124 62C136 46 184 46 196 62L186 74C174 66 146 66 134 74Z', hair);
+      parts.hairFront = locks('M124 62C136 46 184 46 196 62L186 74C174 66 146 66 134 74Z');
     },
     halfup() {
-      parts.hairBack = shape('M160 24C80 24 74 92 82 150C88 240 74 300 84 370Q110 384 124 350L196 350Q210 384 236 370C246 300 232 240 238 150C246 92 240 24 160 24Z', hair) + streak('M94 170C94 240 84 300 92 356');
-      parts.hairFront = '<circle cx="160" cy="26" r="24" fill="' + hair + '" stroke="' + INK + '" stroke-width="2.6"/>' + shape(BANGS, hair) + strokeLine('M138 42q22 12 44 0', 5, o.streak);
+      parts.hairBack = locks('M160 24C80 24 74 92 82 150C88 240 74 300 84 370Q110 384 124 350L196 350Q210 384 236 370C246 300 232 240 238 150C246 92 240 24 160 24Z') + streak('M94 170C94 240 84 300 92 356');
+      parts.hairFront = '<circle cx="160" cy="26" r="24" fill="' + hair + '" stroke="' + INK + '" stroke-width="2.6"/>' + locks(BANGS) + strokeLine('M138 42q22 12 44 0', 5, o.streak);
     },
     lob() {
-      parts.hairBack = shape('M160 24C84 24 72 92 78 152C80 210 70 260 76 300Q110 316 124 270L196 270Q210 316 244 300C250 260 240 210 242 152C248 92 236 24 160 24Z', hair) + streak('M88 170C90 220 80 260 86 292') + shine('M232 170C230 220 240 260 234 292');
-      parts.hairFront = shape(SWEPT, hair) + shine('M122 62C136 48 150 44 164 44');
+      parts.hairBack = locks('M160 24C84 24 72 92 78 152C80 210 70 260 76 300Q110 316 124 270L196 270Q210 316 244 300C250 260 240 210 242 152C248 92 236 24 160 24Z') + streak('M88 170C90 220 80 260 86 292') + shine('M232 170C230 220 240 260 234 292');
+      parts.hairFront = locks(SWEPT) + shine('M122 62C136 48 150 44 164 44');
     },
     shag() {
-      parts.hairBack = shape('M160 24C84 24 70 92 74 150L58 212L80 206L60 276L88 264L72 336L106 300L124 250L196 250L214 300L248 336L232 264L260 276L240 206L262 212L246 150C250 92 236 24 160 24Z', hair) + streak('M86 170L76 240') + shine('M234 170L244 240');
-      parts.hairFront = shape('M98 122C94 60 126 34 160 34C194 34 226 60 222 122L212 90L200 112L186 84L172 110L158 84L144 110L130 86L116 112L106 92Z', hair) + streak('M186 60L198 92', 6);
+      parts.hairBack = locks('M160 24C84 24 70 92 74 150L58 212L80 206L60 276L88 264L72 336L106 300L124 250L196 250L214 300L248 336L232 264L260 276L240 206L262 212L246 150C250 92 236 24 160 24Z') + streak('M86 170L76 240') + shine('M234 170L244 240');
+      parts.hairFront = locks('M98 122C94 60 126 34 160 34C194 34 226 60 222 122L212 90L200 112L186 84L172 110L158 84L144 110L130 86L116 112L106 92Z') + streak('M186 60L198 92', 6);
     },
     fishtail() {
-      parts.hairBack = shape('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z', hair);
+      parts.hairBack = locks('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z');
       const links = [170, 196, 222, 248, 274, 300, 326, 352, 378].map((y, i) => '<ellipse cx="' + (212 + (i % 2 ? 10 : -10)) + '" cy="' + y + '" rx="17" ry="11" transform="rotate(' + (i % 2 ? -32 : 32) + ' 212 ' + y + ')" fill="' + (i % 2 ? hair : hairD) + '" stroke="' + INK + '" stroke-width="2.200"/>').join('');
-      parts.hairFront = links + shape('M204 392h18l-2 12 8 14-16-6-14 6 8-14z', hair) + strokeLine('M202 390h22', 5, o.streak) + shape(SWEPT, hair) + shine('M122 60C136 46 150 42 164 42');
+      parts.hairFront = links + locks('M204 392h18l-2 12 8 14-16-6-14 6 8-14z') + strokeLine('M202 390h22', 5, o.streak) + locks(SWEPT) + shine('M122 60C136 46 150 42 164 42');
     },
     lowpony() {
-      parts.hairBack = shape('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z', hair);
-      parts.hairFront = shape('M204 176C246 210 256 300 226 400C210 360 200 290 184 220Z', hair) + streak('M216 220C232 270 234 320 226 372', 6) + `<circle cx="196" cy="208" r="10" fill="${o.streak}" stroke="${INK}" stroke-width="2.200"/>` + shape(SWEPT, hair);
+      parts.hairBack = locks('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z');
+      parts.hairFront = locks('M204 176C246 210 256 300 226 400C210 360 200 290 184 220Z') + streak('M216 220C232 270 234 320 226 372', 6) + `<circle cx="196" cy="208" r="10" fill="${o.streak}" stroke="${INK}" stroke-width="2.200"/>` + locks(SWEPT);
     },
     topknot() {
-      parts.hairBack = '<circle cx="160" cy="4" r="30" fill="' + hair + '" stroke="' + INK + '" stroke-width="2.600"/>' + strokeLine('M140 -8q20-16 40 0', 5, hairL) + shape('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z', hair);
-      parts.hairFront = shape('M142 22q18 8 36 0v12q-18 8-36 0z', o.streak) + shape(SWEPT, hair) + shine('M122 62C136 48 150 44 164 44');
+      parts.hairBack = '<circle cx="160" cy="4" r="30" fill="' + hair + '" stroke="' + INK + '" stroke-width="2.600"/>' + strokeLine('M140 -8q20-16 40 0', 5, hairL) + locks('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z');
+      parts.hairFront = shape('M142 22q18 8 36 0v12q-18 8-36 0z', o.streak) + locks(SWEPT) + shine('M122 62C136 48 150 44 164 44');
     },
     lowbuns() {
-      parts.hairBack = mirror(`<circle cx="88" cy="186" r="33" fill="${hair}" stroke="${INK}" stroke-width="2.600"/>` + strokeLine('M68 180q20-22 40-2', 6, o.streak)) + shape('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z', hair);
-      parts.hairFront = shape(BANGS, hair) + shine('M126 56C142 44 170 42 190 54');
+      parts.hairBack = mirror(`<circle cx="88" cy="186" r="33" fill="${hair}" stroke="${INK}" stroke-width="2.600"/>` + strokeLine('M68 180q20-22 40-2', 6, o.streak)) + locks('M160 26C102 26 90 80 96 134L224 134C230 80 218 26 160 26Z');
+      parts.hairFront = locks(BANGS) + shine('M126 56C142 44 170 42 190 54');
     },
     boxbraids() {
       const xs = [66, 80, 94, 108, 122, 198, 212, 226, 240, 254];
-      parts.hairBack = xs.map((x, i) => { const d = 'M' + x + ' 90C' + (x - 4) + ' 200 ' + (x + 4) + ' 300 ' + x + ' ' + (396 + (i % 3) * 18); return strokeLine(d, 12, INK) + strokeLine(d, 8, i % 2 ? hair : hairD) + strokeLine(d, 8, hairL, 'stroke-dasharray="1 7" opacity=".55"') + '<circle cx="' + x + '" cy="' + (398 + (i % 3) * 18) + '" r="4.400" fill="' + o.streak + '" stroke="' + INK + '" stroke-width="1.400"/>'; }).join('') + shape('M160 26C96 26 82 84 88 140L232 140C238 84 224 26 160 26Z', hair);
-      parts.hairFront = shape(SWEPT, hair) + strokeLine('M124 56C118 70 112 86 108 104M146 42C140 56 134 72 130 86M186 56C198 70 208 84 214 100', 1.800, hairD);
+      parts.hairBack = xs.map((x, i) => { const d = 'M' + x + ' 90C' + (x - 4) + ' 200 ' + (x + 4) + ' 300 ' + x + ' ' + (396 + (i % 3) * 18); return strokeLine(d, 12, INK) + strokeLine(d, 8, i % 2 ? hair : hairD) + strokeLine(d, 8, hairL, 'stroke-dasharray="1 7" opacity=".55"') + '<circle cx="' + x + '" cy="' + (398 + (i % 3) * 18) + '" r="4.400" fill="' + o.streak + '" stroke="' + INK + '" stroke-width="1.400"/>'; }).join('') + locks('M160 26C96 26 82 84 88 140L232 140C238 84 224 26 160 26Z');
+      parts.hairFront = locks(SWEPT) + strokeLine('M124 56C118 70 112 86 108 104M146 42C140 56 134 72 130 86M186 56C198 70 208 84 214 100', 1.800, hairD);
     },
     locs() {
       const xs = [62, 82, 102, 122, 198, 218, 238, 258];
-      parts.hairBack = xs.map((x, i) => { const d = 'M' + x + ' 96Q' + (x + (i % 2 ? 12 : -12)) + ' 210 ' + x + ' 300T' + x + ' ' + (372 + (i % 3) * 22); return strokeLine(d, 19, INK) + strokeLine(d, 14, i % 2 ? hairD : hair) + strokeLine(d, 3, hairL, 'stroke-dasharray="6 9" opacity=".6"'); }).join('') + shape('M160 26C96 26 82 84 88 140L232 140C238 84 224 26 160 26Z', hair);
-      parts.hairFront = shape(SWEPT, hair) + streak('M176 68C190 80 208 96 216 116', 5);
+      parts.hairBack = xs.map((x, i) => { const d = 'M' + x + ' 96Q' + (x + (i % 2 ? 12 : -12)) + ' 210 ' + x + ' 300T' + x + ' ' + (372 + (i % 3) * 22); return strokeLine(d, 19, INK) + strokeLine(d, 14, i % 2 ? hairD : hair) + strokeLine(d, 3, hairL, 'stroke-dasharray="6 9" opacity=".6"'); }).join('') + locks('M160 26C96 26 82 84 88 140L232 140C238 84 224 26 160 26Z');
+      parts.hairFront = locks(SWEPT) + streak('M176 68C190 80 208 96 216 116', 5);
     },
     bantu() {
       const knots: Array<[number, number]> = [[160, 22], [114, 34], [206, 34], [86, 72], [234, 72], [136, 2], [184, 2]];
       parts.hairBack = knots.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="20" fill="${hair}" stroke="${INK}" stroke-width="2.400"/><path d="M${x - 9} ${y}a9 9 0 1118 0 6 6 0 11-12 0" fill="none" stroke="${hairL}" stroke-width="2.600"/>`).join('');
-      parts.hairFront = shape('M102 110C96 64 124 42 160 42C196 42 224 64 218 110C206 76 186 64 160 64C134 64 114 76 102 110Z', hair) + strokeLine('M160 42V64M126 52L136 68M194 52L184 68', 1.800, S);
+      parts.hairFront = locks('M102 110C96 64 124 42 160 42C196 42 224 64 218 110C206 76 186 64 160 64C134 64 114 76 102 110Z') + strokeLine('M160 42V64M126 52L136 68M194 52L184 68', 1.800, S);
     },
     puffs() {
-      parts.hairBack = mirror(`<circle cx="82" cy="34" r="50" fill="${hair}" stroke="${INK}" stroke-width="2.600"/>` + strokeLine('M50 30q10-30 38-34', 5, hairL, 'opacity=".75"')) + shape('M160 30C102 30 92 80 96 130L224 130C228 80 218 30 160 30Z', hair);
-      parts.hairFront = shape('M100 112C104 66 130 46 160 46C190 46 216 66 220 112C206 84 186 72 160 72C134 72 114 84 100 112Z', hair) + mirror(strokeLine('M112 60l14-12', 7, o.streak));
+      parts.hairBack = mirror(`<circle cx="82" cy="34" r="50" fill="${hair}" stroke="${INK}" stroke-width="2.600"/>` + strokeLine('M50 30q10-30 38-34', 5, hairL, 'opacity=".75"')) + locks('M160 30C102 30 92 80 96 130L224 130C228 80 218 30 160 30Z');
+      parts.hairFront = locks('M100 112C104 66 130 46 160 46C190 46 216 66 220 112C206 84 186 72 160 72C134 72 114 84 100 112Z') + mirror(strokeLine('M112 60l14-12', 7, o.streak));
     },
     hime() {
-      parts.hairBack = shape('M160 24C80 24 74 92 76 150L68 470Q160 490 252 470L244 150C246 92 240 24 160 24Z', hair) + streak('M90 170L84 460') + shine('M230 170L236 460');
-      parts.hairFront = shape('M100 106C94 56 126 32 160 32C194 32 226 56 220 106Q160 92 100 106Z', hair) + mirror(shape('M96 96L120 104L118 232L92 228Z', hair)) + shine('M124 54C142 44 178 44 196 54');
+      parts.hairBack = locks('M160 24C80 24 74 92 76 150L68 470Q160 490 252 470L244 150C246 92 240 24 160 24Z') + streak('M90 170L84 460') + shine('M230 170L236 460');
+      parts.hairFront = locks('M100 106C94 56 126 32 160 32C194 32 226 56 220 106Q160 92 100 106Z') + mirror(locks('M96 96L120 104L118 232L92 228Z')) + shine('M124 54C142 44 178 44 196 54');
     },
     beehive() {
-      parts.hairBack = '<ellipse cx="160" cy="4" rx="72" ry="70" fill="' + hair + '" stroke="' + INK + '" stroke-width="2.600"/>' + strokeLine('M100 20Q160 -50 220 20M106 44Q160 -14 214 44', 3, hairD) + shape('M160 30C102 30 88 90 94 150L226 150C232 90 218 30 160 30Z', hair);
-      parts.hairFront = shape(SWEPT, hair) + strokeLine('M98 60Q160 16 222 60', 8, o.streak) + shine('M122 62C136 48 150 44 164 44');
+      parts.hairBack = '<ellipse cx="160" cy="4" rx="72" ry="70" fill="' + hair + '" stroke="' + INK + '" stroke-width="2.600"/>' + strokeLine('M100 20Q160 -50 220 20M106 44Q160 -14 214 44', 3, hairD) + locks('M160 30C102 30 88 90 94 150L226 150C232 90 218 30 160 30Z');
+      parts.hairFront = locks(SWEPT) + strokeLine('M98 60Q160 16 222 60', 8, o.streak) + shine('M122 62C136 48 150 44 164 44');
     },
     rolls() {
-      parts.hairBack = shape('M160 30C96 30 82 90 80 150C76 196 66 226 84 256Q120 258 124 220L196 220Q200 258 236 256C254 226 244 196 240 150C238 90 224 30 160 30Z', hair);
-      parts.hairFront = mirror(`<circle cx="116" cy="46" r="33" fill="${hair}" stroke="${INK}" stroke-width="2.600"/><path d="M102 46a14 14 0 1128 0 9 9 0 11-18 0" fill="none" stroke="${hairD}" stroke-width="3"/>`) + shape('M116 80C126 58 194 58 204 80C196 96 172 90 160 96C148 90 124 96 116 80Z', hair) + strokeLine('M138 66q22 10 44 0', 5, o.streak);
+      parts.hairBack = locks('M160 30C96 30 82 90 80 150C76 196 66 226 84 256Q120 258 124 220L196 220Q200 258 236 256C254 226 244 196 240 150C238 90 224 30 160 30Z');
+      parts.hairFront = mirror(`<circle cx="116" cy="46" r="33" fill="${hair}" stroke="${INK}" stroke-width="2.600"/><path d="M102 46a14 14 0 1128 0 9 9 0 11-18 0" fill="none" stroke="${hairD}" stroke-width="3"/>`) + locks('M116 80C126 58 194 58 204 80C196 96 172 90 160 96C148 90 124 96 116 80Z') + strokeLine('M138 66q22 10 44 0', 5, o.streak);
     },
     crimped() {
       const edge = (x0: number, dir: number) => { let d = ''; for (let i = 0; i < 14; i++) d += 'L' + (x0 + dir * (i * .8 + (i % 2 ? 14 : 0))) + ' ' + (120 + i * 22); return d; };
       parts.hairBack = shape('M160 24C84 24 78 70 80 120' + edge(80, -1) + 'L120 430L200 430' + edge(240, 1).split('L').filter(Boolean).reverse().map(p => 'L' + p).join('') + 'L240 120C242 70 236 24 160 24Z', hair) + [100, 120, 200, 220].map(x => strokeLine('M' + x + ' 150l-8 14 8 14-8 14 8 14-8 14 8 14-8 14 8 14-8 14 8 14-8 14 8 14', 2, x % 40 ? hairD : o.streak)).join('');
-      parts.hairFront = shape(SWEPT, hair) + shine('M122 62C136 48 150 44 164 44');
+      parts.hairFront = locks(SWEPT) + shine('M122 62C136 48 150 44 164 44');
     },
     ringlets() {
       const curl = (x: number, n: number) => Array.from({ length: n }, (_, i) => '<circle cx="' + (x + (i % 2 ? 7 : -7)) + '" cy="' + (150 + i * 30) + '" r="' + (19 - i * .9) + '" fill="' + (i % 2 ? hair : hairD) + '" stroke="' + INK + '" stroke-width="2.200"/>').join('');
-      parts.hairBack = mirror(curl(66, 9) + curl(100, 7)) + shape('M160 26C96 26 82 84 86 150L234 150C238 84 224 26 160 26Z', hair);
-      parts.hairFront = shape(BANGS, hair) + mirror(`<path d="M96 56q18-16 26 6-14 16-26-6z" fill="${o.streak}" stroke="${INK}" stroke-width="2"/>`);
+      parts.hairBack = mirror(curl(66, 9) + curl(100, 7)) + locks('M160 26C96 26 82 84 86 150L234 150C238 84 224 26 160 26Z');
+      parts.hairFront = locks(BANGS) + mirror(`<path d="M96 56q18-16 26 6-14 16-26-6z" fill="${o.streak}" stroke="${INK}" stroke-width="2"/>`);
     },
     undercut() {
-      parts.hairBack = shape('M168 24C110 24 100 70 104 120L224 330Q256 300 244 220C240 190 242 170 240 150C248 92 236 24 168 24Z', hair) + streak('M232 170C230 220 244 260 234 306');
-      parts.hairFront = shape('M108 96C110 48 146 30 176 32C212 34 230 66 222 122C212 92 192 72 164 64C146 78 124 88 108 96Z', hair) + strokeLine('M102 88v44M108 80v40', 3, hairD, 'stroke-dasharray="2 4"') + streak('M170 44C188 52 208 76 216 100', 6);
+      parts.hairBack = locks('M168 24C110 24 100 70 104 120L224 330Q256 300 244 220C240 190 242 170 240 150C248 92 236 24 168 24Z') + streak('M232 170C230 220 244 260 234 306');
+      parts.hairFront = locks('M108 96C110 48 146 30 176 32C212 34 230 66 222 122C212 92 192 72 164 64C146 78 124 88 108 96Z') + strokeLine('M102 88v44M108 80v40', 3, hairD, 'stroke-dasharray="2 4"') + streak('M170 44C188 52 208 76 216 100', 6);
     },
     spiky() {
-      parts.hairBack = shape('M96 136L62 112L88 92L52 54L96 62L84 14L126 44L136 -6L160 34L184 -6L194 44L236 14L224 62L268 54L232 92L258 112L224 136Z', hair) + strokeLine('M126 44L136 8M194 44L184 8', 4, o.streak);
-      parts.hairFront = shape('M100 118L108 86L124 100L134 70L150 92L164 62L178 92L194 72L202 100L216 86L220 118C224 60 196 36 160 36C124 36 96 60 100 118Z', hair);
+      parts.hairBack = locks('M96 136L62 112L88 92L52 54L96 62L84 14L126 44L136 -6L160 34L184 -6L194 44L236 14L224 62L268 54L232 92L258 112L224 136Z') + strokeLine('M126 44L136 8M194 44L184 8', 4, o.streak);
+      parts.hairFront = locks('M100 118L108 86L124 100L134 70L150 92L164 62L178 92L194 72L202 100L216 86L220 118C224 60 196 36 160 36C124 36 96 60 100 118Z');
     },
     turban() {
       parts.hairFront = '<path d="M98 112C86 50 124 16 164 18C206 18 236 56 222 112C206 86 188 74 160 74C132 74 114 86 98 112Z" fill="' + hair + '" stroke="' + INK + '" stroke-width="2.6" stroke-linejoin="round"/>' + strokeLine('M104 86C130 44 186 30 220 84M116 54C150 68 190 62 212 44', 2.4, hairD) + '<circle cx="160" cy="36" r="9" fill="' + o.streak + '" stroke="' + INK + '" stroke-width="2.2"/>';
@@ -1090,9 +1102,16 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
 
   const lean = pose.lean || 0, tilt = pose.tilt || 0, lift = pose.lift || 0;
   const LOWER: Layer[] = ['legs', 'legwear', 'pants', 'shoes'];
+  defs += '<filter id="' + uid + 'cel" filterUnits="userSpaceOnUse" x="-300" y="-300" width="1000" height="1400" color-interpolation-filters="sRGB"><feOffset in="SourceAlpha" dx="-7" dy="-3" result="o"/><feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#1c0f22" flood-opacity=".3"/><feComposite in2="edge" operator="in" result="sh"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter>';
+  const SHADED: Layer[] = ['legs', 'pants', 'shoes', 'torso', 'bottom', 'top', 'arms', 'sleeves', 'hairBack'];
+  const THIN: Layer[] = ['torso', 'bottom', 'top', 'neck'];
   const placed = (l: Layer): string => {
     let out = parts[l] || '';
     if (!out) return '';
+    if (THIN.includes(l)) out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
+    if (SHADED.includes(l)) out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
+    if (l === 'hairFront' && !scarfOn) out = '<g transform="translate(160 0) scale(1.1 1) translate(-160 0)">' + out + '</g>';
+    if (HEAD_LAYERS.includes(l)) out = '<g transform="translate(160 205) scale(1.05) translate(-160 -205)">' + out + '</g>';
     if (tilt && HEAD_LAYERS.includes(l)) out = '<g transform="rotate(' + tilt + ' 160 195)">' + out + '</g>';
     if (lean && !LOWER.includes(l)) out = '<g transform="rotate(' + lean + ' 160 385)">' + out + '</g>';
     return lift ? '<g transform="translate(0 ' + (-lift) + ')">' + out + '</g>' : out;
