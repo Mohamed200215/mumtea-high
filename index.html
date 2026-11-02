@@ -130,23 +130,6 @@ nav.tabs button[aria-current="page"]{background:var(--pink);color:var(--white)}
 .panel p{margin:4px 0 10px;font-size:15px}
 canvas{display:block;width:100%;max-width:100%;background:#14081a;touch-action:none;border:2px solid #000;aspect-ratio:4/3}
 .gamebar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;font:13px var(--label)}
-.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:440px;margin-inline:auto}
-.mem button{aspect-ratio:1;background:var(--pink-deep);border:2px solid #000;color:var(--white);font-size:clamp(22px,5vw,34px);cursor:pointer;line-height:1;padding:0}
-.mem button.up{background:var(--paper);color:var(--plum)}
-.mem button.done{background:var(--teal);color:#04202e}
-.riot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:400px;margin-inline:auto}
-.riot button{aspect-ratio:1;background:#2a1038;border:3px solid #000;padding:6px;cursor:pointer;border-radius:50%;overflow:hidden}
-.riot button svg,.riot button img{display:block;width:100%;height:100%;object-fit:contain}
-.riot button.splat{background:var(--slime)}
-.dance{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:440px;margin-inline:auto}
-.dance button{aspect-ratio:1;font-size:clamp(28px,7vw,48px);background:var(--plum);color:var(--white);border:3px solid #000;cursor:pointer;line-height:1;padding:0}
-.dance button:nth-child(1){background:var(--pink-deep)}.dance button:nth-child(2){background:var(--cyan-deep)}.dance button:nth-child(3){background:#2d8a2d}.dance button:nth-child(4){background:var(--violet)}
-.dance button.lit{background:var(--paper);color:#000;transform:scale(1.05)}
-.crypt{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-width:420px;margin-inline:auto}
-.crypt button{aspect-ratio:1;background:#000;color:var(--white);border:0;font:15px var(--label);cursor:pointer;padding:0}
-.crypt button.sel{background:var(--pink)}.crypt button.got{background:var(--teal);color:#000}
-.words{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font:13px var(--label);justify-content:center}
-.words .got{text-decoration:line-through;color:var(--teal)}
 
 /* blog */
 .blog{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:24px;align-items:start}
@@ -202,7 +185,7 @@ footer p{margin:0 0 6px;max-width:80ch}
 
 h1,h2,h3,.strip b,.pill,nav.tabs button,.marquee,.tile strong,.bones,.code label,.coffin button,.linkish,.lineup button,.student h3,.q,.hello,.filters button{text-transform:uppercase}
 h1,h2,h3{line-height:1.35;letter-spacing:0}
-.meta,.hello,.gamebar,#codeMsg,#saveMsg,.diary dt,.stack label,.idcard p b,.student small,.gbody em,th,.words,.flaskbox small,.crypt button,.code input,.q,.coffin button{font-family:var(--body);font-weight:800;letter-spacing:.01em}
+.meta,.hello,.gamebar,#codeMsg,#saveMsg,.diary dt,.stack label,.idcard p b,.student small,.gbody em,th,.flaskbox small,.crypt button,.code input,.q,.coffin button{font-family:var(--body);font-weight:800;letter-spacing:.01em}
 .gamebar .pill{font-family:var(--label);font-size:13px}
 .q{font-size:19px;text-transform:none}
 .tile strong{font-size:16px}
@@ -274,12 +257,6 @@ nav.tabs button{font-size:14px}
 .ordercard .gart{background:none}
 .orderwant{display:flex;flex-wrap:wrap;gap:6px;font-size:28px;line-height:1}
 .orderwant span.done{opacity:.25}
-.traybar{height:10px;background:#000;margin:8px 0;overflow:hidden}
-.traybar i{display:block;height:100%;width:0;background:var(--slime)}
-.trayfood{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.trayfood button{background:#000;border:3px solid var(--violet);padding:10px 4px;font-size:30px;cursor:pointer;color:var(--white);touch-action:manipulation;min-width:0}
-.trayfood button:hover{border-color:var(--white)}
-.trayfood button small{display:block;font:800 12px var(--body);color:var(--muted);margin-top:4px}
 .lockerrule{font:800 15px var(--body);color:var(--paper);min-height:1.4em;margin:0 0 6px}
 .letter{background:var(--paper);min-height:96px;display:grid;place-items:center;font:400 38px var(--display);border:3px solid #000;margin-bottom:10px;transform:rotate(-1deg)}
 .lockers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -463,6 +440,13 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .notecat{position:absolute;right:8px;bottom:0;width:112px;height:96px;pointer-events:none}
 @media (max-width:520px){.notepaper input{font-size:22px}.notepaper textarea{height:calc(var(--rule)*7)}}
 
+/* every wardrobe item stays inside its own box */
+.wtile{overflow:hidden}
+.wpic{overflow:hidden}
+.wpic svg,.lockerdoll svg{overflow:hidden!important}
+.lockerdoll{aspect-ratio:420/730}
+.lockerdoll svg{height:100%}
+
 /*ARCADE-CSS-END*/
 </style>
 
@@ -539,8 +523,8 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
           <div class="row"><button class="pill" type="button" id="slideRead">Read the post</button></div>
         </article>
         <article class="slide s3" data-slide="2" hidden>
-          <h2>13 games. Zero homework.</h2>
-          <p>Dress up a ghoul, wreck the lunch hall, race a hearse. Every game plays right here at Mumtea High.</p>
+          <h2>Four games. Zero homework.</h2>
+          <p>Dress up a ghoul, catch sugar skulls, swim the flooded basement. Every game plays right here at Mumtea High.</p>
           <div class="row"><button class="pill" type="button" data-go="games">Open the arcade</button></div>
         </article>
         <div class="dots" id="dots"></div>
@@ -573,7 +557,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
     <div class="tiles">
       <button class="tile" type="button" data-go="tea"><strong>Read freakishly fresh tea!</strong><span>The timeline of what everyone is thinking.</span></button>
       <button class="tile" type="button" data-go="registration"><strong>Register as a spooky student!</strong><span>Sign up with your email, a username and a password, then dress your ghoul.</span></button>
-      <button class="tile" type="button" data-go="games"><strong>Play a frightfully fun game!</strong><span>Thirteen games, from dress up to a flooded-basement swim.</span></button>
+      <button class="tile" type="button" data-go="games"><strong>Play a frightfully fun game!</strong><span>Four games, from dress up to a flooded-basement swim.</span></button>
     </div>
     <form class="code" id="codeForm">
       <label for="codeIn">Got a code?</label>
@@ -609,39 +593,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
         <canvas id="spill" width="480" height="360" aria-label="Spill Proof game area"></canvas>
         <div class="gamebar"><button class="pill" type="button" id="spillGo">Start</button><span id="spillStat" role="status">Best: 0</span></div>
       </div>
-      <div class="panel gpanel" data-game="cards" hidden>
-        <h3>Creepy Cards</h3>
-        <p>Find every pair in as few flips as you can.</p>
-        <div class="mem" id="mem"></div>
-        <div class="gamebar"><button class="pill" type="button" id="memGo">Shuffle</button><span id="memStat" role="status">Flips: 0</span></div>
-      </div>
-      <div class="panel gpanel" data-game="riot" hidden>
-        <h3>Lunch Riot</h3>
-        <p>Thirty seconds. Tap ghouls to splat them with gruel. Hit Earl Ghoul and you lose two points.</p>
-        <div class="riot" id="riot"></div>
-        <div class="gamebar"><button class="pill" type="button" id="riotGo">Start</button><span id="riotStat" role="status"></span></div>
-      </div>
-      <div class="panel gpanel" data-game="hearse" hidden>
-        <h3>Hearse Dash</h3>
-        <p>Dodge tombstones and grab green skulls. Use the arrow keys, or tap the left or right side of the road.</p>
-        <canvas id="hearse" width="480" height="360" aria-label="Hearse Dash game area"></canvas>
-        <div class="gamebar"><button class="pill" type="button" id="hearseGo">Start</button><span id="hearseStat" role="status"></span></div>
-      </div>
-      <div class="panel gpanel" data-game="dance" hidden>
-        <h3>Dance Dread</h3>
-        <p>Watch the moves, then copy them. One wrong step and you're out.</p>
-        <div class="dance" id="dance"></div>
-        <div class="gamebar"><button class="pill" type="button" id="danceGo">Start</button><span id="danceStat" role="status"></span></div>
-      </div>
-      <div class="panel gpanel" data-game="crypt" hidden>
-        <h3>Word Crypt</h3>
-        <p>Words run across, down and on the diagonal.</p>
-        <div class="crypt" id="crypt"></div>
-        <div class="words" id="cryptWords"></div>
-        <div class="gamebar"><button class="pill" type="button" id="cryptGo">New crypt</button><span id="cryptStat" role="status"></span></div>
-      </div>
-    </div>
-  </div></section>
+    </div></div></section>
 
   <section class="view band" data-view="tea" hidden><div class="wrap">
     <h2 class="sec-h">Spill the Tea</h2>
@@ -842,12 +794,7 @@ if(!matchMedia('(prefers-reduced-motion:reduce)').matches)slTimer=setInterval(()
 /* ---------- arcade menu ---------- */
 const MENU=[
 ['closet','Scream Queen Closet','Dress up','A full wardrobe: tops, skirts, tights, boots and monster bits.','👗'],
-['spill','Spill Proof','Arcade','Catch sugar skulls, dodge the bats.','🍵'],
-['cards','Creepy Cards','Puzzle','Find every pair in the fewest flips.','🃏'],
-['riot','Lunch Riot','Arcade','Splat ghouls before the bell. Spare Earl.','🍲'],
-['hearse','Hearse Dash','Arcade','Swerve past the tombstones. No brakes.','🏁'],
-['dance','Dance Dread','Rhythm','Copy the moves. They only get longer.','💃'],
-['crypt','Word Crypt','Puzzle','Hunt eight words hidden in the crypt.','🔤']
+['spill','Spill Proof','Arcade','Catch sugar skulls, dodge the bats.','🍵']
 ];
 function openGame(id,scroll){
   stops.forEach(f=>f());
@@ -857,161 +804,6 @@ function openGame(id,scroll){
   if(scroll)$('#player').scrollIntoView({block:'start'});
 }
 const tone=(f,d=.18)=>{if(store.get('mute',false))return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume&&ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime;o.frequency.value=f;o.type='triangle';g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+d)}catch(e){}};
-
-/* ---------- Lunch Riot ---------- */
-(function(){
-  const grid=$('#riot');const cells=[];let score=0,left=0,tick=null,pop=null,best=store.get('riotBest',0);
-  const heads=riotSkulls();
-  const stat=()=>{$('#riotStat').textContent=(tick?'Time: '+left+'  Splats: '+score+'  ':'')+'Best: '+best};
-  for(let i=0;i<9;i++){
-    const b=el('button',{type:'button','aria-label':'Table '+(i+1),onclick(){hit(i)}});cells.push({b,kind:null,t:0});grid.append(b);
-  }
-  function clear(c){c.kind=null;c.b.innerHTML='';c.b.className=''}
-  function hit(i){
-    const c=cells[i];if(!c.kind)return;
-    if(c.kind==='earl'){score=Math.max(0,score-2);tone(140)}else{score++;tone(520,.08)}
-    clear(c);c.b.className='splat';setTimeout(()=>{if(!c.kind)c.b.className=''},180);stat();
-  }
-  function spawn(){
-    const now=Date.now();cells.forEach(c=>{if(c.kind&&now>c.t)clear(c)});
-    const free=cells.filter(c=>!c.kind);if(!free.length)return;
-    const c=free[Math.floor(Math.random()*free.length)];
-    c.kind=Math.random()<.22?'earl':'ghoul';c.t=now+Math.max(650,1300-score*18);
-    c.b.innerHTML=c.kind==='earl'?'<svg viewBox="0 0 120 120" aria-hidden="true"><use href="#cup"/></svg>':heads[Math.floor(Math.random()*heads.length)];
-  }
-  function end(done){
-    clearInterval(tick);clearInterval(pop);tick=pop=null;cells.forEach(clear);
-    if(done){if(score>best){best=score;store.set('riotBest',best)}award(Math.ceil(score/2));$('#riotGo').textContent='Play again'}
-    stat();
-  }
-  stops.push(()=>{if(tick)end(false)});
-  $('#riotGo').addEventListener('click',()=>{
-    if(tick)end(false);score=0;left=30;
-    tick=setInterval(()=>{left--;stat();if(left<=0)end(true)},1000);pop=setInterval(spawn,520);stat();
-  });
-  stat();
-})();
-
-/* ---------- Hearse Dash ---------- */
-(function(){
-  const cv=$('#hearse'),c=cv.getContext('2d'),W=cv.width,H=cv.height,LANES=[100,240,380];
-  let run=false,lane=1,px=LANES[1],items=[],score=0,last=0,road=0,best=store.get('hearseBest',0),gap=0;
-  const stat=()=>{$('#hearseStat').textContent=(run?'Distance: '+Math.floor(score)+'  ':'')+'Best: '+best};
-  function car(){
-    c.save();c.translate(px,H-70);
-    c.fillStyle='#14101a';c.strokeStyle='#ff1f8f';c.lineWidth=3;c.fillRect(-26,-46,52,92);c.strokeRect(-26,-46,52,92);
-    c.fillStyle='#35dcc8';c.fillRect(-19,-34,38,16);c.fillStyle='#ff1f8f';c.fillRect(-19,8,38,28);
-    c.fillStyle='#fff6fb';c.fillRect(-24,-46,10,5);c.fillRect(14,-46,10,5);c.restore();
-  }
-  function scene(){
-    c.fillStyle='#2a1038';c.fillRect(0,0,W,H);c.fillStyle='#14081a';c.fillRect(30,0,W-60,H);
-    c.fillStyle='#f9e9a6';for(const x of [170,310])for(let y=(road%60)-60;y<H;y+=60)c.fillRect(x-3,y,6,32);
-    items.forEach(i=>{
-      c.save();c.translate(i.x,i.y);
-      if(i.bone){c.fillStyle='#8df04a';c.beginPath();c.arc(0,-2,13,0,7);c.fill();c.fillRect(-8,8,16,8);c.fillStyle='#000';c.beginPath();c.arc(-5,-3,3,0,7);c.arc(5,-3,3,0,7);c.fill()}
-      else{c.fillStyle='#c9b4cf';c.beginPath();c.moveTo(-26,26);c.lineTo(-26,-10);c.quadraticCurveTo(0,-44,26,-10);c.lineTo(26,26);c.fill();c.fillStyle='#000';c.fillRect(-3,-18,6,28);c.fillRect(-11,-10,22,6)}
-      c.restore();
-    });
-    car();
-  }
-  function msg(t){scene();c.fillStyle='#fff6fb';c.font='32px "Breath of the House", Impact, fantasy';c.textAlign='center';c.fillText(t.toUpperCase(),W/2,H/2-20)}
-  function frame(now){
-    if(!run)return;
-    const dt=Math.min(40,now-last);last=now;const sp=.22+score*.00025;
-    road+=dt*sp;score+=dt*.01;gap-=dt*sp;px+=(LANES[lane]-px)*Math.min(1,dt*.018);
-    if(gap<=0){gap=170+Math.random()*90;const l=Math.floor(Math.random()*3);items.push({x:LANES[l],y:-40,bone:Math.random()<.25})}
-    items=items.filter(i=>{
-      i.y+=dt*sp;
-      if(i.y>H-120&&i.y<H-30&&Math.abs(i.x-px)<44){
-        if(i.bone){score+=10;tone(780,.08);return false}
-        run=false;
-      }
-      return i.y<H+50;
-    });
-    if(!run){
-      const s=Math.floor(score);if(s>best){best=s;store.set('hearseBest',best)}award(Math.ceil(s/25));tone(110,.4);
-      msg('Crashed at '+s);$('#hearseGo').textContent='Drive again';stat();return;
-    }
-    scene();stat();requestAnimationFrame(frame);
-  }
-  const steer=d=>{lane=Math.max(0,Math.min(2,lane+d))};
-  cv.addEventListener('pointerdown',e=>{const r=cv.getBoundingClientRect();steer(e.clientX-r.left<r.width/2?-1:1)});
-  addEventListener('keydown',e=>{if(run&&e.key==='ArrowLeft'){steer(-1);e.preventDefault()}if(run&&e.key==='ArrowRight'){steer(1);e.preventDefault()}});
-  stops.push(()=>{if(run){run=false;msg('Hearse Dash')}});
-  $('#hearseGo').addEventListener('click',()=>{items=[];score=0;lane=1;px=LANES[1];gap=0;run=true;last=performance.now();requestAnimationFrame(frame)});
-  msg('Hearse Dash');stat();
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(!run)msg('Hearse Dash')});
-})();
-
-/* ---------- Dance Dread ---------- */
-(function(){
-  const MOVES=[['←',262,'Left'],['↑',330,'Up'],['↓',392,'Down'],['→',523,'Right']];
-  const pad=$('#dance');let seq=[],pos=0,listening=false,timers=[],best=store.get('danceBest',0);
-  const stat=t=>{$('#danceStat').textContent=(t?t+'  ':'')+'Best: '+best};
-  const btns=MOVES.map((m,i)=>{const b=el('button',{type:'button',text:m[0],'aria-label':m[2],onclick(){press(i)}});pad.append(b);return b});
-  const flash=i=>{btns[i].classList.add('lit');tone(MOVES[i][1]);setTimeout(()=>btns[i].classList.remove('lit'),240)};
-  const clearT=()=>{timers.forEach(clearTimeout);timers=[]};
-  function play(){
-    listening=false;pos=0;stat('Watch…');
-    const gapMs=Math.max(300,560-seq.length*18);
-    seq.forEach((m,i)=>timers.push(setTimeout(()=>flash(m),400+i*gapMs)));
-    timers.push(setTimeout(()=>{listening=true;stat('Your turn. Round '+seq.length)},400+seq.length*gapMs));
-  }
-  function next(){seq.push(Math.floor(Math.random()*4));play()}
-  function press(i){
-    if(!listening)return;flash(i);
-    if(seq[pos]!==i){
-      listening=false;const r=seq.length-1;if(r>best){best=r;store.set('danceBest',best)}award(r*2);
-      tone(110,.4);stat('Tripped after '+r+' rounds!');$('#danceGo').textContent='Dance again';return;
-    }
-    pos++;if(pos===seq.length){listening=false;timers.push(setTimeout(next,700))}
-  }
-  stops.push(()=>{clearT();listening=false});
-  $('#danceGo').addEventListener('click',()=>{clearT();seq=[];next()});
-  stat();
-})();
-
-/* ---------- Word Crypt ---------- */
-(function(){
-  const WORDS=['MUMTEA','FANGS','GHOUL','COFFIN','BOOTS','GLOSS','SKULL','TEACUP'],N=10;
-  const grid=$('#crypt');let cells,found,start,clicks;
-  const DIRS=[[1,0],[0,1],[1,1],[1,-1]];
-  function build(){
-    const g=Array.from({length:N},()=>Array(N).fill(''));
-    WORDS.forEach(w=>{
-      for(let tries=0;tries<300;tries++){
-        const [dx,dy]=DIRS[Math.floor(Math.random()*4)],x=Math.floor(Math.random()*N),y=Math.floor(Math.random()*N);
-        const ex=x+dx*(w.length-1),ey=y+dy*(w.length-1);
-        if(ex<0||ex>=N||ey<0||ey>=N)continue;
-        let ok=true;for(let i=0;i<w.length;i++){const c=g[y+dy*i][x+dx*i];if(c&&c!==w[i]){ok=false;break}}
-        if(!ok)continue;
-        for(let i=0;i<w.length;i++)g[y+dy*i][x+dx*i]=w[i];
-        return;
-      }
-    });
-    const AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return g.map(r=>r.map(c=>c||AZ[Math.floor(Math.random()*26)]));
-  }
-  function list(){const l=$('#cryptWords');l.textContent='';WORDS.forEach(w=>l.append(el('span',{cls:found.includes(w)?'got':'',text:w})))}
-  function deal(){
-    const g=build();found=[];start=null;clicks=0;grid.textContent='';cells=[];
-    g.forEach((r,y)=>r.forEach((ch,x)=>{const b=el('button',{type:'button',text:ch,'aria-label':'Letter '+ch+', row '+(y+1)+', column '+(x+1),onclick(){pick(x,y)}});cells.push(b);grid.append(b)}));
-    list();$('#cryptStat').textContent='Tap a word’s first letter, then its last.';
-  }
-  const at=(x,y)=>cells[y*N+x];
-  function pick(x,y){
-    if(!start){start=[x,y];at(x,y).classList.add('sel');return}
-    const [sx,sy]=start;at(sx,sy).classList.remove('sel');start=null;
-    const dx=Math.sign(x-sx),dy=Math.sign(y-sy),len=Math.max(Math.abs(x-sx),Math.abs(y-sy))+1;
-    if(!((x-sx)===dx*(len-1)&&(y-sy)===dy*(len-1)))return;
-    let s='';const line=[];for(let i=0;i<len;i++){const b=at(sx+dx*i,sy+dy*i);s+=b.textContent;line.push(b)}
-    const w=WORDS.find(k=>(k===s||k===[...s].reverse().join(''))&&!found.includes(k));
-    if(!w)return;
-    found.push(w);line.forEach(b=>b.classList.add('got'));tone(660,.12);list();
-    if(found.length===WORDS.length){award(25);$('#cryptStat').textContent='Crypt cleared! +25 bones'}else $('#cryptStat').textContent=found.length+' of '+WORDS.length+' found';
-  }
-  $('#cryptGo').addEventListener('click',deal);deal();
-})();
 
 /* ---------- Spill Proof ---------- */
 (function(){
@@ -1060,29 +852,6 @@ const tone=(f,d=.18)=>{if(store.get('mute',false))return;try{ctx=ctx||new (windo
   $('#spillGo').addEventListener('click',()=>{items=[];score=0;lives=3;run=true;last=performance.now();stat();requestAnimationFrame(frame)});
   idle('Spill Proof');
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(!run)idle('Spill Proof')});
-})();
-
-/* ---------- Creepy Cards ---------- */
-(function(){
-  const icons=['☠','♥','☾','✦','⚡','☕','✂','★'];
-  let deck=[],open=[],flips=0,matched=0,lock=false;
-  function deal(){
-    deck=[...icons,...icons].map(v=>({v,r:Math.random()})).sort((a,b)=>a.r-b.r);open=[];flips=0;matched=0;lock=false;
-    const m=$('#mem');m.textContent='';
-    deck.forEach((d,i)=>{d.b=el('button',{type:'button','aria-label':'Card '+(i+1),onclick(){flip(d)}});m.append(d.b)});
-    $('#memStat').textContent='Flips: 0';
-  }
-  function flip(d){
-    if(lock||d.up||d.done)return;
-    d.up=true;d.b.classList.add('up');d.b.textContent=d.v+'︎';d.b.setAttribute('aria-label','Card showing '+d.v);open.push(d);
-    if(open.length<2)return;
-    flips++;$('#memStat').textContent='Flips: '+flips;
-    const [a,b]=open;open=[];
-    if(a.v===b.v){a.done=b.done=true;a.b.classList.add('done');b.b.classList.add('done');matched++;
-      if(matched===icons.length){const n=Math.max(5,30-flips);award(n);$('#memStat').textContent='All found in '+flips+' flips! +'+n+' bones'}}
-    else{lock=true;setTimeout(()=>{[a,b].forEach(x=>{x.up=false;x.b.classList.remove('up');x.b.textContent='';x.b.setAttribute('aria-label','Face-down card')});lock=false},750)}
-  }
-  $('#memGo').addEventListener('click',deal);deal();
 })();
 
 /* ---------- blog ---------- */
@@ -1334,15 +1103,11 @@ function renderAdmin() {
     });
     box.append(status, el('div', { cls: 'adminbar' }, el('div', { cls: 'adminstats' }, el('div', {}, el('strong', { text: String(adminStudents.length) }), el('span', { text: adminStudents.length === 1 ? 'member' : 'members' })), el('div', {}, el('strong', { text: String(allPosts.length) }), el('span', { text: allPosts.length === 1 ? 'post' : 'posts' }))), el('div', { cls: 'row' }, composeButton('Write a post'), el('button', { cls: 'pill ghost', type: 'button', onclick() { leaveAdmin(); } }, 'Leave admin mode'))), el('section', { cls: 'panel' }, el('h3', { text: 'Your note' }), noteForm), el('section', { cls: 'panel' }, el('h3', { text: 'Members' }), people), el('section', { cls: 'panel' }, el('h3', { text: 'Posts' }), posts));
 }
-/* ---------- arcade: six extra games plus shelf search, filters and favourites ---------- */
+/* ---------- arcade: extra games plus shelf search, filters and favourites ---------- */
 const DISPLAY_FONT = '"Breath of the House", Impact, fantasy';
 const NEW_GAMES = [
     ['riptide', 'Riptide Run', 'Arcade', 'Swim the flooded basement. Hold to rise, let go to sink.', '🌊'],
-    ['hall', 'Hall Pass', 'Arcade', 'Hop Earl across the hallway without meeting a coffin cart.', '🐸'],
     ['casket', 'Casket Shot', 'Arcade', 'Pull back, aim, and sink skulls into the casket.', '⚰️'],
-    ['tray', 'Tray Rush', 'Arcade', 'Load every order before the ghoul loses patience.', '🍱'],
-    ['stack', 'Cheer Stack', 'Arcade', 'Drop each tier square. Whatever hangs over falls off.', '📣'],
-    ['locker', 'Locker Post', 'Puzzle', 'Sort the mail, and watch out when the rule flips.', '📬'],
 ];
 MENU.push(...NEW_GAMES);
 function makePanel(id, title, help, body, goText = 'Start') {
@@ -1597,168 +1362,6 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
     banner(c, 'Riptide Run');
     stat();
 })();
-/* ---------- Hall Pass ---------- */
-(function () {
-    const [cv, c] = makeCanvas('Hall Pass game area');
-    const pad = el('div', { cls: 'gpad', 'aria-label': 'Hop controls' });
-    const p = makePanel('hall', 'Hall Pass', 'Get Earl Ghoul to the top of the hall. Use the arrow keys, swipe the game, or use the pad on a phone.', [cv, pad]);
-    const CELL = 40, COLS = 12, ROWS = 9;
-    let run = false, lanes = [], ex = 6, ey = 8, score = 0, lives = 3, level = 1, top = 8, last = 0;
-    const stat = () => { p.stat.textContent = (run ? 'Score: ' + score + '  Lives: ' + lives + '  Hall: ' + level + '  ' : '') + 'Best: ' + store.get('hallBest', 0); };
-    function buildLanes() {
-        lanes = [];
-        for (const row of [1, 2, 3, 5, 6, 7]) {
-            const dir = row % 2 ? 1 : -1, w = 52 + (row % 3) * 14, n = 2 + (row % 2), step = 480 / n, carts = [];
-            for (let i = 0; i < n; i++)
-                carts.push({ x: i * step + Math.random() * 40, w });
-            lanes.push({ row, dir, speed: (.045 + row * .006) * (1 + (level - 1) * .18), carts });
-        }
-    }
-    function scene() {
-        for (let r = 0; r < ROWS; r++) {
-            c.fillStyle = r === 0 ? '#35dcc8' : r === 4 || r === 8 ? '#3a1250' : r % 2 ? '#181019' : '#14081a';
-            c.fillRect(0, r * CELL, 480, CELL);
-        }
-        c.fillStyle = '#04202e';
-        c.font = '20px ' + DISPLAY_FONT;
-        c.textAlign = 'center';
-        c.fillText('TEA THIS WAY', 240, 28);
-        for (const l of lanes)
-            for (const k of l.carts) {
-                const y = l.row * CELL + 6;
-                c.fillStyle = '#6a1f86';
-                c.strokeStyle = '#000';
-                c.lineWidth = 3;
-                c.beginPath();
-                c.moveTo(k.x + 10, y);
-                c.lineTo(k.x + k.w - 10, y);
-                c.lineTo(k.x + k.w, y + 14);
-                c.lineTo(k.x + k.w - 12, y + 28);
-                c.lineTo(k.x + 12, y + 28);
-                c.lineTo(k.x, y + 14);
-                c.closePath();
-                c.fill();
-                c.stroke();
-                c.strokeStyle = '#f9e9a6';
-                c.lineWidth = 2;
-                c.beginPath();
-                c.moveTo(k.x + k.w / 2, y + 6);
-                c.lineTo(k.x + k.w / 2, y + 22);
-                c.moveTo(k.x + k.w / 2 - 6, y + 12);
-                c.lineTo(k.x + k.w / 2 + 6, y + 12);
-                c.stroke();
-            }
-        drawEarl(c, ex * CELL, ey * CELL + 22, .9);
-    }
-    function hop(dx, dy) {
-        if (!run)
-            return;
-        ex = Math.max(1, Math.min(COLS - 1, ex + dx));
-        ey = Math.max(0, Math.min(ROWS - 1, ey + dy));
-        tone(440, .05);
-        if (ey < top) {
-            score += 10 * (top - ey);
-            top = ey;
-            stat();
-        }
-        if (ey === 0) {
-            score += 50;
-            level++;
-            top = 8;
-            ex = 6;
-            ey = 8;
-            buildLanes();
-            tone(880, .2);
-            stat();
-        }
-    }
-    function frame(now) {
-        if (!run)
-            return;
-        const dt = Math.min(40, now - last);
-        last = now;
-        for (const l of lanes)
-            for (const k of l.carts) {
-                k.x += l.dir * l.speed * dt;
-                if (l.dir > 0 && k.x > 480)
-                    k.x = -k.w;
-                if (l.dir < 0 && k.x + k.w < 0)
-                    k.x = 480;
-            }
-        const lane = lanes.find(l => l.row === ey), px = ex * CELL;
-        if (lane && lane.carts.some(k => px + 13 > k.x && px - 13 < k.x + k.w)) {
-            lives--;
-            tone(130, .3);
-            ex = 6;
-            ey = 8;
-            top = 8;
-            stat();
-            if (lives <= 0) {
-                run = false;
-                p.bestOf(score);
-                award(Math.ceil(score / 40));
-                stat();
-                scene();
-                banner(c, 'Detention!', score + ' points');
-                p.go.textContent = 'Play again';
-                return;
-            }
-        }
-        scene();
-        requestAnimationFrame(frame);
-    }
-    [['up', '↑', 0, -1], ['left', '←', -1, 0], ['down', '↓', 0, 1], ['right', '→', 1, 0]].forEach(([cls, label, dx, dy]) => {
-        pad.append(el('button', { type: 'button', cls, 'aria-label': 'Hop ' + cls, onclick() { hop(dx, dy); } }, label));
-    });
-    addEventListener('keydown', e => {
-        if (!run || typing(e))
-            return;
-        const m = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] };
-        const d = m[e.key];
-        if (d) {
-            hop(d[0], d[1]);
-            e.preventDefault();
-        }
-    });
-    let from = null;
-    cv.addEventListener('pointerdown', e => { from = toCanvas(cv, e); });
-    cv.addEventListener('pointerup', e => {
-        if (!from)
-            return;
-        const to = toCanvas(cv, e), dx = to.x - from.x, dy = to.y - from.y;
-        from = null;
-        if (Math.abs(dx) < 12 && Math.abs(dy) < 12)
-            hop(0, -1);
-        else if (Math.abs(dx) > Math.abs(dy))
-            hop(Math.sign(dx), 0);
-        else
-            hop(0, Math.sign(dy));
-    });
-    p.go.addEventListener('click', () => {
-        run = true;
-        score = 0;
-        lives = 3;
-        level = 1;
-        ex = 6;
-        ey = 8;
-        top = 8;
-        buildLanes();
-        last = performance.now();
-        p.go.textContent = 'Restart';
-        p.go.blur();
-        stat();
-        requestAnimationFrame(frame);
-    });
-    stops.push(() => { if (run) {
-        run = false;
-        scene();
-        banner(c, 'Hall Pass');
-    } });
-    buildLanes();
-    scene();
-    banner(c, 'Hall Pass');
-    stat();
-})();
 /* ---------- Casket Shot ---------- */
 (function () {
     const [cv, c] = makeCanvas('Casket Shot game area');
@@ -1975,287 +1578,6 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
     banner(c, 'Casket Shot');
     stat();
 })();
-/* ---------- Tray Rush ---------- */
-(function () {
-    const FOOD = [['🍵', 'Tea'], ['💀', 'Skull candy'], ['🦇', 'Bat wings'], ['🧁', 'Grave cake'], ['🕸️', 'Web floss'], ['🍬', 'Gloss drop']];
-    const face = el('div', { cls: 'gart', 'aria-hidden': 'true' });
-    const want = el('div', { cls: 'orderwant' });
-    const bar = el('i'), food = el('div', { cls: 'trayfood' });
-    const card = el('div', { cls: 'ordercard' }, face, want);
-    const p = makePanel('tray', 'Tray Rush', 'Tap what the ghoul ordered, in any order, or press keys 1 to 6. Wrong items cost you patience. Three ghouls storm out and you are done.', [card, el('div', { cls: 'traybar' }, bar), food]);
-    let run = false, order = [], got = [], score = 0, walks = 3, patience = 0, full = 1, last = 0;
-    const stat = () => { p.stat.textContent = (run ? 'Served: ' + score + '  Walkouts left: ' + walks + '  ' : '') + 'Best: ' + store.get('trayBest', 0); };
-    function drawOrder() {
-        want.textContent = '';
-        want.style.fontSize = run ? '' : '15px';
-        if (!run) {
-            want.textContent = 'Press start when the lunch bell rings.';
-            return;
-        }
-        order.forEach((f, i) => want.append(el('span', { cls: got[i] ? 'done' : '', title: FOOD[f][1] }, FOOD[f][0])));
-    }
-    function nextOrder() {
-        const n = Math.min(6, 2 + Math.floor(score / 3));
-        order = Array.from({ length: n }, () => Math.floor(Math.random() * FOOD.length));
-        got = order.map(() => false);
-        full = patience = Math.max(3500, 8000 - score * 280) + n * 500;
-        const guest = pick(loadRoster());
-        face.innerHTML = guest ? drawGhoul(guest.look, { head: true }) : doll(DOLLS.mumtea, { head: true });
-        drawOrder();
-    }
-    function serve(f) {
-        if (!run)
-            return;
-        const i = order.findIndex((o, k) => o === f && !got[k]);
-        if (i < 0) {
-            patience -= 900;
-            tone(150, .12);
-            return;
-        }
-        got[i] = true;
-        tone(560 + i * 70, .06);
-        if (got.every(Boolean)) {
-            score++;
-            tone(880, .18);
-            stat();
-            nextOrder();
-        }
-        else
-            drawOrder();
-    }
-    function frame(now) {
-        if (!run)
-            return;
-        patience -= now - last;
-        last = now;
-        bar.style.width = Math.max(0, patience / full * 100) + '%';
-        if (patience <= 0) {
-            walks--;
-            tone(120, .3);
-            stat();
-            if (walks <= 0) {
-                run = false;
-                p.bestOf(score);
-                award(score);
-                stat();
-                drawOrder();
-                want.textContent = 'Riot in the creepateria! You served ' + score + '.';
-                p.go.textContent = 'Play again';
-                return;
-            }
-            nextOrder();
-        }
-        requestAnimationFrame(frame);
-    }
-    FOOD.forEach(([icon, name], i) => food.append(el('button', { type: 'button', 'aria-label': name, onclick() { serve(i); } }, icon, el('small', { text: (i + 1) + ' ' + name }))));
-    addEventListener('keydown', e => {
-        if (!run || typing(e))
-            return;
-        const n = Number(e.key);
-        if (n >= 1 && n <= FOOD.length)
-            serve(n - 1);
-    });
-    p.go.addEventListener('click', () => {
-        run = true;
-        score = 0;
-        walks = 3;
-        last = performance.now();
-        p.go.textContent = 'Restart';
-        nextOrder();
-        stat();
-        requestAnimationFrame(frame);
-    });
-    stops.push(() => { if (run) {
-        run = false;
-        drawOrder();
-        bar.style.width = '0';
-    } });
-    drawOrder();
-    stat();
-})();
-/* ---------- Cheer Stack ---------- */
-(function () {
-    const [cv, c] = makeCanvas('Cheer Stack game area');
-    const p = makePanel('stack', 'Cheer Stack', 'Tap, click or press space to drop each tier. Only the part that lands stays. Land one dead on and the tier grows back a little.', [cv]);
-    const H = 26, COLORS = ['#ff1f8f', '#19b7e8', '#35dcc8', '#f9e9a6', '#8df04a', '#c77dff'];
-    let run = false, tiers = [], mover = { x: 0, w: 220 }, dir = 1, score = 0, last = 0, cam = 0;
-    const stat = () => { p.stat.textContent = (run ? 'Height: ' + score + '  ' : '') + 'Best: ' + store.get('stackBest', 0); };
-    function bar(t, i) {
-        const y = 330 - (i + 1) * H + cam;
-        c.fillStyle = COLORS[i % COLORS.length];
-        c.strokeStyle = '#000';
-        c.lineWidth = 3;
-        c.fillRect(t.x, y, t.w, H);
-        c.strokeRect(t.x, y, t.w, H);
-    }
-    function scene() {
-        c.fillStyle = '#14081a';
-        c.fillRect(0, 0, 480, 360);
-        c.fillStyle = '#3a1250';
-        c.fillRect(0, 330 + cam, 480, 60);
-        tiers.forEach(bar);
-        if (run)
-            bar(mover, tiers.length);
-    }
-    function drop() {
-        if (!run)
-            return;
-        const under = tiers[tiers.length - 1];
-        const a = Math.max(mover.x, under.x), b = Math.min(mover.x + mover.w, under.x + under.w), w = b - a;
-        if (w <= 0) {
-            run = false;
-            p.bestOf(score);
-            award(Math.ceil(score / 2));
-            tone(110, .4);
-            stat();
-            scene();
-            banner(c, 'Tumble!', score + ' tiers');
-            p.go.textContent = 'Play again';
-            return;
-        }
-        const perfect = Math.abs(mover.x - under.x) < 5;
-        const placed = perfect ? { x: under.x, w: Math.min(220, under.w + 8) } : { x: a, w };
-        tiers.push(placed);
-        score++;
-        tone(perfect ? 880 : 440 + score * 8, .1);
-        stat();
-        mover = { x: dir > 0 ? 0 : 480 - placed.w, w: placed.w };
-    }
-    function frame(now) {
-        if (!run)
-            return;
-        const dt = Math.min(40, now - last);
-        last = now;
-        mover.x += dir * dt * (.16 + score * .006);
-        if ((mover.x + mover.w > 480 && dir > 0) || (mover.x < 0 && dir < 0))
-            dir *= -1;
-        cam += (Math.max(0, (tiers.length - 7) * H) - cam) * Math.min(1, dt * .006);
-        scene();
-        requestAnimationFrame(frame);
-    }
-    cv.addEventListener('pointerdown', e => { e.preventDefault(); drop(); });
-    addEventListener('keydown', e => { if (run && e.key === ' ' && !typing(e)) {
-        drop();
-        e.preventDefault();
-    } });
-    p.go.addEventListener('click', () => {
-        run = true;
-        score = 0;
-        cam = 0;
-        dir = 1;
-        tiers = [{ x: 130, w: 220 }];
-        mover = { x: 0, w: 220 };
-        last = performance.now();
-        p.go.textContent = 'Restart';
-        p.go.blur();
-        stat();
-        requestAnimationFrame(frame);
-    });
-    stops.push(() => { if (run) {
-        run = false;
-        scene();
-        banner(c, 'Cheer Stack');
-    } });
-    tiers = [{ x: 130, w: 220 }];
-    scene();
-    banner(c, 'Cheer Stack');
-    stat();
-})();
-/* ---------- Locker Post ---------- */
-(function () {
-    const BOXES = [['Pink', '#ff1f8f', '#d3006f'], ['Blue', '#19b7e8', '#0b6f9c'], ['Green', '#8df04a', '#2f8f00'], ['Gold', '#f4d35e', '#9a7a00']];
-    const rule = el('p', { cls: 'lockerrule' });
-    const letter = el('div', { cls: 'letter' });
-    const lockers = el('div', { cls: 'lockers' });
-    const p = makePanel('locker', 'Locker Post', 'Each letter says one colour in another colour. Sort it by the rule shown, which flips every five letters. Tap a locker, or press 1 to 4. Forty seconds.', [rule, letter, lockers]);
-    let run = false, word = 0, ink = 0, byInk = false, score = 0, combo = 0, count = 0, left = 0, last = 0;
-    const stat = () => { p.stat.textContent = (run ? 'Time: ' + Math.ceil(left / 1000) + '  Score: ' + score + '  Combo: ' + combo + '  ' : '') + 'Best: ' + store.get('lockerBest', 0); };
-    function next() {
-        if (count && count % 5 === 0) {
-            byInk = !byInk;
-            tone(300, .15);
-        }
-        word = Math.floor(Math.random() * 4);
-        do {
-            ink = Math.floor(Math.random() * 4);
-        } while (ink === word);
-        rule.textContent = byInk ? 'Rule: go by the INK colour' : 'Rule: go by what the WORD says';
-        letter.textContent = BOXES[word][0];
-        letter.style.color = BOXES[ink][2];
-    }
-    function send(i) {
-        if (!run)
-            return;
-        count++;
-        if (i === (byInk ? ink : word)) {
-            combo++;
-            score += 1 + Math.floor(combo / 5);
-            tone(600 + combo * 20, .07);
-        }
-        else {
-            combo = 0;
-            left -= 2000;
-            tone(140, .2);
-        }
-        stat();
-        next();
-    }
-    function frame(now) {
-        if (!run)
-            return;
-        const before = Math.ceil(left / 1000);
-        left -= now - last;
-        last = now;
-        if (Math.ceil(left / 1000) !== before)
-            stat();
-        if (left <= 0) {
-            run = false;
-            p.bestOf(score);
-            award(Math.ceil(score / 3));
-            stat();
-            rule.textContent = 'The bell rang.';
-            letter.textContent = score + ' points';
-            letter.style.color = '#2a1420';
-            p.go.textContent = 'Play again';
-            return;
-        }
-        requestAnimationFrame(frame);
-    }
-    BOXES.forEach(([name, colour], i) => {
-        const b = el('button', { type: 'button', onclick() { send(i); } }, (i + 1) + ' ' + name);
-        b.style.background = colour;
-        lockers.append(b);
-    });
-    addEventListener('keydown', e => {
-        if (!run || typing(e))
-            return;
-        const n = Number(e.key);
-        if (n >= 1 && n <= 4)
-            send(n - 1);
-    });
-    p.go.addEventListener('click', () => {
-        run = true;
-        score = 0;
-        combo = 0;
-        count = 0;
-        byInk = false;
-        left = 40000;
-        last = performance.now();
-        p.go.textContent = 'Restart';
-        next();
-        stat();
-        requestAnimationFrame(frame);
-    });
-    stops.push(() => { if (run) {
-        run = false;
-        rule.textContent = '';
-        letter.textContent = 'Locker Post';
-        letter.style.color = '#2a1420';
-    } });
-    letter.textContent = 'Locker Post';
-    letter.style.color = '#2a1420';
-    stat();
-})();
 /* ---------- shelf: search, filters, favourites ---------- */
 const BEST_KEYS = { spill: 'spillBest', riot: 'riotBest', hearse: 'hearseBest', dance: 'danceBest', riptide: 'riptideBest', hall: 'hallBest', casket: 'casketBest', tray: 'trayBest', stack: 'stackBest', locker: 'lockerBest' };
 let shelfGenre = 'All', shelfQuery = '', currentGame = 'closet';
@@ -2415,13 +1737,39 @@ const SKIRT_FIT = { pleats: [456, 66], tutu: [440, 75], shred: [440, 56], pencil
 const GLOVE_LONG = ['opera', 'lace', 'mesh', 'stripes', 'dots', 'skeleton', 'satin', 'velvet', 'scales', 'batgloves'];
 const GLOVE_SHORT = ['short', 'biker', 'frill', 'driving', 'spiked', 'wraps', 'mittens', 'boxing', 'paws'];
 const NAILS = { nails: '', french: '#fff6fb', ombre: '', stilettos: '', glitter: '', rainbownails: '#ff1f8f|#f4d35e|#35dcc8|#6a1f86', gothnails: '#14101a', claws: '#14101a', henna: '#8a3324' };
+/* Eye shapes: white of the eye, upper lid, lower lid, iris height, iris size, lash shift. */
+const EYE_SHAPES = {
+    almond: ['M-25 4Q-8-22 24-9Q10 20-25 4Z', 'M-27 5Q-9-24 25-10L40-19', 'M-20 8Q4 16 22-4', -3, 13.5, 0],
+    round: ['M-24 0C-24-26 24-26 24 0C24 20-24 20-24 0Z', 'M-26 1C-25-27 25-27 26-1', 'M-20 11Q0 20 20 11', -1, 14, -5],
+    doll: ['M-28 0C-28-34 28-34 28 0C28 26-28 26-28 0Z', 'M-30 1C-29-36 29-36 30-1', 'M-24 14Q0 26 24 14', 0, 18, -11],
+    cat: ['M-25 8Q-6-16 30-20Q16 16-25 8Z', 'M-27 9Q-6-18 30-21L44-30', 'M-20 12Q8 16 26-12', -3, 12.5, 0],
+    doe: ['M-24-6Q0-24 26 6Q4 18-24-6Z', 'M-26-6Q0-27 28 8', 'M-20 1Q6 18 24 8', -2, 13, -2],
+    wide: ['M-31 2Q0-22 31-2Q0 19-31 2Z', 'M-33 3Q0-25 33-2L42-8', 'M-26 8Q0 19 26 4', -2, 13.5, -1],
+    narrow: ['M-26 2Q0-10 26-4Q0 10-26 2Z', 'M-28 3Q0-12 28-4L38-9', 'M-20 6Q4 10 22 0', -1, 12, 8],
+    hooded: ['M-25 2Q-4-6 25-4Q8 16-25 2Z', 'M-28 0Q-4-12 28-6', 'M-20 6Q4 15 22 0', 0, 12, 7],
+    sleepy: ['M-25 4Q-6-2 24 0Q8 18-25 4Z', 'M-27 4Q-6-4 26 0', 'M-20 9Q4 17 22 3', 3, 12, 9],
+    monolid: ['M-26 2Q-4-12 28-8Q10 12-26 2Z', 'M-28 3Q-4-14 30-9L38-13', 'M-20 6Q6 12 24-3', -2, 11.5, 5],
+    angry: ['M-25 6Q-6-4 26-16Q12 18-25 6Z', 'M-27 6Q-6-5 28-18', 'M-20 10Q6 18 24-4', 1, 12, 3],
+    sad: ['M-25-8Q4-16 26 6Q4 18-25-8Z', 'M-27-9Q4-19 28 8', 'M-20 0Q4 16 24 8', 0, 12, -1],
+};
+const EYES = [
+    { id: 'classic', name: 'Almond' }, { id: 'round', name: 'Round', shape: 'round' }, { id: 'doll', name: 'Big doll', shape: 'doll' }, { id: 'cat', name: 'Cat eye', shape: 'cat' }, { id: 'doe', name: 'Doe eye', shape: 'doe' },
+    { id: 'wide', name: 'Wide', shape: 'wide' }, { id: 'narrow', name: 'Narrow', shape: 'narrow' }, { id: 'hooded', name: 'Hooded', shape: 'hooded' }, { id: 'sleepy', name: 'Sleepy', shape: 'sleepy' }, { id: 'monolid', name: 'Monolid', shape: 'monolid' },
+    { id: 'closed', name: 'Closed', pupil: 'shut' }, { id: 'wink', name: 'Wink', pupil: 'wink' }, { id: 'happy', name: 'Happy arcs', pupil: 'arc' }, { id: 'angry', name: 'Angry', shape: 'angry' }, { id: 'sad', name: 'Sad', shape: 'sad' },
+    { id: 'winged', name: 'Winged liner', lash: 'wing' }, { id: 'bold', name: 'Bold liner', lash: 'thick' }, { id: 'nolash', name: 'No lashes', lash: 'none' }, { id: 'lashy', name: 'Long lashes', lash: 'long' }, { id: 'bottomlash', name: 'Bottom lashes', lash: 'bottom' },
+    { id: 'slit', name: 'Vampire slit', shape: 'cat', pupil: 'slit' }, { id: 'star', name: 'Star pupils', shape: 'round', pupil: 'star' }, { id: 'heart', name: 'Heart pupils', shape: 'round', pupil: 'heart' }, { id: 'cross', name: 'Cross pupils', pupil: 'cross' }, { id: 'spiral', name: 'Hypnotised', shape: 'round', pupil: 'spiral' },
+    { id: 'glow', name: 'Glowing', pupil: 'glow', lash: 'none' }, { id: 'blackout', name: 'Demon black', shape: 'cat', pupil: 'blackout' }, { id: 'button', name: 'Button eyes', shape: 'round', pupil: 'button', lash: 'none' }, { id: 'sparkle', name: 'Sparkly', shape: 'doll', pupil: 'sparkle' }, { id: 'mismatch', name: 'Two colours', pupil: 'mismatch' },
+];
+const BROW_COLOURS = ['#17101c', '#3f2412', '#5a2c17', '#8b5a2b', '#a0392a', '#d98a3d', '#f4d35e', '#9aa0ac', '#f6f0ff', '#ff1f8f', '#f08fb4', '#6a1f86', '#19b7e8', '#35dcc8', '#2f8f4e', '#c0392b'];
 const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
 const WARDROBE = [
     { title: 'Poses', key: 'pose', items: POSES.map(p => [p.id, p.name]), colours: [], box: WIDE_BOX, layers: [] },
     { title: 'Hair', key: 'hairStyle', items: [['long', 'Long'], ['pony', 'High pony'], ['twins', 'Twin tails'], ['bob', 'Bob'], ['curls', 'Curls'], ['side', 'Side sweep'], ['buns', 'Space buns'], ['afro', 'Afro'], ['braids', 'Long braids'], ['waves', 'Mermaid waves'], ['pixie', 'Pixie'], ['mohawk', 'Mohawk'], ['halfup', 'Half up'], ['lob', 'Long bob'], ['shag', 'Shaggy layers'], ['fishtail', 'Fishtail braid'], ['lowpony', 'Low pony'], ['topknot', 'Top knot'], ['lowbuns', 'Low buns'], ['boxbraids', 'Box braids'], ['locs', 'Locs'], ['bantu', 'Bantu knots'], ['puffs', 'Afro puffs'], ['hime', 'Blunt fringe'], ['beehive', 'Beehive'], ['rolls', 'Victory rolls'], ['crimped', 'Crimped'], ['ringlets', 'Ringlets'], ['undercut', 'Side shave'], ['spiky', 'Spiky']], colours: [['hair', 'Colour', HAIR_COLOURS], ['streak', 'Streak or folds', BRIGHT]], box: '10 0 300 330', layers: ['hairBack', 'head', 'hairFront'] },
     { title: 'Hijabs', key: 'hairStyle', items: HIJABS.map(h => [h.id, h.name]), colours: [['hair', 'Scarf colour', HAIR_COLOURS], ['streak', 'Second colour', BRIGHT]], box: '10 0 300 400', layers: ['hairBack', 'head', 'hairFront'] },
-    { title: 'Face', colours: [['skin', 'Skin', SKINS], ['eye', 'Eyes', ['#19b7e8', '#35dcc8', '#8df04a', '#ffb703', '#c77dff', '#ff1f8f', '#7a4a21', '#3f2412', '#14101a', '#6f8f4e', '#9aa0ac', '#d62828', '#f4d35e', '#1f3a8a']], ['shadow', 'Eyeshadow', ['#ff1f8f', '#6a1f86', '#19b7e8', '#35dcc8', '#f4d35e', '#14101a', '#c0392b', '#ff8c1a', '#8df04a', '#b19cd9', '#c98f63', '#fff6fb', '#c9a227', '#1f3a8a']], ['lip', 'Lips', ['#b80e63', '#ff1f8f', '#d62828', '#5a0f7a', '#14101a', '#b5694f', '#e58f9e', '#c76b5a', '#8a3324', '#ff8c1a', '#19b7e8', '#6a1f86', '#8df04a', '#f7b8cf']]], box: HEAD_BOX, layers: ['head', 'face'] },
+    { title: 'Skin and lips', colours: [['skin', 'Skin', SKINS], ['lip', 'Lips', ['#b80e63', '#ff1f8f', '#d62828', '#5a0f7a', '#14101a', '#b5694f', '#e58f9e', '#c76b5a', '#8a3324', '#ff8c1a', '#19b7e8', '#6a1f86', '#8df04a', '#f7b8cf']]], box: HEAD_BOX, layers: ['head', 'face'] },
+    { title: 'Eyes', key: 'eyeStyle', items: EYES.map(e => [e.id, e.name]), colours: [['eye', 'Eye colour', ['#19b7e8', '#35dcc8', '#8df04a', '#ffb703', '#c77dff', '#ff1f8f', '#7a4a21', '#3f2412', '#14101a', '#6f8f4e', '#9aa0ac', '#d62828', '#f4d35e', '#1f3a8a']], ['shadow', 'Eyeshadow', ['#ff1f8f', '#6a1f86', '#19b7e8', '#35dcc8', '#f4d35e', '#14101a', '#c0392b', '#ff8c1a', '#8df04a', '#b19cd9', '#c98f63', '#fff6fb', '#c9a227', '#1f3a8a']]], box: '88 84 144 88', layers: ['head', 'face'], crop: true },
+    { title: 'Eyebrows', key: 'brow', items: [['arch', 'Soft arch'], ['high', 'High arch'], ['straight', 'Straight'], ['pencil', 'Pencil thin'], ['thick', 'Thick'], ['bushy', 'Bushy'], ['angry', 'Angry'], ['worried', 'Worried'], ['round', 'Rounded'], ['scurve', 'S curve'], ['tapered', 'Tapered'], ['feather', 'Feathered'], ['slit', 'One slit'], ['doubleslit', 'Two slits'], ['pierced', 'Pierced'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['stitched', 'Stitched'], ['unibrow', 'Unibrow'], ['none', 'No brows'], ['ombre', 'Ombre'], ['zigzag', 'Zigzag'], ['wavy', 'Wavy'], ['starend', 'Star tip'], ['heartend', 'Heart tip'], ['spiked', 'Spiked'], ['gems', 'Gems'], ['square', 'Square'], ['flick', 'Flick up'], ['short', 'Short']], colours: [['browC', 'Colour', BROW_COLOURS]], box: '88 72 144 88', layers: ['head', 'face'], crop: true },
     { title: 'Face details', key: 'mark', items: [['none', 'None'], ['freckles', 'Freckles'], ['blush', 'Rosy cheeks'], ['star', 'Star'], ['heart', 'Heart'], ['tear', 'Goth tear'], ['mole', 'Beauty mark'], ['bandage', 'Plaster'], ['gems', 'Face gems'], ['glitter', 'Glitter'], ['moon', 'Moon'], ['bat', 'Bat'], ['butterfly', 'Butterfly'], ['flower', 'Flower'], ['bolt', 'Lightning'], ['scar', 'Scar'], ['web', 'Spider web'], ['dots', 'Dot trail'], ['bindi', 'Bindi'], ['nosering', 'Nose ring'], ['lipring', 'Lip ring'], ['brow', 'Brow slit'], ['whiskers', 'Whiskers'], ['tears', 'Crystal tears'], ['stripes', 'Cheek stripes'], ['warpaint', 'War paint'], ['sugar', 'Sugar skull'], ['dimples', 'Dimples'], ['liner', 'Graphic liner'], ['tattoo', 'Rose tattoo']], colours: [], box: HEAD_BOX, layers: ['head', 'face', 'mark'] },
     { title: 'Eyewear', key: 'eyewear', items: [['none', 'None'], ['round', 'Round glasses'], ['cat', 'Cat eye'], ['shades', 'Shades'], ['hearts', 'Heart shades'], ['visor', 'Visor'], ['monocle', 'Monocle'], ['square', 'Square'], ['aviator', 'Aviators'], ['oval', 'Oval'], ['half', 'Half rim'], ['starry', 'Star shades'], ['skull', 'Skull shades'], ['flower', 'Flower shades'], ['goggles', 'Goggles'], ['steam', 'Steam goggles'], ['mask', 'Party mask'], ['patch', 'Eye patch'], ['butterfly', 'Butterfly mask'], ['lace', 'Lace mask'], ['vr', 'VR visor'], ['threed', '3D glasses'], ['rainbow', 'Rainbow lens'], ['nerd', 'Taped glasses'], ['pixel', 'Pixel shades'], ['ski', 'Ski goggles'], ['catmask', 'Cat mask'], ['batmask', 'Bat mask'], ['chain', 'Chain glasses'], ['rimless', 'Rimless']], colours: [['trim', 'Trim', BRIGHT]], box: HEAD_BOX, layers: ['head', 'eyewear'] },
     { title: 'Monster side', key: 'monster', items: [['none', 'Just me'], ['fangs', 'Vampire fangs'], ['bat', 'Bat wings'], ['wolf', 'Wolf ears'], ['fins', 'Sea fins'], ['bolts', 'Neck bolts'], ['wraps', 'Mummy wraps'], ['horns', 'Little horns'], ['stitches', 'Stitches'], ['cat', 'Were-cat'], ['fox', 'Fox spirit'], ['bunny', 'Were-bunny'], ['dragon', 'Dragon'], ['ghost', 'Ghost'], ['zombie', 'Zombie'], ['scales', 'Sea scales'], ['elf', 'Elf ears'], ['alien', 'Alien'], ['cyclops', 'Third eye'], ['snakes', 'Snake hair'], ['pumpkin', 'Pumpkin kid'], ['skeleton', 'Skeleton'], ['antlers', 'Antlers'], ['unicorn', 'Unicorn horn'], ['spidereyes', 'Spider eyes'], ['gills', 'Gills'], ['tentacles', 'Tentacles'], ['tusks', 'Ogre tusks'], ['ram', 'Ram horns'], ['shark', 'Shark teeth']], colours: [], box: '0 0 320 330', layers: ['wings', 'head', 'face', 'monster'] },
@@ -2432,12 +1780,12 @@ const WARDROBE = [
     { title: 'Shoes', key: 'shoes', items: [['heels', 'Strappy'], ['platform', 'Platforms'], ['combat', 'Combat'], ['knee', 'Tall boots'], ['sneaker', 'High tops'], ['mary', 'Mary Janes'], ['wedge', 'Wedges'], ['ballet', 'Ballet ties'], ['cowboy', 'Cowboy boots'], ['chunky', 'Chunky trainers'], ['spike', 'Spiked boots'], ['gladiator', 'Gladiators'], ['flats', 'Flats'], ['loafers', 'Loafers'], ['pumps', 'Pumps'], ['ankle', 'Ankle boots'], ['chelsea', 'Chelsea boots'], ['rain', 'Rain boots'], ['fluffy', 'Fluffy boots'], ['creepers', 'Creepers'], ['skates', 'Roller skates'], ['iceskates', 'Ice skates'], ['moon', 'Moon boots'], ['thigh', 'Thigh boots'], ['bowflats', 'Bow flats'], ['clogs', 'Clogs'], ['slides', 'Slides'], ['batheels', 'Bat heels'], ['slippers', 'Fluffy slippers'], ['hooves', 'Hooves']], colours: [['shoesC', 'Colour', BRIGHT]], box: '60 520 200 200', layers: ['shoes'] },
     { title: 'Headwear', key: 'headwear', items: [['none', 'None'], ['bow', 'Big bow'], ['tiara', 'Tiara'], ['hat', 'Tiny hat'], ['flower', 'Flower'], ['hoops', 'Hoops'], ['clip', 'Skull clip'], ['beret', 'Beret'], ['band', 'Headband'], ['witch', 'Witch hat'], ['halo', 'Halo'], ['cat', 'Cat ears'], ['stars', 'Star clips'], ['crown', 'Crown'], ['beanie', 'Beanie'], ['bucket', 'Bucket hat'], ['cap', 'Cap'], ['tophat', 'Top hat'], ['veil', 'Veil'], ['bunny', 'Bunny ears'], ['flowers', 'Flower crown'], ['bandana', 'Bandana'], ['butterflies', 'Butterfly clips'], ['pearlband', 'Pearl band'], ['antennae', 'Antennae'], ['sunhat', 'Sun hat'], ['dangles', 'Star earrings'], ['batears', 'Bat earrings'], ['tikka', 'Tikka'], ['spider', 'Spider clip']], colours: [], box: '30 -50 260 270', layers: ['head', 'headwear'] },
     { title: 'Necklaces', key: 'neck', items: [['none', 'None'], ['choker', 'Choker'], ['skull', 'Skull pendant'], ['pearls', 'Pearls'], ['chain', 'Chain'], ['heart', 'Heart locket'], ['spikes', 'Spiked collar'], ['bowtie', 'Bow tie'], ['tie', 'School tie'], ['ribbon', 'Ribbon'], ['cameo', 'Cameo'], ['moon', 'Moon'], ['star', 'Star'], ['bat', 'Bat'], ['lariat', 'Lariat'], ['layered', 'Layered chains'], ['beads', 'Beads'], ['gems', 'Gem collar'], ['ruff', 'Ruff'], ['scarf', 'Scarf'], ['bandana', 'Neck scarf'], ['boa', 'Feather boa'], ['shell', 'Shell'], ['key', 'Key'], ['padlock', 'Padlock'], ['tags', 'Tags'], ['bone', 'Bone'], ['spider', 'Spider'], ['coffin', 'Coffin'], ['teacup', 'Teacup']], colours: [], box: '70 190 180 170', layers: ['torso', 'neck'] },
-    { title: 'Hands', key: 'gloves', items: [['none', 'Bare'], ['nails', 'Painted nails'], ['short', 'Short gloves'], ['opera', 'Long gloves'], ['fingerless', 'Fingerless'], ['claws', 'Claws'], ['lace', 'Lace gloves'], ['mesh', 'Mesh gloves'], ['stripes', 'Striped gloves'], ['dots', 'Dotted gloves'], ['mittens', 'Mittens'], ['boxing', 'Boxing gloves'], ['skeleton', 'Skeleton'], ['biker', 'Biker gloves'], ['satin', 'Satin with bow'], ['frill', 'Frilly gloves'], ['french', 'French nails'], ['ombre', 'Ombre nails'], ['stilettos', 'Long nails'], ['glitter', 'Glitter nails'], ['wraps', 'Hand wraps'], ['henna', 'Henna'], ['scales', 'Scales'], ['paws', 'Paws'], ['driving', 'Driving gloves'], ['spiked', 'Spiked gloves'], ['rainbownails', 'Rainbow nails'], ['gothnails', 'Goth nails'], ['velvet', 'Velvet gloves'], ['batgloves', 'Bat gloves']], colours: [['gloveC', 'Colour', BRIGHT]], box: '0 290 150 190', layers: ['arms'] },
-    { title: 'Hand accessories', key: 'wrist', items: [['none', 'None'], ['bangle', 'Bangle'], ['stack', 'Bangle stack'], ['charm', 'Charm bracelet'], ['pearls', 'Pearls'], ['watch', 'Watch'], ['smart', 'Smart watch'], ['spikes', 'Spiked cuff'], ['leather', 'Leather cuff'], ['ribbon', 'Ribbon'], ['friend', 'Friendship band'], ['beads', 'Beads'], ['skulls', 'Skull beads'], ['chain', 'Chain'], ['gold', 'Gold cuff'], ['ring', 'Ring'], ['tworings', 'Two rings'], ['gem', 'Big gem ring'], ['heartring', 'Heart ring'], ['skullring', 'Skull ring'], ['knuckles', 'Knuckle rings'], ['handchain', 'Hand chain'], ['scrunchie', 'Scrunchie'], ['sweatband', 'Sweatband'], ['corsage', 'Corsage'], ['bow', 'Wrist bow'], ['wrapribbon', 'Ribbon wrap'], ['snake', 'Snake armlet'], ['armband', 'Arm band'], ['tattoo', 'Bat tattoo']], colours: [['trim', 'Trim', BRIGHT]], box: '10 240 150 230', layers: ['arms', 'sleeves'] },
+    { title: 'Hands', key: 'gloves', items: [['none', 'Bare'], ['nails', 'Painted nails'], ['short', 'Short gloves'], ['opera', 'Long gloves'], ['fingerless', 'Fingerless'], ['claws', 'Claws'], ['lace', 'Lace gloves'], ['mesh', 'Mesh gloves'], ['stripes', 'Striped gloves'], ['dots', 'Dotted gloves'], ['mittens', 'Mittens'], ['boxing', 'Boxing gloves'], ['skeleton', 'Skeleton'], ['biker', 'Biker gloves'], ['satin', 'Satin with bow'], ['frill', 'Frilly gloves'], ['french', 'French nails'], ['ombre', 'Ombre nails'], ['stilettos', 'Long nails'], ['glitter', 'Glitter nails'], ['wraps', 'Hand wraps'], ['henna', 'Henna'], ['scales', 'Scales'], ['paws', 'Paws'], ['driving', 'Driving gloves'], ['spiked', 'Spiked gloves'], ['rainbownails', 'Rainbow nails'], ['gothnails', 'Goth nails'], ['velvet', 'Velvet gloves'], ['batgloves', 'Bat gloves']], colours: [['gloveC', 'Colour', BRIGHT]], box: '0 290 150 190', layers: ['arms'], crop: true },
+    { title: 'Hand accessories', key: 'wrist', items: [['none', 'None'], ['bangle', 'Bangle'], ['stack', 'Bangle stack'], ['charm', 'Charm bracelet'], ['pearls', 'Pearls'], ['watch', 'Watch'], ['smart', 'Smart watch'], ['spikes', 'Spiked cuff'], ['leather', 'Leather cuff'], ['ribbon', 'Ribbon'], ['friend', 'Friendship band'], ['beads', 'Beads'], ['skulls', 'Skull beads'], ['chain', 'Chain'], ['gold', 'Gold cuff'], ['ring', 'Ring'], ['tworings', 'Two rings'], ['gem', 'Big gem ring'], ['heartring', 'Heart ring'], ['skullring', 'Skull ring'], ['knuckles', 'Knuckle rings'], ['handchain', 'Hand chain'], ['scrunchie', 'Scrunchie'], ['sweatband', 'Sweatband'], ['corsage', 'Corsage'], ['bow', 'Wrist bow'], ['wrapribbon', 'Ribbon wrap'], ['snake', 'Snake armlet'], ['armband', 'Arm band'], ['tattoo', 'Bat tattoo']], colours: [['trim', 'Trim', BRIGHT]], box: '10 240 150 230', layers: ['arms', 'sleeves'], crop: true },
     { title: 'On your back', key: 'back', items: [['none', 'Nothing'], ['cape', 'Long cape'], ['short', 'Short cape'], ['bag', 'Backpack'], ['tail', 'Devil tail'], ['bigbow', 'Giant bow'], ['angel', 'Angel wings'], ['butterfly', 'Butterfly wings'], ['fairy', 'Fairy wings'], ['dragon', 'Dragon wings'], ['demon', 'Demon wings'], ['peacock', 'Peacock fan'], ['cat', 'Cat tail'], ['fox', 'Fox tail'], ['cloak', 'Hooded cloak'], ['guitar', 'Guitar'], ['coffin', 'Coffin bag'], ['teddy', 'Teddy bag'], ['batbag', 'Bat bag'], ['skullbag', 'Skull bag'], ['broom', 'Broomstick'], ['jetpack', 'Jetpack'], ['sash', 'Sash'], ['moon', 'Moon halo'], ['shawl', 'Lace shawl'], ['balloons', 'Balloons'], ['parasol', 'Parasol'], ['longscarf', 'Flying scarf'], ['ribbons', 'Ribbons'], ['shell', 'Shell']], colours: [], box: '-80 -40 480 730', layers: ['back'] },
     { title: 'In hand', key: 'hold', items: [['none', 'Nothing'], ['cup', 'Teacup'], ['purse', 'Purse'], ['skull', 'Skull bag'], ['wand', 'Wand'], ['phone', 'iCoffin'], ['mic', 'Microphone'], ['rose', 'Black rose'], ['book', 'Spell book'], ['brolly', 'Bat umbrella'], ['boba', 'Bubble tea'], ['lipstick', 'Lipstick'], ['icecream', 'Ice cream'], ['lollipop', 'Lollipop'], ['mirror', 'Mirror'], ['fan', 'Fan'], ['candle', 'Candle'], ['potion', 'Potion'], ['orb', 'Crystal ball'], ['teddy', 'Teddy'], ['pumpkin', 'Pumpkin'], ['balloon', 'Balloon'], ['bouquet', 'Bouquet'], ['camera', 'Camera'], ['lantern', 'Lantern'], ['donut', 'Donut'], ['cupcake', 'Cupcake'], ['cat', 'Kitten'], ['brush', 'Paintbrush'], ['scroll', 'Scroll']], colours: [], box: '-40 240 230 260', layers: ['hold'] },
 ];
-const FANG_LOOK = { skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none' };
+const FANG_LOOK = { skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '' };
 function randomLook() {
     const look = { ...FANG_LOOK, hairStyle: 'long' };
     for (const page of WARDROBE) {
@@ -2452,6 +1800,7 @@ function randomLook() {
     }
     look.hold = 'none';
     look.wrist = 'none';
+    look.browC = '';
     look.pose = 'classic';
     return look;
 }
@@ -3080,14 +2429,81 @@ function drawGhoul(o, opt = {}) {
     /* ---------- head and face ---------- */
     parts.head = `<ellipse cx="100" cy="134" rx="9" ry="15" fill="${SD}" stroke="${INK}" stroke-width="2.4"/><ellipse cx="220" cy="134" rx="9" ry="15" fill="${SD}" stroke="${INK}" stroke-width="2.4"/>`
         + shape('M100 112Q100 44 160 44Q220 44 220 112Q220 162 182 192Q160 208 138 192Q100 162 100 112Z', S);
-    const eye = (cx, flip) => `<g transform="translate(${cx} 128) scale(${flip * .8} .86)">
-    <path d="M-26-2Q-10-30 26-16L36-22L30-6Q6 0-26-2Z" fill="${o.shadow}" opacity=".78"/>
-    <path d="M-25 4Q-8-22 24-9Q10 20-25 4Z" fill="#fff"/>
-    <circle cx="1" cy="-3" r="13.5" fill="${o.eye}"/><circle cx="1" cy="-3" r="13.5" fill="none" stroke="${shade(o.eye, -.45)}" stroke-width="2.4"/><circle cx="1" cy="-2" r="6.8" fill="#0d0710"/><circle cx="6" cy="-8" r="4" fill="#fff"/><circle cx="-4" cy="3" r="2" fill="#fff"/>
-    <path d="M-27 5Q-9-24 25-10L40-19" fill="none" stroke="${INK}" stroke-width="5.4" stroke-linecap="round"/>
-    <path d="M-20-7l-7-8M-9-14l-4-9M4-16l1-9M16-13l6-8" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M-20 8Q4 16 22-4" fill="none" stroke="${INK}" stroke-width="1.5"/>
-    <path d="M-26-30Q2-46 36-30" fill="none" stroke="${shade(HIJABS.some(h => h.id === o.hairStyle) ? '#17101c' : hair, -.3)}" stroke-width="4.2" stroke-linecap="round"/></g>`;
+    const scarfOn = HIJABS.some(h => h.id === o.hairStyle);
+    const browColour = o.browC || shade(scarfOn ? '#17101c' : hair, -.3);
+    const eyeSpec = EYES.find(e => e.id === o.eyeStyle) || EYES[0];
+    const LASHES = 'M-20-7l-7-8M-9-14l-4-9M4-16l1-9M16-13l6-8';
+    const eyeInner = (flip) => {
+        if (eyeSpec.id === 'classic')
+            return '<path d="M-26-2Q-10-30 26-16L36-22L30-6Q6 0-26-2Z" fill="' + o.shadow + '" opacity=".78"/><path d="M-25 4Q-8-22 24-9Q10 20-25 4Z" fill="#fff"/><circle cx="1" cy="-3" r="13.5" fill="' + o.eye + '"/><circle cx="1" cy="-3" r="13.5" fill="none" stroke="' + shade(o.eye, -.45) + '" stroke-width="2.4"/><circle cx="1" cy="-2" r="6.8" fill="#0d0710"/><circle cx="6" cy="-8" r="4" fill="#fff"/><circle cx="-4" cy="3" r="2" fill="#fff"/><path d="M-27 5Q-9-24 25-10L40-19" fill="none" stroke="' + INK + '" stroke-width="5.4" stroke-linecap="round"/><path d="' + LASHES + '" stroke="' + INK + '" stroke-width="2.6" stroke-linecap="round"/><path d="M-20 8Q4 16 22-4" fill="none" stroke="' + INK + '" stroke-width="1.5"/>';
+        const shut = eyeSpec.pupil === 'shut' || (eyeSpec.pupil === 'wink' && flip > 0);
+        if (shut)
+            return strokeLine('M-24 -6Q0 -18 28 -8', 11, o.shadow, 'opacity=".7"') + strokeLine('M-26 0Q0 12 26 -4', 5.4, INK) + strokeLine('M-18 6l-5 8M-6 9l-2 9M8 9l2 9M19 4l6 7', 2.6, INK);
+        if (eyeSpec.pupil === 'arc')
+            return strokeLine('M-24 2Q0 -24 24 0', 12, o.shadow, 'opacity=".55" transform="translate(0 -6)"') + strokeLine('M-24 5Q0 -18 24 3', 5.4, INK) + strokeLine('M-16 -7l-5-7M-2 -11l-1-9M13 -8l5-8', 2.6, INK);
+        const [sc, lid, low, iy, ir, dy] = EYE_SHAPES[eyeSpec.shape || 'almond'];
+        const clip = uid + 'e' + (flip > 0 ? 'r' : 'l');
+        defs += '<clipPath id="' + clip + '"><path d="' + sc + '"/></clipPath>';
+        const colour = eyeSpec.pupil === 'mismatch' && flip > 0 ? o.streak : o.eye, kind = eyeSpec.pupil || 'round';
+        const c = 'translate(1 ' + iy + ')';
+        const iris = '<circle cx="1" cy="' + iy + '" r="' + ir + '" fill="' + colour + '"/><circle cx="1" cy="' + iy + '" r="' + ir + '" fill="none" stroke="' + shade(colour, -.45) + '" stroke-width="2.4"/>';
+        const glints = '<circle cx="6" cy="' + (iy - 5) + '" r="4" fill="#fff"/><circle cx="-4" cy="' + (iy + 5) + '" r="2" fill="#fff"/>';
+        const BLACK = '#0d0710';
+        const middle = {
+            slit: () => iris + '<ellipse cx="1" cy="' + iy + '" rx="2.800" ry="' + (ir - 1) + '" fill="' + BLACK + '"/><circle cx="6" cy="' + (iy - 5) + '" r="2.400" fill="#fff"/>',
+            star: () => iris + '<path transform="' + c + '" d="M0-10l2.800 6.300 6.700.6-5 4.500 1.500 6.600-6-3.500-6 3.500 1.500-6.600-5-4.500 6.700-.6z" fill="' + BLACK + '"/>',
+            heart: () => iris + '<path transform="' + c + '" d="M0 9c-10-7-12-13-7-15 3-1 6 0 7 3 1-3 4-4 7-3 5 2 3 8-7 15z" fill="' + BLACK + '"/><circle cx="6" cy="' + (iy - 6) + '" r="2.200" fill="#fff"/>',
+            cross: () => iris + '<path transform="' + c + '" d="M-9-2.500h6.500V-9h5v6.500H9v5H2.500V9h-5V2.500H-9z" fill="' + BLACK + '"/>',
+            spiral: () => '<circle cx="1" cy="' + iy + '" r="' + ir + '" fill="#fff"/>' + strokeLine('M1 ' + iy + 'a2 2 0 013 2 5 5 0 01-8-2 8 8 0 0113-4 11 11 0 01-1 14', 2.400, colour),
+            glow: () => '<circle cx="1" cy="' + iy + '" r="' + ir + '" fill="' + colour + '"/><circle cx="1" cy="' + iy + '" r="' + (ir * .55) + '" fill="#fff" opacity=".85"/>',
+            blackout: () => '<circle cx="1" cy="' + iy + '" r="4" fill="' + colour + '"/>',
+            sparkle: () => iris + '<circle cx="1" cy="' + (iy + 1) + '" r="6.800" fill="' + BLACK + '"/><path transform="translate(6 ' + (iy - 5) + ') scale(.75)" d="M0-9Q1-1 9 0Q1 1 0 9Q-1 1-9 0Q-1-1 0-9z" fill="#fff"/><path transform="translate(-5 ' + (iy + 5) + ') scale(.45)" d="M0-9Q1-1 9 0Q1 1 0 9Q-1 1-9 0Q-1-1 0-9z" fill="#fff"/><circle cx="-6" cy="' + (iy - 5) + '" r="1.500" fill="#fff"/>',
+            button: () => '<circle cx="1" cy="' + iy + '" r="' + (ir + 3) + '" fill="#14101a"/><circle cx="1" cy="' + iy + '" r="' + (ir - 2) + '" fill="none" stroke="' + colour + '" stroke-width="1.800"/>' + strokeLine('M-4 ' + (iy - 5) + 'l10 10M6 ' + (iy - 5) + 'l-10 10', 2.600, '#fff6fb'),
+        }[kind]?.() || iris + '<circle cx="1" cy="' + (iy + 1) + '" r="' + (ir * .5).toFixed(1) + '" fill="' + BLACK + '"/>' + glints;
+        const lash = eyeSpec.lash || 'classic', up = 'transform="translate(0 ' + dy + ')"';
+        const lashes = lash === 'none' ? '' : lash === 'long' ? strokeLine('M-20-7l-11-13M-9-14l-7-15M4-16l1-15M16-13l10-13', 2.800, INK, up) : lash === 'thick' ? strokeLine(LASHES, 4, INK, up) : lash === 'bottom' ? strokeLine(LASHES, 2.600, INK, up) + strokeLine('M-14 13l-4 8M-3 15l-1 9M9 13l3 8M18 7l6 6', 2.200, INK) : strokeLine(LASHES, 2.600, INK, up);
+        const shadow = strokeLine(lid, 11, o.shadow, 'opacity=".72" transform="translate(0 -5)"');
+        const wing = lash === 'wing' ? '<path d="M18 -14L50 -30L30 -4Z" fill="' + INK + '"/>' : '';
+        return shadow + '<path d="' + sc + '" fill="' + (kind === 'blackout' ? BLACK : '#fff') + '"/><g clip-path="url(#' + clip + ')">' + middle + '</g>' + strokeLine(lid, lash === 'thick' ? 8 : 5.4, INK) + wing + lashes + strokeLine(low, lash === 'thick' ? 3 : 1.5, INK);
+    };
+    /* Brows are drawn on the outside-going line, so one drawing suits both sides. */
+    const brow = (flip) => {
+        const c = browColour, line = (d, w = 4.2, extra = '') => strokeLine(d, w, c, extra);
+        const ARCH = 'M-26-30Q2-46 36-30';
+        return {
+            arch: () => line(ARCH),
+            high: () => line('M-26-32Q4-58 36-34'),
+            straight: () => line('M-26-34L36-34', 5),
+            pencil: () => line('M-26-32Q4-50 36-32', 1.800),
+            thick: () => line(ARCH, 9),
+            bushy: () => line(ARCH, 8) + line('M-22-30l-3-9M-12-36l-2-9M0-39l0-9M12-39l2-9M24-35l4-8', 3),
+            angry: () => line('M-28-20L36-44', 6.500),
+            worried: () => line('M-28-46Q0-40 36-22', 5),
+            round: () => line('M-22-30C-16-52 22-52 30-30', 5.500),
+            scurve: () => line('M-28-30C-14-46 4-34 14-38S30-42 38-30', 4.600),
+            tapered: () => '<path d="M-28-28Q-26-38-18-38Q10-48 40-28Q8-40-18-30Z" fill="' + c + '"/>',
+            feather: () => [-24, -16, -8, 0, 8, 16, 24, 32].map((x, i) => line('M' + x + ' ' + (-31 - Math.sin(i / 7 * 3.14) * 8) + 'l' + (i < 4 ? -2 : 4) + ' -9', 2.200)).join(''),
+            slit: () => line(ARCH, 5) + strokeLine('M16-46l-5 17', 3.600, S),
+            doubleslit: () => line(ARCH, 5) + strokeLine('M14-46l-5 16M23-44l-5 16', 2.800, S),
+            pierced: () => line(ARCH) + '<circle cx="22" cy="-29" r="4.500" fill="none" stroke="#c0c0d8" stroke-width="2.200"/><circle cx="10" cy="-30" r="4.500" fill="none" stroke="#c0c0d8" stroke-width="2.200"/>',
+            dotted: () => line(ARCH, 5, 'stroke-dasharray="0 9"'),
+            dashed: () => '<path d="' + ARCH + '" fill="none" stroke="' + c + '" stroke-width="4.600" stroke-dasharray="9 5"/>',
+            stitched: () => line('M-26-34Q2-46 36-34', 2) + line('M-18-44l3 13M-6-48l2 13M6-50l1 13M18-48l-1 13M28-44l-2 12', 2),
+            unibrow: () => line('M-52-36Q-34-36-26-36Q2-48 36-32', 6),
+            none: () => '',
+            ombre: () => line('M-26-30Q-14-38 -6-39', 5, 'opacity=".28"') + line('M-6-39Q6-41 16-38', 5, 'opacity=".62"') + line('M16-38Q28-35 36-30', 5),
+            zigzag: () => line('M-26-30L-14-42L-4-32L8-46L18-34L36-40', 3.600),
+            wavy: () => line('M-26-32q10-14 20-2t20-2 22 2', 4),
+            starend: () => line('M-26-32Q-2-44 20-38') + '<path transform="translate(30 -36)" d="M0-9l2.500 6 6.500.5-5 4 1.500 6.500-5.500-3.500-5.500 3.500 1.500-6.500-5-4 6.500-.5z" fill="' + c + '"/>',
+            heartend: () => line('M-26-32Q-2-44 18-38') + '<path transform="translate(28 -38)" d="M0 8c-9-6-11-12-6-14 3-1 5 0 6 3 1-3 3-4 6-3 5 2 3 8-6 14z" fill="' + c + '"/>',
+            spiked: () => '<path d="M-28-28L-24-40L-16-34L-10-46L-2-38L6-50L12-40L22-48L24-38L38-38L36-30Q6-40-28-28Z" fill="' + c + '"/>',
+            gems: () => line(ARCH, 3) + [-16, -4, 8, 20, 30].map((x, i) => '<path transform="translate(' + x + ' ' + [-42, -46, -46, -42, -37][i] + ')" d="M0-4l3.500 4-3.500 4-3.500-4z" fill="' + o.trim + '" stroke="' + INK + '" stroke-width=".8"/>').join(''),
+            square: () => '<path d="M-26-30V-42L24-46L38-30L18-36Z" fill="' + c + '" stroke="' + c + '" stroke-width="1"/>',
+            flick: () => line('M-26-30Q6-40 24-34L44-50', 4.600),
+            short: () => line('M-10-38Q6-46 22-38', 6),
+        }[o.brow]?.() || line(ARCH);
+    };
+    const eye = (cx, flip) => '<g transform="translate(' + cx + ' 128) scale(' + (flip * .8) + ' .86)">' + eyeInner(flip) + brow(flip) + '</g>';
     parts.face = eye(128, -1) + eye(192, 1)
         + `<ellipse cx="116" cy="158" rx="12" ry="6" fill="#ff1f8f" opacity=".2"/><ellipse cx="204" cy="158" rx="12" ry="6" fill="#ff1f8f" opacity=".2"/>`
         + strokeLine('M156 159q4 4 8 0', 2.2, INK)
@@ -3371,10 +2787,6 @@ function drawGhoul(o, opt = {}) {
     const box = opt.box || (opt.head ? HEAD_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
     const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
     return `<svg viewBox="${box}" style="overflow:visible" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
-}
-/* Lunch Riot targets: plain skulls, not students */
-function riotSkulls() {
-    return ['#ff1f8f', '#19b7e8', '#35dcc8', '#f4d35e'].map(bow => `<svg viewBox="0 0 120 120" aria-hidden="true"><path d="M60 16c-26 0-42 18-42 42 0 16 8 28 20 34v14h44V92c12-6 20-18 20-34 0-24-16-42-42-42z" fill="#fff6fb" stroke="#000" stroke-width="4"/><circle cx="44" cy="60" r="11"/><circle cx="76" cy="60" r="11"/><path d="M60 72l-6 12h12z"/><path d="M60 22L38 8q-6 14 4 22zM60 22l22-14q6 14-4 22z" fill="${bow}" stroke="#000" stroke-width="3"/></svg>`);
 }
 const FANG_NAMES = ['mumtea', 'mumtas', 'fangtastic', 'msfangtastic', 'ms.fangtastic', 'msfantastic', 'ms.fantastic'];
 const USERNAME_RULE = /^[A-Za-z0-9_.-]{3,20}$/;
@@ -3841,6 +3253,23 @@ function drawStudioStage() {
     studioName.textContent = owner;
     studioStage.innerHTML = drawGhoul(studioLook, { label: owner, box: WIDE_BOX });
 }
+/* Widens the view so the whole drawing sits inside its box. Sizes are only known once the box is on screen. */
+function fitInBox(svg, box) {
+    if (!svg)
+        return;
+    try {
+        const b = svg.getBBox(), [x, y, w, h] = box.split(' ').map(Number), pad = 8;
+        if (!b.width)
+            return;
+        const left = Math.min(x, b.x - pad), top = Math.min(y, b.y - pad);
+        svg.setAttribute('viewBox', [left, top, Math.max(x + w, b.x + b.width + pad) - left, Math.max(y + h, b.y + b.height + pad) - top].join(' '));
+    }
+    catch { /* not on screen yet: the observer below comes back to it */ }
+}
+function fitStudio() {
+    fitInBox(studioStage.querySelector('svg'), WIDE_BOX);
+    studioTiles.querySelectorAll('.wpic[data-box]').forEach(pic => fitInBox(pic.querySelector('svg'), pic.dataset.box));
+}
 function drawStudio() {
     const page = WARDROBE[studioPage];
     const focused = document.activeElement?.dataset?.w;
@@ -3853,6 +3282,8 @@ function drawStudio() {
         const isPose = page.key === 'pose';
         /* Clothes are shown laid flat in the classic pose, so only the Poses page shows the whole figure moving. */
         pic.innerHTML = drawGhoul({ ...studioLook, pose: 'classic', [page.key]: id }, isPose ? { box: page.box } : { only: page.layers, box: page.box });
+        if (!page.crop)
+            pic.dataset.box = page.box;
         studioTiles.append(el('button', { cls: 'wtile', type: 'button', 'data-w': page.key + ':' + id, 'aria-pressed': studioLook[page.key] === id, onclick() { changeLook(page.key, id); } }, pic, el('small', { text: label })));
     });
     studioTiles.hidden = !page.items;
@@ -3867,6 +3298,7 @@ function drawStudio() {
         row('Pattern', PATTERNS.map(([id, label]) => el('button', { cls: 'wchip', type: 'button', 'data-w': key + ':' + id, 'aria-pressed': studioLook[key] === id, onclick() { changeLook(key, id); } }, label)));
     }
     drawStudioStage();
+    fitStudio();
     if (focused)
         studioRoot.querySelector('[data-w="' + focused + '"]')?.focus();
 }
@@ -3965,6 +3397,7 @@ function renderProfile() {
     const buttons = el('div', { cls: 'stagebtns' }, el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = studioSaved; studioDirty = false; studioMsg.textContent = 'Back to your last saved look.'; drawStudio(); } }, 'Restart'), el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = randomLook(); studioDirty = true; studioMsg.textContent = signedInId() || studioForFang ? 'Not saved yet.' : 'Register to keep this look.'; drawStudio(); } }, 'Surprise me'), el('button', { cls: 'wnav wsave', type: 'button', onclick() { saveStudio(); } }, 'Save'));
     const right = el('div', { cls: 'wstage' }, el('div', { cls: 'locker' }, el('div', { cls: 'lockerinside' }, studioStage)), studioName, buttons, studioMsg);
     studioRoot.append(left, right);
+    new ResizeObserver(() => fitStudio()).observe(studioTiles);
 })();
 const POST_LIMIT = 1000;
 let allPosts = [];

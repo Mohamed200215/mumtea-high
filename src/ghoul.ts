@@ -7,7 +7,7 @@ interface Look {
   bottom: string; bottomC: string; bottomP: string;
   legs: string; legsC: string;
   shoes: string; shoesC: string;
-  pose: string; eyewear: string; neck: string; gloves: string; gloveC: string; wrist: string; mark: string; back: string;
+  pose: string; eyeStyle: string; brow: string; browC: string; eyewear: string; neck: string; gloves: string; gloveC: string; wrist: string; mark: string; back: string;
 }
 type Layer = 'back' | 'neck' | 'mark' | 'eyewear' | 'armsFront' | 'wings' | 'hairBack' | 'legs' | 'legwear' | 'pants' | 'shoes' | 'torso' | 'bottom' | 'top' | 'arms' | 'sleeves' | 'hold' | 'head' | 'face' | 'monster' | 'hairFront' | 'headwear';
 const LAYER_ORDER: Layer[] = ['back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront'];
@@ -61,7 +61,8 @@ const poseOf = (id: string): Pose => POSES.find(p => p.id === id) || POSES[0];
 interface WardrobePage {
   title: string; key?: keyof Look; items?: Array<[string, string]>;
   colours: Array<[keyof Look, string, string[]]>; pattern?: keyof Look;
-  box: string; layers: Layer[];
+  /* crop: this box shows just part of a bigger drawing, so it stays zoomed in. */
+  box: string; layers: Layer[]; crop?: boolean;
 }
 /* Scarf styles are built from parts: how it falls, the top of the head, the edge and any pin. */
 interface Hijab { id: string; name: string; drape?: string; crown?: string; edge?: string; acc?: string; print?: string }
@@ -87,13 +88,39 @@ const SKIRT_FIT: Record<string, [number, number]> = { pleats: [456, 66], tutu: [
 const GLOVE_LONG = ['opera', 'lace', 'mesh', 'stripes', 'dots', 'skeleton', 'satin', 'velvet', 'scales', 'batgloves'];
 const GLOVE_SHORT = ['short', 'biker', 'frill', 'driving', 'spiked', 'wraps', 'mittens', 'boxing', 'paws'];
 const NAILS: Record<string, string> = { nails: '', french: '#fff6fb', ombre: '', stilettos: '', glitter: '', rainbownails: '#ff1f8f|#f4d35e|#35dcc8|#6a1f86', gothnails: '#14101a', claws: '#14101a', henna: '#8a3324' };
+/* Eye shapes: white of the eye, upper lid, lower lid, iris height, iris size, lash shift. */
+const EYE_SHAPES: Record<string, [string, string, string, number, number, number]> = {
+  almond: ['M-25 4Q-8-22 24-9Q10 20-25 4Z', 'M-27 5Q-9-24 25-10L40-19', 'M-20 8Q4 16 22-4', -3, 13.5, 0],
+  round: ['M-24 0C-24-26 24-26 24 0C24 20-24 20-24 0Z', 'M-26 1C-25-27 25-27 26-1', 'M-20 11Q0 20 20 11', -1, 14, -5],
+  doll: ['M-28 0C-28-34 28-34 28 0C28 26-28 26-28 0Z', 'M-30 1C-29-36 29-36 30-1', 'M-24 14Q0 26 24 14', 0, 18, -11],
+  cat: ['M-25 8Q-6-16 30-20Q16 16-25 8Z', 'M-27 9Q-6-18 30-21L44-30', 'M-20 12Q8 16 26-12', -3, 12.5, 0],
+  doe: ['M-24-6Q0-24 26 6Q4 18-24-6Z', 'M-26-6Q0-27 28 8', 'M-20 1Q6 18 24 8', -2, 13, -2],
+  wide: ['M-31 2Q0-22 31-2Q0 19-31 2Z', 'M-33 3Q0-25 33-2L42-8', 'M-26 8Q0 19 26 4', -2, 13.5, -1],
+  narrow: ['M-26 2Q0-10 26-4Q0 10-26 2Z', 'M-28 3Q0-12 28-4L38-9', 'M-20 6Q4 10 22 0', -1, 12, 8],
+  hooded: ['M-25 2Q-4-6 25-4Q8 16-25 2Z', 'M-28 0Q-4-12 28-6', 'M-20 6Q4 15 22 0', 0, 12, 7],
+  sleepy: ['M-25 4Q-6-2 24 0Q8 18-25 4Z', 'M-27 4Q-6-4 26 0', 'M-20 9Q4 17 22 3', 3, 12, 9],
+  monolid: ['M-26 2Q-4-12 28-8Q10 12-26 2Z', 'M-28 3Q-4-14 30-9L38-13', 'M-20 6Q6 12 24-3', -2, 11.5, 5],
+  angry: ['M-25 6Q-6-4 26-16Q12 18-25 6Z', 'M-27 6Q-6-5 28-18', 'M-20 10Q6 18 24-4', 1, 12, 3],
+  sad: ['M-25-8Q4-16 26 6Q4 18-25-8Z', 'M-27-9Q4-19 28 8', 'M-20 0Q4 16 24 8', 0, 12, -1],
+};
+const EYES: Array<{ id: string; name: string; shape?: string; pupil?: string; lash?: string }> = [
+  { id: 'classic', name: 'Almond' }, { id: 'round', name: 'Round', shape: 'round' }, { id: 'doll', name: 'Big doll', shape: 'doll' }, { id: 'cat', name: 'Cat eye', shape: 'cat' }, { id: 'doe', name: 'Doe eye', shape: 'doe' },
+  { id: 'wide', name: 'Wide', shape: 'wide' }, { id: 'narrow', name: 'Narrow', shape: 'narrow' }, { id: 'hooded', name: 'Hooded', shape: 'hooded' }, { id: 'sleepy', name: 'Sleepy', shape: 'sleepy' }, { id: 'monolid', name: 'Monolid', shape: 'monolid' },
+  { id: 'closed', name: 'Closed', pupil: 'shut' }, { id: 'wink', name: 'Wink', pupil: 'wink' }, { id: 'happy', name: 'Happy arcs', pupil: 'arc' }, { id: 'angry', name: 'Angry', shape: 'angry' }, { id: 'sad', name: 'Sad', shape: 'sad' },
+  { id: 'winged', name: 'Winged liner', lash: 'wing' }, { id: 'bold', name: 'Bold liner', lash: 'thick' }, { id: 'nolash', name: 'No lashes', lash: 'none' }, { id: 'lashy', name: 'Long lashes', lash: 'long' }, { id: 'bottomlash', name: 'Bottom lashes', lash: 'bottom' },
+  { id: 'slit', name: 'Vampire slit', shape: 'cat', pupil: 'slit' }, { id: 'star', name: 'Star pupils', shape: 'round', pupil: 'star' }, { id: 'heart', name: 'Heart pupils', shape: 'round', pupil: 'heart' }, { id: 'cross', name: 'Cross pupils', pupil: 'cross' }, { id: 'spiral', name: 'Hypnotised', shape: 'round', pupil: 'spiral' },
+  { id: 'glow', name: 'Glowing', pupil: 'glow', lash: 'none' }, { id: 'blackout', name: 'Demon black', shape: 'cat', pupil: 'blackout' }, { id: 'button', name: 'Button eyes', shape: 'round', pupil: 'button', lash: 'none' }, { id: 'sparkle', name: 'Sparkly', shape: 'doll', pupil: 'sparkle' }, { id: 'mismatch', name: 'Two colours', pupil: 'mismatch' },
+];
+const BROW_COLOURS = ['#17101c', '#3f2412', '#5a2c17', '#8b5a2b', '#a0392a', '#d98a3d', '#f4d35e', '#9aa0ac', '#f6f0ff', '#ff1f8f', '#f08fb4', '#6a1f86', '#19b7e8', '#35dcc8', '#2f8f4e', '#c0392b'];
 const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
 const WARDROBE: WardrobePage[] = [
   { title: 'Poses', key: 'pose', items: POSES.map(p => [p.id, p.name] as [string, string]), colours: [], box: WIDE_BOX, layers: [] },
   { title: 'Hair', key: 'hairStyle', items: [['long', 'Long'], ['pony', 'High pony'], ['twins', 'Twin tails'], ['bob', 'Bob'], ['curls', 'Curls'], ['side', 'Side sweep'], ['buns', 'Space buns'], ['afro', 'Afro'], ['braids', 'Long braids'], ['waves', 'Mermaid waves'], ['pixie', 'Pixie'], ['mohawk', 'Mohawk'], ['halfup', 'Half up'], ['lob', 'Long bob'], ['shag', 'Shaggy layers'], ['fishtail', 'Fishtail braid'], ['lowpony', 'Low pony'], ['topknot', 'Top knot'], ['lowbuns', 'Low buns'], ['boxbraids', 'Box braids'], ['locs', 'Locs'], ['bantu', 'Bantu knots'], ['puffs', 'Afro puffs'], ['hime', 'Blunt fringe'], ['beehive', 'Beehive'], ['rolls', 'Victory rolls'], ['crimped', 'Crimped'], ['ringlets', 'Ringlets'], ['undercut', 'Side shave'], ['spiky', 'Spiky']], colours: [['hair', 'Colour', HAIR_COLOURS], ['streak', 'Streak or folds', BRIGHT]], box: '10 0 300 330', layers: ['hairBack', 'head', 'hairFront'] },
   { title: 'Hijabs', key: 'hairStyle', items: HIJABS.map(h => [h.id, h.name] as [string, string]), colours: [['hair', 'Scarf colour', HAIR_COLOURS], ['streak', 'Second colour', BRIGHT]], box: '10 0 300 400', layers: ['hairBack', 'head', 'hairFront'] },
-  { title: 'Face', colours: [['skin', 'Skin', SKINS], ['eye', 'Eyes', ['#19b7e8', '#35dcc8', '#8df04a', '#ffb703', '#c77dff', '#ff1f8f', '#7a4a21', '#3f2412', '#14101a', '#6f8f4e', '#9aa0ac', '#d62828', '#f4d35e', '#1f3a8a']], ['shadow', 'Eyeshadow', ['#ff1f8f', '#6a1f86', '#19b7e8', '#35dcc8', '#f4d35e', '#14101a', '#c0392b', '#ff8c1a', '#8df04a', '#b19cd9', '#c98f63', '#fff6fb', '#c9a227', '#1f3a8a']], ['lip', 'Lips', ['#b80e63', '#ff1f8f', '#d62828', '#5a0f7a', '#14101a', '#b5694f', '#e58f9e', '#c76b5a', '#8a3324', '#ff8c1a', '#19b7e8', '#6a1f86', '#8df04a', '#f7b8cf']]], box: HEAD_BOX, layers: ['head', 'face'] },
+  { title: 'Skin and lips', colours: [['skin', 'Skin', SKINS], ['lip', 'Lips', ['#b80e63', '#ff1f8f', '#d62828', '#5a0f7a', '#14101a', '#b5694f', '#e58f9e', '#c76b5a', '#8a3324', '#ff8c1a', '#19b7e8', '#6a1f86', '#8df04a', '#f7b8cf']]], box: HEAD_BOX, layers: ['head', 'face'] },
+  { title: 'Eyes', key: 'eyeStyle', items: EYES.map(e => [e.id, e.name] as [string, string]), colours: [['eye', 'Eye colour', ['#19b7e8', '#35dcc8', '#8df04a', '#ffb703', '#c77dff', '#ff1f8f', '#7a4a21', '#3f2412', '#14101a', '#6f8f4e', '#9aa0ac', '#d62828', '#f4d35e', '#1f3a8a']], ['shadow', 'Eyeshadow', ['#ff1f8f', '#6a1f86', '#19b7e8', '#35dcc8', '#f4d35e', '#14101a', '#c0392b', '#ff8c1a', '#8df04a', '#b19cd9', '#c98f63', '#fff6fb', '#c9a227', '#1f3a8a']]], box: '88 84 144 88', layers: ['head', 'face'], crop: true },
+  { title: 'Eyebrows', key: 'brow', items: [['arch', 'Soft arch'], ['high', 'High arch'], ['straight', 'Straight'], ['pencil', 'Pencil thin'], ['thick', 'Thick'], ['bushy', 'Bushy'], ['angry', 'Angry'], ['worried', 'Worried'], ['round', 'Rounded'], ['scurve', 'S curve'], ['tapered', 'Tapered'], ['feather', 'Feathered'], ['slit', 'One slit'], ['doubleslit', 'Two slits'], ['pierced', 'Pierced'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['stitched', 'Stitched'], ['unibrow', 'Unibrow'], ['none', 'No brows'], ['ombre', 'Ombre'], ['zigzag', 'Zigzag'], ['wavy', 'Wavy'], ['starend', 'Star tip'], ['heartend', 'Heart tip'], ['spiked', 'Spiked'], ['gems', 'Gems'], ['square', 'Square'], ['flick', 'Flick up'], ['short', 'Short']], colours: [['browC', 'Colour', BROW_COLOURS]], box: '88 72 144 88', layers: ['head', 'face'], crop: true },
   { title: 'Face details', key: 'mark', items: [['none', 'None'], ['freckles', 'Freckles'], ['blush', 'Rosy cheeks'], ['star', 'Star'], ['heart', 'Heart'], ['tear', 'Goth tear'], ['mole', 'Beauty mark'], ['bandage', 'Plaster'], ['gems', 'Face gems'], ['glitter', 'Glitter'], ['moon', 'Moon'], ['bat', 'Bat'], ['butterfly', 'Butterfly'], ['flower', 'Flower'], ['bolt', 'Lightning'], ['scar', 'Scar'], ['web', 'Spider web'], ['dots', 'Dot trail'], ['bindi', 'Bindi'], ['nosering', 'Nose ring'], ['lipring', 'Lip ring'], ['brow', 'Brow slit'], ['whiskers', 'Whiskers'], ['tears', 'Crystal tears'], ['stripes', 'Cheek stripes'], ['warpaint', 'War paint'], ['sugar', 'Sugar skull'], ['dimples', 'Dimples'], ['liner', 'Graphic liner'], ['tattoo', 'Rose tattoo']], colours: [], box: HEAD_BOX, layers: ['head', 'face', 'mark'] },
   { title: 'Eyewear', key: 'eyewear', items: [['none', 'None'], ['round', 'Round glasses'], ['cat', 'Cat eye'], ['shades', 'Shades'], ['hearts', 'Heart shades'], ['visor', 'Visor'], ['monocle', 'Monocle'], ['square', 'Square'], ['aviator', 'Aviators'], ['oval', 'Oval'], ['half', 'Half rim'], ['starry', 'Star shades'], ['skull', 'Skull shades'], ['flower', 'Flower shades'], ['goggles', 'Goggles'], ['steam', 'Steam goggles'], ['mask', 'Party mask'], ['patch', 'Eye patch'], ['butterfly', 'Butterfly mask'], ['lace', 'Lace mask'], ['vr', 'VR visor'], ['threed', '3D glasses'], ['rainbow', 'Rainbow lens'], ['nerd', 'Taped glasses'], ['pixel', 'Pixel shades'], ['ski', 'Ski goggles'], ['catmask', 'Cat mask'], ['batmask', 'Bat mask'], ['chain', 'Chain glasses'], ['rimless', 'Rimless']], colours: [['trim', 'Trim', BRIGHT]], box: HEAD_BOX, layers: ['head', 'eyewear'] },
   { title: 'Monster side', key: 'monster', items: [['none', 'Just me'], ['fangs', 'Vampire fangs'], ['bat', 'Bat wings'], ['wolf', 'Wolf ears'], ['fins', 'Sea fins'], ['bolts', 'Neck bolts'], ['wraps', 'Mummy wraps'], ['horns', 'Little horns'], ['stitches', 'Stitches'], ['cat', 'Were-cat'], ['fox', 'Fox spirit'], ['bunny', 'Were-bunny'], ['dragon', 'Dragon'], ['ghost', 'Ghost'], ['zombie', 'Zombie'], ['scales', 'Sea scales'], ['elf', 'Elf ears'], ['alien', 'Alien'], ['cyclops', 'Third eye'], ['snakes', 'Snake hair'], ['pumpkin', 'Pumpkin kid'], ['skeleton', 'Skeleton'], ['antlers', 'Antlers'], ['unicorn', 'Unicorn horn'], ['spidereyes', 'Spider eyes'], ['gills', 'Gills'], ['tentacles', 'Tentacles'], ['tusks', 'Ogre tusks'], ['ram', 'Ram horns'], ['shark', 'Shark teeth']], colours: [], box: '0 0 320 330', layers: ['wings', 'head', 'face', 'monster'] },
@@ -104,13 +131,13 @@ const WARDROBE: WardrobePage[] = [
   { title: 'Shoes', key: 'shoes', items: [['heels', 'Strappy'], ['platform', 'Platforms'], ['combat', 'Combat'], ['knee', 'Tall boots'], ['sneaker', 'High tops'], ['mary', 'Mary Janes'], ['wedge', 'Wedges'], ['ballet', 'Ballet ties'], ['cowboy', 'Cowboy boots'], ['chunky', 'Chunky trainers'], ['spike', 'Spiked boots'], ['gladiator', 'Gladiators'], ['flats', 'Flats'], ['loafers', 'Loafers'], ['pumps', 'Pumps'], ['ankle', 'Ankle boots'], ['chelsea', 'Chelsea boots'], ['rain', 'Rain boots'], ['fluffy', 'Fluffy boots'], ['creepers', 'Creepers'], ['skates', 'Roller skates'], ['iceskates', 'Ice skates'], ['moon', 'Moon boots'], ['thigh', 'Thigh boots'], ['bowflats', 'Bow flats'], ['clogs', 'Clogs'], ['slides', 'Slides'], ['batheels', 'Bat heels'], ['slippers', 'Fluffy slippers'], ['hooves', 'Hooves']], colours: [['shoesC', 'Colour', BRIGHT]], box: '60 520 200 200', layers: ['shoes'] },
   { title: 'Headwear', key: 'headwear', items: [['none', 'None'], ['bow', 'Big bow'], ['tiara', 'Tiara'], ['hat', 'Tiny hat'], ['flower', 'Flower'], ['hoops', 'Hoops'], ['clip', 'Skull clip'], ['beret', 'Beret'], ['band', 'Headband'], ['witch', 'Witch hat'], ['halo', 'Halo'], ['cat', 'Cat ears'], ['stars', 'Star clips'], ['crown', 'Crown'], ['beanie', 'Beanie'], ['bucket', 'Bucket hat'], ['cap', 'Cap'], ['tophat', 'Top hat'], ['veil', 'Veil'], ['bunny', 'Bunny ears'], ['flowers', 'Flower crown'], ['bandana', 'Bandana'], ['butterflies', 'Butterfly clips'], ['pearlband', 'Pearl band'], ['antennae', 'Antennae'], ['sunhat', 'Sun hat'], ['dangles', 'Star earrings'], ['batears', 'Bat earrings'], ['tikka', 'Tikka'], ['spider', 'Spider clip']], colours: [], box: '30 -50 260 270', layers: ['head', 'headwear'] },
   { title: 'Necklaces', key: 'neck', items: [['none', 'None'], ['choker', 'Choker'], ['skull', 'Skull pendant'], ['pearls', 'Pearls'], ['chain', 'Chain'], ['heart', 'Heart locket'], ['spikes', 'Spiked collar'], ['bowtie', 'Bow tie'], ['tie', 'School tie'], ['ribbon', 'Ribbon'], ['cameo', 'Cameo'], ['moon', 'Moon'], ['star', 'Star'], ['bat', 'Bat'], ['lariat', 'Lariat'], ['layered', 'Layered chains'], ['beads', 'Beads'], ['gems', 'Gem collar'], ['ruff', 'Ruff'], ['scarf', 'Scarf'], ['bandana', 'Neck scarf'], ['boa', 'Feather boa'], ['shell', 'Shell'], ['key', 'Key'], ['padlock', 'Padlock'], ['tags', 'Tags'], ['bone', 'Bone'], ['spider', 'Spider'], ['coffin', 'Coffin'], ['teacup', 'Teacup']], colours: [], box: '70 190 180 170', layers: ['torso', 'neck'] },
-  { title: 'Hands', key: 'gloves', items: [['none', 'Bare'], ['nails', 'Painted nails'], ['short', 'Short gloves'], ['opera', 'Long gloves'], ['fingerless', 'Fingerless'], ['claws', 'Claws'], ['lace', 'Lace gloves'], ['mesh', 'Mesh gloves'], ['stripes', 'Striped gloves'], ['dots', 'Dotted gloves'], ['mittens', 'Mittens'], ['boxing', 'Boxing gloves'], ['skeleton', 'Skeleton'], ['biker', 'Biker gloves'], ['satin', 'Satin with bow'], ['frill', 'Frilly gloves'], ['french', 'French nails'], ['ombre', 'Ombre nails'], ['stilettos', 'Long nails'], ['glitter', 'Glitter nails'], ['wraps', 'Hand wraps'], ['henna', 'Henna'], ['scales', 'Scales'], ['paws', 'Paws'], ['driving', 'Driving gloves'], ['spiked', 'Spiked gloves'], ['rainbownails', 'Rainbow nails'], ['gothnails', 'Goth nails'], ['velvet', 'Velvet gloves'], ['batgloves', 'Bat gloves']], colours: [['gloveC', 'Colour', BRIGHT]], box: '0 290 150 190', layers: ['arms'] },
-  { title: 'Hand accessories', key: 'wrist', items: [['none', 'None'], ['bangle', 'Bangle'], ['stack', 'Bangle stack'], ['charm', 'Charm bracelet'], ['pearls', 'Pearls'], ['watch', 'Watch'], ['smart', 'Smart watch'], ['spikes', 'Spiked cuff'], ['leather', 'Leather cuff'], ['ribbon', 'Ribbon'], ['friend', 'Friendship band'], ['beads', 'Beads'], ['skulls', 'Skull beads'], ['chain', 'Chain'], ['gold', 'Gold cuff'], ['ring', 'Ring'], ['tworings', 'Two rings'], ['gem', 'Big gem ring'], ['heartring', 'Heart ring'], ['skullring', 'Skull ring'], ['knuckles', 'Knuckle rings'], ['handchain', 'Hand chain'], ['scrunchie', 'Scrunchie'], ['sweatband', 'Sweatband'], ['corsage', 'Corsage'], ['bow', 'Wrist bow'], ['wrapribbon', 'Ribbon wrap'], ['snake', 'Snake armlet'], ['armband', 'Arm band'], ['tattoo', 'Bat tattoo']], colours: [['trim', 'Trim', BRIGHT]], box: '10 240 150 230', layers: ['arms', 'sleeves'] },
+  { title: 'Hands', key: 'gloves', items: [['none', 'Bare'], ['nails', 'Painted nails'], ['short', 'Short gloves'], ['opera', 'Long gloves'], ['fingerless', 'Fingerless'], ['claws', 'Claws'], ['lace', 'Lace gloves'], ['mesh', 'Mesh gloves'], ['stripes', 'Striped gloves'], ['dots', 'Dotted gloves'], ['mittens', 'Mittens'], ['boxing', 'Boxing gloves'], ['skeleton', 'Skeleton'], ['biker', 'Biker gloves'], ['satin', 'Satin with bow'], ['frill', 'Frilly gloves'], ['french', 'French nails'], ['ombre', 'Ombre nails'], ['stilettos', 'Long nails'], ['glitter', 'Glitter nails'], ['wraps', 'Hand wraps'], ['henna', 'Henna'], ['scales', 'Scales'], ['paws', 'Paws'], ['driving', 'Driving gloves'], ['spiked', 'Spiked gloves'], ['rainbownails', 'Rainbow nails'], ['gothnails', 'Goth nails'], ['velvet', 'Velvet gloves'], ['batgloves', 'Bat gloves']], colours: [['gloveC', 'Colour', BRIGHT]], box: '0 290 150 190', layers: ['arms'], crop: true },
+  { title: 'Hand accessories', key: 'wrist', items: [['none', 'None'], ['bangle', 'Bangle'], ['stack', 'Bangle stack'], ['charm', 'Charm bracelet'], ['pearls', 'Pearls'], ['watch', 'Watch'], ['smart', 'Smart watch'], ['spikes', 'Spiked cuff'], ['leather', 'Leather cuff'], ['ribbon', 'Ribbon'], ['friend', 'Friendship band'], ['beads', 'Beads'], ['skulls', 'Skull beads'], ['chain', 'Chain'], ['gold', 'Gold cuff'], ['ring', 'Ring'], ['tworings', 'Two rings'], ['gem', 'Big gem ring'], ['heartring', 'Heart ring'], ['skullring', 'Skull ring'], ['knuckles', 'Knuckle rings'], ['handchain', 'Hand chain'], ['scrunchie', 'Scrunchie'], ['sweatband', 'Sweatband'], ['corsage', 'Corsage'], ['bow', 'Wrist bow'], ['wrapribbon', 'Ribbon wrap'], ['snake', 'Snake armlet'], ['armband', 'Arm band'], ['tattoo', 'Bat tattoo']], colours: [['trim', 'Trim', BRIGHT]], box: '10 240 150 230', layers: ['arms', 'sleeves'], crop: true },
   { title: 'On your back', key: 'back', items: [['none', 'Nothing'], ['cape', 'Long cape'], ['short', 'Short cape'], ['bag', 'Backpack'], ['tail', 'Devil tail'], ['bigbow', 'Giant bow'], ['angel', 'Angel wings'], ['butterfly', 'Butterfly wings'], ['fairy', 'Fairy wings'], ['dragon', 'Dragon wings'], ['demon', 'Demon wings'], ['peacock', 'Peacock fan'], ['cat', 'Cat tail'], ['fox', 'Fox tail'], ['cloak', 'Hooded cloak'], ['guitar', 'Guitar'], ['coffin', 'Coffin bag'], ['teddy', 'Teddy bag'], ['batbag', 'Bat bag'], ['skullbag', 'Skull bag'], ['broom', 'Broomstick'], ['jetpack', 'Jetpack'], ['sash', 'Sash'], ['moon', 'Moon halo'], ['shawl', 'Lace shawl'], ['balloons', 'Balloons'], ['parasol', 'Parasol'], ['longscarf', 'Flying scarf'], ['ribbons', 'Ribbons'], ['shell', 'Shell']], colours: [], box: '-80 -40 480 730', layers: ['back'] },
   { title: 'In hand', key: 'hold', items: [['none', 'Nothing'], ['cup', 'Teacup'], ['purse', 'Purse'], ['skull', 'Skull bag'], ['wand', 'Wand'], ['phone', 'iCoffin'], ['mic', 'Microphone'], ['rose', 'Black rose'], ['book', 'Spell book'], ['brolly', 'Bat umbrella'], ['boba', 'Bubble tea'], ['lipstick', 'Lipstick'], ['icecream', 'Ice cream'], ['lollipop', 'Lollipop'], ['mirror', 'Mirror'], ['fan', 'Fan'], ['candle', 'Candle'], ['potion', 'Potion'], ['orb', 'Crystal ball'], ['teddy', 'Teddy'], ['pumpkin', 'Pumpkin'], ['balloon', 'Balloon'], ['bouquet', 'Bouquet'], ['camera', 'Camera'], ['lantern', 'Lantern'], ['donut', 'Donut'], ['cupcake', 'Cupcake'], ['cat', 'Kitten'], ['brush', 'Paintbrush'], ['scroll', 'Scroll']], colours: [], box: '-40 240 230 260', layers: ['hold'] },
 ];
 
-const FANG_LOOK: Look = { skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none' };
+const FANG_LOOK: Look = { skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '' };
 
 function randomLook(): Look {
   const look = { ...FANG_LOOK, hairStyle: 'long' };
@@ -121,6 +148,7 @@ function randomLook(): Look {
   }
   look.hold = 'none';
   look.wrist = 'none';
+  look.browC = '';
   look.pose = 'classic';
   return look;
 }
@@ -718,14 +746,78 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   /* ---------- head and face ---------- */
   parts.head = `<ellipse cx="100" cy="134" rx="9" ry="15" fill="${SD}" stroke="${INK}" stroke-width="2.4"/><ellipse cx="220" cy="134" rx="9" ry="15" fill="${SD}" stroke="${INK}" stroke-width="2.4"/>`
     + shape('M100 112Q100 44 160 44Q220 44 220 112Q220 162 182 192Q160 208 138 192Q100 162 100 112Z', S);
-  const eye = (cx: number, flip: number) => `<g transform="translate(${cx} 128) scale(${flip * .8} .86)">
-    <path d="M-26-2Q-10-30 26-16L36-22L30-6Q6 0-26-2Z" fill="${o.shadow}" opacity=".78"/>
-    <path d="M-25 4Q-8-22 24-9Q10 20-25 4Z" fill="#fff"/>
-    <circle cx="1" cy="-3" r="13.5" fill="${o.eye}"/><circle cx="1" cy="-3" r="13.5" fill="none" stroke="${shade(o.eye, -.45)}" stroke-width="2.4"/><circle cx="1" cy="-2" r="6.8" fill="#0d0710"/><circle cx="6" cy="-8" r="4" fill="#fff"/><circle cx="-4" cy="3" r="2" fill="#fff"/>
-    <path d="M-27 5Q-9-24 25-10L40-19" fill="none" stroke="${INK}" stroke-width="5.4" stroke-linecap="round"/>
-    <path d="M-20-7l-7-8M-9-14l-4-9M4-16l1-9M16-13l6-8" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M-20 8Q4 16 22-4" fill="none" stroke="${INK}" stroke-width="1.5"/>
-    <path d="M-26-30Q2-46 36-30" fill="none" stroke="${shade(HIJABS.some(h => h.id === o.hairStyle) ? '#17101c' : hair, -.3)}" stroke-width="4.2" stroke-linecap="round"/></g>`;
+  const scarfOn = HIJABS.some(h => h.id === o.hairStyle);
+  const browColour = o.browC || shade(scarfOn ? '#17101c' : hair, -.3);
+  const eyeSpec = EYES.find(e => e.id === o.eyeStyle) || EYES[0];
+  const LASHES = 'M-20-7l-7-8M-9-14l-4-9M4-16l1-9M16-13l6-8';
+  const eyeInner = (flip: number): string => {
+    if (eyeSpec.id === 'classic') return '<path d="M-26-2Q-10-30 26-16L36-22L30-6Q6 0-26-2Z" fill="' + o.shadow + '" opacity=".78"/><path d="M-25 4Q-8-22 24-9Q10 20-25 4Z" fill="#fff"/><circle cx="1" cy="-3" r="13.5" fill="' + o.eye + '"/><circle cx="1" cy="-3" r="13.5" fill="none" stroke="' + shade(o.eye, -.45) + '" stroke-width="2.4"/><circle cx="1" cy="-2" r="6.8" fill="#0d0710"/><circle cx="6" cy="-8" r="4" fill="#fff"/><circle cx="-4" cy="3" r="2" fill="#fff"/><path d="M-27 5Q-9-24 25-10L40-19" fill="none" stroke="' + INK + '" stroke-width="5.4" stroke-linecap="round"/><path d="' + LASHES + '" stroke="' + INK + '" stroke-width="2.6" stroke-linecap="round"/><path d="M-20 8Q4 16 22-4" fill="none" stroke="' + INK + '" stroke-width="1.5"/>';
+    const shut = eyeSpec.pupil === 'shut' || (eyeSpec.pupil === 'wink' && flip > 0);
+    if (shut) return strokeLine('M-24 -6Q0 -18 28 -8', 11, o.shadow, 'opacity=".7"') + strokeLine('M-26 0Q0 12 26 -4', 5.4, INK) + strokeLine('M-18 6l-5 8M-6 9l-2 9M8 9l2 9M19 4l6 7', 2.6, INK);
+    if (eyeSpec.pupil === 'arc') return strokeLine('M-24 2Q0 -24 24 0', 12, o.shadow, 'opacity=".55" transform="translate(0 -6)"') + strokeLine('M-24 5Q0 -18 24 3', 5.4, INK) + strokeLine('M-16 -7l-5-7M-2 -11l-1-9M13 -8l5-8', 2.6, INK);
+    const [sc, lid, low, iy, ir, dy] = EYE_SHAPES[eyeSpec.shape || 'almond'];
+    const clip = uid + 'e' + (flip > 0 ? 'r' : 'l');
+    defs += '<clipPath id="' + clip + '"><path d="' + sc + '"/></clipPath>';
+    const colour = eyeSpec.pupil === 'mismatch' && flip > 0 ? o.streak : o.eye, kind = eyeSpec.pupil || 'round';
+    const c = 'translate(1 ' + iy + ')';
+    const iris = '<circle cx="1" cy="' + iy + '" r="' + ir + '" fill="' + colour + '"/><circle cx="1" cy="' + iy + '" r="' + ir + '" fill="none" stroke="' + shade(colour, -.45) + '" stroke-width="2.4"/>';
+    const glints = '<circle cx="6" cy="' + (iy - 5) + '" r="4" fill="#fff"/><circle cx="-4" cy="' + (iy + 5) + '" r="2" fill="#fff"/>';
+    const BLACK = '#0d0710';
+    const middle = ({
+      slit: () => iris + '<ellipse cx="1" cy="' + iy + '" rx="2.800" ry="' + (ir - 1) + '" fill="' + BLACK + '"/><circle cx="6" cy="' + (iy - 5) + '" r="2.400" fill="#fff"/>',
+      star: () => iris + '<path transform="' + c + '" d="M0-10l2.800 6.300 6.700.6-5 4.500 1.500 6.600-6-3.500-6 3.500 1.500-6.600-5-4.500 6.700-.6z" fill="' + BLACK + '"/>',
+      heart: () => iris + '<path transform="' + c + '" d="M0 9c-10-7-12-13-7-15 3-1 6 0 7 3 1-3 4-4 7-3 5 2 3 8-7 15z" fill="' + BLACK + '"/><circle cx="6" cy="' + (iy - 6) + '" r="2.200" fill="#fff"/>',
+      cross: () => iris + '<path transform="' + c + '" d="M-9-2.500h6.500V-9h5v6.500H9v5H2.500V9h-5V2.500H-9z" fill="' + BLACK + '"/>',
+      spiral: () => '<circle cx="1" cy="' + iy + '" r="' + ir + '" fill="#fff"/>' + strokeLine('M1 ' + iy + 'a2 2 0 013 2 5 5 0 01-8-2 8 8 0 0113-4 11 11 0 01-1 14', 2.400, colour),
+      glow: () => '<circle cx="1" cy="' + iy + '" r="' + ir + '" fill="' + colour + '"/><circle cx="1" cy="' + iy + '" r="' + (ir * .55) + '" fill="#fff" opacity=".85"/>',
+      blackout: () => '<circle cx="1" cy="' + iy + '" r="4" fill="' + colour + '"/>',
+      sparkle: () => iris + '<circle cx="1" cy="' + (iy + 1) + '" r="6.800" fill="' + BLACK + '"/><path transform="translate(6 ' + (iy - 5) + ') scale(.75)" d="M0-9Q1-1 9 0Q1 1 0 9Q-1 1-9 0Q-1-1 0-9z" fill="#fff"/><path transform="translate(-5 ' + (iy + 5) + ') scale(.45)" d="M0-9Q1-1 9 0Q1 1 0 9Q-1 1-9 0Q-1-1 0-9z" fill="#fff"/><circle cx="-6" cy="' + (iy - 5) + '" r="1.500" fill="#fff"/>',
+      button: () => '<circle cx="1" cy="' + iy + '" r="' + (ir + 3) + '" fill="#14101a"/><circle cx="1" cy="' + iy + '" r="' + (ir - 2) + '" fill="none" stroke="' + colour + '" stroke-width="1.800"/>' + strokeLine('M-4 ' + (iy - 5) + 'l10 10M6 ' + (iy - 5) + 'l-10 10', 2.600, '#fff6fb'),
+    } as Record<string, () => string>)[kind]?.() || iris + '<circle cx="1" cy="' + (iy + 1) + '" r="' + (ir * .5).toFixed(1) + '" fill="' + BLACK + '"/>' + glints;
+    const lash = eyeSpec.lash || 'classic', up = 'transform="translate(0 ' + dy + ')"';
+    const lashes = lash === 'none' ? '' : lash === 'long' ? strokeLine('M-20-7l-11-13M-9-14l-7-15M4-16l1-15M16-13l10-13', 2.800, INK, up) : lash === 'thick' ? strokeLine(LASHES, 4, INK, up) : lash === 'bottom' ? strokeLine(LASHES, 2.600, INK, up) + strokeLine('M-14 13l-4 8M-3 15l-1 9M9 13l3 8M18 7l6 6', 2.200, INK) : strokeLine(LASHES, 2.600, INK, up);
+    const shadow = strokeLine(lid, 11, o.shadow, 'opacity=".72" transform="translate(0 -5)"');
+    const wing = lash === 'wing' ? '<path d="M18 -14L50 -30L30 -4Z" fill="' + INK + '"/>' : '';
+    return shadow + '<path d="' + sc + '" fill="' + (kind === 'blackout' ? BLACK : '#fff') + '"/><g clip-path="url(#' + clip + ')">' + middle + '</g>' + strokeLine(lid, lash === 'thick' ? 8 : 5.4, INK) + wing + lashes + strokeLine(low, lash === 'thick' ? 3 : 1.5, INK);
+  };
+  /* Brows are drawn on the outside-going line, so one drawing suits both sides. */
+  const brow = (flip: number): string => {
+    const c = browColour, line = (d: string, w = 4.2, extra = '') => strokeLine(d, w, c, extra);
+    const ARCH = 'M-26-30Q2-46 36-30';
+    return ({
+      arch: () => line(ARCH),
+      high: () => line('M-26-32Q4-58 36-34'),
+      straight: () => line('M-26-34L36-34', 5),
+      pencil: () => line('M-26-32Q4-50 36-32', 1.800),
+      thick: () => line(ARCH, 9),
+      bushy: () => line(ARCH, 8) + line('M-22-30l-3-9M-12-36l-2-9M0-39l0-9M12-39l2-9M24-35l4-8', 3),
+      angry: () => line('M-28-20L36-44', 6.500),
+      worried: () => line('M-28-46Q0-40 36-22', 5),
+      round: () => line('M-22-30C-16-52 22-52 30-30', 5.500),
+      scurve: () => line('M-28-30C-14-46 4-34 14-38S30-42 38-30', 4.600),
+      tapered: () => '<path d="M-28-28Q-26-38-18-38Q10-48 40-28Q8-40-18-30Z" fill="' + c + '"/>',
+      feather: () => [-24, -16, -8, 0, 8, 16, 24, 32].map((x, i) => line('M' + x + ' ' + (-31 - Math.sin(i / 7 * 3.14) * 8) + 'l' + (i < 4 ? -2 : 4) + ' -9', 2.200)).join(''),
+      slit: () => line(ARCH, 5) + strokeLine('M16-46l-5 17', 3.600, S),
+      doubleslit: () => line(ARCH, 5) + strokeLine('M14-46l-5 16M23-44l-5 16', 2.800, S),
+      pierced: () => line(ARCH) + '<circle cx="22" cy="-29" r="4.500" fill="none" stroke="#c0c0d8" stroke-width="2.200"/><circle cx="10" cy="-30" r="4.500" fill="none" stroke="#c0c0d8" stroke-width="2.200"/>',
+      dotted: () => line(ARCH, 5, 'stroke-dasharray="0 9"'),
+      dashed: () => '<path d="' + ARCH + '" fill="none" stroke="' + c + '" stroke-width="4.600" stroke-dasharray="9 5"/>',
+      stitched: () => line('M-26-34Q2-46 36-34', 2) + line('M-18-44l3 13M-6-48l2 13M6-50l1 13M18-48l-1 13M28-44l-2 12', 2),
+      unibrow: () => line('M-52-36Q-34-36-26-36Q2-48 36-32', 6),
+      none: () => '',
+      ombre: () => line('M-26-30Q-14-38 -6-39', 5, 'opacity=".28"') + line('M-6-39Q6-41 16-38', 5, 'opacity=".62"') + line('M16-38Q28-35 36-30', 5),
+      zigzag: () => line('M-26-30L-14-42L-4-32L8-46L18-34L36-40', 3.600),
+      wavy: () => line('M-26-32q10-14 20-2t20-2 22 2', 4),
+      starend: () => line('M-26-32Q-2-44 20-38') + '<path transform="translate(30 -36)" d="M0-9l2.500 6 6.500.5-5 4 1.500 6.500-5.500-3.500-5.500 3.500 1.500-6.500-5-4 6.500-.5z" fill="' + c + '"/>',
+      heartend: () => line('M-26-32Q-2-44 18-38') + '<path transform="translate(28 -38)" d="M0 8c-9-6-11-12-6-14 3-1 5 0 6 3 1-3 3-4 6-3 5 2 3 8-6 14z" fill="' + c + '"/>',
+      spiked: () => '<path d="M-28-28L-24-40L-16-34L-10-46L-2-38L6-50L12-40L22-48L24-38L38-38L36-30Q6-40-28-28Z" fill="' + c + '"/>',
+      gems: () => line(ARCH, 3) + [-16, -4, 8, 20, 30].map((x, i) => '<path transform="translate(' + x + ' ' + [-42, -46, -46, -42, -37][i] + ')" d="M0-4l3.500 4-3.500 4-3.500-4z" fill="' + o.trim + '" stroke="' + INK + '" stroke-width=".8"/>').join(''),
+      square: () => '<path d="M-26-30V-42L24-46L38-30L18-36Z" fill="' + c + '" stroke="' + c + '" stroke-width="1"/>',
+      flick: () => line('M-26-30Q6-40 24-34L44-50', 4.600),
+      short: () => line('M-10-38Q6-46 22-38', 6),
+    } as Record<string, () => string>)[o.brow]?.() || line(ARCH);
+  };
+  const eye = (cx: number, flip: number) => '<g transform="translate(' + cx + ' 128) scale(' + (flip * .8) + ' .86)">' + eyeInner(flip) + brow(flip) + '</g>';
   parts.face = eye(128, -1) + eye(192, 1)
     + `<ellipse cx="116" cy="158" rx="12" ry="6" fill="#ff1f8f" opacity=".2"/><ellipse cx="204" cy="158" rx="12" ry="6" fill="#ff1f8f" opacity=".2"/>`
     + strokeLine('M156 159q4 4 8 0', 2.2, INK)
@@ -1009,9 +1101,4 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   const box = opt.box || (opt.head ? HEAD_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
   const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
   return `<svg viewBox="${box}" style="overflow:visible" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
-}
-
-/* Lunch Riot targets: plain skulls, not students */
-function riotSkulls(): string[] {
-  return ['#ff1f8f', '#19b7e8', '#35dcc8', '#f4d35e'].map(bow => `<svg viewBox="0 0 120 120" aria-hidden="true"><path d="M60 16c-26 0-42 18-42 42 0 16 8 28 20 34v14h44V92c12-6 20-18 20-34 0-24-16-42-42-42z" fill="#fff6fb" stroke="#000" stroke-width="4"/><circle cx="44" cy="60" r="11"/><circle cx="76" cy="60" r="11"/><path d="M60 72l-6 12h12z"/><path d="M60 22L38 8q-6 14 4 22zM60 22l22-14q6 14-4 22z" fill="${bow}" stroke="#000" stroke-width="3"/></svg>`);
 }

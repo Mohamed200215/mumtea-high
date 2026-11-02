@@ -26,12 +26,6 @@
 .ordercard .gart{background:none}
 .orderwant{display:flex;flex-wrap:wrap;gap:6px;font-size:28px;line-height:1}
 .orderwant span.done{opacity:.25}
-.traybar{height:10px;background:#000;margin:8px 0;overflow:hidden}
-.traybar i{display:block;height:100%;width:0;background:var(--slime)}
-.trayfood{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.trayfood button{background:#000;border:3px solid var(--violet);padding:10px 4px;font-size:30px;cursor:pointer;color:var(--white);touch-action:manipulation;min-width:0}
-.trayfood button:hover{border-color:var(--white)}
-.trayfood button small{display:block;font:800 12px var(--body);color:var(--muted);margin-top:4px}
 .lockerrule{font:800 15px var(--body);color:var(--paper);min-height:1.4em;margin:0 0 6px}
 .letter{background:var(--paper);min-height:96px;display:grid;place-items:center;font:400 38px var(--display);border:3px solid #000;margin-bottom:10px;transform:rotate(-1deg)}
 .lockers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -214,3 +208,10 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .notedoodle{position:absolute;top:1px;right:8px;width:62px;height:62px;pointer-events:none}
 .notecat{position:absolute;right:8px;bottom:0;width:112px;height:96px;pointer-events:none}
 @media (max-width:520px){.notepaper input{font-size:22px}.notepaper textarea{height:calc(var(--rule)*7)}}
+
+/* every wardrobe item stays inside its own box */
+.wtile{overflow:hidden}
+.wpic{overflow:hidden}
+.wpic svg,.lockerdoll svg{overflow:hidden!important}
+.lockerdoll{aspect-ratio:420/730}
+.lockerdoll svg{height:100%}

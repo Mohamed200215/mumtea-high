@@ -20,6 +20,20 @@ function drawStudioStage(): void {
   studioName.textContent = owner;
   studioStage.innerHTML = drawGhoul(studioLook, { label: owner, box: WIDE_BOX });
 }
+/* Widens the view so the whole drawing sits inside its box. Sizes are only known once the box is on screen. */
+function fitInBox(svg: SVGSVGElement | null, box: string): void {
+  if (!svg) return;
+  try {
+    const b = svg.getBBox(), [x, y, w, h] = box.split(' ').map(Number), pad = 8;
+    if (!b.width) return;
+    const left = Math.min(x, b.x - pad), top = Math.min(y, b.y - pad);
+    svg.setAttribute('viewBox', [left, top, Math.max(x + w, b.x + b.width + pad) - left, Math.max(y + h, b.y + b.height + pad) - top].join(' '));
+  } catch { /* not on screen yet: the observer below comes back to it */ }
+}
+function fitStudio(): void {
+  fitInBox(studioStage.querySelector('svg'), WIDE_BOX);
+  studioTiles.querySelectorAll<HTMLElement>('.wpic[data-box]').forEach(pic => fitInBox(pic.querySelector('svg'), pic.dataset.box as string));
+}
 function drawStudio(): void {
   const page = WARDROBE[studioPage];
   const focused = (document.activeElement as HTMLElement | null)?.dataset?.w;
@@ -31,6 +45,7 @@ function drawStudio(): void {
     const isPose = page.key === 'pose';
     /* Clothes are shown laid flat in the classic pose, so only the Poses page shows the whole figure moving. */
     pic.innerHTML = drawGhoul({ ...studioLook, pose: 'classic', [page.key as keyof Look]: id }, isPose ? { box: page.box } : { only: page.layers, box: page.box });
+    if (!page.crop) pic.dataset.box = page.box;
     studioTiles.append(el('button', { cls: 'wtile', type: 'button', 'data-w': page.key + ':' + id, 'aria-pressed': studioLook[page.key as keyof Look] === id, onclick() { changeLook(page.key as keyof Look, id); } }, pic, el('small', { text: label })));
   });
   studioTiles.hidden = !page.items;
@@ -45,6 +60,7 @@ function drawStudio(): void {
     row('Pattern', PATTERNS.map(([id, label]) => el('button', { cls: 'wchip', type: 'button', 'data-w': key + ':' + id, 'aria-pressed': studioLook[key] === id, onclick() { changeLook(key, id); } }, label)));
   }
   drawStudioStage();
+  fitStudio();
   if (focused) (studioRoot.querySelector('[data-w="' + focused + '"]') as HTMLElement | null)?.focus();
 }
 function syncStudio(): void {
@@ -118,4 +134,5 @@ function renderProfile(): void {
     el('button', { cls: 'wnav wsave', type: 'button', onclick() { saveStudio(); } }, 'Save'));
   const right = el('div', { cls: 'wstage' }, el('div', { cls: 'locker' }, el('div', { cls: 'lockerinside' }, studioStage)), studioName, buttons, studioMsg);
   studioRoot.append(left, right);
+  new ResizeObserver(() => fitStudio()).observe(studioTiles);
 })();
