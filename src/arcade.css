@@ -215,3 +215,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .wpic svg,.lockerdoll svg{overflow:hidden!important}
 .lockerdoll{aspect-ratio:420/730}
 .lockerdoll svg{height:100%}
+
+.topiclist{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.topiclist[hidden]{display:none}

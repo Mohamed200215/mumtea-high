@@ -447,6 +447,9 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .lockerdoll{aspect-ratio:420/730}
 .lockerdoll svg{height:100%}
 
+.topiclist{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.topiclist[hidden]{display:none}
+
 /*ARCADE-CSS-END*/
 </style>
 
@@ -3489,6 +3492,7 @@ function fillSlide() {
     read.onclick = () => go('tea', latest.id);
 }
 /* ---------- the pop-up for writing a post ---------- */
+const POST_TOPICS = ['Samoan men', 'Gingers', 'Politics', 'Femboys', 'Outrageous comments', 'Neurodivergent', 'DC Comics', 'Anime', 'Marvel Comics'];
 const NOTE_STAR = 'M0-9Q1-1 9 0Q1 1 0 9Q-1 1-9 0Q-1-1 0-9z';
 const NOTE_SKULL = '<svg viewBox="0 0 90 90" width="100%" height="100%"><g fill="none" stroke="#2a1430" stroke-width="3.400" stroke-linecap="round" stroke-linejoin="round"><path d="M40 24C22 24 14 38 15 51c1 9 7 14 13 17l1 10 24 1 1-11c7-3 13-9 14-18C68 37 58 24 40 24z" fill="#fdf0e6"/><path d="M34 72v6M42 72v7M50 72v6M38 58l3-5 3 5"/></g><circle cx="30" cy="46" r="6" fill="#2a1430"/><circle cx="52" cy="46" r="6" fill="#2a1430"/><path d="M41 22L26 12q-4 10 2 15zM41 22l15-10q4 10-2 15z" fill="#ff1f8f" stroke="#2a1430" stroke-width="2.600" stroke-linejoin="round"/><path transform="translate(77 30)" d="' + NOTE_STAR + '" fill="none" stroke="#2a1430" stroke-width="2.600"/><path transform="translate(80 58) scale(.7)" d="' + NOTE_STAR + '" fill="none" stroke="#2a1430" stroke-width="3"/></svg>';
 const NOTE_CAT = '<svg viewBox="0 0 112 96" width="100%" height="100%"><path transform="translate(16 28)" d="' + NOTE_STAR + '" fill="none" stroke="#14101a" stroke-width="2.600"/><path transform="translate(26 70) scale(.75)" d="' + NOTE_STAR + '" fill="none" stroke="#14101a" stroke-width="3"/><path d="M40 96C40 76 36 58 40 44L34 6L58 24Q72 20 86 24L108 6L104 44C108 58 106 76 106 96Z" fill="#14101a"/><path d="M47 42Q56 34 66 44Q56 52 47 42zM80 44Q90 34 99 42Q90 52 80 44z" fill="#fff6fb"/><ellipse cx="57" cy="43" rx="2.600" ry="6" fill="#ff1f8f"/><ellipse cx="89" cy="43" rx="2.600" ry="6" fill="#ff1f8f"/><path d="M69 56h8l-4 4z" fill="#ff1f8f"/><path d="M64 62l3 7 3-5zM82 62l-3 7-3-5z" fill="#fff6fb"/><path d="M44 54L28 50M44 60H26M102 54l10-4M102 60h10" stroke="#14101a" stroke-width="1.600" stroke-linecap="round"/></svg>';
@@ -3521,7 +3525,26 @@ function openComposer() {
     const doodle = el('span', { cls: 'notedoodle', 'aria-hidden': 'true' }), cat = el('span', { cls: 'notecat', 'aria-hidden': 'true' });
     doodle.innerHTML = NOTE_SKULL;
     cat.innerHTML = NOTE_CAT;
-    const form = el('form', { cls: 'stack' }, el('div', { cls: 'notepaper' }, title, doodle, body, el('div', { cls: 'notefoot' }, count, cat)), el('div', { cls: 'row' }, submit, el('button', { cls: 'pill ghost', type: 'button', onclick: close }, 'Not yet')), note);
+    /* A topic becomes the title, but never replaces a title someone typed themselves. */
+    let pickedTopic = '';
+    const topicList = el('div', { cls: 'topiclist', id: 'teaTopics', role: 'group', 'aria-label': 'Topic ideas', hidden: '' });
+    const topicsBtn = el('button', { cls: 'pill ghost', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'teaTopics', onclick() {
+            topicList.hidden = !topicList.hidden;
+            topicsBtn.setAttribute('aria-expanded', String(!topicList.hidden));
+        } }, 'Topics');
+    POST_TOPICS.forEach(topic => topicList.append(el('button', { cls: 'chip', type: 'button', onclick() {
+            if (title.value.trim() && title.value !== pickedTopic) {
+                note.textContent = 'You already have a title. Clear it to use this topic.';
+                return;
+            }
+            title.value = pickedTopic = topic;
+            note.textContent = '';
+            update();
+            topicList.hidden = true;
+            topicsBtn.setAttribute('aria-expanded', 'false');
+            body.focus();
+        } }, topic)));
+    const form = el('form', { cls: 'stack' }, el('div', { cls: 'notepaper' }, title, doodle, body, el('div', { cls: 'notefoot' }, count, cat)), topicList, el('div', { cls: 'row' }, submit, topicsBtn, el('button', { cls: 'pill ghost', type: 'button', onclick: close }, 'Not yet')), note);
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const text = body.value.trim();
