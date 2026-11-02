@@ -218,3 +218,29 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 
 .topiclist{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
 .topiclist[hidden]{display:none}
+
+/* leaderboard */
+.lboard{margin-top:16px}
+.lboard h3{margin-bottom:8px}
+.lblist{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:6px}
+.lbrow{display:grid;grid-template-columns:30px 52px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:5px 12px 5px 8px;background:#14101a;border:2px solid var(--violet)}
+.lbrow:first-child{border-color:var(--pink);box-shadow:4px 4px 0 var(--pink)}
+.lbme{background:#2a1038}
+.lbrank{font:400 22px var(--display);color:var(--paper);text-align:center}
+.lbrow:first-child .lbrank{color:var(--pink)}
+.lbface{display:block;width:52px;height:52px;overflow:hidden;background:#fff6fb;border:2px solid #000;border-radius:50%}
+.lbface svg{display:block;width:100%;height:100%;overflow:hidden!important}
+.lbname{font:800 15px var(--body);color:var(--white);overflow-wrap:anywhere}
+.lbscore{font:400 22px var(--display);color:var(--teal)}
+.lbempty,.lbnote{margin:10px 0 0;font-weight:800}
+.hitoast{position:fixed;right:16px;bottom:16px;z-index:9999;display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;width:min(360px,calc(100vw - 32px));box-sizing:border-box;padding:10px 12px;background:#14101a;color:var(--white);border:4px solid var(--pink);box-shadow:6px 6px 0 #000;animation:hitoast .3s ease-out}
+.hitoast .lbface{width:64px;height:64px}
+.hitext{display:flex;flex-direction:column;gap:1px;min-width:0}
+.hitext small{font:400 17px var(--display);color:var(--pink);letter-spacing:.03em}
+.hitext strong{font:800 16px var(--body);overflow-wrap:anywhere}
+.hitext span{font:800 13px var(--body);color:var(--teal)}
+.hiclose{align-self:start;background:none;border:0;color:var(--white);font-size:22px;line-height:1;padding:2px 4px;cursor:pointer}
+@keyframes hitoast{from{transform:translateY(20px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.hitoast{animation:none}}
+@media (max-width:520px){.lbrow{grid-template-columns:24px 44px minmax(0,1fr) auto auto;gap:7px;padding-right:8px}.lbface{width:44px;height:44px}.lbscore{font-size:18px}}
+.lboard[hidden]{display:none}

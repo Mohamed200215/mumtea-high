@@ -179,7 +179,7 @@ let accountMode: 'register' | 'login' | 'forgot' | 'verify' = 'register';
 let pendingEmail = '';
 function refreshAll(message: string): void {
   accountNote.textContent = message;
-  paintDolls(); renderStudents(); renderID(); syncStudio(); renderProfile(); renderBlog(); fillSlide(); renderBoss(); renderAdmin();
+  paintDolls(); renderStudents(); renderID(); syncStudio(); renderProfile(); renderBlog(); fillSlide(); renderBoss(); renderAdmin(); renderScores();
 }
 function renderAccount(): void {
   const signed = !!signedInId();
@@ -303,8 +303,8 @@ async function startBackend(): Promise<void> {
     timer = window.setTimeout(async () => {
       try {
         const scrollY = window.scrollY;
-        await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents()]);
-        paintDolls(); renderStudents(); renderBlog(); fillSlide(); renderBoss(); renderAdmin();
+        await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => {})]);
+        paintDolls(); renderStudents(); renderBlog(); fillSlide(); renderBoss(); renderAdmin(); renderScores();
         window.scrollTo(0, scrollY);
       } catch (err) { /* the next change tries again */ }
     }, 300);
@@ -316,8 +316,9 @@ async function startBackend(): Promise<void> {
       const stillGood = await sb.rpc('admin_check', { token: adminPass });
       if (stillGood.data !== true) setPass(null);
     }
-    await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents()]);
+    await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => {})]);
     dataState = 'ready';
+    startScores();
     if (sessionId && !myRecord()) { await signOut(); }
     if (myRecord()) store.set('blend', myRecord()?.blend || null);
     sb.channel('school').on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, reloadSoon).subscribe();

@@ -271,7 +271,51 @@ begin
   end loop;
 end $$;
 
+-- Game leaderboard: each person's best score per game. Scores only change through submit_score.
+create table if not exists public.game_scores (
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  game text not null check (game in ('spill', 'riptide', 'casket')),
+  score integer not null check (score between 1 and 1000000),
+  at timestamptz not null default now(),
+  primary key (user_id, game)
+);
+create index if not exists game_scores_top on public.game_scores (game, score desc);
+alter table public.game_scores enable row level security;
+drop policy if exists "scores are public" on public.game_scores;
+create policy "scores are public" on public.game_scores for select using (true);
+revoke all on public.game_scores from anon, authenticated;
+grant select on public.game_scores to anon, authenticated;
+
+create or replace function public.submit_score(which text, points integer) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare me uuid := auth.uid(); best integer;
+begin
+  if me is null then raise exception 'log in first'; end if;
+  if not exists (select 1 from public.profiles where id = me and verified) then raise exception 'verify your email first'; end if;
+  if which is null or which not in ('spill', 'riptide', 'casket') then raise exception 'unknown game'; end if;
+  if points is null or points < 1 or points > 1000000 then raise exception 'bad score'; end if;
+  insert into public.game_scores as s (user_id, game, score) values (me, which, points)
+    on conflict (user_id, game) do update set score = excluded.score, at = now() where s.score < excluded.score;
+  select s.score into best from public.game_scores s where s.user_id = me and s.game = which;
+  return best;
+end $$;
+revoke all on function public.submit_score(text, integer) from public, anon;
+grant execute on function public.submit_score(text, integer) to authenticated;
+
+create or replace function public.admin_delete_score(token text, target uuid, which text) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_admin(token);
+  delete from public.game_scores where user_id = target and game = which;
+end $$;
+revoke all on function public.admin_delete_score(text, uuid, text) from public;
+grant execute on function public.admin_delete_score(text, uuid, text) to anon, authenticated;
+
+
 -- Live updates.
+do $$ begin
+  alter publication supabase_realtime add table public.game_scores;
+exception when duplicate_object then null; end $$;
 do $$ begin
   alter publication supabase_realtime add table public.posts;
 exception when duplicate_object then null; end $$;

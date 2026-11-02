@@ -112,7 +112,7 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
   }
   function finish(): void {
     run = false; rise = false;
-    const s = Math.floor(score); p.bestOf(s); award(Math.ceil(s / 20)); stat();
+    const s = Math.floor(score); p.bestOf(s); award(Math.ceil(s / 20)); stat(); submitScore('riptide', s);
     banner(c, 'Surfaced!', s + ' points'); p.go.textContent = 'Play again';
   }
   p.go.addEventListener('click', () => {
@@ -189,7 +189,7 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
     step(dt); scene();
     if (Math.ceil(left / 1000) !== before) stat();
     if (left <= 0) {
-      run = false; ball = null; p.bestOf(score); award(Math.ceil(score / 2)); stat();
+      run = false; ball = null; p.bestOf(score); award(Math.ceil(score / 2)); stat(); submitScore('casket', score);
       scene(); banner(c, 'Time!', score + ' points'); p.go.textContent = 'Play again';
       return;
     }
@@ -263,6 +263,7 @@ function syncPlayerBar(): void {
 }
 function arcadeOpened(id: string): void {
   currentGame = id; store.set('lastGame', id); syncPlayerBar();
+  if (SCORED_GAMES.includes(id)) { scoreTab = id; renderScores(); }
   if (id === 'closet') mountStudio($('#closetHome'));
 }
 (function () {
