@@ -1,0 +1,8 @@
+node_modules/
+build/
+mumtea-high.before-*.html
+mumtea-high.backup.html
+Firefly_Gemini Flash.png
+.claude/
+*.private.sql
+tools/make_setup.cjs

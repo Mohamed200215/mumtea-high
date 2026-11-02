@@ -1,0 +1,14 @@
+{
+  "name": "mumtea-high",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.118.0"
+  }
+}

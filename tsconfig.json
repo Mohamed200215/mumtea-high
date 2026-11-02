@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "none",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "noUnusedLocals": false,
+    "ignoreDeprecations": "5.0",
+    "outFile": "build/arcade.js"
+  },
+  "include": ["src/*.ts"]
+}

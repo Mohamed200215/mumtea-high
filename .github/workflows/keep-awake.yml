@@ -1,0 +1,24 @@
+# Free Supabase projects pause after a week with no activity. This reads the database every three days.
+name: Keep Supabase awake
+on:
+  schedule:
+    - cron: '17 6 */3 * *'
+  workflow_dispatch:
+permissions:
+  actions: write
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read from the database
+        env:
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $SUPABASE_KEY" "https://lhnonknherklzygksbkk.supabase.co/rest/v1/profiles?select=id&limit=1")
+          echo "Supabase answered $code"
+          test "$code" = "200"
+      # GitHub switches scheduled workflows off after 60 quiet days, so this one keeps itself switched on.
+      - name: Keep this schedule enabled
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/keep-awake.yml/enable"
