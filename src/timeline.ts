@@ -1,6 +1,6 @@
 /* ---------- Spill the Tea: the shared timeline of what people have posted ---------- */
 interface TeaPost { id: string; authorId: string | null; title: string; body: string; at: string }
-const POST_LIMIT = 1000;
+const POST_LIMIT = 10000;
 let allPosts: TeaPost[] = [];
 
 async function refreshPosts(): Promise<void> {

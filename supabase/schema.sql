@@ -24,7 +24,7 @@ create table if not exists public.posts (
   id uuid primary key default gen_random_uuid(),
   author_id uuid default auth.uid() references public.profiles (id) on delete cascade,
   title text not null default '' check (char_length(title) <= 100),
-  body text not null check (char_length(btrim(body)) between 1 and 1000),
+  body text not null check (char_length(btrim(body)) between 1 and 10000),
   created_at timestamptz not null default now()
 );
 alter table public.posts alter column author_id drop not null;
