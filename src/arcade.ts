@@ -1,5 +1,5 @@
 /* ---------- arcade: six extra games plus shelf search, filters and favourites ---------- */
-const DISPLAY_FONT = '"Shadow of the Deads", Impact, fantasy';
+const DISPLAY_FONT = '"Breath of the House", Impact, fantasy';
 const NEW_GAMES: MenuRow[] = [
   ['riptide', 'Riptide Run', 'Arcade', 'Swim the flooded basement. Hold to rise, let go to sink.', '🌊'],
   ['hall', 'Hall Pass', 'Arcade', 'Hop Earl across the hallway without meeting a coffin cart.', '🐸'],

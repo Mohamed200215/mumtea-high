@@ -86,7 +86,7 @@
 .wswatch[aria-pressed="true"]{outline:3px solid var(--pink);outline-offset:2px}
 .wchip{background:#fff;color:#14101a;border:2px solid #14101a;padding:4px 10px;font:800 13px var(--body);cursor:pointer}
 .wchip[aria-pressed="true"]{background:var(--pink);color:#fff}
-.stage{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.wstage{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
 .locker{width:100%;max-width:300px;background:var(--violet);padding:8px;clip-path:polygon(24% 0,76% 0,100% 16%,84% 100%,16% 100%,0 16%);filter:drop-shadow(0 0 0 #000)}
 .lockerinside{clip-path:polygon(24% 0,76% 0,100% 16%,84% 100%,16% 100%,0 16%);padding:14px 26px 8px;display:flex;justify-content:center;background-color:#14101a;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='56'%3E%3Cpath d='M22 0l22 28-22 28L0 28z' fill='%23ff1f8f' fill-opacity='.28'/%3E%3Cpath d='M0 0l44 56M44 0L0 56' stroke='%2335dcc8' stroke-opacity='.35' stroke-dasharray='3 4'/%3E%3C/svg%3E")}
 .lockerdoll{width:82%;max-width:210px}
@@ -99,7 +99,7 @@
 .profilefact{margin:0;color:var(--muted);font-size:14px}
 @media (max-width:760px){
   .studio{grid-template-columns:minmax(0,1fr)}
-  .stage{order:-1}
+  .wstage{order:-1}
   .locker{max-width:230px}
   .wtiles{grid-template-columns:repeat(3,minmax(0,1fr))}
   .wpic{height:88px}
@@ -180,3 +180,21 @@
 .adminbar .row{display:flex;flex-wrap:wrap;gap:8px}
 .adminstudiobox{margin-top:18px}
 .adminstudiobox h3{font-size:24px;color:var(--pink);margin-bottom:10px}
+/* the display font runs narrow, so small labels need more size */
+.pill,.gamebar .pill{font-size:16px}
+.lineup button{font-size:16px}
+.strip b{font-size:clamp(17px,1.7vw,22px)}
+.code label{font-size:22px}
+.bones{font-size:20px}
+.coffin h3{font-size:24px}
+.wnav{font-size:18px}
+.stagebtns .wnav{font-size:16px}
+/* poses and the bigger wardrobe */
+.wtiles{max-height:560px;overflow-y:auto}
+.lockerinside{overflow:hidden}
+.lockerdoll{width:100%;max-width:none}
+.lockerinside{padding:14px 10px 8px}
+/* bigger, easier to read navigation */
+nav.tabs{gap:8px}
+nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-spacing:.04em}
+@media (max-width:520px){nav.tabs button{font-size:18px;padding:10px 13px 9px}}

@@ -7,3 +7,5 @@ Firefly_Gemini Flash.png
 *.private.sql
 tools/make_setup.cjs
 supabase/.temp/
+*.private.txt
+*.ttf

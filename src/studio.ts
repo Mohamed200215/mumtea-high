@@ -18,7 +18,7 @@ function changeLook(key: keyof Look, value: string): void {
 function drawStudioStage(): void {
   const owner = studioForFang ? DOLLS.mumtea.name : currentStudent()?.name || 'New ghoul';
   studioName.textContent = owner;
-  studioStage.innerHTML = drawGhoul(studioLook, { label: owner });
+  studioStage.innerHTML = drawGhoul(studioLook, { label: owner, box: WIDE_BOX });
 }
 function drawStudio(): void {
   const page = WARDROBE[studioPage];
@@ -28,7 +28,9 @@ function drawStudio(): void {
   studioTiles.textContent = ''; studioSwatches.textContent = '';
   (page.items || []).forEach(([id, label]) => {
     const pic = el('span', { cls: 'wpic' });
-    pic.innerHTML = drawGhoul({ ...studioLook, [page.key as keyof Look]: id }, { only: page.layers, box: page.box });
+    const isPose = page.key === 'pose';
+    /* Clothes are shown laid flat in the classic pose, so only the Poses page shows the whole figure moving. */
+    pic.innerHTML = drawGhoul({ ...studioLook, pose: 'classic', [page.key as keyof Look]: id }, isPose ? { box: page.box } : { only: page.layers, box: page.box });
     studioTiles.append(el('button', { cls: 'wtile', type: 'button', 'data-w': page.key + ':' + id, 'aria-pressed': studioLook[page.key as keyof Look] === id, onclick() { changeLook(page.key as keyof Look, id); } }, pic, el('small', { text: label })));
   });
   studioTiles.hidden = !page.items;
@@ -114,6 +116,6 @@ function renderProfile(): void {
     el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = studioSaved; studioDirty = false; studioMsg.textContent = 'Back to your last saved look.'; drawStudio(); } }, 'Restart'),
     el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = randomLook(); studioDirty = true; studioMsg.textContent = signedInId() || studioForFang ? 'Not saved yet.' : 'Register to keep this look.'; drawStudio(); } }, 'Surprise me'),
     el('button', { cls: 'wnav wsave', type: 'button', onclick() { saveStudio(); } }, 'Save'));
-  const right = el('div', { cls: 'stage' }, el('div', { cls: 'locker' }, el('div', { cls: 'lockerinside' }, studioStage)), studioName, buttons, studioMsg);
+  const right = el('div', { cls: 'wstage' }, el('div', { cls: 'locker' }, el('div', { cls: 'lockerinside' }, studioStage)), studioName, buttons, studioMsg);
   studioRoot.append(left, right);
 })();
