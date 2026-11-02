@@ -271,14 +271,17 @@ begin
   end loop;
 end $$;
 
--- Game leaderboard: each person's best score per game. Scores only change through submit_score.
+-- Game leaderboard: each person's best score per game. A row with no user_id is Ms. Fangtastic's.
+-- Scores only change through submit_score and admin_submit_score.
 create table if not exists public.game_scores (
-  user_id uuid not null references public.profiles (id) on delete cascade,
+  id bigint generated always as identity primary key,
+  user_id uuid references public.profiles (id) on delete cascade,
   game text not null check (game in ('spill', 'riptide', 'casket')),
   score integer not null check (score between 1 and 1000000),
   at timestamptz not null default now(),
-  primary key (user_id, game)
+  unique (user_id, game)
 );
+create unique index if not exists game_scores_one_fang on public.game_scores (game) where user_id is null;
 create index if not exists game_scores_top on public.game_scores (game, score desc);
 alter table public.game_scores enable row level security;
 drop policy if exists "scores are public" on public.game_scores;
@@ -302,15 +305,29 @@ end $$;
 revoke all on function public.submit_score(text, integer) from public, anon;
 grant execute on function public.submit_score(text, integer) to authenticated;
 
+create or replace function public.admin_submit_score(token text, which text, points integer) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare best integer;
+begin
+  perform private.require_admin(token);
+  if which is null or which not in ('spill', 'riptide', 'casket') then raise exception 'unknown game'; end if;
+  if points is null or points < 1 or points > 1000000 then raise exception 'bad score'; end if;
+  insert into public.game_scores as s (user_id, game, score) values (null, which, points)
+    on conflict (game) where user_id is null do update set score = excluded.score, at = now() where s.score < excluded.score;
+  select s.score into best from public.game_scores s where s.user_id is null and s.game = which;
+  return best;
+end $$;
+revoke all on function public.admin_submit_score(text, text, integer) from public;
+grant execute on function public.admin_submit_score(text, text, integer) to anon, authenticated;
+
 create or replace function public.admin_delete_score(token text, target uuid, which text) returns void
 language plpgsql security definer set search_path = '' as $$
 begin
   perform private.require_admin(token);
-  delete from public.game_scores where user_id = target and game = which;
+  delete from public.game_scores where user_id is not distinct from target and game = which;
 end $$;
 revoke all on function public.admin_delete_score(text, uuid, text) from public;
 grant execute on function public.admin_delete_score(text, uuid, text) to anon, authenticated;
-
 
 -- Live updates.
 do $$ begin

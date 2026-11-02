@@ -2891,6 +2891,9 @@ const HEAD_ONLY_BOX = '46 -14 228 232';
 let allScores = [], scoresLoaded = false, scoreTab = 'riptide', scoreNote = '';
 const announced = new Set();
 const scoreBoard = el('section', { cls: 'panel lboard', 'aria-labelledby': 'lboardTitle' });
+const playerOf = (id) => (id === null ? { id: '', name: DOLLS.mumtea.name, look: DOLLS.mumtea.look, joined: '' } : loadRoster().find(s => s.id === id));
+/* With the code on, you are her, even if an account is also logged in. */
+const isMine = (id) => (isAdmin() ? id === null : id !== null && id === signedInId());
 const headOf = (who) => {
     const face = el('span', { cls: 'lbface', 'aria-hidden': 'true' });
     face.innerHTML = drawGhoul(who.look, { only: HEAD_LAYERS, box: HEAD_ONLY_BOX, head: true });
@@ -2899,7 +2902,7 @@ const headOf = (who) => {
 /* Only people the site can show: a deleted or unverified account never appears. */
 const boardFor = (game) => allScores
     .filter(r => r.game === game)
-    .map(r => ({ ...r, who: loadRoster().find(s => s.id === r.user_id) }))
+    .map(r => ({ ...r, who: playerOf(r.user_id) }))
     .filter(r => r.who)
     .sort((a, b) => b.score - a.score);
 async function refreshScores() {
@@ -2919,13 +2922,13 @@ function renderScores() {
         return;
     const tabs = el('div', { cls: 'chips', role: 'group', 'aria-label': 'Choose a game' }, ...SCORED_GAMES.map(game => el('button', { cls: 'chip', type: 'button', 'aria-pressed': game === scoreTab, onclick() { scoreTab = game; renderScores(); } }, titleOf(game))));
     scoreBoard.append(el('h3', { id: 'lboardTitle', text: 'Leaderboard' }), tabs);
-    const rows = boardFor(scoreTab), me = signedInId();
+    const rows = boardFor(scoreTab);
     if (!rows.length)
         scoreBoard.append(el('p', { cls: 'lbempty', text: 'No scores yet. The top spot is wide open.' }));
     else {
         const list = el('ol', { cls: 'lblist' });
         rows.slice(0, BOARD_SIZE).forEach((r, i) => {
-            const line = el('li', { cls: 'lbrow' + (r.user_id === me ? ' lbme' : '') }, el('span', { cls: 'lbrank', text: String(i + 1) }), headOf(r.who), el('strong', { cls: 'lbname', text: r.who.name + (r.user_id === me ? ' (you)' : '') }), el('span', { cls: 'lbscore', text: r.score.toLocaleString() }));
+            const line = el('li', { cls: 'lbrow' + (isMine(r.user_id) ? ' lbme' : '') }, el('span', { cls: 'lbrank', text: String(i + 1) }), headOf(r.who), el('strong', { cls: 'lbname', text: r.who.name + (isMine(r.user_id) ? ' (you)' : '') }), el('span', { cls: 'lbscore', text: r.score.toLocaleString() }));
             if (isAdmin())
                 line.append(el('button', { cls: 'linkish', type: 'button', 'aria-label': 'Remove the score of ' + r.who.name, async onclick() {
                         const { error } = await sb.rpc('admin_delete_score', { token: adminPass, target: r.user_id, which: r.game });
@@ -2937,22 +2940,21 @@ function renderScores() {
             list.append(line);
         });
         scoreBoard.append(list);
-        const mine = rows.findIndex(r => r.user_id === me);
+        const mine = rows.findIndex(r => isMine(r.user_id));
         if (mine >= BOARD_SIZE)
             scoreBoard.append(el('p', { cls: 'lbnote', text: 'You are number ' + (mine + 1) + ' with ' + rows[mine].score.toLocaleString() + '.' }));
     }
-    if (!me)
-        scoreBoard.append(el('p', { cls: 'lbnote', text: isAdmin() ? 'Scores are saved to student accounts, so Ms. Fangtastic plays just for fun.' : 'Log in to put your name and your ghoul on this board.' }));
+    if (!signedInId() && !isAdmin())
+        scoreBoard.append(el('p', { cls: 'lbnote', text: 'Log in to put your name and your ghoul on this board.' }));
     if (scoreNote)
         scoreBoard.append(el('p', { cls: 'lbnote', role: 'status', text: scoreNote }));
 }
 /* The pop-up everyone on the site sees when someone takes first place. */
-function showHighScore(who, game, score) {
+function showHighScore(who, game, score, mine) {
     const key = who.id + game + score;
     if (announced.has(key))
         return;
     announced.add(key);
-    const mine = who.id === signedInId();
     const close = () => toast.remove();
     const toast = el('div', { cls: 'hitoast', role: 'status' }, headOf(who), el('div', { cls: 'hitext' }, el('small', { text: 'New high score!' }), el('strong', { text: mine ? 'You took first place' : who.name }), el('span', { text: titleOf(game) + ': ' + score.toLocaleString() })), el('button', { cls: 'hiclose', type: 'button', 'aria-label': 'Close', onclick: close }, '×'));
     ($('dialog[open]') || document.body).append(toast);
@@ -2966,21 +2968,22 @@ function takeScore(row) {
         known.score = Math.max(known.score, row.score);
     else
         allScores.push({ user_id: row.user_id, game: row.game, score: row.score });
-    const who = loadRoster().find(s => s.id === row.user_id);
+    const who = playerOf(row.user_id);
     if (who && scoresLoaded && (!top || row.score > top.score))
-        showHighScore(who, row.game, row.score);
+        showHighScore(who, row.game, row.score, isMine(row.user_id));
     renderScores();
 }
 /* Called when a round ends. */
 async function submitScore(game, score) {
-    if (!backendReady || !scoresLoaded || score < 1 || !signedInId())
+    const asFang = isAdmin();
+    if (!backendReady || !scoresLoaded || score < 1 || (!asFang && !signedInId()))
         return;
     scoreTab = game;
-    const before = boardFor(game).find(r => r.user_id === signedInId())?.score || 0;
-    const { data, error } = await sb.rpc('submit_score', { which: game, points: score });
+    const before = boardFor(game).find(r => isMine(r.user_id))?.score || 0;
+    const { data, error } = asFang ? await sb.rpc('admin_submit_score', { token: adminPass, which: game, points: score }) : await sb.rpc('submit_score', { which: game, points: score });
     scoreNote = error ? 'Your score did not save. It will count next round if you beat it again.' : score > before ? 'New personal best saved: ' + score.toLocaleString() + '.' : '';
     if (!error)
-        takeScore({ user_id: signedInId(), game, score: data });
+        takeScore({ user_id: asFang ? null : signedInId(), game, score: data });
     renderScores();
 }
 function startScores() {
