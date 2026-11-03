@@ -3,7 +3,6 @@
 interface ScoreRow { user_id: string | null; game: string; score: number }
 const SCORED_GAMES = ['riptide', 'spill', 'casket'];
 const BOARD_SIZE = 10;
-const HEAD_ONLY_BOX = '46 -14 228 232';
 let allScores: ScoreRow[] = [], scoresLoaded = false, scoreTab = 'riptide', scoreNote = '';
 const announced = new Set<string>();
 const scoreBoard = el('section', { cls: 'panel lboard', 'aria-labelledby': 'lboardTitle' });

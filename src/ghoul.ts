@@ -121,6 +121,7 @@ const EYES: Array<{ id: string; name: string; shape?: string; pupil?: string; la
 const BROW_COLOURS = ['#17101c', '#3f2412', '#5a2c17', '#8b5a2b', '#a0392a', '#d98a3d', '#f4d35e', '#9aa0ac', '#f6f0ff', '#ff1f8f', '#f08fb4', '#6a1f86', '#19b7e8', '#35dcc8', '#2f8f4e', '#c0392b'];
 const LEG_IN = 4, SLIM = .82;
 const LIP_SIZES: Record<string, number> = { tiny: .5, small: .65, medium: .82, full: 1, big: 1.18 };
+const HEAD_ONLY_BOX = '46 -14 228 232';
 const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
 const WARDROBE: WardrobePage[] = [
@@ -1164,8 +1165,10 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     if (lean && !LOWER.includes(l)) out = '<g transform="rotate(' + lean + ' 160 385)">' + out + '</g>';
     return lift ? '<g transform="translate(0 ' + (-lift) + ')">' + out + '</g>' : out;
   };
-  const inner = LAYER_ORDER.filter(l => !opt.only || opt.only.includes(l)).map(placed).join('');
-  const box = opt.box || (opt.head ? HEAD_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
+  /* A head picture draws only the head, and nothing can spill out of it. */
+  const showing = opt.only || (opt.head ? HEAD_LAYERS : null);
+  const inner = LAYER_ORDER.filter(l => !showing || showing.includes(l)).map(placed).join('');
+  const box = opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
   const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
-  return `<svg viewBox="${box}" style="overflow:visible" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
+  return `<svg viewBox="${box}" style="overflow:${opt.head ? 'hidden' : 'visible'}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
 }
