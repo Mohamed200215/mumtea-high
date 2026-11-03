@@ -371,6 +371,11 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .camshutter:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #000}
 .camshutter:disabled{filter:grayscale(.85);cursor:not-allowed}
 .camchips{margin:0 0 12px}
+.camgroup{margin:8px 0 4px;font:13px var(--label);color:var(--paper)}
+.camgroup:first-child{margin-top:0}
+.camstickers{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.camsticker{position:absolute;height:auto;max-width:none;transform:translate(-50%,-50%) rotate(var(--tilt));animation:campop .42s cubic-bezier(.3,1.7,.5,1) backwards}
+@keyframes campop{from{transform:translate(-50%,-50%) rotate(var(--tilt)) scale(0);opacity:0}to{transform:translate(-50%,-50%) rotate(var(--tilt)) scale(1);opacity:1}}
 .polaslot{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:center;margin:0 0 8px}
 .polaprint{position:relative;width:min(100%,340px);overflow:hidden;line-height:0;animation:polaout .9s cubic-bezier(.2,.8,.3,1)}
 .polaprint img{display:block;width:100%;height:auto}
@@ -390,4 +395,5 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
   .camdial{grid-row:1}.camfilter{grid-row:2;grid-column:1}.camrow{grid-row:3;grid-column:1;flex-direction:column}
   .camring{grid-row:1/4;grid-column:2}
 }
-@media (prefers-reduced-motion:reduce){.polaprint,.poladevelop,.camflash.go{animation:none}.camdial{transition:none}}
+@media (prefers-reduced-motion:reduce){.polaprint,.poladevelop,.camflash.go,.camsticker{animation:none}.camdial{transition:none}}
+.gcard .gart img{width:62%;max-width:96px;height:auto;filter:drop-shadow(0 3px 0 rgba(0,0,0,.55))}

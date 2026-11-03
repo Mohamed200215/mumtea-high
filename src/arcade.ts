@@ -244,7 +244,7 @@ function renderMenu(): void {
   }
   rows.forEach(g => {
     const b = el('button', { cls: 'gcard', type: 'button', 'data-game': g[0], 'aria-pressed': g[0] === currentGame, onclick() { openGame(g[0], true); } });
-    const art = el('div', { cls: 'gart', 'aria-hidden': 'true' }); art.textContent = g[4];
+    const art = el('div', { cls: 'gart', 'aria-hidden': 'true' }); if (GAME_ART[g[0]]) art.append(el('img', { src: GAME_ART[g[0]], alt: '', width: 96, height: 96 })); else art.textContent = g[4];
     const best = SCORED_GAMES.includes(g[0]) ? displayBest(g[0]) : 0;
     const body = el('div', { cls: 'gbody' }, el('strong', { text: g[1] }), el('small', { text: g[3] }));
     if (best) body.append(el('span', { cls: 'gbest', text: 'Best: ' + best }));

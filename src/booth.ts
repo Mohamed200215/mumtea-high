@@ -1,17 +1,26 @@
 /* ---------- Say Fangs: take a picture with the laptop camera, get a Polaroid, choose to post it ---------- */
 type CamOp = [name: 'brightness' | 'contrast' | 'saturate' | 'sepia' | 'hue', amount: number];
-interface CamFilter { name: string; ops: CamOp[]; tint?: [colour: string, blend: GlobalCompositeOperation, alpha: number]; vignette?: number }
+/* A sticker sits around the edge of the picture: art, across, down and size as parts of the picture, then its tilt. */
+type CamSticker = [art: string, x: number, y: number, size: number, tilt: number];
+interface CamFilter { name: string; group: string; ops: CamOp[]; tint?: [colour: string, blend: GlobalCompositeOperation, alpha: number]; vignette?: number; stickers?: CamSticker[] }
+const COLOUR = 'Colour filters', SPOOKY = 'Spooky stickers', CUTE = 'Cute stickers';
 const CAM_FILTERS: CamFilter[] = [
-  { name: 'No filter', ops: [] },
-  { name: 'Graveyard', ops: [['saturate', 0], ['contrast', 1.25]], vignette: .55 },
-  { name: 'Old Bone', ops: [['sepia', .75], ['contrast', 1.05], ['brightness', 1.05]], vignette: .3 },
-  { name: 'Blood Moon', ops: [['saturate', 1.4], ['contrast', 1.1]], tint: ['#ff1f8f', 'soft-light', .55], vignette: .45 },
-  { name: 'Bubblegum', ops: [['brightness', 1.08], ['saturate', 1.25]], tint: ['#ff7ac0', 'soft-light', .6] },
-  { name: 'Moonlit', ops: [['saturate', .55], ['brightness', .95]], tint: ['#2f62ff', 'soft-light', .6], vignette: .35 },
-  { name: 'Toxic Slime', ops: [['hue', 70], ['saturate', 1.4]], tint: ['#8df04a', 'soft-light', .3] },
-  { name: 'Ghostly', ops: [['brightness', 1.2], ['contrast', .8], ['saturate', .45]], tint: ['#d8fff8', 'screen', .18] },
-  { name: 'Midnight Plum', ops: [['contrast', 1.15], ['brightness', .85]], tint: ['#6a1f86', 'soft-light', .8], vignette: .5 },
-  { name: 'Tea Stain', ops: [['sepia', .35], ['saturate', 1.2]], tint: ['#c9812f', 'soft-light', .5] },
+  { name: 'No filter', group: COLOUR, ops: [] },
+  { name: 'Graveyard', group: COLOUR, ops: [['saturate', 0], ['contrast', 1.25]], vignette: .55 },
+  { name: 'Old Bone', group: COLOUR, ops: [['sepia', .75], ['contrast', 1.05], ['brightness', 1.05]], vignette: .3 },
+  { name: 'Blood Moon', group: COLOUR, ops: [['saturate', 1.4], ['contrast', 1.1]], tint: ['#ff1f8f', 'soft-light', .55], vignette: .45 },
+  { name: 'Bubblegum', group: COLOUR, ops: [['brightness', 1.08], ['saturate', 1.25]], tint: ['#ff7ac0', 'soft-light', .6] },
+  { name: 'Moonlit', group: COLOUR, ops: [['saturate', .55], ['brightness', .95]], tint: ['#2f62ff', 'soft-light', .6], vignette: .35 },
+  { name: 'Toxic Slime', group: COLOUR, ops: [['hue', 70], ['saturate', 1.4]], tint: ['#8df04a', 'soft-light', .3] },
+  { name: 'Ghostly', group: COLOUR, ops: [['brightness', 1.2], ['contrast', .8], ['saturate', .45]], tint: ['#d8fff8', 'screen', .18] },
+  { name: 'Midnight Plum', group: COLOUR, ops: [['contrast', 1.15], ['brightness', .85]], tint: ['#6a1f86', 'soft-light', .8], vignette: .5 },
+  { name: 'Tea Stain', group: COLOUR, ops: [['sepia', .35], ['saturate', 1.2]], tint: ['#c9812f', 'soft-light', .5] },
+  { name: 'Haunted', group: SPOOKY, ops: [['saturate', .6], ['contrast', 1.12]], tint: ['#35dcc8', 'soft-light', .3], vignette: .5, stickers: [['web', .13, .13, .27, 0], ['ghost', .87, .15, .24, 10], ['bat', .1, .52, .17, -14], ['spider', .91, .55, .14, 12], ['pumpkin', .13, .87, .25, -8], ['ghost', .87, .85, .19, -10]] },
+  { name: 'Coffin Club', group: SPOOKY, ops: [['saturate', .25], ['contrast', 1.2]], vignette: .6, stickers: [['crossbones', .13, .13, .23, -10], ['ball', .87, .13, .21, 8], ['candle', .09, .55, .18, -4], ['skull', .91, .52, .17, 12], ['coffin', .15, .85, .27, -10], ['headstone', .85, .85, .26, 6]] },
+  { name: 'Bloodsucker', group: SPOOKY, ops: [['saturate', 1.2], ['contrast', 1.15], ['brightness', .92]], tint: ['#c00028', 'soft-light', .6], vignette: .6, stickers: [['moon', .13, .13, .24, -12], ['bat', .85, .12, .25, 12], ['blood', .08, .47, .13, 0], ['blood', .93, .38, .11, 0], ['dagger', .12, .84, .24, -20], ['bat', .87, .82, .22, -14]] },
+  { name: 'Sweetheart', group: CUTE, ops: [['brightness', 1.06], ['saturate', 1.15]], tint: ['#ff7ac0', 'soft-light', .4], stickers: [['ribbon', .14, .13, .25, -14], ['heart', .87, .14, .24, 12], ['sparkles', .08, .52, .15, 0], ['heart', .92, .55, .14, -10], ['strawberry', .13, .86, .22, -12], ['lollipop', .87, .84, .25, 14]] },
+  { name: 'Bunny Tea', group: CUTE, ops: [['brightness', 1.05], ['sepia', .12]], tint: ['#fff0c0', 'soft-light', .4], stickers: [['bunny', .13, .14, .25, -10], ['blossom', .87, .12, .21, 10], ['blossom', .08, .54, .14, -18], ['sparkles', .92, .5, .15, 0], ['cup', .14, .85, .25, -6], ['cake', .86, .85, .24, 8]] },
+  { name: 'Daydream', group: CUTE, ops: [['brightness', 1.08], ['saturate', 1.1]], tint: ['#a8c8ff', 'soft-light', .35], stickers: [['rainbow', .15, .12, .28, -8], ['star', .87, .13, .22, 12], ['butterfly', .09, .53, .16, -14], ['sparkles', .92, .55, .15, 0], ['kitty', .14, .86, .25, -8], ['butterfly', .86, .85, .22, 14]] },
 ];
 const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
 const POLA_BLURB = 'Snapped at the Say Fangs photo booth.';
@@ -45,6 +54,15 @@ function camShade(c: CanvasRenderingContext2D, size: number, f: CamFilter): void
     g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,' + f.vignette + ')');
     c.fillStyle = g; c.fillRect(0, 0, size, size);
   }
+}
+
+async function camStickers(c: CanvasRenderingContext2D, size: number, f: CamFilter): Promise<void> {
+  const art = (f.stickers || []).map(st => { const img = new Image(); img.src = STICKER_ART[st[0]]; return img; });
+  await Promise.all(art.map(img => img.decode().catch(() => {})));
+  (f.stickers || []).forEach((st, i) => {
+    const w = st[3] * size;
+    c.save(); c.translate(st[1] * size, st[2] * size); c.rotate(st[4] * Math.PI / 180); c.drawImage(art[i], -w / 2, -w / 2, w, w); c.restore();
+  });
 }
 
 /* ---------- the Polaroid frame, hand-drawn in the school's colours ---------- */
@@ -152,17 +170,17 @@ function postPhoto(post: TeaPost): HTMLElement {
 (function () {
   const video = el('video', { cls: 'camlive', autoplay: '', muted: '', playsinline: '', 'aria-label': 'What your camera can see' }) as HTMLVideoElement;
   video.muted = true;
-  const tint = el('div', { cls: 'camtint' }), vig = el('div', { cls: 'camvig' });
+  const tint = el('div', { cls: 'camtint' }), vig = el('div', { cls: 'camvig' }), stickerLayer = el('div', { cls: 'camstickers', 'aria-hidden': 'true' });
   const count = el('div', { cls: 'camcount', 'aria-live': 'assertive' }), flash = el('div', { cls: 'camflash' });
   const wake = el('button', { cls: 'pill camwake', type: 'button' }, 'Turn on camera');
-  const screen = el('div', { cls: 'camscreen' }, video, el('div', { cls: 'camsquare' }, tint, vig), el('div', { cls: 'camside camside-l' }), el('div', { cls: 'camside camside-r' }), count, flash, wake);
+  const screen = el('div', { cls: 'camscreen' }, video, el('div', { cls: 'camsquare' }, tint, vig, stickerLayer), el('div', { cls: 'camside camside-l' }), el('div', { cls: 'camside camside-r' }), count, flash, wake);
   const filterName = el('strong', { cls: 'camfilter' });
   const dial = el('button', { cls: 'camdial', type: 'button' }, el('span', { cls: 'camdialmark' }));
   const timerBtn = el('button', { cls: 'camround', type: 'button', 'aria-pressed': 'false' }, 'Timer');
   const flipBtn = el('button', { cls: 'camround', type: 'button', 'aria-pressed': 'true' }, 'Mirror');
   const shutter = el('button', { cls: 'camshutter', type: 'button', disabled: '', 'aria-label': 'Take the picture' });
   const pad = (cls: string, label: string, mark: string, act: () => void): HTMLElement => el('button', { cls: 'campad ' + cls, type: 'button', 'aria-label': label, onclick: act }, mark);
-  const chips = el('div', { cls: 'chips camchips', role: 'group', 'aria-label': 'Filters' });
+  const chips = el('div', { cls: 'camchips' });
   const camera = el('div', { cls: 'fangcam' },
     el('div', { cls: 'camtop' },
       el('div', { cls: 'camfinder', 'aria-hidden': 'true' }), el('div', { cls: 'camlights', 'aria-hidden': 'true' }, el('i'), el('i')),
@@ -175,7 +193,7 @@ function postPhoto(post: TeaPost): HTMLElement {
           pad('up', 'Zoom in', '▲', () => setZoom(zoom + .25)), pad('left', 'Previous filter', '◀', () => setFilter(filterAt - 1)),
           shutter, pad('right', 'Next filter', '▶', () => setFilter(filterAt + 1)), pad('down', 'Zoom out', '▼', () => setZoom(zoom - .25))))));
   const printSlot = el('div', { cls: 'polaslot' });
-  const p = makePanel('booth', 'Say Fangs', 'Turn on your camera, pick a filter, then press the pink button. Your picture stays on this device unless you choose to post it.', [chips, camera, printSlot], 'Turn on camera');
+  const p = makePanel('booth', 'Say Fangs', 'Turn on your camera, pick a filter or some stickers, then press the pink button. Your picture stays on this device unless you choose to post it.', [chips, camera, printSlot], 'Turn on camera');
 
   let stream: MediaStream | null = null, asking = 0, filterAt = 0, zoom = 1, mirror = true, useTimer = false, countdown = 0;
   const live = (): boolean => !!stream;
@@ -192,12 +210,18 @@ function postPhoto(post: TeaPost): HTMLElement {
     video.style.filter = camCss(f);
     tint.style.background = f.tint ? f.tint[0] : 'none'; tint.style.opacity = f.tint ? String(f.tint[2]) : '0'; tint.style.mixBlendMode = f.tint ? f.tint[1] : 'normal';
     vig.style.background = f.vignette ? 'radial-gradient(circle,transparent 45%,rgba(0,0,0,' + f.vignette + ') 100%)' : 'none';
+    stickerLayer.textContent = '';
+    (f.stickers || []).forEach((st, n) => stickerLayer.append(el('img', { cls: 'camsticker', src: STICKER_ART[st[0]], alt: '', style: 'left:' + st[1] * 100 + '%;top:' + st[2] * 100 + '%;width:' + st[3] * 100 + '%;--tilt:' + st[4] + 'deg;animation-delay:' + n * 70 + 'ms' })));
     filterName.textContent = f.name;
     dial.setAttribute('aria-label', 'Filter: ' + f.name + '. Press for the next one.');
     dial.style.setProperty('--turn', filterAt * 360 / CAM_FILTERS.length + 'deg');
     $$('button', chips).forEach((b, n) => b.setAttribute('aria-pressed', String(n === filterAt)));
   }
-  CAM_FILTERS.forEach((f, i) => chips.append(el('button', { cls: 'chip', type: 'button', onclick() { setFilter(i); } }, f.name)));
+  [COLOUR, SPOOKY, CUTE].forEach(group => {
+    const row = el('div', { cls: 'chips', role: 'group', 'aria-label': group });
+    CAM_FILTERS.forEach((f, i) => { if (f.group === group) row.append(el('button', { cls: 'chip', type: 'button', onclick() { setFilter(i); } }, f.name)); });
+    chips.append(el('p', { cls: 'camgroup', text: group }), row);
+  });
 
   function stopCamera(): void {
     asking++;
@@ -254,7 +278,9 @@ function postPhoto(post: TeaPost): HTMLElement {
     if (mirror) { c.translate(POLA_S, 0); c.scale(-1, 1); }
     c.drawImage(video, (vw - side) / 2, (vh - side) / 2, side, side, 0, 0, POLA_S, POLA_S);
     c.setTransform(1, 0, 0, 1, 0, 0);
-    camShade(c, POLA_S, CAM_FILTERS[filterAt]);
+    const f = CAM_FILTERS[filterAt];
+    camShade(c, POLA_S, f);
+    await camStickers(c, POLA_S, f);
     await document.fonts.load('38px "Breath of the House"').catch(() => []);
     showPrint(polaroidData(drawPolaroid(photo)));
   }
