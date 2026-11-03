@@ -53,7 +53,7 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
   const p = makePanel('riptide', 'Riptide Run', 'Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three stings and you surface.', [cv]);
   interface Thing { x: number; y: number; r: number; pearl: boolean; phase: number }
   let run = false, rise = false, y = 180, vy = 0, things: Thing[] = [], score = 0, lives = 3, safe = 0, last = 0, gap = 0, far = 0, shown = 0, hunt = false;
-  const stat = () => { p.stat.textContent = (run ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + store.get('riptideBest', 0); };
+  const stat = () => { p.stat.textContent = (run ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('riptide'); };
   function scene(): void {
     const g = c.createLinearGradient(0, 0, 0, 360); g.addColorStop(0, '#0b6f9c'); g.addColorStop(1, '#14081a');
     c.fillStyle = g; c.fillRect(0, 0, 480, 360);
@@ -136,7 +136,7 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
   let run = false, left = 0, score = 0, streak = 0, last = 0, aim = { x: -.6, y: .65 }, power = .62;
   let ball: { x: number; y: number; vx: number; vy: number } | null = null, drag = false;
   let box = { x: 340, y: 210, w: 92, dir: 1 }, moving = false, note = '';
-  const stat = () => { p.stat.textContent = (run ? 'Time: ' + Math.ceil(left / 1000) + '  Score: ' + score + '  ' : '') + 'Best: ' + store.get('casketBest', 0); };
+  const stat = () => { p.stat.textContent = (run ? 'Time: ' + Math.ceil(left / 1000) + '  Score: ' + score + '  ' : '') + 'Best: ' + displayBest('casket'); };
   function skull(x: number, y: number): void {
     c.fillStyle = '#fff6fb'; c.strokeStyle = '#000'; c.lineWidth = 3;
     c.beginPath(); c.arc(x, y, 14, 0, 7); c.fill(); c.stroke();
@@ -222,7 +222,6 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
 })();
 
 /* ---------- shelf: search, filters, favourites ---------- */
-const BEST_KEYS: Record<string, string> = { spill: 'spillBest', riot: 'riotBest', hearse: 'hearseBest', dance: 'danceBest', riptide: 'riptideBest', hall: 'hallBest', casket: 'casketBest', tray: 'trayBest', stack: 'stackBest', locker: 'lockerBest' };
 let shelfGenre = 'All', shelfQuery = '', currentGame = 'closet';
 const favourites = (): string[] => store.get<string[]>('favs', []);
 const titleOf = (id: string): string => (MENU.find(g => g[0] === id) || MENU[0])[1];
@@ -245,7 +244,7 @@ function renderMenu(): void {
   rows.forEach(g => {
     const b = el('button', { cls: 'gcard', type: 'button', 'data-game': g[0], 'aria-pressed': g[0] === currentGame, onclick() { openGame(g[0], true); } });
     const art = el('div', { cls: 'gart', 'aria-hidden': 'true' }); art.textContent = g[4];
-    const best = BEST_KEYS[g[0]] ? store.get<number>(BEST_KEYS[g[0]], 0) : 0;
+    const best = SCORED_GAMES.includes(g[0]) ? displayBest(g[0]) : 0;
     const body = el('div', { cls: 'gbody' }, el('strong', { text: g[1] }), el('small', { text: g[3] }));
     if (best) body.append(el('span', { cls: 'gbest', text: 'Best: ' + best }));
     body.append(el('em', { text: g[2] }));

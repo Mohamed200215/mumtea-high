@@ -329,7 +329,177 @@ end $$;
 revoke all on function public.admin_delete_score(text, uuid, text) from public;
 grant execute on function public.admin_delete_score(text, uuid, text) to anon, authenticated;
 
+-- Editing posts. People change only the words of their own posts; edited_at is set by the database.
+alter table public.posts add column if not exists edited_at timestamptz;
+create or replace function private.mark_edited() returns trigger language plpgsql set search_path = '' as $$
+begin
+  if new.title is distinct from old.title or new.body is distinct from old.body then new.edited_at := now(); end if;
+  return new;
+end $$;
+drop trigger if exists posts_mark_edited on public.posts;
+create trigger posts_mark_edited before update on public.posts for each row execute function private.mark_edited();
+drop policy if exists "people edit their posts" on public.posts;
+create policy "people edit their posts" on public.posts for update to authenticated
+  using (author_id = auth.uid() and exists (select 1 from public.profiles where id = auth.uid() and verified and not muted))
+  with check (author_id = auth.uid());
+grant update (title, body) on public.posts to authenticated;
+
+-- Comments. No author means Ms. Fangtastic, the same as posts.
+create table if not exists public.comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.posts (id) on delete cascade,
+  author_id uuid default auth.uid() references public.profiles (id) on delete cascade,
+  body text not null check (char_length(btrim(body)) between 1 and 1000),
+  created_at timestamptz not null default now()
+);
+create index if not exists comments_post on public.comments (post_id, created_at);
+alter table public.comments enable row level security;
+drop policy if exists "comments are public" on public.comments;
+create policy "comments are public" on public.comments for select using (true);
+drop policy if exists "people comment as themselves" on public.comments;
+create policy "people comment as themselves" on public.comments for insert to authenticated with check (
+  author_id = auth.uid() and exists (select 1 from public.profiles where id = auth.uid() and verified and not muted)
+);
+drop policy if exists "people delete their comments" on public.comments;
+create policy "people delete their comments" on public.comments for delete to authenticated using (author_id = auth.uid());
+revoke all on public.comments from anon, authenticated;
+grant select on public.comments to anon, authenticated;
+grant insert (post_id, body) on public.comments to authenticated;
+grant delete on public.comments to authenticated;
+
+-- Reactions: one of each kind per person per post. No user means Ms. Fangtastic.
+create table if not exists public.post_reactions (
+  id bigint generated always as identity primary key,
+  post_id uuid not null references public.posts (id) on delete cascade,
+  user_id uuid default auth.uid() references public.profiles (id) on delete cascade,
+  kind text not null check (kind in ('fang', 'tea', 'skull', 'heart', 'fire')),
+  unique (post_id, user_id, kind)
+);
+create unique index if not exists post_reactions_one_fang on public.post_reactions (post_id, kind) where user_id is null;
+alter table public.post_reactions enable row level security;
+drop policy if exists "reactions are public" on public.post_reactions;
+create policy "reactions are public" on public.post_reactions for select using (true);
+drop policy if exists "people react as themselves" on public.post_reactions;
+create policy "people react as themselves" on public.post_reactions for insert to authenticated with check (
+  user_id = auth.uid() and exists (select 1 from public.profiles where id = auth.uid() and verified)
+);
+drop policy if exists "people remove their reactions" on public.post_reactions;
+create policy "people remove their reactions" on public.post_reactions for delete to authenticated using (user_id = auth.uid());
+revoke all on public.post_reactions from anon, authenticated;
+grant select on public.post_reactions to anon, authenticated;
+grant insert (post_id, kind) on public.post_reactions to authenticated;
+grant delete on public.post_reactions to authenticated;
+
+-- Reports go only to whoever holds the admin code. Nobody else can read them, including who reported what.
+create table if not exists public.reports (
+  id uuid primary key default gen_random_uuid(),
+  reporter_id uuid default auth.uid() references public.profiles (id) on delete set null,
+  post_id uuid references public.posts (id) on delete cascade,
+  comment_id uuid references public.comments (id) on delete cascade,
+  target_user uuid references public.profiles (id) on delete cascade,
+  reason text not null check (char_length(reason) between 1 and 300),
+  created_at timestamptz not null default now(),
+  check (num_nonnulls(post_id, comment_id, target_user) = 1)
+);
+create unique index if not exists reports_once on public.reports (reporter_id, coalesce(post_id, comment_id, target_user));
+alter table public.reports enable row level security;
+drop policy if exists "people report as themselves" on public.reports;
+create policy "people report as themselves" on public.reports for insert to authenticated with check (
+  reporter_id = auth.uid() and exists (select 1 from public.profiles where id = auth.uid() and verified)
+);
+revoke all on public.reports from anon, authenticated;
+grant insert (post_id, comment_id, target_user, reason) on public.reports to authenticated;
+
+-- Bones follow the account. Scores already do, through game_scores.
+create table if not exists public.player_progress (
+  user_id uuid primary key references public.profiles (id) on delete cascade,
+  bones integer not null default 0 check (bones between 0 and 10000000),
+  updated_at timestamptz not null default now()
+);
+alter table public.player_progress enable row level security;
+drop policy if exists "progress is public" on public.player_progress;
+create policy "progress is public" on public.player_progress for select using (true);
+revoke all on public.player_progress from anon, authenticated;
+grant select on public.player_progress to anon, authenticated;
+create or replace function public.save_bones(total integer) returns void
+language plpgsql security definer set search_path = '' as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'log in first'; end if;
+  if not exists (select 1 from public.profiles where id = me and verified) then raise exception 'verify your email first'; end if;
+  if total is null or total < 0 or total > 10000000 then raise exception 'bad total'; end if;
+  insert into public.player_progress (user_id, bones) values (me, total)
+    on conflict (user_id) do update set bones = excluded.bones, updated_at = now();
+end $$;
+revoke all on function public.save_bones(integer) from public, anon;
+grant execute on function public.save_bones(integer) to authenticated;
+
+-- What the admin code can do with all of this.
+create or replace function public.admin_edit_post(token text, target uuid, title text, body text) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_admin(token);
+  update public.posts p set title = admin_edit_post.title, body = admin_edit_post.body where p.id = target and p.author_id is null;
+end $$;
+create or replace function public.admin_comment(token text, target uuid, body text) returns uuid
+language plpgsql security definer set search_path = '' as $$
+declare new_id uuid;
+begin
+  perform private.require_admin(token);
+  insert into public.comments (post_id, author_id, body) values (target, null, admin_comment.body) returning id into new_id;
+  return new_id;
+end $$;
+create or replace function public.admin_delete_comment(token text, target uuid) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_admin(token);
+  delete from public.comments where id = target;
+end $$;
+create or replace function public.admin_toggle_reaction(token text, target uuid, which text) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_admin(token);
+  delete from public.post_reactions where post_id = target and kind = which and user_id is null;
+  if not found then insert into public.post_reactions (post_id, user_id, kind) values (target, null, which); end if;
+end $$;
+create or replace function public.admin_reports(token text) returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare result jsonb;
+begin
+  perform private.require_admin(token);
+  select coalesce(jsonb_agg(row order by row.at desc), '[]'::jsonb) into result from (
+    select r.id, r.reason, r.created_at as at, who.username as reporter, r.post_id, r.comment_id, r.target_user,
+      coalesce(p.title, '') as title, coalesce(p.body, c.body, '') as body, coalesce(c.post_id, r.post_id) as in_post,
+      coalesce(p.author_id, c.author_id, r.target_user) as author_id
+    from public.reports r
+    left join public.profiles who on who.id = r.reporter_id
+    left join public.posts p on p.id = r.post_id
+    left join public.comments c on c.id = r.comment_id
+  ) row;
+  return result;
+end $$;
+create or replace function public.admin_dismiss_report(token text, target uuid) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_admin(token);
+  delete from public.reports where id = target;
+end $$;
+do $$
+declare f text;
+begin
+  foreach f in array array['admin_edit_post(text, uuid, text, text)', 'admin_comment(text, uuid, text)', 'admin_delete_comment(text, uuid)', 'admin_toggle_reaction(text, uuid, text)', 'admin_reports(text)', 'admin_dismiss_report(text, uuid)'] loop
+    execute 'revoke all on function public.' || f || ' from public';
+    execute 'grant execute on function public.' || f || ' to anon, authenticated';
+  end loop;
+end $$;
+
 -- Live updates.
+do $$ begin
+  alter publication supabase_realtime add table public.comments;
+exception when duplicate_object then null; end $$;
+do $$ begin
+  alter publication supabase_realtime add table public.post_reactions;
+exception when duplicate_object then null; end $$;
 do $$ begin
   alter publication supabase_realtime add table public.game_scores;
 exception when duplicate_object then null; end $$;

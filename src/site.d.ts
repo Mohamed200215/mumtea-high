@@ -10,6 +10,8 @@ declare const $$: <E extends Element = HTMLElement>(s: string, r?: ParentNode) =
 declare const el: (t: string, p?: Record<string, unknown>, ...k: Array<Node | string>) => HTMLElement;
 declare const tone: (f: number, d?: number) => void;
 declare function award(n: number): void;
+declare let bones: number;
+declare function drawBones(): void;
 declare function openGame(id: string, scroll?: boolean): void;
 declare const supabase: { createClient(url: string, key: string, options?: unknown): any };
 declare function paintDolls(): void;

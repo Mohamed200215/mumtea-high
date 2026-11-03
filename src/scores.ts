@@ -29,10 +29,21 @@ async function refreshScores(): Promise<void> {
   allScores = data as ScoreRow[];
   scoresLoaded = true;
 }
+const roundBest: Record<string, number> = {};
+/* A logged-in player's best comes from their account; a guest's stays on this device. */
+function displayBest(game: string): number {
+  /* The games draw their labels while the page is still loading, before accounts are ready. */
+  try {
+    if (isAdmin() || signedInId()) return Math.max(allScores.find(r => r.game === game && isMine(r.user_id))?.score || 0, roundBest[game] || 0);
+  } catch (e) { /* still loading */ }
+  return store.get<number>(game + 'Best', 0);
+}
 function renderScores(): void {
   scoreBoard.textContent = '';
   /* If the scores can't be read, the games carry on without a board. */
   scoreBoard.hidden = !scoresLoaded;
+  renderMenu();
+  SCORED_GAMES.forEach(game => { const label = document.querySelector('.gpanel[data-game="' + game + '"] [role=status]'); if (label && /^Best:/.test(label.textContent || '')) label.textContent = 'Best: ' + displayBest(game); });
   if (!scoresLoaded) return;
   const tabs = el('div', { cls: 'chips', role: 'group', 'aria-label': 'Choose a game' }, ...SCORED_GAMES.map(game => el('button', { cls: 'chip', type: 'button', 'aria-pressed': game === scoreTab, onclick() { scoreTab = game; renderScores(); } }, titleOf(game))));
   scoreBoard.append(el('h3', { id: 'lboardTitle', text: 'Leaderboard' }), tabs);
@@ -41,7 +52,7 @@ function renderScores(): void {
   else {
     const list = el('ol', { cls: 'lblist' });
     rows.slice(0, BOARD_SIZE).forEach((r, i) => {
-      const line = el('li', { cls: 'lbrow' + (isMine(r.user_id) ? ' lbme' : '') }, el('span', { cls: 'lbrank', text: String(i + 1) }), headOf(r.who), el('strong', { cls: 'lbname', text: r.who.name + (isMine(r.user_id) ? ' (you)' : '') }), el('span', { cls: 'lbscore', text: r.score.toLocaleString() }));
+      const line = el('li', { cls: 'lbrow' + (isMine(r.user_id) ? ' lbme' : '') }, el('span', { cls: 'lbrank', text: String(i + 1) }), headOf(r.who), el('strong', { cls: 'lbname' }, personButton(r.user_id, r.who.name + (isMine(r.user_id) ? ' (you)' : ''))), el('span', { cls: 'lbscore', text: r.score.toLocaleString() }));
       if (isAdmin()) line.append(el('button', { cls: 'linkish', type: 'button', 'aria-label': 'Remove the score of ' + r.who.name, async onclick() {
         const { error } = await sb.rpc('admin_delete_score', { token: adminPass, target: r.user_id, which: r.game });
         scoreNote = error ? 'That score was not removed. Try again.' : '';
@@ -83,6 +94,7 @@ async function submitScore(game: string, score: number): Promise<void> {
   const asFang = isAdmin();
   if (!backendReady || !scoresLoaded || score < 1 || (!asFang && !signedInId())) return;
   scoreTab = game;
+  roundBest[game] = Math.max(roundBest[game] || 0, score);
   const before = boardFor(game).find(r => isMine(r.user_id))?.score || 0;
   const { data, error } = asFang ? await sb.rpc('admin_submit_score', { token: adminPass, which: game, points: score }) : await sb.rpc('submit_score', { which: game, points: score });
   scoreNote = error ? 'Your score did not save. It will count next round if you beat it again.' : score > before ? 'New personal best saved: ' + score.toLocaleString() + '.' : '';

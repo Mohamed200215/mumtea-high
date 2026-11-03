@@ -23,7 +23,7 @@ const PATTERNS: Array<[string, string]> = [['solid', 'Plain'], ['stripes', 'Stri
    Legs: [hip, knee], with positive swinging outward. Hands: open, relaxed, fist, point, peace, horns. front puts that arm over the face. */
 interface Pose { id: string; name: string; armL: [number, number]; armR: [number, number]; legL?: [number, number]; legR?: [number, number]; lean?: number; tilt?: number; lift?: number; handL?: string; handR?: string; front?: 'L' | 'R' | 'LR' }
 const POSES: Pose[] = [
-  { id: 'classic', name: 'Classic', armL: [20, 15], armR: [30, -31] },
+  { id: 'classic', name: 'Classic', armL: [20, 15], armR: [32, -31], legL: [-4, 2], legR: [5, -6], tilt: 4 },
   { id: 'hips', name: 'Both hips', armL: [32, -31], armR: [32, -31], handL: 'relaxed', tilt: 3 },
   { id: 'relaxed', name: 'Relaxed', armL: [12, 8], armR: [12, 8], handL: 'relaxed', handR: 'relaxed' },
   { id: 'wave', name: 'Wave', armL: [18, 12], armR: [105, 165], handR: 'open', tilt: 5 },
@@ -54,6 +54,13 @@ const POSES: Pose[] = [
   { id: 'twirl', name: 'Twirl', armL: [150, 195], armR: [65, 40], handL: 'open', handR: 'open', legL: [1, 0], legR: [22, -60], lean: 3, tilt: 6 },
   { id: 'dance', name: 'Disco', armL: [32, -31], armR: [150, 165], handR: 'point', legL: [3, 0], legR: [20, -30], lean: -6, tilt: -6 },
   { id: 'lean', name: 'Sassy lean', armL: [32, -31], armR: [15, 8], handR: 'relaxed', lean: 7, tilt: -8, legL: [8, 0], legR: [-2, 0] },
+  { id: 'power', name: 'Power pose', armL: [32, -31], armR: [32, -31], handL: 'relaxed', legL: [-15, 7], legR: [-15, 7], lean: 2, tilt: -7 },
+  { id: 'cheek', name: 'Finger to cheek', armL: [16, 10], armR: [95, -118], handL: 'relaxed', handR: 'point', legL: [-5, 3], legR: [14, -24], lean: -2, tilt: 9, front: 'R' },
+  { id: 'toss', name: 'Hair toss', armL: [32, -31], armR: [125, -150], handR: 'open', legL: [11, -16], legR: [-7, 4], lean: 6, tilt: -10, front: 'R' },
+  { id: 'pigeon', name: 'Pigeon toes', armL: [32, -31], armR: [14, 8], handR: 'relaxed', legL: [11, -24], legR: [11, -24], tilt: 8 },
+  { id: 'stride', name: 'Big stride', armL: [-12, -4], armR: [28, 18], handL: 'relaxed', handR: 'relaxed', legL: [-14, 8], legR: [22, -18], lean: 4, tilt: 7 },
+  { id: 'vogue', name: 'Vogue', armL: [125, -150], armR: [32, -31], handL: 'open', legL: [7, -6], legR: [-14, 7], tilt: 8, lean: -4, front: 'L' },
+  { id: 'curtsy', name: 'Curtsy', armL: [38, 12], armR: [38, 12], handL: 'relaxed', handR: 'relaxed', legL: [-17, 12], legR: [20, -20], tilt: 10 },
   { id: 'phone', name: 'Selfie', armL: [20, 15], armR: [70, 150], handR: 'relaxed', tilt: 7, legR: [10, -10] },
 ];
 const poseOf = (id: string): Pose => POSES.find(p => p.id === id) || POSES[0];
@@ -1150,6 +1157,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     if (!out) return '';
     if (THIN.includes(l)) out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
     if (SHADED.includes(l)) out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
+    if (l === 'hairBack' && !scarfOn) out = '<g transform="translate(160 110) scale(1.16 1.04) translate(-160 -110)">' + out + '</g>';
     if (l === 'hairFront' && !scarfOn) out = '<g transform="translate(160 0) scale(1.1 1) translate(-160 0)">' + out + '</g>';
     if (HEAD_LAYERS.includes(l)) out = '<g transform="translate(160 205) scale(1.05) translate(-160 -205)">' + out + '</g>';
     if (tilt && HEAD_LAYERS.includes(l)) out = '<g transform="rotate(' + tilt + ' 160 195)">' + out + '</g>';

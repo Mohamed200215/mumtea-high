@@ -244,3 +244,51 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 @media (prefers-reduced-motion:reduce){.hitoast{animation:none}}
 @media (max-width:520px){.lbrow{grid-template-columns:24px 44px minmax(0,1fr) auto auto;gap:7px;padding-right:8px}.lbface{width:44px;height:44px}.lbscore{font-size:18px}}
 .lboard[hidden]{display:none}
+
+/* every character stays inside its own space */
+.doll{overflow:hidden}
+.doll svg{overflow:hidden!important}
+/* people's names lead to their page */
+.personlink{background:none;border:0;padding:0;color:inherit;font:inherit;letter-spacing:inherit;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.personlink:hover{color:var(--pink);text-decoration:underline}
+/* search */
+.teasearch{margin:0 0 14px}
+.teasearch input{width:100%;box-sizing:border-box;padding:10px 12px;background:#000;color:var(--white);border:3px solid var(--cyan-deep,#19b7e8);font:700 16px var(--body)}
+.teacountline{margin:6px 0 0;font-weight:800;color:var(--paper);min-height:1.3em}
+/* post extras */
+.readmore{display:block;margin:0 0 8px}
+.reactbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.reactbtn{display:inline-flex;align-items:center;gap:4px;min-height:34px;min-width:44px;justify-content:center;padding:2px 8px;background:#14101a;color:var(--white);border:2px solid var(--violet);font:800 13px var(--body);cursor:pointer}
+.reactbtn:hover{border-color:var(--pink)}
+.reactbtn[aria-pressed="true"]{background:#5a0f4a;border-color:var(--pink)}
+.teatools{display:flex;flex-wrap:wrap;gap:6px 14px;margin:4px 0}
+.cmtbox{margin-top:8px;padding-top:8px;border-top:2px solid rgba(255,255,255,.14);display:grid;gap:8px;justify-items:start}
+.cmtrow{display:grid;grid-template-columns:38px minmax(0,1fr);gap:8px;width:100%}
+.cmtface{display:block;width:38px;height:38px;overflow:hidden;border-radius:50%;background:var(--plum);border:2px solid var(--violet)}
+.cmtface svg,.lbface svg{display:block;width:100%;height:100%;overflow:hidden!important}
+.cmtbody{min-width:0}
+.cmtwho{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;font:800 14px var(--body)}
+.cmtwho time{font-weight:400;font-size:12px;color:var(--muted)}
+.cmtbody p{margin:2px 0;overflow-wrap:anywhere;white-space:pre-wrap}
+.cmttools{display:flex;gap:12px}
+.cmtform{width:100%;display:grid;gap:6px}
+.cmtform textarea{width:100%;box-sizing:border-box}
+.cmtnote{margin:0;font-size:13px;font-weight:700}
+.reportreasons{border:0;padding:0;margin:0;display:grid;gap:6px}
+.reportreasons legend{font-weight:800;margin-bottom:4px}
+.reportreasons label{display:flex;gap:8px;align-items:center}
+.reportwhy{color:var(--paper);font-weight:800}
+.reportrow{align-items:start;flex-wrap:wrap}
+/* a student's page */
+.studentpage{display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr);gap:24px;align-items:start;margin-bottom:16px}
+.studentfacts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;margin:8px 0 14px}
+.studentfacts dt{font-weight:800;color:var(--paper)}
+.studentfacts dd{margin:0;overflow-wrap:anywhere}
+.studentscores{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.studentscores li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 14px}
+.studentscores span{color:var(--teal);font-weight:800}
+#studentPage .panel{margin-top:14px}
+.rulespage .panel{margin-top:12px}
+.rulespage ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+.rulesline{margin:0 0 10px}
+@media (max-width:620px){.studentpage{grid-template-columns:minmax(0,1fr)}.studentpage .doll{max-width:200px;margin-inline:auto}}

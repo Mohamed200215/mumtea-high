@@ -103,7 +103,12 @@ function mountStudio(parent: Element): void {
 }
 /* Called whenever the page changes view. */
 function viewOpened(v: string): void {
-  if (v === 'admin') { renderAdmin(); if (isAdmin()) mountStudio($('#adminStudio')); }
+  if (v === 'student') renderStudentPage();
+  queueFit();
+  if (v === 'admin') {
+    renderAdmin();
+    if (isAdmin()) { mountStudio($('#adminStudio')); refreshAdminStudents().then(renderAdmin, () => {}); }
+  }
   if (v === 'profile') { renderProfile(); if (signedInId() || isAdmin()) mountStudio($('#profileStudio')); }
   if (v === 'games' && currentGame === 'closet') mountStudio($('#closetHome'));
 }

@@ -476,6 +476,54 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 @media (max-width:520px){.lbrow{grid-template-columns:24px 44px minmax(0,1fr) auto auto;gap:7px;padding-right:8px}.lbface{width:44px;height:44px}.lbscore{font-size:18px}}
 .lboard[hidden]{display:none}
 
+/* every character stays inside its own space */
+.doll{overflow:hidden}
+.doll svg{overflow:hidden!important}
+/* people's names lead to their page */
+.personlink{background:none;border:0;padding:0;color:inherit;font:inherit;letter-spacing:inherit;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.personlink:hover{color:var(--pink);text-decoration:underline}
+/* search */
+.teasearch{margin:0 0 14px}
+.teasearch input{width:100%;box-sizing:border-box;padding:10px 12px;background:#000;color:var(--white);border:3px solid var(--cyan-deep,#19b7e8);font:700 16px var(--body)}
+.teacountline{margin:6px 0 0;font-weight:800;color:var(--paper);min-height:1.3em}
+/* post extras */
+.readmore{display:block;margin:0 0 8px}
+.reactbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.reactbtn{display:inline-flex;align-items:center;gap:4px;min-height:34px;min-width:44px;justify-content:center;padding:2px 8px;background:#14101a;color:var(--white);border:2px solid var(--violet);font:800 13px var(--body);cursor:pointer}
+.reactbtn:hover{border-color:var(--pink)}
+.reactbtn[aria-pressed="true"]{background:#5a0f4a;border-color:var(--pink)}
+.teatools{display:flex;flex-wrap:wrap;gap:6px 14px;margin:4px 0}
+.cmtbox{margin-top:8px;padding-top:8px;border-top:2px solid rgba(255,255,255,.14);display:grid;gap:8px;justify-items:start}
+.cmtrow{display:grid;grid-template-columns:38px minmax(0,1fr);gap:8px;width:100%}
+.cmtface{display:block;width:38px;height:38px;overflow:hidden;border-radius:50%;background:var(--plum);border:2px solid var(--violet)}
+.cmtface svg,.lbface svg{display:block;width:100%;height:100%;overflow:hidden!important}
+.cmtbody{min-width:0}
+.cmtwho{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;font:800 14px var(--body)}
+.cmtwho time{font-weight:400;font-size:12px;color:var(--muted)}
+.cmtbody p{margin:2px 0;overflow-wrap:anywhere;white-space:pre-wrap}
+.cmttools{display:flex;gap:12px}
+.cmtform{width:100%;display:grid;gap:6px}
+.cmtform textarea{width:100%;box-sizing:border-box}
+.cmtnote{margin:0;font-size:13px;font-weight:700}
+.reportreasons{border:0;padding:0;margin:0;display:grid;gap:6px}
+.reportreasons legend{font-weight:800;margin-bottom:4px}
+.reportreasons label{display:flex;gap:8px;align-items:center}
+.reportwhy{color:var(--paper);font-weight:800}
+.reportrow{align-items:start;flex-wrap:wrap}
+/* a student's page */
+.studentpage{display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr);gap:24px;align-items:start;margin-bottom:16px}
+.studentfacts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;margin:8px 0 14px}
+.studentfacts dt{font-weight:800;color:var(--paper)}
+.studentfacts dd{margin:0;overflow-wrap:anywhere}
+.studentscores{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.studentscores li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 14px}
+.studentscores span{color:var(--teal);font-weight:800}
+#studentPage .panel{margin-top:14px}
+.rulespage .panel{margin-top:12px}
+.rulespage ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+.rulesline{margin:0 0 10px}
+@media (max-width:620px){.studentpage{grid-template-columns:minmax(0,1fr)}.studentpage .doll{max-width:200px;margin-inline:auto}}
+
 /*ARCADE-CSS-END*/
 </style>
 
@@ -661,6 +709,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
   <section class="view band" data-view="registration" hidden><div class="wrap">
     <h2 class="sec-h">Registration</h2>
     <p class="lede">Register to get your own ghoul. Take the nine-question quiz to find your blend.</p>
+    <p class="rulesline">By joining, you agree to the <button class="linkish" type="button" data-go="rules">rules and privacy page</button>.</p>
     <div class="two">
       <div class="panel" id="quiz"></div>
       <div>
@@ -695,6 +744,27 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
     <section class="adminstudiobox" id="adminStudioBox" hidden><h3>Dress Ms. Fangtastic</h3><div id="adminStudio"></div></section>
   </div></section>
 
+  <section class="view band" data-view="student" hidden><div class="wrap" id="studentPage"></div></section>
+
+  <section class="view band" data-view="rules" hidden><div class="wrap rulespage">
+    <h2 class="sec-h">Rules and privacy</h2>
+    <p class="lede">The short version of how Mumtea High works. By using the site, you agree to this.</p>
+    <div class="panel"><h3>School rules</h3><ul>
+      <li>You must be at least 13 to make an account.</li>
+      <li>Spill tea, not cruelty. No bullying, threats or hate.</li>
+      <li>Nothing sexual, and nothing illegal.</li>
+      <li>Don't post anyone's private details, including your own.</li>
+      <li>No spam, and no pretending to be someone else.</li>
+      <li>Ms. Fangtastic runs the school. She can remove any post or comment, stop someone posting, or delete any account.</li>
+    </ul></div>
+    <div class="panel"><h3>Reporting</h3><p>Use the Report link on a post, a comment or a student's page. Only Ms. Fangtastic sees reports, including who sent them. She decides what happens next.</p></div>
+    <div class="panel"><h3>What everyone can see</h3><p>Your username, your character, when you joined, your tea blend, your posts, comments, reactions, game scores and bones are public, including to people who are not logged in.</p></div>
+    <div class="panel"><h3>What stays private</h3><p>Your email address is used to verify your account and reset your password, and it is never shown on the site. Your password is stored scrambled, so nobody can read it. A student ID photo stays on your own device and is never uploaded.</p></div>
+    <div class="panel"><h3>Who helps run the site</h3><p>Accounts and posts are stored with Supabase. Emails are sent through Brevo. The site itself is hosted by GitHub Pages. Your browser also keeps small notes on your device, like your login and post drafts.</p></div>
+    <div class="panel"><h3>Leaving</h3><p>You can delete your account yourself on the Registration page when you are logged in. That removes your character, posts, comments, reactions, scores and bones.</p></div>
+    <p>Mumtea High is an unofficial fan gift and is not connected to any toy, film or game company.</p>
+  </div></section>
+
   <section class="view band" data-view="academics" hidden><div class="wrap">
     <h2 class="sec-h">Academics</h2>
     <p class="lede">Ms. Fangtastic's class schedule. Attendance is optional, tea is not.</p>
@@ -721,7 +791,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 
 <footer><div class="wrap">
   <p>Mumtea High. Home of Mumtea, aka Ms. Fantastic, aka Ms. Fangtastic. Stay fangtastic.</p>
-  <p>Unofficial fan gift.</p>
+  <p>Unofficial fan gift. <button class="linkish" type="button" data-go="rules">Rules and privacy</button></p>
 </div></footer>
 </template>
 
@@ -759,7 +829,7 @@ function paintDolls(){$$('[data-doll]').forEach(s=>{const o=DOLLS[s.dataset.doll
 
 
 /* ---------- navigation ---------- */
-const VIEWS=['home','games','tea','registration','profile','fangtastic','students','academics','admin'];
+const VIEWS=['home','games','tea','registration','profile','fangtastic','students','student','rules','academics','admin'];
 function go(v,postId){
   if(!VIEWS.includes(v))v='home';
   $$('.view').forEach(s=>s.hidden=s.dataset.view!==v);
@@ -783,7 +853,7 @@ function drawBones(){
   $('#flask').setAttribute('aria-label','Flask '+Math.round(pct*100)+' percent full of school spirit');
 }
 function award(n){
-  const was=bones;bones+=n;store.set('bones',bones);drawBones();
+  const was=bones;bones+=n;store.set('bones',bones);drawBones();saveBonesSoon();
   if(was<FULL&&bones>=FULL)say('Earl Ghoul','Spirit meter full! Your secret code is BOOBREW.');
 }
 
@@ -838,7 +908,7 @@ const tone=(f,d=.18)=>{if(store.get('mute',false))return;try{ctx=ctx||new (windo
 (function(){
   const cv=$('#spill'),c=cv.getContext('2d'),W=cv.width,H=cv.height;
   let run=false,x=W/2,items=[],score=0,lives=3,t=0,last=0,best=store.get('spillBest',0),keys={};
-  const stat=()=>{$('#spillStat').textContent=(run?'Score: '+score+'  Lives: '+lives+'  ':'')+'Best: '+best};
+  const stat=()=>{$('#spillStat').textContent=(run?'Score: '+score+'  Lives: '+lives+'  ':'')+'Best: '+displayBest('spill')};
   stat();
   function cup(px){
     c.save();c.translate(px,H-34);
@@ -976,7 +1046,7 @@ $('#wallFile').addEventListener('change',async e=>{
    and it checks that pass again on every action (supabase/schema.sql). The buttons here only ask. */
 const DEFAULT_NOTE = 'Everyone is welcome at Mumtea High. Sit down, pour a cup, say what you actually think.';
 const ADMIN_PASS_KEY = 'mh.adminPass';
-let siteNote = '', adminStudents = [];
+let siteNote = '', adminStudents = [], adminReports = [];
 const readPass = () => { try {
     return sessionStorage.getItem(ADMIN_PASS_KEY);
 }
@@ -1005,6 +1075,7 @@ async function refreshNote() {
 async function refreshAdminStudents() {
     if (!isAdmin()) {
         adminStudents = [];
+        adminReports = [];
         return;
     }
     const { data, error } = await sb.rpc('admin_students', { token: adminPass });
@@ -1013,6 +1084,8 @@ async function refreshAdminStudents() {
         return;
     }
     adminStudents = data.map(toStudent);
+    const reports = await sb.rpc('admin_reports', { token: adminPass });
+    adminReports = reports.error ? [] : reports.data;
 }
 /* The pass expired, or the code was changed. */
 function adminEnded() {
@@ -1054,7 +1127,7 @@ function renderBoss() {
     list.textContent = '';
     const hers = allPosts.filter(p => p.authorId === null).slice(0, 3);
     $('#fangPostsBox').hidden = !hers.length;
-    hers.forEach(p => { const card = postCard(p, false); card.removeAttribute('id'); list.append(card); });
+    hers.forEach(p => { const card = postCard(p, false, true); card.removeAttribute('id'); list.append(card); });
     $('#navAdmin').hidden = !isAdmin();
     if (!isAdmin() && !$('[data-view="admin"]').hidden)
         go('home');
@@ -1080,13 +1153,14 @@ function renderAdmin() {
             status.textContent = 'That did not work. Please try again.';
             return;
         }
-        await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents()]);
+        await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshCommunity().catch(() => { }), refreshScores().catch(() => { })]);
         paintDolls();
         renderStudents();
         renderBlog();
         fillSlide();
         renderBoss();
         renderAdmin();
+        renderScores();
         $('#adminBox .accountnote').textContent = done;
     };
     const noteInput = el('textarea', { id: 'noteInput', maxlength: 300, rows: 3 });
@@ -1095,6 +1169,39 @@ function renderAdmin() {
     noteForm.addEventListener('submit', e => {
         e.preventDefault();
         run('admin_set_note', { note: noteInput.value.trim() }, 'Note saved.');
+    });
+    const reports = el('div', { cls: 'adminlist' });
+    if (!adminReports.length)
+        reports.append(el('p', { text: 'Nothing has been reported. The halls are quiet.' }));
+    adminReports.forEach(r => {
+        const sure = (label, name, args, done) => {
+            const b = el('button', { cls: 'pill danger', type: 'button', onclick() {
+                    if (!b.dataset.sure) {
+                        b.dataset.sure = '1';
+                        b.textContent = 'Click again to confirm';
+                        return;
+                    }
+                    run(name, args, done);
+                } }, label);
+            return b;
+        };
+        const kind = r.post_id ? 'Post' : r.comment_id ? 'Comment' : 'Account';
+        const author = r.author_id ? nameOf(r.author_id) : DOLLS.mumtea.name;
+        const buttons = el('div', { cls: 'row' });
+        if (r.in_post)
+            buttons.append(el('button', { cls: 'pill ghost', type: 'button', onclick() { if (r.comment_id)
+                    openComments.add(r.in_post); blogQuery = ''; go('tea', r.in_post); } }, 'See it'));
+        if (r.target_user)
+            buttons.append(el('button', { cls: 'pill ghost', type: 'button', onclick() { openProfile(r.target_user); } }, 'See profile'));
+        if (r.post_id)
+            buttons.append(sure('Delete post', 'admin_delete_post', { target: r.post_id }, 'Post deleted.'));
+        if (r.comment_id)
+            buttons.append(sure('Delete comment', 'admin_delete_comment', { target: r.comment_id }, 'Comment deleted.'));
+        if (r.author_id)
+            buttons.append(sure('Delete ' + author + "'s account", 'admin_delete_user', { target: r.author_id }, author + ' has been removed from the school.'));
+        buttons.append(el('button', { cls: 'pill ghost', type: 'button', onclick() { run('admin_dismiss_report', { target: r.id }, 'Report dismissed.'); } }, 'Dismiss'));
+        const said = kind === 'Account' ? '' : (r.title ? r.title + ': ' : '') + r.body;
+        reports.append(el('div', { cls: 'adminrow reportrow' }, el('div', { cls: 'adminwho' }, el('strong', { text: kind + ' by ' + author }), el('small', { text: 'Reported by ' + (r.reporter || 'a former student') + ', ' + timeAgo(r.at) }), el('p', { cls: 'reportwhy', text: r.reason }), said ? el('p', { text: said.slice(0, 280) + (said.length > 280 ? '...' : '') }) : ''), buttons));
     });
     const people = el('div', { cls: 'adminlist' });
     if (!adminStudents.length)
@@ -1130,7 +1237,7 @@ function renderAdmin() {
             } }, 'Delete post');
         posts.append(el('div', { cls: 'adminrow' }, el('div', { cls: 'adminwho' }, el('strong', { text: authorName(p) }), el('small', { text: timeAgo(p.at) }), el('p', { text: (p.title ? p.title + ': ' : '') + p.body.slice(0, 160) + (p.body.length > 160 ? '...' : '') })), del));
     });
-    box.append(status, el('div', { cls: 'adminbar' }, el('div', { cls: 'adminstats' }, el('div', {}, el('strong', { text: String(adminStudents.length) }), el('span', { text: adminStudents.length === 1 ? 'member' : 'members' })), el('div', {}, el('strong', { text: String(allPosts.length) }), el('span', { text: allPosts.length === 1 ? 'post' : 'posts' }))), el('div', { cls: 'row' }, composeButton('Write a post'), el('button', { cls: 'pill ghost', type: 'button', onclick() { leaveAdmin(); } }, 'Leave admin mode'))), el('section', { cls: 'panel' }, el('h3', { text: 'Your note' }), noteForm), el('section', { cls: 'panel' }, el('h3', { text: 'Members' }), people), el('section', { cls: 'panel' }, el('h3', { text: 'Posts' }), posts));
+    box.append(status, el('div', { cls: 'adminbar' }, el('div', { cls: 'adminstats' }, el('div', {}, el('strong', { text: String(adminStudents.length) }), el('span', { text: adminStudents.length === 1 ? 'member' : 'members' })), el('div', {}, el('strong', { text: String(allPosts.length) }), el('span', { text: allPosts.length === 1 ? 'post' : 'posts' }))), el('div', { cls: 'row' }, composeButton('Write a post'), el('button', { cls: 'pill ghost', type: 'button', onclick() { leaveAdmin(); } }, 'Leave admin mode'))), el('section', { cls: 'panel' }, el('h3', { text: 'Reports (' + adminReports.length + ')' }), reports), el('section', { cls: 'panel' }, el('h3', { text: 'Your note' }), noteForm), el('section', { cls: 'panel' }, el('h3', { text: 'Members' }), people), el('section', { cls: 'panel' }, el('h3', { text: 'Posts' }), posts));
 }
 /* ---------- arcade: extra games plus shelf search, filters and favourites ---------- */
 const DISPLAY_FONT = '"Breath of the House", Impact, fantasy';
@@ -1205,7 +1312,7 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
     const [cv, c] = makeCanvas('Riptide Run game area');
     const p = makePanel('riptide', 'Riptide Run', 'Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three stings and you surface.', [cv]);
     let run = false, rise = false, y = 180, vy = 0, things = [], score = 0, lives = 3, safe = 0, last = 0, gap = 0, far = 0, shown = 0, hunt = false;
-    const stat = () => { p.stat.textContent = (run ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + store.get('riptideBest', 0); };
+    const stat = () => { p.stat.textContent = (run ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('riptide'); };
     function scene() {
         const g = c.createLinearGradient(0, 0, 0, 360);
         g.addColorStop(0, '#0b6f9c');
@@ -1400,7 +1507,7 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
     let run = false, left = 0, score = 0, streak = 0, last = 0, aim = { x: -.6, y: .65 }, power = .62;
     let ball = null, drag = false;
     let box = { x: 340, y: 210, w: 92, dir: 1 }, moving = false, note = '';
-    const stat = () => { p.stat.textContent = (run ? 'Time: ' + Math.ceil(left / 1000) + '  Score: ' + score + '  ' : '') + 'Best: ' + store.get('casketBest', 0); };
+    const stat = () => { p.stat.textContent = (run ? 'Time: ' + Math.ceil(left / 1000) + '  Score: ' + score + '  ' : '') + 'Best: ' + displayBest('casket'); };
     function skull(x, y) {
         c.fillStyle = '#fff6fb';
         c.strokeStyle = '#000';
@@ -1610,7 +1717,6 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
     stat();
 })();
 /* ---------- shelf: search, filters, favourites ---------- */
-const BEST_KEYS = { spill: 'spillBest', riot: 'riotBest', hearse: 'hearseBest', dance: 'danceBest', riptide: 'riptideBest', hall: 'hallBest', casket: 'casketBest', tray: 'trayBest', stack: 'stackBest', locker: 'lockerBest' };
 let shelfGenre = 'All', shelfQuery = '', currentGame = 'closet';
 const favourites = () => store.get('favs', []);
 const titleOf = (id) => (MENU.find(g => g[0] === id) || MENU[0])[1];
@@ -1635,7 +1741,7 @@ function renderMenu() {
         const b = el('button', { cls: 'gcard', type: 'button', 'data-game': g[0], 'aria-pressed': g[0] === currentGame, onclick() { openGame(g[0], true); } });
         const art = el('div', { cls: 'gart', 'aria-hidden': 'true' });
         art.textContent = g[4];
-        const best = BEST_KEYS[g[0]] ? store.get(BEST_KEYS[g[0]], 0) : 0;
+        const best = SCORED_GAMES.includes(g[0]) ? displayBest(g[0]) : 0;
         const body = el('div', { cls: 'gbody' }, el('strong', { text: g[1] }), el('small', { text: g[3] }));
         if (best)
             body.append(el('span', { cls: 'gbest', text: 'Best: ' + best }));
@@ -1698,6 +1804,291 @@ function arcadeOpened(id) {
         currentGame = last;
     syncPlayerBar();
 })();
+const REACTIONS = [['fang', '🦇', 'Fangtastic'], ['tea', '🍵', 'Spilled'], ['skull', '💀', 'Dead'], ['heart', '🖤', 'Love'], ['fire', '🔥', 'Hot']];
+const COMMENT_LIMIT = 1000, SHORT_POST = 600;
+let allComments = [], allReactions = [], allBones = [];
+let blogQuery = '', profileId = null, bonesOwner = null, bonesTimer = 0;
+const openComments = new Set(), openPosts = new Set(), commentDrafts = {};
+async function refreshCommunity() {
+    const [c, r, b] = await Promise.all([
+        sb.from('comments').select('*').order('created_at').limit(3000),
+        sb.from('post_reactions').select('post_id, user_id, kind').limit(10000),
+        sb.from('player_progress').select('user_id, bones'),
+    ]);
+    if (c.error || r.error || b.error)
+        throw c.error || r.error || b.error;
+    allComments = c.data.map((row) => ({ id: row.id, postId: row.post_id, authorId: row.author_id, body: row.body, at: row.created_at }));
+    allReactions = r.data.map((row) => ({ postId: row.post_id, userId: row.user_id, kind: row.kind }));
+    allBones = b.data;
+}
+function redrawPosts() { renderBlog(); renderBoss(); renderStudentPage(); }
+/* With the code on, everything is done as Ms. Fangtastic. */
+const actorIs = (id) => (isAdmin() ? id === null : id !== null && id === signedInId());
+const canAct = () => isAdmin() || !!signedInId();
+const nameOf = (id) => (id === null ? DOLLS.mumtea.name : everyone.find(s => s.id === id)?.name || 'A ghoul');
+function personButton(id, label = nameOf(id)) {
+    return el('button', { cls: 'personlink', type: 'button', onclick() { openProfile(id); } }, label);
+}
+function faceFor(id, cls = 'teaface') {
+    const look = id === null ? DOLLS.mumtea.look : everyone.find(s => s.id === id)?.look;
+    const face = el('span', { cls, 'aria-hidden': 'true' });
+    if (look)
+        face.innerHTML = drawGhoul(look, { only: HEAD_LAYERS, box: HEAD_ONLY_BOX, head: true });
+    return face;
+}
+/* ---------- reactions ---------- */
+function reactionBar(post) {
+    const bar = el('div', { cls: 'reactbar', role: 'group', 'aria-label': 'React to this post' });
+    REACTIONS.forEach(([kind, icon, label]) => {
+        const here = allReactions.filter(r => r.postId === post.id && r.kind === kind);
+        const mine = here.some(r => actorIs(r.userId));
+        bar.append(el('button', { cls: 'reactbtn', type: 'button', title: label, 'aria-label': label + ', ' + here.length, 'aria-pressed': mine, async onclick() {
+                if (!canAct()) {
+                    go('registration');
+                    return;
+                }
+                const { error } = isAdmin() ? await sb.rpc('admin_toggle_reaction', { token: adminPass, target: post.id, which: kind })
+                    : mine ? await sb.from('post_reactions').delete().eq('post_id', post.id).eq('kind', kind).eq('user_id', signedInId())
+                        : await sb.from('post_reactions').insert({ post_id: post.id, kind });
+                if (error)
+                    return;
+                await refreshCommunity().catch(() => { });
+                redrawPosts();
+            } }, icon, el('span', { text: here.length ? String(here.length) : '' })));
+    });
+    return bar;
+}
+/* ---------- comments ---------- */
+function commentRow(c) {
+    const tools = el('div', { cls: 'cmttools' });
+    if (actorIs(c.authorId) || isAdmin()) {
+        const del = el('button', { cls: 'linkish', type: 'button', async onclick() {
+                if (!del.dataset.sure) {
+                    del.dataset.sure = '1';
+                    del.textContent = 'Click again to delete';
+                    return;
+                }
+                const { error } = isAdmin() ? await sb.rpc('admin_delete_comment', { token: adminPass, target: c.id }) : await sb.from('comments').delete().eq('id', c.id);
+                if (error) {
+                    del.textContent = 'That did not work. Try again.';
+                    return;
+                }
+                await refreshCommunity().catch(() => { });
+                redrawPosts();
+            } }, 'Delete');
+        tools.append(del);
+    }
+    if (!actorIs(c.authorId) && !isAdmin() && c.authorId !== null)
+        tools.append(reportButton({ comment_id: c.id }, 'this comment'));
+    return el('div', { cls: 'cmtrow' }, faceFor(c.authorId, 'cmtface'), el('div', { cls: 'cmtbody' }, el('div', { cls: 'cmtwho' }, personButton(c.authorId), el('time', { datetime: c.at, text: timeAgo(c.at) })), el('p', { text: c.body }), tools));
+}
+function commentsBlock(post) {
+    const here = allComments.filter(c => c.postId === post.id), isOpen = openComments.has(post.id);
+    const label = here.length ? here.length + (here.length === 1 ? ' comment' : ' comments') : 'Comment';
+    const box = el('div', { cls: 'cmtbox' }, el('button', { cls: 'linkish cmttoggle', type: 'button', 'aria-expanded': isOpen, onclick() {
+            if (isOpen)
+                openComments.delete(post.id);
+            else
+                openComments.add(post.id);
+            renderBlog();
+        } }, isOpen ? 'Hide comments' : label));
+    if (!isOpen)
+        return box;
+    here.forEach(c => box.append(commentRow(c)));
+    if (!canAct()) {
+        box.append(el('button', { cls: 'pill ghost', type: 'button', 'data-go': 'registration' }, 'Log in to comment'));
+        return box;
+    }
+    if (myRecord()?.muted && !isAdmin()) {
+        box.append(el('p', { cls: 'cmtnote', text: 'Ms. Fangtastic has taken away your posting privileges.' }));
+        return box;
+    }
+    const area = el('textarea', { 'data-cmt': post.id, maxlength: COMMENT_LIMIT, rows: 2, required: '', placeholder: 'Write a comment', 'aria-label': 'Write a comment' });
+    area.value = commentDrafts[post.id] || '';
+    area.addEventListener('input', () => { commentDrafts[post.id] = area.value; });
+    const note = el('p', { cls: 'cmtnote', role: 'status' });
+    const send = el('button', { cls: 'pill', type: 'submit' }, 'Comment');
+    const form = el('form', { cls: 'cmtform' }, area, el('div', { cls: 'row' }, send), note);
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = area.value.trim();
+        if (!text) {
+            note.textContent = 'Write something first.';
+            return;
+        }
+        send.setAttribute('disabled', '');
+        const { error } = isAdmin() ? await sb.rpc('admin_comment', { token: adminPass, target: post.id, body: text }) : await sb.from('comments').insert({ post_id: post.id, body: text });
+        send.removeAttribute('disabled');
+        if (error) {
+            note.textContent = 'That did not post. Your words are still here, so try again.';
+            return;
+        }
+        delete commentDrafts[post.id];
+        await refreshCommunity().catch(() => { });
+        redrawPosts();
+    });
+    box.append(form);
+    return box;
+}
+/* ---------- reports: only whoever has the admin code can read them ---------- */
+const reportDialog = el('dialog', { cls: 'composer', 'aria-labelledby': 'reportTitle' });
+function reportButton(target, what) {
+    return el('button', { cls: 'linkish', type: 'button', onclick() { openReport(target, what); } }, 'Report');
+}
+function openReport(target, what) {
+    reportDialog.textContent = '';
+    const close = () => reportDialog.close(), heading = el('h3', { id: 'reportTitle', text: 'Report ' + what });
+    if (!signedInId()) {
+        reportDialog.append(heading, el('p', { text: 'Log in first, so Ms. Fangtastic knows the report is real.' }), el('div', { cls: 'row' }, el('button', { cls: 'pill', type: 'button', onclick() { close(); go('registration'); } }, 'Register or log in'), el('button', { cls: 'pill ghost', type: 'button', onclick: close }, 'Cancel')));
+        reportDialog.showModal();
+        return;
+    }
+    const reasons = ['Mean or bullying', 'Spam', 'Not appropriate', 'Something else'];
+    const group = el('fieldset', { cls: 'reportreasons' }, el('legend', { text: 'What is wrong?' }), ...reasons.map((reason, i) => {
+        const radio = el('input', { type: 'radio', name: 'reportReason', value: reason });
+        if (!i)
+            radio.checked = true;
+        return el('label', {}, radio, reason);
+    }));
+    const extra = el('textarea', { maxlength: 200, rows: 2, placeholder: 'Anything to add? (optional)', 'aria-label': 'Anything to add?' });
+    const note = el('p', { cls: 'accountnote', role: 'status' }), send = el('button', { cls: 'pill', type: 'submit' }, 'Send report');
+    const form = el('form', { cls: 'stack' }, group, extra, el('p', { cls: 'cmtnote', text: 'Only Ms. Fangtastic sees reports, including who sent them.' }), el('div', { cls: 'row' }, send, el('button', { cls: 'pill ghost', type: 'button', onclick: close }, 'Cancel')), note);
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const picked = group.querySelector('input:checked').value;
+        send.setAttribute('disabled', '');
+        const { error } = await sb.from('reports').insert({ ...target, reason: picked + (extra.value.trim() ? ': ' + extra.value.trim() : '') });
+        if (error && error.code !== '23505') {
+            send.removeAttribute('disabled');
+            note.textContent = 'That did not send. Please try again.';
+            return;
+        }
+        reportDialog.textContent = '';
+        reportDialog.append(heading, el('p', { text: error ? 'You have already reported this. Ms. Fangtastic has it.' : 'Thank you. Ms. Fangtastic will take a look.' }), el('div', { cls: 'row' }, el('button', { cls: 'pill', type: 'button', onclick: close }, 'Close')));
+    });
+    reportDialog.append(heading, form);
+    reportDialog.showModal();
+}
+/* ---------- a student's own page ---------- */
+function openProfile(id) {
+    if (id === null) {
+        go('fangtastic');
+        return;
+    }
+    profileId = id;
+    go('student');
+    try {
+        history.replaceState(null, '', '#student-' + id);
+    }
+    catch (e) { /* the page still works */ }
+}
+function renderStudentPage() {
+    const page = $('#studentPage');
+    page.textContent = '';
+    const s = loadRoster().find(x => x.id === profileId);
+    const back = el('button', { cls: 'pill ghost', type: 'button', 'data-go': 'students' }, 'All students');
+    if (!s) {
+        page.append(el('h2', { cls: 'sec-h', text: 'Student not found' }), el('p', { cls: 'lede', text: 'This ghoul may have left the school.' }), back);
+        return;
+    }
+    const pic = el('span', { cls: 'doll' });
+    pic.innerHTML = drawGhoul(s.look, { label: s.name });
+    const mine = s.id === signedInId() && !isAdmin();
+    const bones = allBones.find(b => b.user_id === s.id)?.bones || 0;
+    const facts = el('dl', { cls: 'studentfacts' });
+    [['Monster', MONSTER_NAMES[s.look.monster] || 'Monster'], ['Joined', new Date(s.joined).toLocaleDateString()], ['Blend', s.blend || 'Not yet steeped'], ['Bones', String(bones)]].forEach(([k, v]) => facts.append(el('dt', { text: k }), el('dd', { text: v })));
+    const scores = SCORED_GAMES.map(game => { const rows = boardFor(game), i = rows.findIndex(r => r.user_id === s.id); return i < 0 ? null : el('li', {}, el('strong', { text: titleOf(game) }), el('span', { text: rows[i].score.toLocaleString() + ' (number ' + (i + 1) + ')' })); }).filter(Boolean);
+    const posts = allPosts.filter(p => p.authorId === s.id);
+    const actions = el('div', { cls: 'row' }, back);
+    if (mine)
+        actions.append(el('button', { cls: 'pill', type: 'button', 'data-go': 'profile' }, 'Change my look'));
+    else if (!isAdmin())
+        actions.append(reportButton({ target_user: s.id }, s.name));
+    page.append(el('div', { cls: 'studentpage' }, pic, el('div', { cls: 'studentinfo' }, el('h2', { cls: 'sec-h', text: s.name }), facts, actions)), el('section', { cls: 'panel' }, el('h3', { text: 'High scores' }), scores.length ? el('ul', { cls: 'studentscores' }, ...scores) : el('p', { text: 'No scores yet.' })), el('section', { cls: 'panel' }, el('h3', { text: 'Their tea' }), posts.length ? el('div', { cls: 'timeline' }, ...posts.map(p => { const card = postCard(p, false, true); card.removeAttribute('id'); return card; })) : el('p', { text: 'Nothing spilled yet.' })));
+}
+/* ---------- search: narrows with every letter, matching the start of a word ---------- */
+function searchPosts(list, query) {
+    const parts = query.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!parts.length)
+        return list;
+    const wordsOf = (text) => text.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+    const inside = (text) => { const words = wordsOf(text); return parts.every(part => words.some(w => w.startsWith(part))); };
+    return list.filter(p => inside(p.title + ' ' + p.body + ' ' + authorName(p))).sort((a, b) => Number(inside(b.title)) - Number(inside(a.title)));
+}
+const blogCount = el('p', { cls: 'teacountline', role: 'status' });
+(function () {
+    const input = el('input', { type: 'search', id: 'teaSearch', placeholder: 'Search the tea, like politics or anime', 'aria-label': 'Search posts', autocomplete: 'off' });
+    input.addEventListener('input', () => { blogQuery = input.value; renderBlog(); });
+    $('.blog').before(el('div', { cls: 'teasearch' }, input, blogCount));
+    $('#root').append(reportDialog);
+    reportDialog.addEventListener('click', e => { if (e.target === reportDialog)
+        reportDialog.close(); });
+})();
+/* ---------- bones follow the account ---------- */
+function saveBonesSoon() {
+    clearTimeout(bonesTimer);
+    bonesTimer = window.setTimeout(() => { if (signedInId() && signedInId() === bonesOwner)
+        sb.rpc('save_bones', { total: bones }).then(() => { }, () => { }); }, 800);
+}
+async function syncProgress() {
+    const me = signedInId();
+    if (!backendReady || me === bonesOwner)
+        return;
+    bonesOwner = me;
+    if (!me) {
+        bones = 0;
+        store.set('bones', 0);
+        drawBones();
+        return;
+    }
+    const { data, error } = await sb.from('player_progress').select('bones').eq('user_id', me).maybeSingle();
+    if (error)
+        return;
+    /* A first login keeps what this device earned as a guest. */
+    if (data) {
+        bones = data.bones;
+        store.set('bones', bones);
+        drawBones();
+    }
+    else
+        saveBonesSoon();
+}
+/* ---------- keep every character inside its space, without changing the space's shape ---------- */
+function fitDolls() {
+    document.querySelectorAll('.doll svg:not([data-fit])').forEach(svg => {
+        if (!svg.getBoundingClientRect().width)
+            return;
+        try {
+            const b = svg.getBBox(), v = svg.viewBox.baseVal, pad = 8;
+            if (!b.width)
+                return;
+            const x0 = Math.min(v.x, b.x - pad), y0 = Math.min(v.y, b.y - pad), x1 = Math.max(v.x + v.width, b.x + b.width + pad), y1 = Math.max(v.y + v.height, b.y + b.height + pad);
+            let w = x1 - x0, h = y1 - y0, x = x0, y = y0;
+            const ratio = v.width / v.height;
+            if (w / h > ratio) {
+                const grown = w / ratio;
+                y -= (grown - h) / 2;
+                h = grown;
+            }
+            else {
+                const grown = h * ratio;
+                x -= (grown - w) / 2;
+                w = grown;
+            }
+            svg.setAttribute('viewBox', [x, y, w, h].join(' '));
+            svg.dataset.fit = '1';
+        }
+        catch (e) { /* not on screen yet: the next change comes back to it */ }
+    });
+}
+let fitQueued = false;
+function queueFit() {
+    if (fitQueued)
+        return;
+    fitQueued = true;
+    requestAnimationFrame(() => { fitQueued = false; fitDolls(); });
+}
+new MutationObserver(queueFit).observe(document.body, { childList: true, subtree: true });
 /* Supabase connection. This key is the public one, made to live in a website: row level security in
    supabase/schema.sql is what protects the data. Never put the service_role key here. */
 const SUPABASE_URL = 'https://lhnonknherklzygksbkk.supabase.co';
@@ -1716,7 +2107,7 @@ const HAIR_COLOURS = ['#17101c', '#5a2c17', '#a0392a', '#f4d35e', '#f6f0ff', '#f
 const BRIGHT = ['#14101a', '#fff6fb', '#ff1f8f', '#f08fb4', '#6a1f86', '#19b7e8', '#35dcc8', '#8df04a', '#f4d35e', '#c0392b', '#2c2436', '#9aa0ac', '#1f3a8a', '#0f766e', '#2f8f4e', '#ff8c1a', '#8b5a2b', '#c9a227', '#b19cd9', '#ffd1dc'];
 const PATTERNS = [['solid', 'Plain'], ['stripes', 'Stripes'], ['argyle', 'Argyle'], ['tartan', 'Tartan'], ['skulls', 'Skulls'], ['dots', 'Polka dots'], ['hearts', 'Hearts'], ['stars', 'Stars'], ['bats', 'Bats'], ['checks', 'Checks'], ['zigzag', 'Zigzag'], ['webs', 'Webs'], ['spots', 'Leopard'], ['diamonds', 'Diamonds'], ['flowers', 'Flowers']];
 const POSES = [
-    { id: 'classic', name: 'Classic', armL: [20, 15], armR: [30, -31] },
+    { id: 'classic', name: 'Classic', armL: [20, 15], armR: [32, -31], legL: [-4, 2], legR: [5, -6], tilt: 4 },
     { id: 'hips', name: 'Both hips', armL: [32, -31], armR: [32, -31], handL: 'relaxed', tilt: 3 },
     { id: 'relaxed', name: 'Relaxed', armL: [12, 8], armR: [12, 8], handL: 'relaxed', handR: 'relaxed' },
     { id: 'wave', name: 'Wave', armL: [18, 12], armR: [105, 165], handR: 'open', tilt: 5 },
@@ -1747,6 +2138,13 @@ const POSES = [
     { id: 'twirl', name: 'Twirl', armL: [150, 195], armR: [65, 40], handL: 'open', handR: 'open', legL: [1, 0], legR: [22, -60], lean: 3, tilt: 6 },
     { id: 'dance', name: 'Disco', armL: [32, -31], armR: [150, 165], handR: 'point', legL: [3, 0], legR: [20, -30], lean: -6, tilt: -6 },
     { id: 'lean', name: 'Sassy lean', armL: [32, -31], armR: [15, 8], handR: 'relaxed', lean: 7, tilt: -8, legL: [8, 0], legR: [-2, 0] },
+    { id: 'power', name: 'Power pose', armL: [32, -31], armR: [32, -31], handL: 'relaxed', legL: [-15, 7], legR: [-15, 7], lean: 2, tilt: -7 },
+    { id: 'cheek', name: 'Finger to cheek', armL: [16, 10], armR: [95, -118], handL: 'relaxed', handR: 'point', legL: [-5, 3], legR: [14, -24], lean: -2, tilt: 9, front: 'R' },
+    { id: 'toss', name: 'Hair toss', armL: [32, -31], armR: [125, -150], handR: 'open', legL: [11, -16], legR: [-7, 4], lean: 6, tilt: -10, front: 'R' },
+    { id: 'pigeon', name: 'Pigeon toes', armL: [32, -31], armR: [14, 8], handR: 'relaxed', legL: [11, -24], legR: [11, -24], tilt: 8 },
+    { id: 'stride', name: 'Big stride', armL: [-12, -4], armR: [28, 18], handL: 'relaxed', handR: 'relaxed', legL: [-14, 8], legR: [22, -18], lean: 4, tilt: 7 },
+    { id: 'vogue', name: 'Vogue', armL: [125, -150], armR: [32, -31], handL: 'open', legL: [7, -6], legR: [-14, 7], tilt: 8, lean: -4, front: 'L' },
+    { id: 'curtsy', name: 'Curtsy', armL: [38, 12], armR: [38, 12], handL: 'relaxed', handR: 'relaxed', legL: [-17, 12], legR: [20, -20], tilt: 10 },
     { id: 'phone', name: 'Selfie', armL: [20, 15], armR: [70, 150], handR: 'relaxed', tilt: 7, legR: [10, -10] },
 ];
 const poseOf = (id) => POSES.find(p => p.id === id) || POSES[0];
@@ -2870,6 +3268,8 @@ function drawGhoul(o, opt = {}) {
             out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
         if (SHADED.includes(l))
             out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
+        if (l === 'hairBack' && !scarfOn)
+            out = '<g transform="translate(160 110) scale(1.16 1.04) translate(-160 -110)">' + out + '</g>';
         if (l === 'hairFront' && !scarfOn)
             out = '<g transform="translate(160 0) scale(1.1 1) translate(-160 0)">' + out + '</g>';
         if (HEAD_LAYERS.includes(l))
@@ -2914,10 +3314,24 @@ async function refreshScores() {
     allScores = data;
     scoresLoaded = true;
 }
+const roundBest = {};
+/* A logged-in player's best comes from their account; a guest's stays on this device. */
+function displayBest(game) {
+    /* The games draw their labels while the page is still loading, before accounts are ready. */
+    try {
+        if (isAdmin() || signedInId())
+            return Math.max(allScores.find(r => r.game === game && isMine(r.user_id))?.score || 0, roundBest[game] || 0);
+    }
+    catch (e) { /* still loading */ }
+    return store.get(game + 'Best', 0);
+}
 function renderScores() {
     scoreBoard.textContent = '';
     /* If the scores can't be read, the games carry on without a board. */
     scoreBoard.hidden = !scoresLoaded;
+    renderMenu();
+    SCORED_GAMES.forEach(game => { const label = document.querySelector('.gpanel[data-game="' + game + '"] [role=status]'); if (label && /^Best:/.test(label.textContent || ''))
+        label.textContent = 'Best: ' + displayBest(game); });
     if (!scoresLoaded)
         return;
     const tabs = el('div', { cls: 'chips', role: 'group', 'aria-label': 'Choose a game' }, ...SCORED_GAMES.map(game => el('button', { cls: 'chip', type: 'button', 'aria-pressed': game === scoreTab, onclick() { scoreTab = game; renderScores(); } }, titleOf(game))));
@@ -2928,7 +3342,7 @@ function renderScores() {
     else {
         const list = el('ol', { cls: 'lblist' });
         rows.slice(0, BOARD_SIZE).forEach((r, i) => {
-            const line = el('li', { cls: 'lbrow' + (isMine(r.user_id) ? ' lbme' : '') }, el('span', { cls: 'lbrank', text: String(i + 1) }), headOf(r.who), el('strong', { cls: 'lbname', text: r.who.name + (isMine(r.user_id) ? ' (you)' : '') }), el('span', { cls: 'lbscore', text: r.score.toLocaleString() }));
+            const line = el('li', { cls: 'lbrow' + (isMine(r.user_id) ? ' lbme' : '') }, el('span', { cls: 'lbrank', text: String(i + 1) }), headOf(r.who), el('strong', { cls: 'lbname' }, personButton(r.user_id, r.who.name + (isMine(r.user_id) ? ' (you)' : ''))), el('span', { cls: 'lbscore', text: r.score.toLocaleString() }));
             if (isAdmin())
                 line.append(el('button', { cls: 'linkish', type: 'button', 'aria-label': 'Remove the score of ' + r.who.name, async onclick() {
                         const { error } = await sb.rpc('admin_delete_score', { token: adminPass, target: r.user_id, which: r.game });
@@ -2979,6 +3393,7 @@ async function submitScore(game, score) {
     if (!backendReady || !scoresLoaded || score < 1 || (!asFang && !signedInId()))
         return;
     scoreTab = game;
+    roundBest[game] = Math.max(roundBest[game] || 0, score);
     const before = boardFor(game).find(r => isMine(r.user_id))?.score || 0;
     const { data, error } = asFang ? await sb.rpc('admin_submit_score', { token: adminPass, which: game, points: score }) : await sb.rpc('submit_score', { which: game, points: score });
     scoreNote = error ? 'Your score did not save. It will count next round if you beat it again.' : score > before ? 'New personal best saved: ' + score.toLocaleString() + '.' : '';
@@ -3135,12 +3550,12 @@ function studentCard(s, mine) {
     const line = STUDENT_LINES[hashOf(s.id) % STUDENT_LINES.length] + (s.blend ? ' Blend: ' + s.blend + '.' : '');
     const pic = el('span', { cls: 'doll' });
     pic.innerHTML = drawGhoul(s.look, { label: s.name });
-    return el('article', { cls: 'student' }, pic, el('div', {}, el('h3', { text: s.name }), el('small', { text: role }), el('p', { text: line })));
+    return el('article', { cls: 'student' }, pic, el('div', {}, el('h3', {}, personButton(s.id, s.name)), el('small', { text: role }), el('p', { text: line })));
 }
 function lineupButton(name, art, target) {
     const pic = el('span', { cls: 'doll' });
     pic.innerHTML = art;
-    return el('button', { type: 'button', 'data-go': target }, pic, name);
+    return target === 'fangtastic' ? el('button', { type: 'button', 'data-go': target }, pic, name) : el('button', { type: 'button', onclick() { openProfile(target); } }, pic, name);
 }
 function renderStudents() {
     const roster = loadRoster(), me = currentStudent();
@@ -3157,7 +3572,7 @@ function renderStudents() {
             : roster.length === 0 ? 'Ms. Fangtastic is waiting on her first student.'
                 : roster.length + (roster.length === 1 ? ' student has' : ' students have') + ' enrolled so far.';
     lineup.append(lineupButton(DOLLS.mumtea.name, doll(DOLLS.mumtea), 'fangtastic'));
-    roster.slice(-3).reverse().forEach(s => lineup.append(lineupButton(s.name, drawGhoul(s.look), 'students')));
+    roster.slice(-3).reverse().forEach(s => lineup.append(lineupButton(s.name, drawGhoul(s.look), s.id)));
     if (!signedInId() && !isAdmin()) {
         list.append(el('button', { cls: 'student seat', type: 'button', 'data-go': 'registration' }, 'This seat is empty. Register and your ghoul sits here.'));
         lineup.append(el('button', { cls: 'seatbtn', type: 'button', 'data-go': 'registration' }, 'Register to join'));
@@ -3216,6 +3631,8 @@ function refreshAll(message) {
     renderBoss();
     renderAdmin();
     renderScores();
+    renderStudentPage();
+    syncProgress();
 }
 function renderAccount() {
     const signed = !!signedInId();
@@ -3390,7 +3807,7 @@ async function startBackend() {
         timer = window.setTimeout(async () => {
             try {
                 const scrollY = window.scrollY;
-                await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => { })]);
+                await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => { }), refreshCommunity().catch(() => { })]);
                 paintDolls();
                 renderStudents();
                 renderBlog();
@@ -3398,6 +3815,7 @@ async function startBackend() {
                 renderBoss();
                 renderAdmin();
                 renderScores();
+                renderStudentPage();
                 window.scrollTo(0, scrollY);
             }
             catch (err) { /* the next change tries again */ }
@@ -3411,7 +3829,7 @@ async function startBackend() {
             if (stillGood.data !== true)
                 setPass(null);
         }
-        await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => { })]);
+        await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => { }), refreshCommunity().catch(() => { })]);
         dataState = 'ready';
         startScores();
         if (sessionId && !myRecord()) {
@@ -3419,12 +3837,15 @@ async function startBackend() {
         }
         if (myRecord())
             store.set('blend', myRecord()?.blend || null);
-        sb.channel('school').on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, reloadSoon).subscribe();
+        sb.channel('school').on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'post_reactions' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, reloadSoon).subscribe();
     }
     catch (err) {
         dataState = 'failed';
     }
     refreshAll('');
+    const linked = /^#student-([0-9a-f-]{36})$/.exec(location.hash);
+    if (linked)
+        openProfile(linked[1]);
     if (cameFromVerifyLink && sessionId) {
         const blend = store.get('blend', null);
         if (blend)
@@ -3573,10 +3994,15 @@ function mountStudio(parent) {
 }
 /* Called whenever the page changes view. */
 function viewOpened(v) {
+    if (v === 'student')
+        renderStudentPage();
+    queueFit();
     if (v === 'admin') {
         renderAdmin();
-        if (isAdmin())
+        if (isAdmin()) {
             mountStudio($('#adminStudio'));
+            refreshAdminStudents().then(renderAdmin, () => { });
+        }
     }
     if (v === 'profile') {
         renderProfile();
@@ -3619,7 +4045,7 @@ async function refreshPosts() {
     const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false }).limit(200);
     if (error)
         throw error;
-    allPosts = data.map((row) => ({ id: row.id, authorId: row.author_id, title: row.title, body: row.body, at: row.created_at }));
+    allPosts = data.map((row) => ({ id: row.id, authorId: row.author_id, title: row.title, body: row.body, at: row.created_at, editedAt: row.edited_at || null }));
 }
 function timeAgo(iso) {
     const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
@@ -3636,19 +4062,31 @@ function timeAgo(iso) {
 const authorOf = (post) => everyone.find(s => s.id === post.authorId);
 /* A post with no author is from Ms. Fangtastic. */
 const authorName = (post) => (post.authorId === null ? DOLLS.mumtea.name : authorOf(post)?.name || 'A ghoul');
-function postCard(post, highlight) {
-    const author = authorOf(post);
-    const face = el('span', { cls: 'teaface', 'aria-hidden': 'true' });
-    face.innerHTML = post.authorId === null ? doll(DOLLS.mumtea, { head: true }) : author ? drawGhoul(author.look, { head: true }) : '';
-    const who = el('div', { cls: 'teawho' }, el('strong', { text: authorName(post) }));
+/* compact shows a post away from the timeline: its comments stay on the timeline. */
+function postCard(post, highlight, compact = false) {
+    const face = faceFor(post.authorId);
+    const who = el('div', { cls: 'teawho' }, el('strong', {}, personButton(post.authorId, authorName(post))));
     if (post.authorId === null)
         who.append(el('span', { cls: 'teabadge', text: 'Headghoul' }));
-    who.append(el('time', { datetime: post.at, title: new Date(post.at).toLocaleString(), text: timeAgo(post.at) }));
+    who.append(el('time', { datetime: post.at, title: new Date(post.at).toLocaleString(), text: timeAgo(post.at) + (post.editedAt ? ', edited' : '') }));
     const card = el('div', { cls: 'teacard' }, who);
     if (post.title)
         card.append(el('h3', { text: post.title }));
-    post.body.split(/\n+/).forEach(line => card.append(el('p', { text: line })));
+    const long = post.body.length > SHORT_POST, showAll = openPosts.has(post.id);
+    (long && !showAll ? post.body.slice(0, SHORT_POST).trimEnd() + '...' : post.body).split(/\n+/).forEach(line => card.append(el('p', { text: line })));
+    if (long)
+        card.append(el('button', { cls: 'linkish readmore', type: 'button', 'aria-expanded': showAll, onclick() {
+                if (showAll)
+                    openPosts.delete(post.id);
+                else
+                    openPosts.add(post.id);
+                redrawPosts();
+            } }, showAll ? 'Read less' : 'Read more'));
+    card.append(reactionBar(post));
+    const tools = el('div', { cls: 'teatools' });
     const mine = isAdmin() ? post.authorId === null : post.authorId !== null && post.authorId === signedInId();
+    if (mine)
+        tools.append(el('button', { cls: 'linkish', type: 'button', onclick() { openComposer(post); } }, 'Edit'));
     if (mine || isAdmin()) {
         const del = el('button', { cls: 'linkish', type: 'button', async onclick() {
                 if (!del.dataset.sure) {
@@ -3666,13 +4104,25 @@ function postCard(post, highlight) {
                 fillSlide();
                 renderBoss();
             } }, mine ? 'Delete my post' : 'Delete this post');
-        card.append(del);
+        tools.append(del);
     }
+    if (!mine && !isAdmin() && post.authorId !== null)
+        tools.append(reportButton({ post_id: post.id }, 'this post'));
+    card.append(tools);
+    if (compact) {
+        const count = allComments.filter(c => c.postId === post.id).length;
+        card.append(el('button', { cls: 'linkish', type: 'button', onclick() { openComments.add(post.id); go('tea', post.id); } }, count ? count + (count === 1 ? ' comment' : ' comments') : 'Comment'));
+    }
+    else
+        card.append(commentsBlock(post));
     return el('article', { cls: 'teapost' + (highlight ? ' teanew' : ''), id: 'post-' + post.id }, face, card);
 }
 function renderBlog(id) {
     const main = $('#blogMain');
+    /* A reload can arrive while someone is typing a comment, so they keep their place. */
+    const typing = document.activeElement, typingIn = main.contains(typing) ? typing?.dataset?.cmt : undefined, caret = typingIn ? typing?.selectionStart : 0;
     main.textContent = '';
+    blogCount.textContent = '';
     if (dataState !== 'ready') {
         main.append(el('div', { cls: 'teaempty' }, el('h3', { text: dataState === 'loading' ? 'Brewing...' : 'The kettle is off' }), el('p', { text: dataState === 'loading' ? 'Fetching the latest tea.' : backendReady ? 'Could not reach the school database. Try refreshing.' : OFFLINE_NOTE })));
         return;
@@ -3681,7 +4131,21 @@ function renderBlog(id) {
         main.append(el('div', { cls: 'teaempty' }, el('h3', { text: 'No tea yet' }), el('p', { text: 'Nobody has posted anything. Go on, be the first.' }), composeButton('Write the first post')));
         return;
     }
-    main.append(el('div', { cls: 'timeline' }, ...allPosts.map(p => postCard(p, p.id === id))));
+    const shown = searchPosts(allPosts, blogQuery);
+    if (blogQuery.trim())
+        blogCount.textContent = shown.length + (shown.length === 1 ? ' post matches' : ' posts match');
+    if (!shown.length) {
+        main.append(el('div', { cls: 'teaempty' }, el('h3', { text: 'No tea found' }), el('p', { text: 'Nothing starts with that yet. Try different letters, or spill some yourself.' })));
+        return;
+    }
+    main.append(el('div', { cls: 'timeline' }, ...shown.map(p => postCard(p, p.id === id))));
+    if (typingIn) {
+        const back = main.querySelector('[data-cmt="' + typingIn + '"]');
+        if (back) {
+            back.focus();
+            back.setSelectionRange(caret || 0, caret || 0);
+        }
+    }
     if (id)
         document.getElementById('post-' + id)?.scrollIntoView({ block: 'center' });
 }
@@ -3708,10 +4172,10 @@ const NOTE_STAR = 'M0-9Q1-1 9 0Q1 1 0 9Q-1 1-9 0Q-1-1 0-9z';
 const NOTE_SKULL = '<svg viewBox="0 0 90 90" width="100%" height="100%"><g fill="none" stroke="#2a1430" stroke-width="3.400" stroke-linecap="round" stroke-linejoin="round"><path d="M40 24C22 24 14 38 15 51c1 9 7 14 13 17l1 10 24 1 1-11c7-3 13-9 14-18C68 37 58 24 40 24z" fill="#fdf0e6"/><path d="M34 72v6M42 72v7M50 72v6M38 58l3-5 3 5"/></g><circle cx="30" cy="46" r="6" fill="#2a1430"/><circle cx="52" cy="46" r="6" fill="#2a1430"/><path d="M41 22L26 12q-4 10 2 15zM41 22l15-10q4 10-2 15z" fill="#ff1f8f" stroke="#2a1430" stroke-width="2.600" stroke-linejoin="round"/><path transform="translate(77 30)" d="' + NOTE_STAR + '" fill="none" stroke="#2a1430" stroke-width="2.600"/><path transform="translate(80 58) scale(.7)" d="' + NOTE_STAR + '" fill="none" stroke="#2a1430" stroke-width="3"/></svg>';
 const NOTE_CAT = '<svg viewBox="0 0 112 96" width="100%" height="100%"><path transform="translate(16 28)" d="' + NOTE_STAR + '" fill="none" stroke="#14101a" stroke-width="2.600"/><path transform="translate(26 70) scale(.75)" d="' + NOTE_STAR + '" fill="none" stroke="#14101a" stroke-width="3"/><path d="M40 96C40 76 36 58 40 44L34 6L58 24Q72 20 86 24L108 6L104 44C108 58 106 76 106 96Z" fill="#14101a"/><path d="M47 42Q56 34 66 44Q56 52 47 42zM80 44Q90 34 99 42Q90 52 80 44z" fill="#fff6fb"/><ellipse cx="57" cy="43" rx="2.600" ry="6" fill="#ff1f8f"/><ellipse cx="89" cy="43" rx="2.600" ry="6" fill="#ff1f8f"/><path d="M69 56h8l-4 4z" fill="#ff1f8f"/><path d="M64 62l3 7 3-5zM82 62l-3 7-3-5z" fill="#fff6fb"/><path d="M44 54L28 50M44 60H26M102 54l10-4M102 60h10" stroke="#14101a" stroke-width="1.600" stroke-linecap="round"/></svg>';
 const composer = el('dialog', { cls: 'composer', 'aria-labelledby': 'composerTitle' });
-function openComposer() {
+function openComposer(editing) {
     composer.textContent = '';
     const close = () => composer.close();
-    const heading = el('h3', { id: 'composerTitle', text: isAdmin() ? 'Spill the tea as Ms. Fangtastic' : 'Spill the tea' });
+    const heading = el('h3', { id: 'composerTitle', text: editing ? 'Edit your post' : isAdmin() ? 'Spill the tea as Ms. Fangtastic' : 'Spill the tea' });
     if (!signedInId() && !isAdmin()) {
         composer.append(heading, el('p', { text: 'Register or log in first, so everyone knows whose tea this is.' }), el('div', { cls: 'row' }, el('button', { cls: 'pill', type: 'button', onclick() { close(); go('registration'); $('#signName').focus(); } }, 'Register or log in'), el('button', { cls: 'pill ghost', type: 'button', onclick: close }, 'Cancel')));
         composer.showModal();
@@ -3725,11 +4189,12 @@ function openComposer() {
     const title = el('input', { id: 'teaTitle', maxlength: 100, placeholder: 'Title', 'aria-label': 'Title (optional)' });
     const body = el('textarea', { id: 'teaBody', maxlength: POST_LIMIT, required: '', placeholder: 'What are you thinking?', 'aria-label': 'What are you thinking?' });
     const count = el('span', { cls: 'teacount' }), note = el('p', { cls: 'accountnote', role: 'status' });
-    const submit = el('button', { cls: 'pill', type: 'submit' }, 'Post it');
+    const submit = el('button', { cls: 'pill', type: 'submit' }, editing ? 'Save changes' : 'Post it');
     const draft = store.get('draft', null);
-    title.value = draft?.t || '';
-    body.value = draft?.b || '';
-    const update = () => { count.textContent = body.value.length + ' / ' + POST_LIMIT; store.set('draft', { t: title.value, b: body.value }); };
+    title.value = editing ? editing.title : draft?.t || '';
+    body.value = editing ? editing.body : draft?.b || '';
+    const update = () => { count.textContent = body.value.length + ' / ' + POST_LIMIT; if (!editing)
+        store.set('draft', { t: title.value, b: body.value }); };
     title.addEventListener('input', update);
     body.addEventListener('input', update);
     update();
@@ -3759,6 +4224,19 @@ function openComposer() {
             return;
         }
         submit.setAttribute('disabled', '');
+        if (editing) {
+            const saved = isAdmin() ? await sb.rpc('admin_edit_post', { token: adminPass, target: editing.id, title: title.value.trim(), body: text }) : await sb.from('posts').update({ title: title.value.trim(), body: text }).eq('id', editing.id);
+            submit.removeAttribute('disabled');
+            if (saved.error) {
+                note.textContent = 'That did not save. Your words are still here, so try again.';
+                return;
+            }
+            await refreshPosts();
+            close();
+            fillSlide();
+            redrawPosts();
+            return;
+        }
         /* With the code you are her. Without it the database refuses to post as her at all. */
         const postingAsBoss = isAdmin();
         const result = postingAsBoss ? await sb.rpc('admin_post', { token: adminPass, title: title.value.trim(), body: text }) : await sb.from('posts').insert({ title: title.value.trim(), body: text }).select().single();

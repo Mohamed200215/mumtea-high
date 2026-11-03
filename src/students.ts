@@ -119,11 +119,11 @@ function studentCard(s: Student, mine: boolean): HTMLElement {
   const role = (MONSTER_NAMES[s.look.monster] || 'Monster') + (mine ? ' (you)' : '') + ', joined ' + new Date(s.joined).toLocaleDateString();
   const line = STUDENT_LINES[hashOf(s.id) % STUDENT_LINES.length] + (s.blend ? ' Blend: ' + s.blend + '.' : '');
   const pic = el('span', { cls: 'doll' }); pic.innerHTML = drawGhoul(s.look, { label: s.name });
-  return el('article', { cls: 'student' }, pic, el('div', {}, el('h3', { text: s.name }), el('small', { text: role }), el('p', { text: line })));
+  return el('article', { cls: 'student' }, pic, el('div', {}, el('h3', {}, personButton(s.id, s.name)), el('small', { text: role }), el('p', { text: line })));
 }
-function lineupButton(name: string, art: string, target: string): HTMLElement {
+function lineupButton(name: string, art: string, target: string | null): HTMLElement {
   const pic = el('span', { cls: 'doll' }); pic.innerHTML = art;
-  return el('button', { type: 'button', 'data-go': target }, pic, name);
+  return target === 'fangtastic' ? el('button', { type: 'button', 'data-go': target }, pic, name) : el('button', { type: 'button', onclick() { openProfile(target); } }, pic, name);
 }
 function renderStudents(): void {
   const roster = loadRoster(), me = currentStudent();
@@ -139,7 +139,7 @@ function renderStudents(): void {
     : roster.length + (roster.length === 1 ? ' student has' : ' students have') + ' enrolled so far.';
 
   lineup.append(lineupButton(DOLLS.mumtea.name, doll(DOLLS.mumtea), 'fangtastic'));
-  roster.slice(-3).reverse().forEach(s => lineup.append(lineupButton(s.name, drawGhoul(s.look), 'students')));
+  roster.slice(-3).reverse().forEach(s => lineup.append(lineupButton(s.name, drawGhoul(s.look), s.id)));
   if (!signedInId() && !isAdmin()) {
     list.append(el('button', { cls: 'student seat', type: 'button', 'data-go': 'registration' }, 'This seat is empty. Register and your ghoul sits here.'));
     lineup.append(el('button', { cls: 'seatbtn', type: 'button', 'data-go': 'registration' }, 'Register to join'));
@@ -179,7 +179,7 @@ let accountMode: 'register' | 'login' | 'forgot' | 'verify' = 'register';
 let pendingEmail = '';
 function refreshAll(message: string): void {
   accountNote.textContent = message;
-  paintDolls(); renderStudents(); renderID(); syncStudio(); renderProfile(); renderBlog(); fillSlide(); renderBoss(); renderAdmin(); renderScores();
+  paintDolls(); renderStudents(); renderID(); syncStudio(); renderProfile(); renderBlog(); fillSlide(); renderBoss(); renderAdmin(); renderScores(); renderStudentPage(); syncProgress();
 }
 function renderAccount(): void {
   const signed = !!signedInId();
@@ -303,8 +303,8 @@ async function startBackend(): Promise<void> {
     timer = window.setTimeout(async () => {
       try {
         const scrollY = window.scrollY;
-        await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => {})]);
-        paintDolls(); renderStudents(); renderBlog(); fillSlide(); renderBoss(); renderAdmin(); renderScores();
+        await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => {}), refreshCommunity().catch(() => {})]);
+        paintDolls(); renderStudents(); renderBlog(); fillSlide(); renderBoss(); renderAdmin(); renderScores(); renderStudentPage();
         window.scrollTo(0, scrollY);
       } catch (err) { /* the next change tries again */ }
     }, 300);
@@ -316,16 +316,18 @@ async function startBackend(): Promise<void> {
       const stillGood = await sb.rpc('admin_check', { token: adminPass });
       if (stillGood.data !== true) setPass(null);
     }
-    await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => {})]);
+    await Promise.all([refreshRoster(), refreshPosts(), refreshNote(), refreshAdminStudents(), refreshScores().catch(() => {}), refreshCommunity().catch(() => {})]);
     dataState = 'ready';
     startScores();
     if (sessionId && !myRecord()) { await signOut(); }
     if (myRecord()) store.set('blend', myRecord()?.blend || null);
-    sb.channel('school').on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, reloadSoon).subscribe();
+    sb.channel('school').on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'post_reactions' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, reloadSoon).on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, reloadSoon).subscribe();
   } catch (err) {
     dataState = 'failed';
   }
   refreshAll('');
+  const linked = /^#student-([0-9a-f-]{36})$/.exec(location.hash);
+  if (linked) openProfile(linked[1]);
   if (cameFromVerifyLink && sessionId) {
     const blend = store.get<string | null>('blend', null);
     if (blend) await updateMe({ blend });
