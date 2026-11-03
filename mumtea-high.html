@@ -520,9 +520,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .studentscores li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 14px}
 .studentscores span{color:var(--teal);font-weight:800}
 #studentPage .panel{margin-top:14px}
-.rulespage .panel{margin-top:12px}
-.rulespage ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
-.rulesline{margin:0 0 10px}
 @media (max-width:620px){.studentpage{grid-template-columns:minmax(0,1fr)}.studentpage .doll{max-width:200px;margin-inline:auto}}
 
 /* costly effects that added little */
@@ -629,6 +626,15 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 @media (prefers-reduced-motion:reduce){.polaprint,.poladevelop,.camflash.go,.camsticker{animation:none}.camdial{transition:none}}
 .gcard .gart img{width:62%;max-width:96px;height:auto;filter:drop-shadow(0 3px 0 rgba(0,0,0,.55))}
 .typedemoji{display:inline-block;width:1.3em;height:1.3em;margin:0 .05em;vertical-align:-.28em}
+/* games on another website */
+.moregames{margin-top:28px;padding-top:18px;border-top:3px solid var(--violet)}
+.moregames h3{font:400 28px/1.2 var(--bubble);color:var(--pink);margin:0 0 6px}
+.moregames h4{font:800 15px var(--body);color:var(--paper);margin:16px 0 8px}
+.moregames p{margin:0}
+.moregrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.moregame{display:flex;align-items:center;min-height:48px;padding:8px 12px;background:#000;color:var(--white);border:2px solid var(--violet);font:800 14px var(--body);text-decoration:none;overflow-wrap:anywhere}
+.moregame:hover,.moregame:focus-visible{border-color:var(--pink);color:var(--paper)}
+.moregames .moreall{margin-top:16px}
 
 /*ARCADE-CSS-END*/
 </style>
@@ -776,7 +782,46 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
         <canvas id="spill" width="480" height="360" aria-label="Spill Proof game area"></canvas>
         <div class="gamebar"><button class="pill" type="button" id="spillGo">Start</button><span id="spillStat" role="status">Best: 0</span></div>
       </div>
-    </div></div></section>
+    </div>
+    <section class="moregames" aria-labelledby="moreGamesTitle">
+      <h3 id="moreGamesTitle">More Monster High games</h3>
+      <p>Pick a game and it opens on Numuki, another website, in a new tab. These games do not earn bones.</p>
+      <h4>Dress up and create</h4>
+      <div class="moregrid">
+        <a class="moregame" href="https://www.numuki.com/game/create-a-monster-design-lab/" target="_blank" rel="noopener noreferrer">Create a Monster</a>
+        <a class="moregame" href="https://www.numuki.com/game/fang-tastic-fashion-show/" target="_blank" rel="noopener noreferrer">Fang-Tastic Fashion Show</a>
+        <a class="moregame" href="https://www.numuki.com/game/mh-first-day-of-school-dress-up-game/" target="_blank" rel="noopener noreferrer">First Day of School</a>
+        <a class="moregame" href="https://www.numuki.com/game/how-do-you-boo-frankie-stein-dress-up/" target="_blank" rel="noopener noreferrer">How Do You Boo: Frankie Stein</a>
+        <a class="moregame" href="https://www.numuki.com/game/how-do-you-boo-clawdeen-wolf-dress-up/" target="_blank" rel="noopener noreferrer">How Do You Boo: Clawdeen Wolf</a>
+        <a class="moregame" href="https://www.numuki.com/game/party-ghouls-rochelle-goyle-dress-up/" target="_blank" rel="noopener noreferrer">Party Ghouls: Rochelle Goyle</a>
+        <a class="moregame" href="https://www.numuki.com/game/isi-dawndancer-dress-up/" target="_blank" rel="noopener noreferrer">Isi Dawndancer Dress Up</a>
+        <a class="moregame" href="https://www.numuki.com/game/catty-noir-dress-up/" target="_blank" rel="noopener noreferrer">Catty Noir Dress Up</a>
+        <a class="moregame" href="https://www.numuki.com/game/new-scaremester-catty-noir/" target="_blank" rel="noopener noreferrer">New Scaremester: Catty Noir</a>
+      </div>
+      <h4>Adventure and action</h4>
+      <div class="moregrid">
+        <a class="moregame" href="https://www.numuki.com/game/creeptastic-catacomb-adventures/" target="_blank" rel="noopener noreferrer">Creeptastic Catacomb Adventures</a>
+        <a class="moregame" href="https://www.numuki.com/game/secret-creepers-adventures/" target="_blank" rel="noopener noreferrer">Secret Creepers Adventures</a>
+        <a class="moregame" href="https://www.numuki.com/game/mh-scary-sun/" target="_blank" rel="noopener noreferrer">Scary Sun</a>
+        <a class="moregame" href="https://www.numuki.com/game/skulltastic-survival/" target="_blank" rel="noopener noreferrer">Skulltastic Survival</a>
+        <a class="moregame" href="https://www.numuki.com/game/great-scarrier-swim/" target="_blank" rel="noopener noreferrer">Great Scarrier Swim</a>
+        <a class="moregame" href="https://www.numuki.com/game/mh-froggie-dash/" target="_blank" rel="noopener noreferrer">Froggie Dash</a>
+        <a class="moregame" href="https://www.numuki.com/game/creepateria-food-fright/" target="_blank" rel="noopener noreferrer">Creepateria Food Fright</a>
+      </div>
+      <h4>Dance</h4>
+      <div class="moregrid">
+        <a class="moregame" href="https://www.numuki.com/game/dawn-of-the-dance/" target="_blank" rel="noopener noreferrer">Dawn of the Dance</a>
+        <a class="moregame" href="https://www.numuki.com/game/mh-fear-a-mid/" target="_blank" rel="noopener noreferrer">Fear-A-Mid</a>
+      </div>
+      <h4>Puzzles</h4>
+      <div class="moregrid">
+        <a class="moregame" href="https://www.numuki.com/game/ghoul-word-search/" target="_blank" rel="noopener noreferrer">Ghoul Search</a>
+        <a class="moregame" href="https://www.numuki.com/game/who-s-that-ghoul/" target="_blank" rel="noopener noreferrer">Who's That Ghoul?</a>
+        <a class="moregame" href="https://www.numuki.com/game/mh-monster-freakout/" target="_blank" rel="noopener noreferrer">Monster Freakout</a>
+      </div>
+      <p class="moreall"><a class="pill" href="https://www.numuki.com/games/monster-high/" target="_blank" rel="noopener noreferrer">See all the Monster High games on Numuki</a></p>
+    </section>
+  </div></section>
 
   <section class="view band" data-view="tea" hidden><div class="wrap">
     <h2 class="sec-h">Spill the Tea</h2>
@@ -815,7 +860,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
   <section class="view band" data-view="registration" hidden><div class="wrap">
     <h2 class="sec-h">Registration</h2>
     <p class="lede">Register to get your own ghoul. Take the nine-question quiz to find your blend.</p>
-    <p class="rulesline">By joining, you agree to the <button class="linkish" type="button" data-go="rules">rules and privacy page</button>.</p>
     <div class="two">
       <div class="panel" id="quiz"></div>
       <div>
@@ -852,26 +896,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 
   <section class="view band" data-view="student" hidden><div class="wrap" id="studentPage"></div></section>
 
-  <section class="view band" data-view="rules" hidden><div class="wrap rulespage">
-    <h2 class="sec-h">Rules and privacy</h2>
-    <p class="lede">The short version of how Mumtea High works. By using the site, you agree to this.</p>
-    <div class="panel"><h3>School rules</h3><ul>
-      <li>You must be at least 13 to make an account.</li>
-      <li>Spill tea, not cruelty. No bullying, threats or hate.</li>
-      <li>Nothing sexual, and nothing illegal.</li>
-      <li>Don't post anyone's private details, including your own.</li>
-      <li>No spam, and no pretending to be someone else.</li>
-      <li>Ms. Fangtastic runs the school. She can remove any post or comment, stop someone posting, or delete any account.</li>
-    </ul></div>
-    <div class="panel"><h3>Reporting</h3><p>Use the Report link on a post, a comment or a student's page. Only Ms. Fangtastic sees reports, including who sent them. She decides what happens next.</p></div>
-    <div class="panel"><h3>What everyone can see</h3><p>Your username, your character, when you joined, your tea blend, your posts, comments, reactions, game scores and bones are public, including to people who are not logged in.</p></div>
-    <div class="panel"><h3>What stays private</h3><p>Your email address is used to verify your account and reset your password, and it is never shown on the site. Your password is stored scrambled, so nobody can read it. A student ID photo stays on your own device and is never uploaded.</p></div>
-    <div class="panel"><h3>Camera and Polaroids</h3><p>Say Fangs only uses your camera after you turn it on, and it turns off when you leave the game. Pictures are made on your own device and nothing is sent anywhere unless you press Post. A posted Polaroid is public, and it is gone for good when the post or your account is deleted. Only post pictures of other people if they have said yes.</p></div>
-    <div class="panel"><h3>Who helps run the site</h3><p>Accounts and posts are stored with Supabase. Emails are sent through Brevo. The site itself is hosted by GitHub Pages. Your browser also keeps small notes on your device, like your login and post drafts.</p></div>
-    <div class="panel"><h3>Leaving</h3><p>You can delete your account yourself on the Registration page when you are logged in. That removes your character, posts, comments, reactions, scores and bones.</p></div>
-    <p>Mumtea High is an unofficial fan gift and is not connected to any toy, film or game company.</p>
-  </div></section>
-
   <section class="view band" data-view="academics" hidden><div class="wrap">
     <h2 class="sec-h">Academics</h2>
     <p class="lede">Pick a class. Read the short lesson, then pass the quiz to finish it and earn bones.</p>
@@ -888,7 +912,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 
 <footer><div class="wrap">
   <p>Mumtea High. Home of Mumtea, aka Ms. Fantastic, aka Ms. Fangtastic. Stay fangtastic.</p>
-  <p>Unofficial fan gift. <button class="linkish" type="button" data-go="rules">Rules and privacy</button></p>
 </div></footer>
 </template>
 
@@ -926,7 +949,7 @@ function paintDolls(){$$('[data-doll]').forEach(s=>{const o=DOLLS[s.dataset.doll
 
 
 /* ---------- navigation ---------- */
-const VIEWS=['home','games','tea','registration','profile','fangtastic','students','student','rules','academics','admin'];
+const VIEWS=['home','games','tea','registration','profile','fangtastic','students','student','academics','admin'];
 function go(v,postId){
   if(!VIEWS.includes(v))v='home';
   $$('.view').forEach(s=>s.hidden=s.dataset.view!==v);
