@@ -149,8 +149,6 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
     c.fillStyle = '#6a1f86'; c.strokeStyle = '#000'; c.lineWidth = 4;
     c.beginPath(); c.moveTo(box.x, box.y); c.lineTo(box.x + box.w, box.y); c.lineTo(box.x + box.w - 12, 310); c.lineTo(box.x + 12, 310); c.closePath(); c.fill(); c.stroke();
     c.strokeStyle = '#ff1f8f'; c.lineWidth = 6; c.beginPath(); c.moveTo(box.x - 4, box.y); c.lineTo(box.x + box.w + 4, box.y); c.stroke();
-    const mx = box.x + box.w / 2;
-    c.strokeStyle = '#f9e9a6'; c.lineWidth = 3; c.beginPath(); c.moveTo(mx, box.y + 22); c.lineTo(mx, box.y + 64); c.moveTo(mx - 12, box.y + 36); c.lineTo(mx + 12, box.y + 36); c.stroke();
     if (run && !ball) {
       c.fillStyle = 'rgba(255,246,251,.65)';
       let x = HOME.x, y = HOME.y, vx = -aim.x * power, vy = -aim.y * power;

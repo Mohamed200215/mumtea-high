@@ -115,7 +115,7 @@ const EYES: Array<{ id: string; name: string; shape?: string; pupil?: string; la
   { id: 'wide', name: 'Wide', shape: 'wide' }, { id: 'narrow', name: 'Narrow', shape: 'narrow' }, { id: 'hooded', name: 'Hooded', shape: 'hooded' }, { id: 'sleepy', name: 'Sleepy', shape: 'sleepy' }, { id: 'monolid', name: 'Monolid', shape: 'monolid' },
   { id: 'closed', name: 'Closed', pupil: 'shut' }, { id: 'wink', name: 'Wink', pupil: 'wink' }, { id: 'happy', name: 'Happy arcs', pupil: 'arc' }, { id: 'angry', name: 'Angry', shape: 'angry' }, { id: 'sad', name: 'Sad', shape: 'sad' },
   { id: 'winged', name: 'Winged liner', lash: 'wing' }, { id: 'bold', name: 'Bold liner', lash: 'thick' }, { id: 'nolash', name: 'No lashes', lash: 'none' }, { id: 'lashy', name: 'Long lashes', lash: 'long' }, { id: 'bottomlash', name: 'Bottom lashes', lash: 'bottom' },
-  { id: 'slit', name: 'Vampire slit', shape: 'cat', pupil: 'slit' }, { id: 'star', name: 'Star pupils', shape: 'round', pupil: 'star' }, { id: 'heart', name: 'Heart pupils', shape: 'round', pupil: 'heart' }, { id: 'cross', name: 'Cross pupils', pupil: 'cross' }, { id: 'spiral', name: 'Hypnotised', shape: 'round', pupil: 'spiral' },
+  { id: 'slit', name: 'Vampire slit', shape: 'cat', pupil: 'slit' }, { id: 'star', name: 'Star pupils', shape: 'round', pupil: 'star' }, { id: 'heart', name: 'Heart pupils', shape: 'round', pupil: 'heart' }, { id: 'cross', name: 'Diamond pupils', pupil: 'diamond' }, { id: 'spiral', name: 'Hypnotised', shape: 'round', pupil: 'spiral' },
   { id: 'glow', name: 'Glowing', pupil: 'glow', lash: 'none' }, { id: 'blackout', name: 'Demon black', shape: 'cat', pupil: 'blackout' }, { id: 'button', name: 'Button eyes', shape: 'round', pupil: 'button', lash: 'none' }, { id: 'sparkle', name: 'Sparkly', shape: 'doll', pupil: 'sparkle' }, { id: 'mismatch', name: 'Two colours', pupil: 'mismatch' },
 ];
 const BROW_COLOURS = ['#17101c', '#3f2412', '#5a2c17', '#8b5a2b', '#a0392a', '#d98a3d', '#f4d35e', '#9aa0ac', '#f6f0ff', '#ff1f8f', '#f08fb4', '#6a1f86', '#19b7e8', '#35dcc8', '#2f8f4e', '#c0392b'];
@@ -658,7 +658,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     tags: strokeLine('M146 226Q160 258 174 226', 2, '#c0c0d8') + `<rect x="150" y="250" width="14" height="24" rx="4" fill="#c0c0d8" stroke="${INK}" stroke-width="1.500" transform="rotate(-10 157 262)"/><rect x="158" y="252" width="14" height="24" rx="4" fill="#e6e6f0" stroke="${INK}" stroke-width="1.500" transform="rotate(8 165 264)"/>`,
     bone: strokeLine('M147 222Q160 230 173 222', 5, '#14101a') + shape('M150 240a4 4 0 10-3 7 4 4 0 103 6l20 0a4 4 0 103-6 4 4 0 10-3-7z', '#fff6e0'),
     spider: strokeLine('M146 226Q160 252 174 226', 1.400, '#fff6fb') + strokeLine('M148 248l-8-6M148 254h-10M148 260l-8 6M172 248l8-6M172 254h10M172 260l8 6', 2, '#14101a') + `<ellipse cx="160" cy="254" rx="12" ry="9" fill="#14101a" stroke="${INK}" stroke-width="1.200"/><circle cx="160" cy="246" r="5" fill="#14101a"/>`,
-    coffin: strokeLine('M146 226Q160 248 174 226', 2, '#c0c0d8') + shape('M155 242h10l6 8-4 22h-14l-4-22z', '#14101a') + strokeLine('M160 248v14M155 254h10', 1.800, o.trim),
+    coffin: strokeLine('M146 226Q160 248 174 226', 2, '#c0c0d8') + shape('M155 242h10l6 8-4 22h-14l-4-22z', '#14101a'),
     teacup: strokeLine('M146 226Q160 248 174 226', 2, '#f4d35e') + `<path d="M148 244h24v6c0 9-5 14-12 14s-12-5-12-14z" fill="#fff6fb" stroke="${INK}" stroke-width="1.800"/><path d="M172 248h3a4 4 0 010 9h-5" fill="none" stroke="${INK}" stroke-width="1.800"/>`,
 } as Record<string, string>)[o.neck] || '';
   const twin = (inner: string) => inner + '<g transform="translate(320 0) scale(-1 1)">' + inner + '</g>';
@@ -678,7 +678,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     fox: `<path d="M184 372C258 366 302 440 276 520C268 546 244 540 238 524C216 470 200 420 180 400Z" fill="#ff8c1a" stroke="${INK}" stroke-width="2.600" stroke-linejoin="round"/><path d="M276 520C268 546 244 540 238 524C232 500 262 480 280 490Z" fill="#fff6fb" stroke="${INK}" stroke-width="2"/>`,
     cloak: `<path d="M116 216C100 170 120 110 160 96C200 110 220 170 204 216C238 380 256 540 268 668Q160 700 52 668C64 540 82 380 116 216Z" fill="${o.trim}" stroke="${INK}" stroke-width="2.600" stroke-linejoin="round"/>` + strokeLine('M100 340C92 460 80 570 74 660M220 340C228 460 240 570 246 660', 1.800, INK, 'opacity=".4"'),
     guitar: `<g transform="rotate(32 160 330)">` + shape('M152 130h16v160h-16z', '#5a2c17') + shape('M146 96h28v36h-28z', '#14101a') + `<path d="M160 280c-30 0-44 22-40 44 3 14 8 18 4 34-5 26 14 46 36 46s41-20 36-46c-4-16 1-20 4-34 4-22-10-44-40-44z" fill="#c0392b" stroke="${INK}" stroke-width="2.600"/><circle cx="160" cy="340" r="13" fill="#14101a"/></g>`,
-    coffin: shape('M130 224h60l26 40-14 116h-84l-14-116z', '#14101a') + strokeLine('M160 250v76M138 280h44', 5, o.trim),
+    coffin: shape('M130 224h60l26 40-14 116h-84l-14-116z', '#14101a'),
     teddy: `<circle cx="104" cy="240" r="20" fill="#8b5a2b" stroke="${INK}" stroke-width="2.600"/><circle cx="216" cy="240" r="20" fill="#8b5a2b" stroke="${INK}" stroke-width="2.600"/><rect x="100" y="240" width="120" height="120" rx="42" fill="#a56f3c" stroke="${INK}" stroke-width="2.600"/>`,
     batbag: twin('<path d="M120 276C96 240 66 230 44 244C56 256 54 274 48 286C66 280 76 286 80 304C94 296 106 304 116 320Z" fill="#14101a" stroke="' + INK + '" stroke-width="2.200"/>') + `<rect x="110" y="256" width="100" height="98" rx="30" fill="#14101a" stroke="${INK}" stroke-width="2.600"/>`,
     skullbag: `<path d="M160 226c-44 0-62 32-62 66 0 26 12 42 28 50v34h68v-34c16-8 28-24 28-50 0-34-18-66-62-66z" fill="#fff6fb" stroke="${INK}" stroke-width="2.600"/>`,
@@ -819,7 +819,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       slit: () => iris + '<ellipse cx="1" cy="' + iy + '" rx="2.800" ry="' + (ir - 1) + '" fill="' + BLACK + '"/><circle cx="6" cy="' + (iy - 5) + '" r="2.400" fill="#fff"/>',
       star: () => iris + '<path transform="' + c + '" d="M0-10l2.800 6.300 6.700.6-5 4.500 1.500 6.600-6-3.500-6 3.500 1.500-6.600-5-4.500 6.700-.6z" fill="' + BLACK + '"/>',
       heart: () => iris + '<path transform="' + c + '" d="M0 9c-10-7-12-13-7-15 3-1 6 0 7 3 1-3 4-4 7-3 5 2 3 8-7 15z" fill="' + BLACK + '"/><circle cx="6" cy="' + (iy - 6) + '" r="2.200" fill="#fff"/>',
-      cross: () => iris + '<path transform="' + c + '" d="M-9-2.500h6.500V-9h5v6.500H9v5H2.500V9h-5V2.500H-9z" fill="' + BLACK + '"/>',
+      diamond: () => iris + '<path transform="' + c + '" d="M0-10L8 0 0 10-8 0z" fill="' + BLACK + '"/>',
       spiral: () => '<circle cx="1" cy="' + iy + '" r="' + ir + '" fill="#fff"/>' + strokeLine('M1 ' + iy + 'a2 2 0 013 2 5 5 0 01-8-2 8 8 0 0113-4 11 11 0 01-1 14', 2.400, colour),
       glow: () => '<circle cx="1" cy="' + iy + '" r="' + ir + '" fill="' + colour + '"/><circle cx="1" cy="' + iy + '" r="' + (ir * .55) + '" fill="#fff" opacity=".85"/>',
       blackout: () => '<circle cx="1" cy="' + iy + '" r="4" fill="' + colour + '"/>',
