@@ -108,16 +108,14 @@ function openComposer(): void {
   title.addEventListener('input', update); body.addEventListener('input', update); update();
   const doodle = el('span', { cls: 'notedoodle', 'aria-hidden': 'true' }), cat = el('span', { cls: 'notecat', 'aria-hidden': 'true' });
   doodle.innerHTML = NOTE_SKULL; cat.innerHTML = NOTE_CAT;
-  /* A topic becomes the title, but never replaces a title someone typed themselves. */
-  let pickedTopic = '';
+  /* Picking a topic always makes it the title. */
   const topicList = el('div', { cls: 'topiclist', id: 'teaTopics', role: 'group', 'aria-label': 'Topic ideas', hidden: '' });
   const topicsBtn = el('button', { cls: 'pill ghost', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'teaTopics', onclick() {
     topicList.hidden = !topicList.hidden;
     topicsBtn.setAttribute('aria-expanded', String(!topicList.hidden));
   } }, 'Topics');
   POST_TOPICS.forEach(topic => topicList.append(el('button', { cls: 'chip', type: 'button', onclick() {
-    if (title.value.trim() && title.value !== pickedTopic) { note.textContent = 'You already have a title. Clear it to use this topic.'; return; }
-    title.value = pickedTopic = topic; note.textContent = '';
+    title.value = topic; note.textContent = '';
     update(); topicList.hidden = true; topicsBtn.setAttribute('aria-expanded', 'false'); body.focus();
   } }, topic)));
   const form = el('form', { cls: 'stack' },
