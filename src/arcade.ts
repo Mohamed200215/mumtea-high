@@ -3,6 +3,7 @@ const DISPLAY_FONT = '"Breath of the House", Impact, fantasy';
 const NEW_GAMES: MenuRow[] = [
   ['riptide', 'Riptide Run', 'Arcade', 'Swim the flooded basement. Hold to rise, let go to sink.', '🌊'],
   ['casket', 'Casket Shot', 'Arcade', 'Pull back, aim, and sink skulls into the casket.', '⚰️'],
+  ['booth', 'Say Fangs', 'Camera', 'Take a picture with your camera, pick a filter, and get a Polaroid.', '📸'],
 ];
 MENU.push(...NEW_GAMES);
 

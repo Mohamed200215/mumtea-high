@@ -259,6 +259,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .readmore{display:block;margin:0 0 8px}
 .reactbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .reactbtn{display:inline-flex;align-items:center;gap:4px;min-height:34px;min-width:44px;justify-content:center;padding:2px 8px;background:#14101a;color:var(--white);border:2px solid var(--violet);font:800 13px var(--body);cursor:pointer}
+.reactbtn img{display:block;width:26px;height:26px}
 .reactbtn:hover{border-color:var(--pink)}
 .reactbtn[aria-pressed="true"]{background:#5a0f4a;border-color:var(--pink)}
 .teatools{display:flex;flex-wrap:wrap;gap:6px 14px;margin:4px 0}
@@ -327,3 +328,66 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .classfeedback p{margin:0 0 10px;font-weight:700}
 .opts button.rightanswer,.opts button.rightanswer:disabled{background:#0f766e;border-color:var(--teal);color:#fff;opacity:1}
 .opts button.wronganswer,.opts button.wronganswer:disabled{background:#a3121f;border-color:#fff;color:#fff;opacity:1}
+
+/* say fangs: the camera and the polaroid */
+.gpanel[data-game="booth"]{max-width:860px}
+.fangcam{--metal:#ff4fa8;background:linear-gradient(160deg,#ff8cc6,var(--metal) 32%,var(--pink-deep) 100%);border:3px solid #000;border-radius:26px;padding:12px 14px 16px;box-shadow:inset 0 2px 0 #ffd0e8,inset 0 -3px 0 #7b0a45,0 7px 0 #000;position:relative;z-index:1;color:#2a0a1c}
+.camtop{display:flex;align-items:center;gap:12px;min-height:50px;padding:0 6px 8px}
+.camfinder{width:54px;height:36px;border-radius:7px;background:radial-gradient(circle at 42% 42%,#524565,#08050b 58%);border:3px solid #7b0a45;box-shadow:0 0 0 2px #000}
+.camlights{display:grid;gap:5px}
+.camlights i{display:block;width:20px;height:7px;border-radius:9px;background:#35102a;box-shadow:0 1px 0 #ffd0e8}
+.cambrand{display:flex;gap:8px;align-items:baseline;flex:1;min-width:0;font:13px var(--label);flex-wrap:wrap}
+.cambrand b{font:italic 800 15px var(--body)}
+.camzoom{display:flex;border:3px solid #000;border-radius:99px;overflow:hidden;background:linear-gradient(#f4eef6,#9b8ea6)}
+.camzoom button{width:42px;height:32px;border:0;background:none;cursor:pointer;font:800 15px var(--body);color:#1b0d1b}
+.camzoom button+button{border-left:2px solid #000}
+.camzoom button:hover{background:#fff}
+.cammain{display:grid;grid-template-columns:minmax(0,1fr) 164px;gap:14px;align-items:center}
+.cambezel{background:#08050b;border-radius:14px;padding:18px 26px 6px;box-shadow:0 0 0 2px #000,inset 0 0 0 2px #2c2233}
+.camscreen{position:relative;aspect-ratio:4/3;overflow:hidden;background:#14081a;isolation:isolate}
+.camlive{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.camsquare{position:absolute;top:0;bottom:0;left:12.5%;right:12.5%;outline:2px solid rgba(255,255,255,.7);outline-offset:-2px}
+.camtint,.camvig{position:absolute;inset:0;pointer-events:none}
+.camside{position:absolute;top:0;bottom:0;width:12.5%;background:rgba(8,5,11,.74)}
+.camside-l{left:0}.camside-r{right:0}
+.camcount{position:absolute;inset:0;display:grid;place-items:center;font:96px var(--display);color:var(--white);text-shadow:0 4px 0 #000;pointer-events:none}
+.camflash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.camflash.go{animation:camflash .32s ease-out}
+@keyframes camflash{from{opacity:1}to{opacity:0}}
+.camwake{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:9px 18px;font-size:15px;white-space:nowrap}
+.camname{text-align:center;font:17px var(--display);letter-spacing:.14em;color:#efe6f4;padding-top:5px}
+.camcontrols{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.camdial{--turn:0deg;position:relative;width:88px;height:88px;border-radius:50%;border:3px solid #000;cursor:pointer;padding:0;background:radial-gradient(circle,#f8f4fa 0 38%,#a79bb0 40% 46%,transparent 47%),repeating-conic-gradient(#d9d0df 0 10deg,#6d6176 10deg 20deg);transform:rotate(var(--turn));transition:transform .2s}
+.camdialmark{position:absolute;left:50%;top:7px;width:9px;height:18px;margin-left:-4.5px;border-radius:5px;background:var(--pink);border:2px solid #000}
+.camfilter{font:800 14px/1.15 var(--body);text-align:center;min-height:16px;color:#fff;text-shadow:0 1px 0 #000}
+.camrow{display:flex;gap:6px}
+.camround{min-height:34px;padding:2px 9px;border:2px solid #000;border-radius:99px;background:linear-gradient(#f4eef6,#a79bb0);color:#1b0d1b;font:800 12px var(--body);cursor:pointer}
+.camround[aria-pressed="true"]{background:var(--teal)}
+.camring{position:relative;width:138px;height:138px;border-radius:50%;border:3px solid #000;background:radial-gradient(circle,#b8acc1 0 32%,#efe9f3 34% 100%)}
+.campad{position:absolute;width:42px;height:42px;border:0;background:none;color:#1b0d1b;font-size:14px;cursor:pointer;border-radius:50%}
+.campad:hover{background:#fff}
+.campad.up{left:45px;top:1px}.campad.down{left:45px;bottom:1px}.campad.left{left:1px;top:45px}.campad.right{right:1px;top:45px}
+.camshutter{position:absolute;left:43px;top:43px;width:46px;height:46px;border-radius:50%;border:3px solid #000;background:radial-gradient(circle at 40% 35%,#ff9fce,var(--pink) 58%,var(--pink-deep));box-shadow:0 3px 0 #000;cursor:pointer}
+.camshutter:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #000}
+.camshutter:disabled{filter:grayscale(.85);cursor:not-allowed}
+.camchips{margin:0 0 12px}
+.polaslot{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:center;margin:0 0 8px}
+.polaprint{position:relative;width:min(100%,340px);overflow:hidden;line-height:0;animation:polaout .9s cubic-bezier(.2,.8,.3,1)}
+.polaprint img{display:block;width:100%;height:auto}
+@keyframes polaout{from{clip-path:inset(0 0 100% 0);transform:translateY(-55%)}to{clip-path:inset(0);transform:none}}
+.poladevelop{position:absolute;left:11.25%;top:9.23%;width:77.5%;height:63.59%;background:#2c2233;opacity:0;animation:poladev 3.6s ease-in .4s backwards;pointer-events:none}
+@keyframes poladev{from{opacity:1}to{opacity:0}}
+.polaacts{flex:1 1 250px;min-width:0;padding-top:12px}
+.polaacts input{width:100%;margin-bottom:10px}
+.polanote{min-height:24px;margin:10px 0 0;font-weight:700}
+.postpola{display:block;width:min(100%,320px);height:auto;aspect-ratio:640/780;margin:8px 0;background:#181019}
+@media (max-width:640px){
+  .fangcam{padding:10px 8px 14px;border-radius:18px}
+  .cammain{grid-template-columns:minmax(0,1fr)}
+  .cambezel{padding:10px 10px 4px}
+  .cambrand b{display:none}
+  .camcontrols{display:grid;grid-template-columns:88px minmax(0,1fr);justify-items:center;gap:6px 10px}
+  .camdial{grid-row:1}.camfilter{grid-row:2;grid-column:1}.camrow{grid-row:3;grid-column:1;flex-direction:column}
+  .camring{grid-row:1/4;grid-column:2}
+}
+@media (prefers-reduced-motion:reduce){.polaprint,.poladevelop,.camflash.go{animation:none}.camdial{transition:none}}

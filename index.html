@@ -490,6 +490,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .readmore{display:block;margin:0 0 8px}
 .reactbar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .reactbtn{display:inline-flex;align-items:center;gap:4px;min-height:34px;min-width:44px;justify-content:center;padding:2px 8px;background:#14101a;color:var(--white);border:2px solid var(--violet);font:800 13px var(--body);cursor:pointer}
+.reactbtn img{display:block;width:26px;height:26px}
 .reactbtn:hover{border-color:var(--pink)}
 .reactbtn[aria-pressed="true"]{background:#5a0f4a;border-color:var(--pink)}
 .teatools{display:flex;flex-wrap:wrap;gap:6px 14px;margin:4px 0}
@@ -558,6 +559,69 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .classfeedback p{margin:0 0 10px;font-weight:700}
 .opts button.rightanswer,.opts button.rightanswer:disabled{background:#0f766e;border-color:var(--teal);color:#fff;opacity:1}
 .opts button.wronganswer,.opts button.wronganswer:disabled{background:#a3121f;border-color:#fff;color:#fff;opacity:1}
+
+/* say fangs: the camera and the polaroid */
+.gpanel[data-game="booth"]{max-width:860px}
+.fangcam{--metal:#ff4fa8;background:linear-gradient(160deg,#ff8cc6,var(--metal) 32%,var(--pink-deep) 100%);border:3px solid #000;border-radius:26px;padding:12px 14px 16px;box-shadow:inset 0 2px 0 #ffd0e8,inset 0 -3px 0 #7b0a45,0 7px 0 #000;position:relative;z-index:1;color:#2a0a1c}
+.camtop{display:flex;align-items:center;gap:12px;min-height:50px;padding:0 6px 8px}
+.camfinder{width:54px;height:36px;border-radius:7px;background:radial-gradient(circle at 42% 42%,#524565,#08050b 58%);border:3px solid #7b0a45;box-shadow:0 0 0 2px #000}
+.camlights{display:grid;gap:5px}
+.camlights i{display:block;width:20px;height:7px;border-radius:9px;background:#35102a;box-shadow:0 1px 0 #ffd0e8}
+.cambrand{display:flex;gap:8px;align-items:baseline;flex:1;min-width:0;font:13px var(--label);flex-wrap:wrap}
+.cambrand b{font:italic 800 15px var(--body)}
+.camzoom{display:flex;border:3px solid #000;border-radius:99px;overflow:hidden;background:linear-gradient(#f4eef6,#9b8ea6)}
+.camzoom button{width:42px;height:32px;border:0;background:none;cursor:pointer;font:800 15px var(--body);color:#1b0d1b}
+.camzoom button+button{border-left:2px solid #000}
+.camzoom button:hover{background:#fff}
+.cammain{display:grid;grid-template-columns:minmax(0,1fr) 164px;gap:14px;align-items:center}
+.cambezel{background:#08050b;border-radius:14px;padding:18px 26px 6px;box-shadow:0 0 0 2px #000,inset 0 0 0 2px #2c2233}
+.camscreen{position:relative;aspect-ratio:4/3;overflow:hidden;background:#14081a;isolation:isolate}
+.camlive{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.camsquare{position:absolute;top:0;bottom:0;left:12.5%;right:12.5%;outline:2px solid rgba(255,255,255,.7);outline-offset:-2px}
+.camtint,.camvig{position:absolute;inset:0;pointer-events:none}
+.camside{position:absolute;top:0;bottom:0;width:12.5%;background:rgba(8,5,11,.74)}
+.camside-l{left:0}.camside-r{right:0}
+.camcount{position:absolute;inset:0;display:grid;place-items:center;font:96px var(--display);color:var(--white);text-shadow:0 4px 0 #000;pointer-events:none}
+.camflash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.camflash.go{animation:camflash .32s ease-out}
+@keyframes camflash{from{opacity:1}to{opacity:0}}
+.camwake{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:9px 18px;font-size:15px;white-space:nowrap}
+.camname{text-align:center;font:17px var(--display);letter-spacing:.14em;color:#efe6f4;padding-top:5px}
+.camcontrols{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0}
+.camdial{--turn:0deg;position:relative;width:88px;height:88px;border-radius:50%;border:3px solid #000;cursor:pointer;padding:0;background:radial-gradient(circle,#f8f4fa 0 38%,#a79bb0 40% 46%,transparent 47%),repeating-conic-gradient(#d9d0df 0 10deg,#6d6176 10deg 20deg);transform:rotate(var(--turn));transition:transform .2s}
+.camdialmark{position:absolute;left:50%;top:7px;width:9px;height:18px;margin-left:-4.5px;border-radius:5px;background:var(--pink);border:2px solid #000}
+.camfilter{font:800 14px/1.15 var(--body);text-align:center;min-height:16px;color:#fff;text-shadow:0 1px 0 #000}
+.camrow{display:flex;gap:6px}
+.camround{min-height:34px;padding:2px 9px;border:2px solid #000;border-radius:99px;background:linear-gradient(#f4eef6,#a79bb0);color:#1b0d1b;font:800 12px var(--body);cursor:pointer}
+.camround[aria-pressed="true"]{background:var(--teal)}
+.camring{position:relative;width:138px;height:138px;border-radius:50%;border:3px solid #000;background:radial-gradient(circle,#b8acc1 0 32%,#efe9f3 34% 100%)}
+.campad{position:absolute;width:42px;height:42px;border:0;background:none;color:#1b0d1b;font-size:14px;cursor:pointer;border-radius:50%}
+.campad:hover{background:#fff}
+.campad.up{left:45px;top:1px}.campad.down{left:45px;bottom:1px}.campad.left{left:1px;top:45px}.campad.right{right:1px;top:45px}
+.camshutter{position:absolute;left:43px;top:43px;width:46px;height:46px;border-radius:50%;border:3px solid #000;background:radial-gradient(circle at 40% 35%,#ff9fce,var(--pink) 58%,var(--pink-deep));box-shadow:0 3px 0 #000;cursor:pointer}
+.camshutter:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #000}
+.camshutter:disabled{filter:grayscale(.85);cursor:not-allowed}
+.camchips{margin:0 0 12px}
+.polaslot{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:center;margin:0 0 8px}
+.polaprint{position:relative;width:min(100%,340px);overflow:hidden;line-height:0;animation:polaout .9s cubic-bezier(.2,.8,.3,1)}
+.polaprint img{display:block;width:100%;height:auto}
+@keyframes polaout{from{clip-path:inset(0 0 100% 0);transform:translateY(-55%)}to{clip-path:inset(0);transform:none}}
+.poladevelop{position:absolute;left:11.25%;top:9.23%;width:77.5%;height:63.59%;background:#2c2233;opacity:0;animation:poladev 3.6s ease-in .4s backwards;pointer-events:none}
+@keyframes poladev{from{opacity:1}to{opacity:0}}
+.polaacts{flex:1 1 250px;min-width:0;padding-top:12px}
+.polaacts input{width:100%;margin-bottom:10px}
+.polanote{min-height:24px;margin:10px 0 0;font-weight:700}
+.postpola{display:block;width:min(100%,320px);height:auto;aspect-ratio:640/780;margin:8px 0;background:#181019}
+@media (max-width:640px){
+  .fangcam{padding:10px 8px 14px;border-radius:18px}
+  .cammain{grid-template-columns:minmax(0,1fr)}
+  .cambezel{padding:10px 10px 4px}
+  .cambrand b{display:none}
+  .camcontrols{display:grid;grid-template-columns:88px minmax(0,1fr);justify-items:center;gap:6px 10px}
+  .camdial{grid-row:1}.camfilter{grid-row:2;grid-column:1}.camrow{grid-row:3;grid-column:1;flex-direction:column}
+  .camring{grid-row:1/4;grid-column:2}
+}
+@media (prefers-reduced-motion:reduce){.polaprint,.poladevelop,.camflash.go{animation:none}.camdial{transition:none}}
 
 /*ARCADE-CSS-END*/
 </style>
@@ -795,6 +859,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
     <div class="panel"><h3>Reporting</h3><p>Use the Report link on a post, a comment or a student's page. Only Ms. Fangtastic sees reports, including who sent them. She decides what happens next.</p></div>
     <div class="panel"><h3>What everyone can see</h3><p>Your username, your character, when you joined, your tea blend, your posts, comments, reactions, game scores and bones are public, including to people who are not logged in.</p></div>
     <div class="panel"><h3>What stays private</h3><p>Your email address is used to verify your account and reset your password, and it is never shown on the site. Your password is stored scrambled, so nobody can read it. A student ID photo stays on your own device and is never uploaded.</p></div>
+    <div class="panel"><h3>Camera and Polaroids</h3><p>Say Fangs only uses your camera after you turn it on, and it turns off when you leave the game. Pictures are made on your own device and nothing is sent anywhere unless you press Post. A posted Polaroid is public, and it is gone for good when the post or your account is deleted. Only post pictures of other people if they have said yes.</p></div>
     <div class="panel"><h3>Who helps run the site</h3><p>Accounts and posts are stored with Supabase. Emails are sent through Brevo. The site itself is hosted by GitHub Pages. Your browser also keeps small notes on your device, like your login and post drafts.</p></div>
     <div class="panel"><h3>Leaving</h3><p>You can delete your account yourself on the Registration page when you are logged in. That removes your character, posts, comments, reactions, scores and bones.</p></div>
     <p>Mumtea High is an unofficial fan gift and is not connected to any toy, film or game company.</p>
@@ -1420,6 +1485,7 @@ const DISPLAY_FONT = '"Breath of the House", Impact, fantasy';
 const NEW_GAMES = [
     ['riptide', 'Riptide Run', 'Arcade', 'Swim the flooded basement. Hold to rise, let go to sink.', '🌊'],
     ['casket', 'Casket Shot', 'Arcade', 'Pull back, aim, and sink skulls into the casket.', '⚰️'],
+    ['booth', 'Say Fangs', 'Camera', 'Take a picture with your camera, pick a filter, and get a Polaroid.', '📸'],
 ];
 MENU.push(...NEW_GAMES);
 function makePanel(id, title, help, body, goText = 'Start') {
@@ -1980,7 +2046,510 @@ function arcadeOpened(id) {
         currentGame = last;
     syncPlayerBar();
 })();
-const REACTIONS = [['fang', '🦇', 'Fangtastic'], ['tea', '🍵', 'Spilled'], ['skull', '💀', 'Dead'], ['heart', '🖤', 'Love'], ['fire', '🔥', 'Hot']];
+const CAM_FILTERS = [
+    { name: 'No filter', ops: [] },
+    { name: 'Graveyard', ops: [['saturate', 0], ['contrast', 1.25]], vignette: .55 },
+    { name: 'Old Bone', ops: [['sepia', .75], ['contrast', 1.05], ['brightness', 1.05]], vignette: .3 },
+    { name: 'Blood Moon', ops: [['saturate', 1.4], ['contrast', 1.1]], tint: ['#ff1f8f', 'soft-light', .55], vignette: .45 },
+    { name: 'Bubblegum', ops: [['brightness', 1.08], ['saturate', 1.25]], tint: ['#ff7ac0', 'soft-light', .6] },
+    { name: 'Moonlit', ops: [['saturate', .55], ['brightness', .95]], tint: ['#2f62ff', 'soft-light', .6], vignette: .35 },
+    { name: 'Toxic Slime', ops: [['hue', 70], ['saturate', 1.4]], tint: ['#8df04a', 'soft-light', .3] },
+    { name: 'Ghostly', ops: [['brightness', 1.2], ['contrast', .8], ['saturate', .45]], tint: ['#d8fff8', 'screen', .18] },
+    { name: 'Midnight Plum', ops: [['contrast', 1.15], ['brightness', .85]], tint: ['#6a1f86', 'soft-light', .8], vignette: .5 },
+    { name: 'Tea Stain', ops: [['sepia', .35], ['saturate', 1.2]], tint: ['#c9812f', 'soft-light', .5] },
+];
+const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
+const POLA_BLURB = 'Snapped at the Say Fangs photo booth.';
+const camCss = (f) => f.ops.map(([n, v]) => (n === 'hue' ? 'hue-rotate(' + v + 'deg)' : n + '(' + v + ')')).join(' ') || 'none';
+/* The same sums the browser uses for its picture filters, so the Polaroid matches the screen in every browser. */
+function camMatrix([n, v]) {
+    if (n === 'saturate')
+        return [.213 + .787 * v, .715 - .715 * v, .072 - .072 * v, .213 - .213 * v, .715 + .285 * v, .072 - .072 * v, .213 - .213 * v, .715 - .715 * v, .072 + .928 * v];
+    if (n === 'sepia') {
+        const k = 1 - v;
+        return [.393 + .607 * k, .769 - .769 * k, .189 - .189 * k, .349 - .349 * k, .686 + .314 * k, .168 - .168 * k, .272 - .272 * k, .534 - .534 * k, .131 + .869 * k];
+    }
+    const a = v * Math.PI / 180, cs = Math.cos(a), sn = Math.sin(a);
+    return [.213 + cs * .787 - sn * .213, .715 - cs * .715 - sn * .715, .072 - cs * .072 + sn * .928, .213 - cs * .213 + sn * .143, .715 + cs * .285 + sn * .14, .072 - cs * .072 - sn * .283, .213 - cs * .213 - sn * .787, .715 - cs * .715 + sn * .715, .072 + cs * .928 + sn * .072];
+}
+function camShade(c, size, f) {
+    const img = c.getImageData(0, 0, size, size), d = img.data;
+    f.ops.forEach(op => {
+        if (op[0] === 'brightness' || op[0] === 'contrast') {
+            const mul = op[1], add = op[0] === 'contrast' ? 127.5 * (1 - mul) : 0;
+            for (let i = 0; i < d.length; i += 4) {
+                d[i] = d[i] * mul + add;
+                d[i + 1] = d[i + 1] * mul + add;
+                d[i + 2] = d[i + 2] * mul + add;
+            }
+            return;
+        }
+        const m = camMatrix(op);
+        for (let i = 0; i < d.length; i += 4) {
+            const r = d[i], g = d[i + 1], b = d[i + 2];
+            d[i] = m[0] * r + m[1] * g + m[2] * b;
+            d[i + 1] = m[3] * r + m[4] * g + m[5] * b;
+            d[i + 2] = m[6] * r + m[7] * g + m[8] * b;
+        }
+    });
+    c.putImageData(img, 0, 0);
+    if (f.tint) {
+        c.save();
+        c.globalCompositeOperation = f.tint[1];
+        c.globalAlpha = f.tint[2];
+        c.fillStyle = f.tint[0];
+        c.fillRect(0, 0, size, size);
+        c.restore();
+    }
+    if (f.vignette) {
+        const g = c.createRadialGradient(size / 2, size / 2, size * .318, size / 2, size / 2, size * .707);
+        g.addColorStop(0, 'rgba(0,0,0,0)');
+        g.addColorStop(1, 'rgba(0,0,0,' + f.vignette + ')');
+        c.fillStyle = g;
+        c.fillRect(0, 0, size, size);
+    }
+}
+/* ---------- the Polaroid frame, hand-drawn in the school's colours ---------- */
+function drawPolaroid(photo) {
+    const cv = el('canvas', { width: POLA_W, height: POLA_H }), c = cv.getContext('2d');
+    let seed = 7;
+    const jig = () => { seed = (seed * 16807) % 2147483647; return (seed / 2147483647 - .5) * 2.6; };
+    const sketch = (pts, width = 5, colour = '#000') => {
+        c.lineCap = c.lineJoin = 'round';
+        c.strokeStyle = colour;
+        c.lineWidth = width;
+        c.beginPath();
+        pts.forEach((p, i) => {
+            const q = pts[(i + 1) % pts.length], steps = Math.ceil(Math.hypot(q[0] - p[0], q[1] - p[1]) / 26);
+            if (!i)
+                c.moveTo(p[0], p[1]);
+            for (let s = 1; s <= steps; s++)
+                c.lineTo(p[0] + (q[0] - p[0]) * s / steps + (s < steps ? jig() : 0), p[1] + (q[1] - p[1]) * s / steps + (s < steps ? jig() : 0));
+        });
+        c.closePath();
+        c.stroke();
+    };
+    const ticks = (colour, lines) => {
+        c.strokeStyle = colour;
+        c.lineWidth = 7;
+        c.lineCap = 'round';
+        lines.forEach(l => { c.beginPath(); c.moveTo(l[0], l[1]); c.lineTo(l[2], l[3]); c.stroke(); });
+    };
+    const heart = (x, y, s) => {
+        c.save();
+        c.translate(x, y);
+        c.scale(s, s);
+        c.rotate(-.12);
+        c.beginPath();
+        c.moveTo(0, 18);
+        c.bezierCurveTo(-30, -4, -24, -26, -10, -24);
+        c.bezierCurveTo(-4, -24, 0, -18, 0, -13);
+        c.bezierCurveTo(0, -18, 5, -24, 11, -24);
+        c.bezierCurveTo(25, -26, 30, -4, 0, 18);
+        c.closePath();
+        c.fillStyle = '#ff1f8f';
+        c.fill();
+        c.strokeStyle = '#000';
+        c.lineWidth = 4.5;
+        c.lineJoin = 'round';
+        c.stroke();
+        c.fillStyle = '#ffd0e8';
+        c.beginPath();
+        c.ellipse(-12, -13, 4, 2.8, -.6, 0, 7);
+        c.fill();
+        c.restore();
+    };
+    const star = (x, y, r) => {
+        c.save();
+        c.translate(x, y);
+        c.rotate(.2);
+        c.beginPath();
+        for (let i = 0; i < 10; i++) {
+            const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? r * .48 : r;
+            c.lineTo(Math.cos(a) * d, Math.sin(a) * d);
+        }
+        c.closePath();
+        c.fillStyle = '#35dcc8';
+        c.fill();
+        c.strokeStyle = '#000';
+        c.lineWidth = 4.5;
+        c.lineJoin = 'round';
+        c.stroke();
+        c.restore();
+    };
+    const bat = (x, y, s) => {
+        c.save();
+        c.translate(x, y);
+        c.scale(s, s);
+        c.rotate(-.14);
+        c.fillStyle = '#3a1250';
+        c.strokeStyle = '#000';
+        c.lineWidth = 4;
+        c.lineJoin = 'round';
+        c.beginPath();
+        c.moveTo(-8, -6);
+        c.quadraticCurveTo(-30, -26, -54, -14);
+        c.quadraticCurveTo(-46, -4, -48, 8);
+        c.quadraticCurveTo(-37, 1, -30, 12);
+        c.quadraticCurveTo(-21, 5, -13, 16);
+        c.lineTo(13, 16);
+        c.quadraticCurveTo(21, 5, 30, 12);
+        c.quadraticCurveTo(37, 1, 48, 8);
+        c.quadraticCurveTo(46, -4, 54, -14);
+        c.quadraticCurveTo(30, -26, 8, -6);
+        c.closePath();
+        c.fill();
+        c.stroke();
+        c.beginPath();
+        c.moveTo(-14, -8);
+        c.lineTo(-17, -29);
+        c.lineTo(-5, -18);
+        c.lineTo(5, -18);
+        c.lineTo(17, -29);
+        c.lineTo(14, -8);
+        c.closePath();
+        c.fill();
+        c.stroke();
+        c.beginPath();
+        c.arc(0, -4, 17, 0, 7);
+        c.fill();
+        c.stroke();
+        c.fillStyle = '#ff1f8f';
+        c.beginPath();
+        c.arc(-6.5, -7, 3.6, 0, 7);
+        c.arc(6.5, -7, 3.6, 0, 7);
+        c.fill();
+        c.fillStyle = '#fff6fb';
+        c.beginPath();
+        c.moveTo(-6, 3);
+        c.lineTo(-3, 9);
+        c.lineTo(-1, 3);
+        c.moveTo(1, 3);
+        c.lineTo(3, 9);
+        c.lineTo(6, 3);
+        c.fill();
+        c.restore();
+    };
+    const skull = (x, y, s) => {
+        c.save();
+        c.translate(x, y);
+        c.scale(s, s);
+        c.rotate(-.1);
+        c.fillStyle = '#fff6fb';
+        c.strokeStyle = '#000';
+        c.lineWidth = 4.5;
+        c.lineJoin = 'round';
+        c.beginPath();
+        c.moveTo(-14, 16);
+        c.lineTo(-14, 28);
+        c.lineTo(14, 28);
+        c.lineTo(14, 16);
+        c.bezierCurveTo(30, 10, 34, -6, 30, -14);
+        c.bezierCurveTo(24, -38, -24, -38, -30, -14);
+        c.bezierCurveTo(-34, -6, -30, 10, -14, 16);
+        c.closePath();
+        c.fill();
+        c.stroke();
+        c.fillStyle = '#000';
+        c.beginPath();
+        c.ellipse(-12, -3, 8, 9, .15, 0, 7);
+        c.ellipse(12, -3, 8, 9, -.15, 0, 7);
+        c.fill();
+        c.beginPath();
+        c.moveTo(0, 7);
+        c.lineTo(-4, 14);
+        c.lineTo(4, 14);
+        c.fill();
+        c.lineWidth = 3;
+        c.beginPath();
+        c.moveTo(-5, 20);
+        c.lineTo(-5, 28);
+        c.moveTo(5, 20);
+        c.lineTo(5, 28);
+        c.stroke();
+        c.fillStyle = '#ff7ab8';
+        c.beginPath();
+        c.arc(-19, 9, 5, 0, 7);
+        c.arc(19, 9, 5, 0, 7);
+        c.fill();
+        c.translate(21, -27);
+        c.fillStyle = '#ff1f8f';
+        c.lineWidth = 3.5;
+        c.beginPath();
+        c.moveTo(0, 0);
+        c.lineTo(-17, -11);
+        c.lineTo(-17, 11);
+        c.closePath();
+        c.fill();
+        c.stroke();
+        c.beginPath();
+        c.moveTo(0, 0);
+        c.lineTo(17, -11);
+        c.lineTo(17, 11);
+        c.closePath();
+        c.fill();
+        c.stroke();
+        c.beginPath();
+        c.arc(0, 0, 5, 0, 7);
+        c.fill();
+        c.stroke();
+        c.restore();
+    };
+    c.fillStyle = '#181019';
+    c.fillRect(0, 0, POLA_W, POLA_H);
+    c.fillStyle = '#f9e9a6';
+    c.fillRect(28, 28, 584, 724);
+    c.fillStyle = 'rgba(255,31,143,.1)';
+    c.fillRect(28, 568, 584, 184);
+    sketch([[28, 28], [612, 28], [612, 752], [28, 752]], 6);
+    c.drawImage(photo, POLA_X, POLA_Y, POLA_S, POLA_S);
+    sketch([[POLA_X, POLA_Y], [POLA_X + POLA_S, POLA_Y], [POLA_X + POLA_S, POLA_Y + POLA_S], [POLA_X, POLA_Y + POLA_S]], 5);
+    bat(62, 54, 1);
+    ticks('#ff1f8f', [[122, 18, 130, 7], [132, 30, 148, 24]]);
+    heart(586, 58, 1.1);
+    ticks('#35dcc8', [[585, 92, 607, 92], [572, 102, 588, 114]]);
+    skull(112, 668, 1.15);
+    ticks('#19b7e8', [[168, 660, 192, 654], [168, 684, 190, 694]]);
+    heart(506, 640, 1);
+    star(556, 694, 34);
+    ticks('#ff1f8f', [[462, 668, 482, 674], [468, 696, 488, 690]]);
+    c.fillStyle = '#2a1420';
+    c.textAlign = 'center';
+    c.font = '38px ' + DISPLAY_FONT;
+    c.fillText('MUMTEA HIGH', POLA_W / 2, 662, 240);
+    c.font = '800 18px Nunito, sans-serif';
+    c.fillText(new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }), POLA_W / 2, 692, 240);
+    return cv;
+}
+function polaroidData(cv) {
+    for (let q = .86; q > .4; q -= .08) {
+        const url = cv.toDataURL('image/jpeg', q);
+        if (url.length <= MAX_PHOTO)
+            return url;
+    }
+    return cv.toDataURL('image/jpeg', .4);
+}
+/* ---------- Polaroids on the timeline: fetched only when a post comes near the screen ---------- */
+let photoIds = new Set();
+const photoCache = new Map();
+const photoWatch = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting)
+            return;
+        photoWatch.unobserve(entry.target);
+        showPostPhoto(entry.target);
+    });
+}, { rootMargin: '600px' }) : null;
+async function showPostPhoto(img) {
+    const id = img.dataset.post;
+    if (!photoCache.has(id)) {
+        const { data, error } = await sb.from('post_photos').select('photo').eq('post_id', id).maybeSingle();
+        if (error || !data)
+            return;
+        photoCache.set(id, data.photo);
+    }
+    img.src = photoCache.get(id);
+}
+function postPhoto(post) {
+    const img = el('img', { cls: 'postpola', alt: 'Polaroid photo posted by ' + authorName(post), 'data-post': post.id, width: POLA_W, height: POLA_H });
+    if (photoCache.has(post.id))
+        img.src = photoCache.get(post.id);
+    else if (photoWatch)
+        photoWatch.observe(img);
+    else
+        showPostPhoto(img);
+    return img;
+}
+/* ---------- the camera ---------- */
+(function () {
+    const video = el('video', { cls: 'camlive', autoplay: '', muted: '', playsinline: '', 'aria-label': 'What your camera can see' });
+    video.muted = true;
+    const tint = el('div', { cls: 'camtint' }), vig = el('div', { cls: 'camvig' });
+    const count = el('div', { cls: 'camcount', 'aria-live': 'assertive' }), flash = el('div', { cls: 'camflash' });
+    const wake = el('button', { cls: 'pill camwake', type: 'button' }, 'Turn on camera');
+    const screen = el('div', { cls: 'camscreen' }, video, el('div', { cls: 'camsquare' }, tint, vig), el('div', { cls: 'camside camside-l' }), el('div', { cls: 'camside camside-r' }), count, flash, wake);
+    const filterName = el('strong', { cls: 'camfilter' });
+    const dial = el('button', { cls: 'camdial', type: 'button' }, el('span', { cls: 'camdialmark' }));
+    const timerBtn = el('button', { cls: 'camround', type: 'button', 'aria-pressed': 'false' }, 'Timer');
+    const flipBtn = el('button', { cls: 'camround', type: 'button', 'aria-pressed': 'true' }, 'Mirror');
+    const shutter = el('button', { cls: 'camshutter', type: 'button', disabled: '', 'aria-label': 'Take the picture' });
+    const pad = (cls, label, mark, act) => el('button', { cls: 'campad ' + cls, type: 'button', 'aria-label': label, onclick: act }, mark);
+    const chips = el('div', { cls: 'chips camchips', role: 'group', 'aria-label': 'Filters' });
+    const camera = el('div', { cls: 'fangcam' }, el('div', { cls: 'camtop' }, el('div', { cls: 'camfinder', 'aria-hidden': 'true' }), el('div', { cls: 'camlights', 'aria-hidden': 'true' }, el('i'), el('i')), el('div', { cls: 'cambrand', 'aria-hidden': 'true' }, el('span', { text: 'FG-13' }), el('b', { text: 'Super Scream Shot' })), el('div', { cls: 'camzoom' }, el('button', { type: 'button', 'aria-label': 'Zoom out', onclick() { setZoom(zoom - .25); } }, 'W'), el('button', { type: 'button', 'aria-label': 'Zoom in', onclick() { setZoom(zoom + .25); } }, 'T'))), el('div', { cls: 'cammain' }, el('div', { cls: 'cambezel' }, screen, el('div', { cls: 'camname', 'aria-hidden': 'true', text: 'FANGCAM' })), el('div', { cls: 'camcontrols' }, dial, filterName, el('div', { cls: 'camrow' }, timerBtn, flipBtn), el('div', { cls: 'camring' }, pad('up', 'Zoom in', '▲', () => setZoom(zoom + .25)), pad('left', 'Previous filter', '◀', () => setFilter(filterAt - 1)), shutter, pad('right', 'Next filter', '▶', () => setFilter(filterAt + 1)), pad('down', 'Zoom out', '▼', () => setZoom(zoom - .25))))));
+    const printSlot = el('div', { cls: 'polaslot' });
+    const p = makePanel('booth', 'Say Fangs', 'Turn on your camera, pick a filter, then press the pink button. Your picture stays on this device unless you choose to post it.', [chips, camera, printSlot], 'Turn on camera');
+    let stream = null, asking = 0, filterAt = 0, zoom = 1, mirror = true, useTimer = false, countdown = 0;
+    const live = () => !!stream;
+    const drawSwitch = () => {
+        p.go.textContent = live() ? 'Turn off camera' : 'Turn on camera';
+        wake.hidden = live();
+        if (live())
+            shutter.removeAttribute('disabled');
+        else
+            shutter.setAttribute('disabled', '');
+    };
+    const aim = () => { video.style.transform = 'scale(' + (mirror ? -zoom : zoom) + ',' + zoom + ')'; };
+    function setZoom(z) { zoom = Math.min(3, Math.max(1, z)); aim(); }
+    function setFilter(i) {
+        filterAt = (i + CAM_FILTERS.length) % CAM_FILTERS.length;
+        const f = CAM_FILTERS[filterAt];
+        video.style.filter = camCss(f);
+        tint.style.background = f.tint ? f.tint[0] : 'none';
+        tint.style.opacity = f.tint ? String(f.tint[2]) : '0';
+        tint.style.mixBlendMode = f.tint ? f.tint[1] : 'normal';
+        vig.style.background = f.vignette ? 'radial-gradient(circle,transparent 45%,rgba(0,0,0,' + f.vignette + ') 100%)' : 'none';
+        filterName.textContent = f.name;
+        dial.setAttribute('aria-label', 'Filter: ' + f.name + '. Press for the next one.');
+        dial.style.setProperty('--turn', filterAt * 360 / CAM_FILTERS.length + 'deg');
+        $$('button', chips).forEach((b, n) => b.setAttribute('aria-pressed', String(n === filterAt)));
+    }
+    CAM_FILTERS.forEach((f, i) => chips.append(el('button', { cls: 'chip', type: 'button', onclick() { setFilter(i); } }, f.name)));
+    function stopCamera() {
+        asking++;
+        if (countdown) {
+            clearInterval(countdown);
+            countdown = 0;
+            count.textContent = '';
+        }
+        if (stream)
+            stream.getTracks().forEach(t => t.stop());
+        stream = null;
+        video.srcObject = null;
+        drawSwitch();
+    }
+    stops.push(stopCamera);
+    async function startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            p.stat.textContent = 'This browser cannot use a camera on this page.';
+            return;
+        }
+        const ticket = ++asking;
+        p.stat.textContent = 'Asking your browser for the camera...';
+        try {
+            const got = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 960 }, facingMode: 'user' }, audio: false });
+            if (ticket !== asking) {
+                got.getTracks().forEach(t => t.stop());
+                return;
+            }
+            stream = got;
+            video.srcObject = got;
+            await video.play().catch(() => { });
+            p.stat.textContent = '';
+        }
+        catch (e) {
+            if (ticket !== asking)
+                return;
+            const name = e.name;
+            p.stat.textContent = name === 'NotAllowedError' ? 'The camera is blocked. Allow it from the icon in your address bar, then try again.'
+                : name === 'NotFoundError' ? 'No camera was found on this device.'
+                    : name === 'NotReadableError' ? 'Another app is using your camera. Close it and try again.'
+                        : 'The camera would not start. Try again.';
+        }
+        drawSwitch();
+    }
+    const toggle = () => { if (live())
+        stopCamera();
+    else
+        startCamera(); };
+    p.go.addEventListener('click', toggle);
+    wake.addEventListener('click', toggle);
+    dial.addEventListener('click', () => setFilter(filterAt + 1));
+    timerBtn.addEventListener('click', () => { useTimer = !useTimer; timerBtn.setAttribute('aria-pressed', String(useTimer)); });
+    flipBtn.addEventListener('click', () => { mirror = !mirror; flipBtn.setAttribute('aria-pressed', String(mirror)); aim(); });
+    function take() {
+        if (!live() || countdown)
+            return;
+        if (!useTimer) {
+            snap();
+            return;
+        }
+        let left = 3;
+        count.textContent = String(left);
+        countdown = window.setInterval(() => {
+            left--;
+            if (left > 0) {
+                count.textContent = String(left);
+                tone(660, .06);
+                return;
+            }
+            clearInterval(countdown);
+            countdown = 0;
+            count.textContent = '';
+            snap();
+        }, 1000);
+    }
+    shutter.addEventListener('click', take);
+    async function snap() {
+        const vw = video.videoWidth, vh = video.videoHeight;
+        if (!vw || !vh) {
+            p.stat.textContent = 'The camera is still waking up. Try again in a moment.';
+            return;
+        }
+        tone(1200, .05);
+        flash.classList.remove('go');
+        void flash.offsetWidth;
+        flash.classList.add('go');
+        /* The middle square of the 4:3 screen, exactly as framed. */
+        const side = 3 / Math.max(4 / vw, 3 / vh) / zoom;
+        const photo = el('canvas', { width: POLA_S, height: POLA_S }), c = photo.getContext('2d', { willReadFrequently: true });
+        if (mirror) {
+            c.translate(POLA_S, 0);
+            c.scale(-1, 1);
+        }
+        c.drawImage(video, (vw - side) / 2, (vh - side) / 2, side, side, 0, 0, POLA_S, POLA_S);
+        c.setTransform(1, 0, 0, 1, 0, 0);
+        camShade(c, POLA_S, CAM_FILTERS[filterAt]);
+        await document.fonts.load('38px "Breath of the House"').catch(() => []);
+        showPrint(polaroidData(drawPolaroid(photo)));
+    }
+    function showPrint(url) {
+        const img = el('img', { src: url, alt: 'Your Polaroid', width: POLA_W, height: POLA_H });
+        const print = el('div', { cls: 'polaprint' }, img, el('div', { cls: 'poladevelop', 'aria-hidden': 'true' }));
+        const note = el('p', { cls: 'polanote', role: 'status' });
+        const caption = el('input', { type: 'text', maxlength: 200, placeholder: 'Add a caption (optional)', 'aria-label': 'Caption for your post' });
+        const save = el('a', { cls: 'pill ghost', href: url, download: 'mumtea-polaroid.jpg' }, 'Save picture');
+        const again = el('button', { cls: 'pill ghost', type: 'button', onclick() { printSlot.textContent = ''; camera.scrollIntoView({ block: 'nearest' }); } }, 'Take another');
+        const send = el('button', { cls: 'pill', type: 'button' }, 'Post my Polaroid');
+        const actions = el('div', { cls: 'polaacts' }, caption, el('div', { cls: 'row' }, send, save, again), note);
+        send.addEventListener('click', async () => {
+            if (!canAct()) {
+                note.textContent = 'Log in first to post it. Your Polaroid stays here while you do.';
+                go('registration');
+                return;
+            }
+            send.setAttribute('disabled', '');
+            note.textContent = 'Posting...';
+            const words = caption.value.trim() || POLA_BLURB;
+            const { data, error } = isAdmin() ? await sb.rpc('admin_post_polaroid', { token: adminPass, caption: words, photo: url }) : await sb.rpc('post_polaroid', { caption: words, photo: url });
+            if (error) {
+                send.removeAttribute('disabled');
+                note.textContent = error.code === 'PGRST202' ? 'Posting Polaroids is not switched on yet. You can still save your picture.' : /a day/.test(error.message || '') ? 'That is 30 Polaroids today. Try again tomorrow.' : 'That did not post. Your Polaroid is still here, so try again.';
+                return;
+            }
+            photoCache.set(data, url);
+            caption.setAttribute('disabled', '');
+            note.textContent = 'Posted. ';
+            note.append(el('button', { cls: 'linkish', type: 'button', onclick() { go('tea', data); } }, 'See it on Spill the Tea'));
+            await refreshPosts().catch(() => { });
+            redrawPosts();
+            fillSlide();
+        });
+        printSlot.textContent = '';
+        printSlot.append(print, actions);
+        print.scrollIntoView({ block: 'nearest' });
+    }
+    setFilter(0);
+    drawSwitch();
+    aim();
+})();
+// Pictures are Microsoft Fluent Emoji (MIT licence), kept inside the page so they appear at once.
+const REACTIONS = [
+    ['fang', 'data:image/webp;base64,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', 'Fangtastic'],
+    ['tea', 'data:image/webp;base64,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', 'Spilled'],
+    ['skull', 'data:image/webp;base64,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', 'Dead'],
+    ['heart', 'data:image/webp;base64,UklGRpYIAABXRUJQVlA4WAoAAAAwAAAARwAARwAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZBTFBIRAMAAA0kAUmKyoiIRhJtbYYk/RGpsW3btm3btm3bWNq2bdu2mWVkZsSwKrCcTURMANRs25ZlD+7uiRVovgMbEKlsopVEZAPtTnJLJHfXP93P+48QERPgprZtJ3qf1CULSKCkxAoLBSxcYOC35B4VVNEBDnLOzEwV24iYAPjPFmlxU+ZMFcv68vSp108Z4Djx8mZJovve3XvhCVEOavxS5XPGcPsDWsL0CZ5cO/I6TCPCRraqhTKa/pAVM3kW7f6Z0z8sRihuic5hAn9VtSQFSuQ6uOt96F/IyNi0uE3hT6waaYqViL/8nJuywMmmxKEQKdLSdC4z5aKP/EWJXb0HgYhRnPw9nBGfiBjOvNSGqJWUsz9M9DoAoCScTiBqFLv8gD5PfiI43XwCLOM0rdf/LQGcYxYBlmqWqYPnP4HYCwmwVUpNnHAaavUnwBZnHZK48WJ2t4E1Tr30XYwYBFjjMr7cnYMSNQP2SsxmFgX2aryw+2PE7Eo4ANKAqyeavzNSVQJ5pbHiAik5QxKRzTX6AaM0yKz2158gZhGpKNK5g+RYLu95B1KYcqnMSxDXL5dMdwKqI5dE+gVhFUv1+xB0xVal+lzQx0S6VI8j+hpIK9XMgoI3Ssr0V1OjwJVSqkSfpgTRRykSSLTbEvPN++ISVfUc/9xhhjT3rIxjv7RyStO1ENuzrI8qiZVU8qw9GQoiKcjFC/FpaElfHUlAw4vkAmDtV2soEtg7VRK2Jg2Jh4SjPxYjMfpo1ZjYwnknIPhHuj59MV2w0FkTmPp7Dc+OhXLuLwbGXycPTyUSfTtbYeVcPdg/gUDmfAOYB3d+6BZbGN/SOMDRuzx9DUOQ4O5vwNUc06CCKoR97DBwNvu2q6QI4BzZCLypq0/H8io3+8QaxA2o2adbSZ1T+NwyBALS7727lorJJXBuOQIh6fcBlZvE4eDdehyBoPT73IRdEiBWP5Z9B4HN5e+HJMNMyOd5cUBo764NS1OrDJz3vWOA4KGHg6cW1FAU1LozXAHhndf9GrXSUUTU2rIOgYTUHKuNTowi+THDRCDnalumRL9Yc4OBt50LXVGFJ1UQ0vDGa4kTTWZRG2MOwVsfXYwPERU9BW+/tlG+wz8PVlA4IFwDAACQEwCdASpIAEgAPkEci0OioaEZmq8wKAQEswbbpiFOZkCvSTdp3vinDT8numL4nu4K853pAP611EHoAeWh+qvwO/tr+3vs+GACZW9AD+G/1PqgegB+gBp+/AMPeXR1P+sHxetlrctNryuKMBWn73rM5YNfu1r/v+KqINpfgFQ7tx+BZYD9QSK0/Tv3TwcpHKBY2ixI5xybJaGxryPCKn993/YRooAA/vxvH//Cb//wjF//4KOphwJ/7U6xqUh3OmO5MY0Wkec090//BkTtf8Yd5XF7noQF4eZVjxDVrZ/03iGvtPwmfgNxLS28B6lKy2KkZMdONkIXZQw2k/MS3K/HSoe34Cq2kMhS2+Bohe0HJB0ZxSyKL++L1lvnDmPrJ6UTrA/9Wufr/mcx3zEaFKoG5BOTLZl53jeAkbz63Pujb70+Y3qpgk/POBKjPdp04qv1f+nk+rtNcsw8IKkaWxV5f96jtJCSjLUlpP//Ywt6G+69/cnCDP9QxR40s3RZNELPrgUa6xjE3pNaZBRBGGPp/oajIJktjVXYKTVIuOE/DcB6ClzUNLjEq91NY4qlSWGKtfrx7bMadMp5T/9OOrB69aMTWYkf+D5L3lxGBMzMYILbeFErEdpjzyI5u65khEXH4ED/cVi93i1Fc4BbuPnfACBS+EDIEocAPV+UM/oYjrMgR6xly65+nvh0fz3withw4zVCkPgJZpce8UqbXaQmgV8ossMrMcGbBpTR8u3Gfh/AQXvHBA2NQE3i3R97DIyq61U1vEEAv1+sR435t4aA1C/iUiTmtgC9Ney4IQ59l9Ef6d+06/LA8an/iAxie2/9prfF0p2Z4OfzM3+s5f7hDwExswQ2uU9JgZVe05E+TQEwoq8Ty2TzPEsSIQSfPrAB+lBgDKnMXuV4yi0RKjXiQjebxC6zwGoPaikI7DffN/gyv0fTj/9pUPW7zqPm5KrH9sfx+1sGWY1J5Mic1jE4rJeOC4K6+C1LNDiwlLN9SPl/1hJcxHnSqexqVzCJxF3YtFZDa8F/8b8eLM7Gn1f5X/S8AoSRzd/l1Xudtr/W5RBcKtxW2jMxXEcro7wUjN/+qlqamZxLS0A/NqW9ZX+JqwtUjngL3+4T25y4ddn5vlwZZbBz0qoAAAAAAA==', 'Love'],
+    ['fire', 'data:image/webp;base64,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', 'Hot'],
+];
 const COMMENT_LIMIT = 1000, SHORT_POST = 600;
 let allComments = [], allReactions = [], allBones = [];
 let blogQuery = '', profileId = null, bonesOwner = null, bonesTimer = 0;
@@ -2030,7 +2599,7 @@ function reactionBar(post) {
                     return;
                 await refreshCommunity().catch(() => { });
                 redrawPosts();
-            } }, icon, el('span', { text: here.length ? String(here.length) : '' })));
+            } }, el('img', { src: icon, alt: '', width: 26, height: 26, draggable: false }), el('span', { text: here.length ? String(here.length) : '' })));
     });
     return bar;
 }
@@ -4365,6 +4934,8 @@ async function refreshPosts() {
     const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false }).limit(200);
     if (error)
         throw error;
+    const photos = await sb.from('post_photos').select('post_id');
+    photoIds = new Set(photos.error ? [] : (photos.data || []).map((row) => row.post_id));
     allPosts = data.map((row) => ({ id: row.id, authorId: row.author_id, title: row.title, body: row.body, at: row.created_at, editedAt: row.edited_at || null }));
 }
 function timeAgo(iso) {
@@ -4392,6 +4963,8 @@ function postCard(post, highlight, compact = false) {
     const card = el('div', { cls: 'teacard' }, who);
     if (post.title)
         card.append(el('h3', { text: post.title }));
+    if (photoIds.has(post.id))
+        card.append(postPhoto(post));
     const long = post.body.length > SHORT_POST, showAll = openPosts.has(post.id);
     (long && !showAll ? post.body.slice(0, SHORT_POST).trimEnd() + '...' : post.body).split(/\n+/).forEach(line => card.append(el('p', { text: line })));
     if (long)

@@ -1,0 +1,294 @@
+/* ---------- Say Fangs: take a picture with the laptop camera, get a Polaroid, choose to post it ---------- */
+type CamOp = [name: 'brightness' | 'contrast' | 'saturate' | 'sepia' | 'hue', amount: number];
+interface CamFilter { name: string; ops: CamOp[]; tint?: [colour: string, blend: GlobalCompositeOperation, alpha: number]; vignette?: number }
+const CAM_FILTERS: CamFilter[] = [
+  { name: 'No filter', ops: [] },
+  { name: 'Graveyard', ops: [['saturate', 0], ['contrast', 1.25]], vignette: .55 },
+  { name: 'Old Bone', ops: [['sepia', .75], ['contrast', 1.05], ['brightness', 1.05]], vignette: .3 },
+  { name: 'Blood Moon', ops: [['saturate', 1.4], ['contrast', 1.1]], tint: ['#ff1f8f', 'soft-light', .55], vignette: .45 },
+  { name: 'Bubblegum', ops: [['brightness', 1.08], ['saturate', 1.25]], tint: ['#ff7ac0', 'soft-light', .6] },
+  { name: 'Moonlit', ops: [['saturate', .55], ['brightness', .95]], tint: ['#2f62ff', 'soft-light', .6], vignette: .35 },
+  { name: 'Toxic Slime', ops: [['hue', 70], ['saturate', 1.4]], tint: ['#8df04a', 'soft-light', .3] },
+  { name: 'Ghostly', ops: [['brightness', 1.2], ['contrast', .8], ['saturate', .45]], tint: ['#d8fff8', 'screen', .18] },
+  { name: 'Midnight Plum', ops: [['contrast', 1.15], ['brightness', .85]], tint: ['#6a1f86', 'soft-light', .8], vignette: .5 },
+  { name: 'Tea Stain', ops: [['sepia', .35], ['saturate', 1.2]], tint: ['#c9812f', 'soft-light', .5] },
+];
+const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
+const POLA_BLURB = 'Snapped at the Say Fangs photo booth.';
+
+const camCss = (f: CamFilter): string => f.ops.map(([n, v]) => (n === 'hue' ? 'hue-rotate(' + v + 'deg)' : n + '(' + v + ')')).join(' ') || 'none';
+/* The same sums the browser uses for its picture filters, so the Polaroid matches the screen in every browser. */
+function camMatrix([n, v]: CamOp): number[] {
+  if (n === 'saturate') return [.213 + .787 * v, .715 - .715 * v, .072 - .072 * v, .213 - .213 * v, .715 + .285 * v, .072 - .072 * v, .213 - .213 * v, .715 - .715 * v, .072 + .928 * v];
+  if (n === 'sepia') { const k = 1 - v; return [.393 + .607 * k, .769 - .769 * k, .189 - .189 * k, .349 - .349 * k, .686 + .314 * k, .168 - .168 * k, .272 - .272 * k, .534 - .534 * k, .131 + .869 * k]; }
+  const a = v * Math.PI / 180, cs = Math.cos(a), sn = Math.sin(a);
+  return [.213 + cs * .787 - sn * .213, .715 - cs * .715 - sn * .715, .072 - cs * .072 + sn * .928, .213 - cs * .213 + sn * .143, .715 + cs * .285 + sn * .14, .072 - cs * .072 - sn * .283, .213 - cs * .213 - sn * .787, .715 - cs * .715 + sn * .715, .072 + cs * .928 + sn * .072];
+}
+function camShade(c: CanvasRenderingContext2D, size: number, f: CamFilter): void {
+  const img = c.getImageData(0, 0, size, size), d = img.data;
+  f.ops.forEach(op => {
+    if (op[0] === 'brightness' || op[0] === 'contrast') {
+      const mul = op[1], add = op[0] === 'contrast' ? 127.5 * (1 - mul) : 0;
+      for (let i = 0; i < d.length; i += 4) { d[i] = d[i] * mul + add; d[i + 1] = d[i + 1] * mul + add; d[i + 2] = d[i + 2] * mul + add; }
+      return;
+    }
+    const m = camMatrix(op);
+    for (let i = 0; i < d.length; i += 4) {
+      const r = d[i], g = d[i + 1], b = d[i + 2];
+      d[i] = m[0] * r + m[1] * g + m[2] * b; d[i + 1] = m[3] * r + m[4] * g + m[5] * b; d[i + 2] = m[6] * r + m[7] * g + m[8] * b;
+    }
+  });
+  c.putImageData(img, 0, 0);
+  if (f.tint) { c.save(); c.globalCompositeOperation = f.tint[1]; c.globalAlpha = f.tint[2]; c.fillStyle = f.tint[0]; c.fillRect(0, 0, size, size); c.restore(); }
+  if (f.vignette) {
+    const g = c.createRadialGradient(size / 2, size / 2, size * .318, size / 2, size / 2, size * .707);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,' + f.vignette + ')');
+    c.fillStyle = g; c.fillRect(0, 0, size, size);
+  }
+}
+
+/* ---------- the Polaroid frame, hand-drawn in the school's colours ---------- */
+function drawPolaroid(photo: HTMLCanvasElement): HTMLCanvasElement {
+  const cv = el('canvas', { width: POLA_W, height: POLA_H }) as HTMLCanvasElement, c = cv.getContext('2d') as CanvasRenderingContext2D;
+  let seed = 7;
+  const jig = (): number => { seed = (seed * 16807) % 2147483647; return (seed / 2147483647 - .5) * 2.6; };
+  const sketch = (pts: number[][], width = 5, colour = '#000'): void => {
+    c.lineCap = c.lineJoin = 'round'; c.strokeStyle = colour; c.lineWidth = width; c.beginPath();
+    pts.forEach((p, i) => {
+      const q = pts[(i + 1) % pts.length], steps = Math.ceil(Math.hypot(q[0] - p[0], q[1] - p[1]) / 26);
+      if (!i) c.moveTo(p[0], p[1]);
+      for (let s = 1; s <= steps; s++) c.lineTo(p[0] + (q[0] - p[0]) * s / steps + (s < steps ? jig() : 0), p[1] + (q[1] - p[1]) * s / steps + (s < steps ? jig() : 0));
+    });
+    c.closePath(); c.stroke();
+  };
+  const ticks = (colour: string, lines: number[][]): void => {
+    c.strokeStyle = colour; c.lineWidth = 7; c.lineCap = 'round';
+    lines.forEach(l => { c.beginPath(); c.moveTo(l[0], l[1]); c.lineTo(l[2], l[3]); c.stroke(); });
+  };
+  const heart = (x: number, y: number, s: number): void => {
+    c.save(); c.translate(x, y); c.scale(s, s); c.rotate(-.12);
+    c.beginPath(); c.moveTo(0, 18); c.bezierCurveTo(-30, -4, -24, -26, -10, -24); c.bezierCurveTo(-4, -24, 0, -18, 0, -13); c.bezierCurveTo(0, -18, 5, -24, 11, -24); c.bezierCurveTo(25, -26, 30, -4, 0, 18); c.closePath();
+    c.fillStyle = '#ff1f8f'; c.fill(); c.strokeStyle = '#000'; c.lineWidth = 4.5; c.lineJoin = 'round'; c.stroke();
+    c.fillStyle = '#ffd0e8'; c.beginPath(); c.ellipse(-12, -13, 4, 2.8, -.6, 0, 7); c.fill();
+    c.restore();
+  };
+  const star = (x: number, y: number, r: number): void => {
+    c.save(); c.translate(x, y); c.rotate(.2); c.beginPath();
+    for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? r * .48 : r; c.lineTo(Math.cos(a) * d, Math.sin(a) * d); }
+    c.closePath(); c.fillStyle = '#35dcc8'; c.fill(); c.strokeStyle = '#000'; c.lineWidth = 4.5; c.lineJoin = 'round'; c.stroke(); c.restore();
+  };
+  const bat = (x: number, y: number, s: number): void => {
+    c.save(); c.translate(x, y); c.scale(s, s); c.rotate(-.14); c.fillStyle = '#3a1250'; c.strokeStyle = '#000'; c.lineWidth = 4; c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(-8, -6); c.quadraticCurveTo(-30, -26, -54, -14); c.quadraticCurveTo(-46, -4, -48, 8); c.quadraticCurveTo(-37, 1, -30, 12); c.quadraticCurveTo(-21, 5, -13, 16); c.lineTo(13, 16);
+    c.quadraticCurveTo(21, 5, 30, 12); c.quadraticCurveTo(37, 1, 48, 8); c.quadraticCurveTo(46, -4, 54, -14); c.quadraticCurveTo(30, -26, 8, -6); c.closePath(); c.fill(); c.stroke();
+    c.beginPath(); c.moveTo(-14, -8); c.lineTo(-17, -29); c.lineTo(-5, -18); c.lineTo(5, -18); c.lineTo(17, -29); c.lineTo(14, -8); c.closePath(); c.fill(); c.stroke();
+    c.beginPath(); c.arc(0, -4, 17, 0, 7); c.fill(); c.stroke();
+    c.fillStyle = '#ff1f8f'; c.beginPath(); c.arc(-6.5, -7, 3.6, 0, 7); c.arc(6.5, -7, 3.6, 0, 7); c.fill();
+    c.fillStyle = '#fff6fb'; c.beginPath(); c.moveTo(-6, 3); c.lineTo(-3, 9); c.lineTo(-1, 3); c.moveTo(1, 3); c.lineTo(3, 9); c.lineTo(6, 3); c.fill();
+    c.restore();
+  };
+  const skull = (x: number, y: number, s: number): void => {
+    c.save(); c.translate(x, y); c.scale(s, s); c.rotate(-.1); c.fillStyle = '#fff6fb'; c.strokeStyle = '#000'; c.lineWidth = 4.5; c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(-14, 16); c.lineTo(-14, 28); c.lineTo(14, 28); c.lineTo(14, 16); c.bezierCurveTo(30, 10, 34, -6, 30, -14); c.bezierCurveTo(24, -38, -24, -38, -30, -14); c.bezierCurveTo(-34, -6, -30, 10, -14, 16); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = '#000'; c.beginPath(); c.ellipse(-12, -3, 8, 9, .15, 0, 7); c.ellipse(12, -3, 8, 9, -.15, 0, 7); c.fill();
+    c.beginPath(); c.moveTo(0, 7); c.lineTo(-4, 14); c.lineTo(4, 14); c.fill();
+    c.lineWidth = 3; c.beginPath(); c.moveTo(-5, 20); c.lineTo(-5, 28); c.moveTo(5, 20); c.lineTo(5, 28); c.stroke();
+    c.fillStyle = '#ff7ab8'; c.beginPath(); c.arc(-19, 9, 5, 0, 7); c.arc(19, 9, 5, 0, 7); c.fill();
+    c.translate(21, -27); c.fillStyle = '#ff1f8f'; c.lineWidth = 3.5;
+    c.beginPath(); c.moveTo(0, 0); c.lineTo(-17, -11); c.lineTo(-17, 11); c.closePath(); c.fill(); c.stroke();
+    c.beginPath(); c.moveTo(0, 0); c.lineTo(17, -11); c.lineTo(17, 11); c.closePath(); c.fill(); c.stroke();
+    c.beginPath(); c.arc(0, 0, 5, 0, 7); c.fill(); c.stroke();
+    c.restore();
+  };
+
+  c.fillStyle = '#181019'; c.fillRect(0, 0, POLA_W, POLA_H);
+  c.fillStyle = '#f9e9a6'; c.fillRect(28, 28, 584, 724);
+  c.fillStyle = 'rgba(255,31,143,.1)'; c.fillRect(28, 568, 584, 184);
+  sketch([[28, 28], [612, 28], [612, 752], [28, 752]], 6);
+  c.drawImage(photo, POLA_X, POLA_Y, POLA_S, POLA_S);
+  sketch([[POLA_X, POLA_Y], [POLA_X + POLA_S, POLA_Y], [POLA_X + POLA_S, POLA_Y + POLA_S], [POLA_X, POLA_Y + POLA_S]], 5);
+  bat(62, 54, 1); ticks('#ff1f8f', [[122, 18, 130, 7], [132, 30, 148, 24]]);
+  heart(586, 58, 1.1); ticks('#35dcc8', [[585, 92, 607, 92], [572, 102, 588, 114]]);
+  skull(112, 668, 1.15); ticks('#19b7e8', [[168, 660, 192, 654], [168, 684, 190, 694]]);
+  heart(506, 640, 1); star(556, 694, 34); ticks('#ff1f8f', [[462, 668, 482, 674], [468, 696, 488, 690]]);
+  c.fillStyle = '#2a1420'; c.textAlign = 'center';
+  c.font = '38px ' + DISPLAY_FONT; c.fillText('MUMTEA HIGH', POLA_W / 2, 662, 240);
+  c.font = '800 18px Nunito, sans-serif'; c.fillText(new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }), POLA_W / 2, 692, 240);
+  return cv;
+}
+function polaroidData(cv: HTMLCanvasElement): string {
+  for (let q = .86; q > .4; q -= .08) { const url = cv.toDataURL('image/jpeg', q); if (url.length <= MAX_PHOTO) return url; }
+  return cv.toDataURL('image/jpeg', .4);
+}
+
+/* ---------- Polaroids on the timeline: fetched only when a post comes near the screen ---------- */
+let photoIds = new Set<string>();
+const photoCache = new Map<string, string>();
+const photoWatch = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    photoWatch!.unobserve(entry.target);
+    showPostPhoto(entry.target as HTMLImageElement);
+  });
+}, { rootMargin: '600px' }) : null;
+async function showPostPhoto(img: HTMLImageElement): Promise<void> {
+  const id = img.dataset.post as string;
+  if (!photoCache.has(id)) {
+    const { data, error } = await sb.from('post_photos').select('photo').eq('post_id', id).maybeSingle();
+    if (error || !data) return;
+    photoCache.set(id, data.photo);
+  }
+  img.src = photoCache.get(id) as string;
+}
+function postPhoto(post: TeaPost): HTMLElement {
+  const img = el('img', { cls: 'postpola', alt: 'Polaroid photo posted by ' + authorName(post), 'data-post': post.id, width: POLA_W, height: POLA_H }) as HTMLImageElement;
+  if (photoCache.has(post.id)) img.src = photoCache.get(post.id) as string;
+  else if (photoWatch) photoWatch.observe(img);
+  else showPostPhoto(img);
+  return img;
+}
+
+/* ---------- the camera ---------- */
+(function () {
+  const video = el('video', { cls: 'camlive', autoplay: '', muted: '', playsinline: '', 'aria-label': 'What your camera can see' }) as HTMLVideoElement;
+  video.muted = true;
+  const tint = el('div', { cls: 'camtint' }), vig = el('div', { cls: 'camvig' });
+  const count = el('div', { cls: 'camcount', 'aria-live': 'assertive' }), flash = el('div', { cls: 'camflash' });
+  const wake = el('button', { cls: 'pill camwake', type: 'button' }, 'Turn on camera');
+  const screen = el('div', { cls: 'camscreen' }, video, el('div', { cls: 'camsquare' }, tint, vig), el('div', { cls: 'camside camside-l' }), el('div', { cls: 'camside camside-r' }), count, flash, wake);
+  const filterName = el('strong', { cls: 'camfilter' });
+  const dial = el('button', { cls: 'camdial', type: 'button' }, el('span', { cls: 'camdialmark' }));
+  const timerBtn = el('button', { cls: 'camround', type: 'button', 'aria-pressed': 'false' }, 'Timer');
+  const flipBtn = el('button', { cls: 'camround', type: 'button', 'aria-pressed': 'true' }, 'Mirror');
+  const shutter = el('button', { cls: 'camshutter', type: 'button', disabled: '', 'aria-label': 'Take the picture' });
+  const pad = (cls: string, label: string, mark: string, act: () => void): HTMLElement => el('button', { cls: 'campad ' + cls, type: 'button', 'aria-label': label, onclick: act }, mark);
+  const chips = el('div', { cls: 'chips camchips', role: 'group', 'aria-label': 'Filters' });
+  const camera = el('div', { cls: 'fangcam' },
+    el('div', { cls: 'camtop' },
+      el('div', { cls: 'camfinder', 'aria-hidden': 'true' }), el('div', { cls: 'camlights', 'aria-hidden': 'true' }, el('i'), el('i')),
+      el('div', { cls: 'cambrand', 'aria-hidden': 'true' }, el('span', { text: 'FG-13' }), el('b', { text: 'Super Scream Shot' })),
+      el('div', { cls: 'camzoom' }, el('button', { type: 'button', 'aria-label': 'Zoom out', onclick() { setZoom(zoom - .25); } }, 'W'), el('button', { type: 'button', 'aria-label': 'Zoom in', onclick() { setZoom(zoom + .25); } }, 'T'))),
+    el('div', { cls: 'cammain' },
+      el('div', { cls: 'cambezel' }, screen, el('div', { cls: 'camname', 'aria-hidden': 'true', text: 'FANGCAM' })),
+      el('div', { cls: 'camcontrols' }, dial, filterName, el('div', { cls: 'camrow' }, timerBtn, flipBtn),
+        el('div', { cls: 'camring' },
+          pad('up', 'Zoom in', '▲', () => setZoom(zoom + .25)), pad('left', 'Previous filter', '◀', () => setFilter(filterAt - 1)),
+          shutter, pad('right', 'Next filter', '▶', () => setFilter(filterAt + 1)), pad('down', 'Zoom out', '▼', () => setZoom(zoom - .25))))));
+  const printSlot = el('div', { cls: 'polaslot' });
+  const p = makePanel('booth', 'Say Fangs', 'Turn on your camera, pick a filter, then press the pink button. Your picture stays on this device unless you choose to post it.', [chips, camera, printSlot], 'Turn on camera');
+
+  let stream: MediaStream | null = null, asking = 0, filterAt = 0, zoom = 1, mirror = true, useTimer = false, countdown = 0;
+  const live = (): boolean => !!stream;
+  const drawSwitch = (): void => {
+    p.go.textContent = live() ? 'Turn off camera' : 'Turn on camera';
+    wake.hidden = live();
+    if (live()) shutter.removeAttribute('disabled'); else shutter.setAttribute('disabled', '');
+  };
+  const aim = (): void => { video.style.transform = 'scale(' + (mirror ? -zoom : zoom) + ',' + zoom + ')'; };
+  function setZoom(z: number): void { zoom = Math.min(3, Math.max(1, z)); aim(); }
+  function setFilter(i: number): void {
+    filterAt = (i + CAM_FILTERS.length) % CAM_FILTERS.length;
+    const f = CAM_FILTERS[filterAt];
+    video.style.filter = camCss(f);
+    tint.style.background = f.tint ? f.tint[0] : 'none'; tint.style.opacity = f.tint ? String(f.tint[2]) : '0'; tint.style.mixBlendMode = f.tint ? f.tint[1] : 'normal';
+    vig.style.background = f.vignette ? 'radial-gradient(circle,transparent 45%,rgba(0,0,0,' + f.vignette + ') 100%)' : 'none';
+    filterName.textContent = f.name;
+    dial.setAttribute('aria-label', 'Filter: ' + f.name + '. Press for the next one.');
+    dial.style.setProperty('--turn', filterAt * 360 / CAM_FILTERS.length + 'deg');
+    $$('button', chips).forEach((b, n) => b.setAttribute('aria-pressed', String(n === filterAt)));
+  }
+  CAM_FILTERS.forEach((f, i) => chips.append(el('button', { cls: 'chip', type: 'button', onclick() { setFilter(i); } }, f.name)));
+
+  function stopCamera(): void {
+    asking++;
+    if (countdown) { clearInterval(countdown); countdown = 0; count.textContent = ''; }
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null; video.srcObject = null; drawSwitch();
+  }
+  stops.push(stopCamera);
+  async function startCamera(): Promise<void> {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { p.stat.textContent = 'This browser cannot use a camera on this page.'; return; }
+    const ticket = ++asking;
+    p.stat.textContent = 'Asking your browser for the camera...';
+    try {
+      const got = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 960 }, facingMode: 'user' }, audio: false });
+      if (ticket !== asking) { got.getTracks().forEach(t => t.stop()); return; }
+      stream = got; video.srcObject = got; await video.play().catch(() => {});
+      p.stat.textContent = '';
+    } catch (e) {
+      if (ticket !== asking) return;
+      const name = (e as DOMException).name;
+      p.stat.textContent = name === 'NotAllowedError' ? 'The camera is blocked. Allow it from the icon in your address bar, then try again.'
+        : name === 'NotFoundError' ? 'No camera was found on this device.'
+        : name === 'NotReadableError' ? 'Another app is using your camera. Close it and try again.'
+        : 'The camera would not start. Try again.';
+    }
+    drawSwitch();
+  }
+  const toggle = (): void => { if (live()) stopCamera(); else startCamera(); };
+  p.go.addEventListener('click', toggle); wake.addEventListener('click', toggle);
+  dial.addEventListener('click', () => setFilter(filterAt + 1));
+  timerBtn.addEventListener('click', () => { useTimer = !useTimer; timerBtn.setAttribute('aria-pressed', String(useTimer)); });
+  flipBtn.addEventListener('click', () => { mirror = !mirror; flipBtn.setAttribute('aria-pressed', String(mirror)); aim(); });
+
+  function take(): void {
+    if (!live() || countdown) return;
+    if (!useTimer) { snap(); return; }
+    let left = 3; count.textContent = String(left);
+    countdown = window.setInterval(() => {
+      left--;
+      if (left > 0) { count.textContent = String(left); tone(660, .06); return; }
+      clearInterval(countdown); countdown = 0; count.textContent = ''; snap();
+    }, 1000);
+  }
+  shutter.addEventListener('click', take);
+
+  async function snap(): Promise<void> {
+    const vw = video.videoWidth, vh = video.videoHeight;
+    if (!vw || !vh) { p.stat.textContent = 'The camera is still waking up. Try again in a moment.'; return; }
+    tone(1200, .05);
+    flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
+    /* The middle square of the 4:3 screen, exactly as framed. */
+    const side = 3 / Math.max(4 / vw, 3 / vh) / zoom;
+    const photo = el('canvas', { width: POLA_S, height: POLA_S }) as HTMLCanvasElement, c = photo.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
+    if (mirror) { c.translate(POLA_S, 0); c.scale(-1, 1); }
+    c.drawImage(video, (vw - side) / 2, (vh - side) / 2, side, side, 0, 0, POLA_S, POLA_S);
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    camShade(c, POLA_S, CAM_FILTERS[filterAt]);
+    await document.fonts.load('38px "Breath of the House"').catch(() => []);
+    showPrint(polaroidData(drawPolaroid(photo)));
+  }
+
+  function showPrint(url: string): void {
+    const img = el('img', { src: url, alt: 'Your Polaroid', width: POLA_W, height: POLA_H });
+    const print = el('div', { cls: 'polaprint' }, img, el('div', { cls: 'poladevelop', 'aria-hidden': 'true' }));
+    const note = el('p', { cls: 'polanote', role: 'status' });
+    const caption = el('input', { type: 'text', maxlength: 200, placeholder: 'Add a caption (optional)', 'aria-label': 'Caption for your post' }) as HTMLInputElement;
+    const save = el('a', { cls: 'pill ghost', href: url, download: 'mumtea-polaroid.jpg' }, 'Save picture');
+    const again = el('button', { cls: 'pill ghost', type: 'button', onclick() { printSlot.textContent = ''; camera.scrollIntoView({ block: 'nearest' }); } }, 'Take another');
+    const send = el('button', { cls: 'pill', type: 'button' }, 'Post my Polaroid');
+    const actions = el('div', { cls: 'polaacts' }, caption, el('div', { cls: 'row' }, send, save, again), note);
+    send.addEventListener('click', async () => {
+      if (!canAct()) { note.textContent = 'Log in first to post it. Your Polaroid stays here while you do.'; go('registration'); return; }
+      send.setAttribute('disabled', ''); note.textContent = 'Posting...';
+      const words = caption.value.trim() || POLA_BLURB;
+      const { data, error } = isAdmin() ? await sb.rpc('admin_post_polaroid', { token: adminPass, caption: words, photo: url }) : await sb.rpc('post_polaroid', { caption: words, photo: url });
+      if (error) {
+        send.removeAttribute('disabled');
+        note.textContent = error.code === 'PGRST202' ? 'Posting Polaroids is not switched on yet. You can still save your picture.' : /a day/.test(error.message || '') ? 'That is 30 Polaroids today. Try again tomorrow.' : 'That did not post. Your Polaroid is still here, so try again.';
+        return;
+      }
+      photoCache.set(data, url);
+      caption.setAttribute('disabled', '');
+      note.textContent = 'Posted. ';
+      note.append(el('button', { cls: 'linkish', type: 'button', onclick() { go('tea', data); } }, 'See it on Spill the Tea'));
+      await refreshPosts().catch(() => {});
+      redrawPosts(); fillSlide();
+    });
+    printSlot.textContent = '';
+    printSlot.append(print, actions);
+    print.scrollIntoView({ block: 'nearest' });
+  }
+
+  setFilter(0); drawSwitch(); aim();
+})();

@@ -516,3 +516,46 @@ exception when duplicate_object then null; end $$;
 -- Run this once, with your own secret code of at least 6 characters, to switch on admin mode.
 -- Run it again any time to change the code. Do not save the real code in this file.
 -- select public.set_admin_code('YOUR_SECRET_CODE');
+
+-- Polaroids and the laughing reaction.
+-- A photo lives in its own table so the timeline stays quick, and goes when its post or its author's account goes.
+create table if not exists public.post_photos (
+  post_id uuid primary key references public.posts (id) on delete cascade,
+  photo text not null check (char_length(photo) <= 400000 and photo ~ '^data:image/jpeg;base64,[A-Za-z0-9+/]+={0,2}$')
+);
+alter table public.post_photos enable row level security;
+drop policy if exists "polaroids are public" on public.post_photos;
+create policy "polaroids are public" on public.post_photos for select using (true);
+revoke all on public.post_photos from anon, authenticated;
+grant select on public.post_photos to anon, authenticated;
+
+create or replace function public.post_polaroid(caption text, photo text) returns uuid
+language plpgsql security definer set search_path = '' as $$
+declare me uuid := auth.uid(); new_id uuid;
+begin
+  if me is null or not exists (select 1 from public.profiles where id = me and verified and not muted) then
+    raise exception 'not allowed to post';
+  end if;
+  if (select count(*) from public.post_photos f join public.posts p on p.id = f.post_id where p.author_id = me and p.created_at > now() - interval '1 day') >= 30 then
+    raise exception 'only 30 polaroids a day';
+  end if;
+  insert into public.posts (author_id, title, body) values (me, '', caption) returning id into new_id;
+  insert into public.post_photos (post_id, photo) values (new_id, post_polaroid.photo);
+  return new_id;
+end $$;
+create or replace function public.admin_post_polaroid(token text, caption text, photo text) returns uuid
+language plpgsql security definer set search_path = '' as $$
+declare new_id uuid;
+begin
+  perform private.require_admin(token);
+  insert into public.posts (author_id, title, body) values (null, '', caption) returning id into new_id;
+  insert into public.post_photos (post_id, photo) values (new_id, admin_post_polaroid.photo);
+  return new_id;
+end $$;
+revoke all on function public.post_polaroid(text, text) from public;
+grant execute on function public.post_polaroid(text, text) to authenticated;
+revoke all on function public.admin_post_polaroid(text, text, text) from public;
+grant execute on function public.admin_post_polaroid(text, text, text) to anon, authenticated;
+
+alter table public.post_reactions drop constraint if exists post_reactions_kind_check;
+alter table public.post_reactions add constraint post_reactions_kind_check check (kind in ('fang', 'tea', 'skull', 'heart', 'fire', 'laugh'));

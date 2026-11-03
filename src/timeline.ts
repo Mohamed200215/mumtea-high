@@ -6,6 +6,8 @@ let allPosts: TeaPost[] = [];
 async function refreshPosts(): Promise<void> {
   const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false }).limit(200);
   if (error) throw error;
+  const photos = await sb.from('post_photos').select('post_id');
+  photoIds = new Set(photos.error ? [] : (photos.data || []).map((row: any) => row.post_id));
   allPosts = data.map((row: any): TeaPost => ({ id: row.id, authorId: row.author_id, title: row.title, body: row.body, at: row.created_at, editedAt: row.edited_at || null }));
 }
 function timeAgo(iso: string): string {
@@ -29,6 +31,7 @@ function postCard(post: TeaPost, highlight: boolean, compact = false): HTMLEleme
   who.append(el('time', { datetime: post.at, title: new Date(post.at).toLocaleString(), text: timeAgo(post.at) + (post.editedAt ? ', edited' : '') }));
   const card = el('div', { cls: 'teacard' }, who);
   if (post.title) card.append(el('h3', { text: post.title }));
+  if (photoIds.has(post.id)) card.append(postPhoto(post));
   const long = post.body.length > SHORT_POST, showAll = openPosts.has(post.id);
   (long && !showAll ? post.body.slice(0, SHORT_POST).trimEnd() + '...' : post.body).split(/\n+/).forEach(line => card.append(el('p', { text: line })));
   if (long) card.append(el('button', { cls: 'linkish readmore', type: 'button', 'aria-expanded': showAll, onclick() {
