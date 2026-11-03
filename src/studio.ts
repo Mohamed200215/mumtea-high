@@ -49,7 +49,7 @@ const tileWatcher = new IntersectionObserver(entries => entries.forEach(entry =>
   if (!page.key) return;
   const look = { ...studioLook, pose: 'classic', [page.key]: id };
   pic.innerHTML = page.key === 'pose' ? drawGhoul({ ...look, pose: id }, { box: page.box, plain: true }) : drawGhoul(look, { only: page.layers, box: page.box, plain: true });
-  if (pic.dataset.box) fitInBox(pic.querySelector('svg'), pic.dataset.box);
+  if (pic.dataset.box) { fitInBox(pic.querySelector('svg'), pic.dataset.box); bakeSvg(pic.querySelector('svg')); }
 }), { root: studioTiles, rootMargin: '160px' });
 function drawStudio(): void {
   /* Nobody can see it on another page. It draws when it comes into view. */

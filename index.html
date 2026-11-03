@@ -529,6 +529,13 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .locker{filter:none}
 .boss .doll{filter:none}
 
+/* baked characters */
+.teaface img,.cmtface img,.lbface img{display:block;width:100%;height:100%}
+.wpic img{display:block;width:100%;height:100%;object-fit:contain}
+/* the sliding strip gets its own layer, so it never repaints the page */
+.marquee{contain:paint}
+.marquee div{will-change:transform}
+
 /*ARCADE-CSS-END*/
 </style>
 
@@ -2058,9 +2065,21 @@ async function syncProgress() {
     else
         saveBonesSoon();
 }
+/* ---------- finished characters become one picture, so scrolling doesn't repaint hundreds of shapes ---------- */
+function bakeSvg(svg) {
+    if (!svg)
+        return;
+    const img = document.createElement('img');
+    img.decoding = 'sync';
+    img.alt = svg.getAttribute('aria-label') || '';
+    img.draggable = false;
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+    svg.replaceWith(img);
+}
 /* ---------- keep every character inside its space, without changing the space's shape ---------- */
 function fitDolls() {
-    document.querySelectorAll('.doll svg:not([data-fit])').forEach(svg => {
+    document.querySelectorAll('.teaface svg,.cmtface svg,.lbface svg').forEach(bakeSvg);
+    document.querySelectorAll('.doll svg').forEach(svg => {
         if (!svg.getBoundingClientRect().width)
             return;
         try {
@@ -2081,7 +2100,9 @@ function fitDolls() {
                 w = grown;
             }
             svg.setAttribute('viewBox', [x, y, w, h].join(' '));
-            svg.dataset.fit = '1';
+            svg.setAttribute('width', String(w));
+            svg.setAttribute('height', String(h));
+            bakeSvg(svg);
         }
         catch (e) { /* not on screen yet: the next change comes back to it */ }
     });
@@ -2093,7 +2114,7 @@ function queueFit() {
     fitQueued = true;
     requestAnimationFrame(() => { fitQueued = false; fitDolls(); });
 }
-new MutationObserver(queueFit).observe(document.body, { childList: true, subtree: true });
+new MutationObserver(queueFit).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
 /* Supabase connection. This key is the public one, made to live in a website: row level security in
    supabase/schema.sql is what protects the data. Never put the service_role key here. */
 const SUPABASE_URL = 'https://lhnonknherklzygksbkk.supabase.co';
@@ -3941,8 +3962,10 @@ const tileWatcher = new IntersectionObserver(entries => entries.forEach(entry =>
         return;
     const look = { ...studioLook, pose: 'classic', [page.key]: id };
     pic.innerHTML = page.key === 'pose' ? drawGhoul({ ...look, pose: id }, { box: page.box, plain: true }) : drawGhoul(look, { only: page.layers, box: page.box, plain: true });
-    if (pic.dataset.box)
+    if (pic.dataset.box) {
         fitInBox(pic.querySelector('svg'), pic.dataset.box);
+        bakeSvg(pic.querySelector('svg'));
+    }
 }), { root: studioTiles, rootMargin: '160px' });
 function drawStudio() {
     /* Nobody can see it on another page. It draws when it comes into view. */

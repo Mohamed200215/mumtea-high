@@ -198,9 +198,20 @@ async function syncProgress(): Promise<void> {
   if (data) { bones = data.bones; store.set('bones', bones); drawBones(); } else saveBonesSoon();
 }
 
+/* ---------- finished characters become one picture, so scrolling doesn't repaint hundreds of shapes ---------- */
+function bakeSvg(svg: Element | null): void {
+  if (!svg) return;
+  const img = document.createElement('img');
+  img.decoding = 'sync';
+  img.alt = svg.getAttribute('aria-label') || '';
+  img.draggable = false;
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+  svg.replaceWith(img);
+}
 /* ---------- keep every character inside its space, without changing the space's shape ---------- */
 function fitDolls(): void {
-  document.querySelectorAll<SVGSVGElement>('.doll svg:not([data-fit])').forEach(svg => {
+  document.querySelectorAll('.teaface svg,.cmtface svg,.lbface svg').forEach(bakeSvg);
+  document.querySelectorAll<SVGSVGElement>('.doll svg').forEach(svg => {
     if (!svg.getBoundingClientRect().width) return;
     try {
       const b = svg.getBBox(), v = svg.viewBox.baseVal, pad = 8;
@@ -210,7 +221,9 @@ function fitDolls(): void {
       const ratio = v.width / v.height;
       if (w / h > ratio) { const grown = w / ratio; y -= (grown - h) / 2; h = grown; } else { const grown = h * ratio; x -= (grown - w) / 2; w = grown; }
       svg.setAttribute('viewBox', [x, y, w, h].join(' '));
-      svg.dataset.fit = '1';
+      svg.setAttribute('width', String(w));
+      svg.setAttribute('height', String(h));
+      bakeSvg(svg);
     } catch (e) { /* not on screen yet: the next change comes back to it */ }
   });
 }
@@ -220,4 +233,4 @@ function queueFit(): void {
   fitQueued = true;
   requestAnimationFrame(() => { fitQueued = false; fitDolls(); });
 }
-new MutationObserver(queueFit).observe(document.body, { childList: true, subtree: true });
+new MutationObserver(queueFit).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
