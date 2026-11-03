@@ -397,3 +397,4 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 }
 @media (prefers-reduced-motion:reduce){.polaprint,.poladevelop,.camflash.go,.camsticker{animation:none}.camdial{transition:none}}
 .gcard .gart img{width:62%;max-width:96px;height:auto;filter:drop-shadow(0 3px 0 rgba(0,0,0,.55))}
+.typedemoji{display:inline-block;width:1.3em;height:1.3em;margin:0 .05em;vertical-align:-.28em}

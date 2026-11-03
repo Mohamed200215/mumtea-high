@@ -7,6 +7,7 @@ async function refreshPosts(): Promise<void> {
   const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending: false }).limit(200);
   if (error) throw error;
   const photos = await sb.from('post_photos').select('post_id');
+  laughReady = !photos.error;
   photoIds = new Set(photos.error ? [] : (photos.data || []).map((row: any) => row.post_id));
   allPosts = data.map((row: any): TeaPost => ({ id: row.id, authorId: row.author_id, title: row.title, body: row.body, at: row.created_at, editedAt: row.edited_at || null }));
 }
@@ -30,10 +31,10 @@ function postCard(post: TeaPost, highlight: boolean, compact = false): HTMLEleme
   if (post.authorId === null) who.append(el('span', { cls: 'teabadge', text: 'Headghoul' }));
   who.append(el('time', { datetime: post.at, title: new Date(post.at).toLocaleString(), text: timeAgo(post.at) + (post.editedAt ? ', edited' : '') }));
   const card = el('div', { cls: 'teacard' }, who);
-  if (post.title) card.append(el('h3', { text: post.title }));
+  if (post.title) card.append(el('h3', {}, ...emojiText(post.title)));
   if (photoIds.has(post.id)) card.append(postPhoto(post));
   const long = post.body.length > SHORT_POST, showAll = openPosts.has(post.id);
-  (long && !showAll ? post.body.slice(0, SHORT_POST).trimEnd() + '...' : post.body).split(/\n+/).forEach(line => card.append(el('p', { text: line })));
+  (long && !showAll ? post.body.slice(0, SHORT_POST).trimEnd() + '...' : post.body).split(/\n+/).forEach(line => card.append(el('p', {}, ...emojiText(line))));
   if (long) card.append(el('button', { cls: 'linkish readmore', type: 'button', 'aria-expanded': showAll, onclick() {
     if (showAll) openPosts.delete(post.id); else openPosts.add(post.id);
     redrawPosts();
@@ -93,7 +94,7 @@ function fillSlide(): void {
     return;
   }
   $('#slideTitle').textContent = latest.title || authorName(latest) + ' says';
-  $('#slideText').textContent = latest.body.split('\n')[0].slice(0, 170);
+  $('#slideText').replaceChildren(...emojiText(latest.body.split('\n')[0].slice(0, 170)));
   read.textContent = 'Read the timeline';
   read.onclick = () => go('tea', latest.id);
 }
