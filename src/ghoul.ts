@@ -209,7 +209,8 @@ function drawHand(shape: string, skin: string, fill: string, tips: string, tipSt
   return lines(6.6, INK) + '<path d="M-7.5 1Q-8 15 -6 16L6 16Q8 15 7.5 1Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4" stroke-linejoin="round"/>' + lines(4, skin) + nails;
 }
 
-function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[]; box?: string } = {}): string {
+/* plain: small previews skip the costly shading and hair streaks. detail: the big wardrobe figure shades each layer on its own. */
+function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[]; box?: string; plain?: boolean; detail?: boolean } = {}): string {
   const uid = 'g' + (++ghoulCounter);
   const pose = opt.head ? POSES[0] : poseOf(o.pose);
   let defs = '';
@@ -922,6 +923,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   const hairDark = shade(hair, -.68);
   let lockCount = 0;
   const locks = (d: string): string => {
+    if (opt.plain) return shape(d, hair);
     const id = uid + 'h' + (++lockCount);
     defs += '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath>';
     return '<path d="' + d + '" fill="' + hair + '"/><g clip-path="url(#' + id + ')">' + STRAND_DARK.map(t => strand(t, hairDark)).join('') + STRAND_LIGHT.map(t => strand(t, hairL)).join('') + '</g><path d="' + d + '" fill="none" stroke="' + INK + '" stroke-width="3.200" stroke-linejoin="round"/>';
@@ -1150,14 +1152,15 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
 
   const lean = pose.lean || 0, tilt = pose.tilt || 0, lift = pose.lift || 0;
   const LOWER: Layer[] = ['legs', 'legwear', 'pants', 'shoes'];
-  defs += '<filter id="' + uid + 'cel" filterUnits="userSpaceOnUse" x="-300" y="-300" width="1000" height="1400" color-interpolation-filters="sRGB"><feOffset in="SourceAlpha" dx="-7" dy="-3" result="o"/><feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#1c0f22" flood-opacity=".3"/><feComposite in2="edge" operator="in" result="sh"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter>';
+  const shading = !opt.plain && !opt.head && !opt.only;
+  if (shading) defs += '<filter id="' + uid + 'cel" filterUnits="userSpaceOnUse" x="-150" y="-120" width="620" height="880" color-interpolation-filters="sRGB"><feOffset in="SourceAlpha" dx="-7" dy="-3" result="o"/><feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#1c0f22" flood-opacity=".3"/><feComposite in2="edge" operator="in" result="sh"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter>';
   const SHADED: Layer[] = ['legs', 'pants', 'shoes', 'torso', 'bottom', 'top', 'arms', 'sleeves', 'hairBack'];
   const THIN: Layer[] = ['torso', 'bottom', 'top', 'neck'];
   const placed = (l: Layer): string => {
     let out = parts[l] || '';
     if (!out) return '';
     if (THIN.includes(l)) out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
-    if (SHADED.includes(l)) out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
+    if (shading && opt.detail && SHADED.includes(l)) out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
     if (l === 'hairBack' && !scarfOn) out = '<g transform="translate(160 110) scale(1.16 1.04) translate(-160 -110)">' + out + '</g>';
     if (l === 'hairFront' && !scarfOn) out = '<g transform="translate(160 0) scale(1.1 1) translate(-160 0)">' + out + '</g>';
     if (HEAD_LAYERS.includes(l)) out = '<g transform="translate(160 205) scale(1.05) translate(-160 -205)">' + out + '</g>';
@@ -1167,7 +1170,13 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   };
   /* A head picture draws only the head, and nothing can spill out of it. */
   const showing = opt.only || (opt.head ? HEAD_LAYERS : null);
-  const inner = LAYER_ORDER.filter(l => !showing || showing.includes(l)).map(placed).join('');
+  /* Everywhere else the whole body shares one shading pass, which is far lighter to paint. */
+  const BODY_START = LAYER_ORDER.indexOf('legs'), BODY_END = LAYER_ORDER.indexOf('sleeves');
+  const inner = LAYER_ORDER.map((l, i) => {
+    const drawn = !showing || showing.includes(l) ? placed(l) : '';
+    if (!shading || opt.detail) return drawn;
+    return (i === BODY_START ? '<g filter="url(#' + uid + 'cel)">' : '') + drawn + (i === BODY_END ? '</g>' : '');
+  }).join('');
   const box = opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
   const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
   return `<svg viewBox="${box}" style="overflow:${opt.head ? 'hidden' : 'visible'}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;

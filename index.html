@@ -524,6 +524,11 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .rulesline{margin:0 0 10px}
 @media (max-width:620px){.studentpage{grid-template-columns:minmax(0,1fr)}.studentpage .doll{max-width:200px;margin-inline:auto}}
 
+/* costly effects that added little */
+.cast .doll{filter:none}
+.locker{filter:none}
+.boss .doll{filter:none}
+
 /*ARCADE-CSS-END*/
 </style>
 
@@ -2290,6 +2295,7 @@ function drawHand(shape, skin, fill, tips, tipStyle = '') {
     }).join('') : '';
     return lines(6.6, INK) + '<path d="M-7.5 1Q-8 15 -6 16L6 16Q8 15 7.5 1Z" fill="' + fill + '" stroke="' + INK + '" stroke-width="2.4" stroke-linejoin="round"/>' + lines(4, skin) + nails;
 }
+/* plain: small previews skip the costly shading and hair streaks. detail: the big wardrobe figure shades each layer on its own. */
 function drawGhoul(o, opt = {}) {
     const uid = 'g' + (++ghoulCounter);
     const pose = opt.head ? POSES[0] : poseOf(o.pose);
@@ -3031,6 +3037,8 @@ function drawGhoul(o, opt = {}) {
     const hairDark = shade(hair, -.68);
     let lockCount = 0;
     const locks = (d) => {
+        if (opt.plain)
+            return shape(d, hair);
         const id = uid + 'h' + (++lockCount);
         defs += '<clipPath id="' + id + '"><path d="' + d + '"/></clipPath>';
         return '<path d="' + d + '" fill="' + hair + '"/><g clip-path="url(#' + id + ')">' + STRAND_DARK.map(t => strand(t, hairDark)).join('') + STRAND_LIGHT.map(t => strand(t, hairL)).join('') + '</g><path d="' + d + '" fill="none" stroke="' + INK + '" stroke-width="3.200" stroke-linejoin="round"/>';
@@ -3258,7 +3266,9 @@ function drawGhoul(o, opt = {}) {
     }[o.headwear] || '';
     const lean = pose.lean || 0, tilt = pose.tilt || 0, lift = pose.lift || 0;
     const LOWER = ['legs', 'legwear', 'pants', 'shoes'];
-    defs += '<filter id="' + uid + 'cel" filterUnits="userSpaceOnUse" x="-300" y="-300" width="1000" height="1400" color-interpolation-filters="sRGB"><feOffset in="SourceAlpha" dx="-7" dy="-3" result="o"/><feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#1c0f22" flood-opacity=".3"/><feComposite in2="edge" operator="in" result="sh"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter>';
+    const shading = !opt.plain && !opt.head && !opt.only;
+    if (shading)
+        defs += '<filter id="' + uid + 'cel" filterUnits="userSpaceOnUse" x="-150" y="-120" width="620" height="880" color-interpolation-filters="sRGB"><feOffset in="SourceAlpha" dx="-7" dy="-3" result="o"/><feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#1c0f22" flood-opacity=".3"/><feComposite in2="edge" operator="in" result="sh"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter>';
     const SHADED = ['legs', 'pants', 'shoes', 'torso', 'bottom', 'top', 'arms', 'sleeves', 'hairBack'];
     const THIN = ['torso', 'bottom', 'top', 'neck'];
     const placed = (l) => {
@@ -3267,7 +3277,7 @@ function drawGhoul(o, opt = {}) {
             return '';
         if (THIN.includes(l))
             out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
-        if (SHADED.includes(l))
+        if (shading && opt.detail && SHADED.includes(l))
             out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
         if (l === 'hairBack' && !scarfOn)
             out = '<g transform="translate(160 110) scale(1.16 1.04) translate(-160 -110)">' + out + '</g>';
@@ -3283,7 +3293,14 @@ function drawGhoul(o, opt = {}) {
     };
     /* A head picture draws only the head, and nothing can spill out of it. */
     const showing = opt.only || (opt.head ? HEAD_LAYERS : null);
-    const inner = LAYER_ORDER.filter(l => !showing || showing.includes(l)).map(placed).join('');
+    /* Everywhere else the whole body shares one shading pass, which is far lighter to paint. */
+    const BODY_START = LAYER_ORDER.indexOf('legs'), BODY_END = LAYER_ORDER.indexOf('sleeves');
+    const inner = LAYER_ORDER.map((l, i) => {
+        const drawn = !showing || showing.includes(l) ? placed(l) : '';
+        if (!shading || opt.detail)
+            return drawn;
+        return (i === BODY_START ? '<g filter="url(#' + uid + 'cel)">' : '') + drawn + (i === BODY_END ? '</g>' : '');
+    }).join('');
     const box = opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
     const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
     return `<svg viewBox="${box}" style="overflow:${opt.head ? 'hidden' : 'visible'}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
@@ -3870,7 +3887,7 @@ async function startBackend() {
     }
 }
 /* ---------- the wardrobe: used by the Profile page and Scream Queen Closet ---------- */
-let studioLook = randomLook(), studioSaved = studioLook, studioPage = 0, studioDirty = false, studioForFang = false;
+let studioLook = randomLook(), studioSaved = studioLook, studioPage = 0, studioDirty = false, studioForFang = false, studioStale = true;
 const studioRoot = el('div', { cls: 'studio' });
 const studioTitle = el('h4', { cls: 'wtitle', 'aria-live': 'polite' });
 const studioCount = el('span', { cls: 'wcount' });
@@ -3883,12 +3900,19 @@ function changeLook(key, value) {
     studioLook = { ...studioLook, [key]: value };
     studioDirty = true;
     studioMsg.textContent = signedInId() || studioForFang ? 'Not saved yet.' : 'Register to keep this look.';
+    /* Picking an item only moves the highlight and redresses the big figure. The previews stay as they are. */
+    if (key === WARDROBE[studioPage].key && !studioStale) {
+        studioTiles.querySelectorAll('.wtile').forEach(t => t.setAttribute('aria-pressed', String(t.dataset.w === key + ':' + value)));
+        drawStudioStage();
+        fitStudio();
+        return;
+    }
     drawStudio();
 }
 function drawStudioStage() {
     const owner = studioForFang ? DOLLS.mumtea.name : currentStudent()?.name || 'New ghoul';
     studioName.textContent = owner;
-    studioStage.innerHTML = drawGhoul(studioLook, { label: owner, box: WIDE_BOX });
+    studioStage.innerHTML = drawGhoul(studioLook, { label: owner, box: WIDE_BOX, detail: true });
 }
 /* Widens the view so the whole drawing sits inside its box. Sizes are only known once the box is on screen. */
 function fitInBox(svg, box) {
@@ -3907,7 +3931,27 @@ function fitStudio() {
     fitInBox(studioStage.querySelector('svg'), WIDE_BOX);
     studioTiles.querySelectorAll('.wpic[data-box]').forEach(pic => fitInBox(pic.querySelector('svg'), pic.dataset.box));
 }
+/* Previews are drawn as they scroll into view, so opening a page doesn't draw 30 or more at once. */
+const tileWatcher = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (!entry.isIntersecting)
+        return;
+    const pic = entry.target, page = WARDROBE[studioPage], id = pic.dataset.item;
+    tileWatcher.unobserve(pic);
+    if (!page.key)
+        return;
+    const look = { ...studioLook, pose: 'classic', [page.key]: id };
+    pic.innerHTML = page.key === 'pose' ? drawGhoul({ ...look, pose: id }, { box: page.box, plain: true }) : drawGhoul(look, { only: page.layers, box: page.box, plain: true });
+    if (pic.dataset.box)
+        fitInBox(pic.querySelector('svg'), pic.dataset.box);
+}), { root: studioTiles, rootMargin: '160px' });
 function drawStudio() {
+    /* Nobody can see it on another page. It draws when it comes into view. */
+    if (!studioRoot.getClientRects().length) {
+        studioStale = true;
+        return;
+    }
+    studioStale = false;
+    tileWatcher.disconnect();
     const page = WARDROBE[studioPage];
     const focused = document.activeElement?.dataset?.w;
     studioTitle.textContent = page.title;
@@ -3916,11 +3960,10 @@ function drawStudio() {
     studioSwatches.textContent = '';
     (page.items || []).forEach(([id, label]) => {
         const pic = el('span', { cls: 'wpic' });
-        const isPose = page.key === 'pose';
-        /* Clothes are shown laid flat in the classic pose, so only the Poses page shows the whole figure moving. */
-        pic.innerHTML = drawGhoul({ ...studioLook, pose: 'classic', [page.key]: id }, isPose ? { box: page.box } : { only: page.layers, box: page.box });
+        pic.dataset.item = id;
         if (!page.crop)
             pic.dataset.box = page.box;
+        tileWatcher.observe(pic);
         studioTiles.append(el('button', { cls: 'wtile', type: 'button', 'data-w': page.key + ':' + id, 'aria-pressed': studioLook[page.key] === id, onclick() { changeLook(page.key, id); } }, pic, el('small', { text: label })));
     });
     studioTiles.hidden = !page.items;
@@ -4039,7 +4082,10 @@ function renderProfile() {
     const buttons = el('div', { cls: 'stagebtns' }, el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = studioSaved; studioDirty = false; studioMsg.textContent = 'Back to your last saved look.'; drawStudio(); } }, 'Restart'), el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = randomLook(); studioDirty = true; studioMsg.textContent = signedInId() || studioForFang ? 'Not saved yet.' : 'Register to keep this look.'; drawStudio(); } }, 'Surprise me'), el('button', { cls: 'wnav wsave', type: 'button', onclick() { saveStudio(); } }, 'Save'));
     const right = el('div', { cls: 'wstage' }, el('div', { cls: 'locker' }, el('div', { cls: 'lockerinside' }, studioStage)), studioName, buttons, studioMsg);
     studioRoot.append(left, right);
-    new ResizeObserver(() => fitStudio()).observe(studioTiles);
+    new ResizeObserver(() => { if (studioStale && studioRoot.getClientRects().length)
+        drawStudio();
+    else
+        fitStudio(); }).observe(studioRoot);
 })();
 const POST_LIMIT = 10000;
 let allPosts = [];

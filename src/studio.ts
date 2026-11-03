@@ -1,5 +1,5 @@
 /* ---------- the wardrobe: used by the Profile page and Scream Queen Closet ---------- */
-let studioLook: Look = randomLook(), studioSaved: Look = studioLook, studioPage = 0, studioDirty = false, studioForFang = false;
+let studioLook: Look = randomLook(), studioSaved: Look = studioLook, studioPage = 0, studioDirty = false, studioForFang = false, studioStale = true;
 const studioRoot = el('div', { cls: 'studio' });
 const studioTitle = el('h4', { cls: 'wtitle', 'aria-live': 'polite' });
 const studioCount = el('span', { cls: 'wcount' });
@@ -13,12 +13,19 @@ function changeLook(key: keyof Look, value: string): void {
   studioLook = { ...studioLook, [key]: value };
   studioDirty = true;
   studioMsg.textContent = signedInId() || studioForFang ? 'Not saved yet.' : 'Register to keep this look.';
+  /* Picking an item only moves the highlight and redresses the big figure. The previews stay as they are. */
+  if (key === WARDROBE[studioPage].key && !studioStale) {
+    studioTiles.querySelectorAll<HTMLElement>('.wtile').forEach(t => t.setAttribute('aria-pressed', String(t.dataset.w === key + ':' + value)));
+    drawStudioStage();
+    fitStudio();
+    return;
+  }
   drawStudio();
 }
 function drawStudioStage(): void {
   const owner = studioForFang ? DOLLS.mumtea.name : currentStudent()?.name || 'New ghoul';
   studioName.textContent = owner;
-  studioStage.innerHTML = drawGhoul(studioLook, { label: owner, box: WIDE_BOX });
+  studioStage.innerHTML = drawGhoul(studioLook, { label: owner, box: WIDE_BOX, detail: true });
 }
 /* Widens the view so the whole drawing sits inside its box. Sizes are only known once the box is on screen. */
 function fitInBox(svg: SVGSVGElement | null, box: string): void {
@@ -34,7 +41,21 @@ function fitStudio(): void {
   fitInBox(studioStage.querySelector('svg'), WIDE_BOX);
   studioTiles.querySelectorAll<HTMLElement>('.wpic[data-box]').forEach(pic => fitInBox(pic.querySelector('svg'), pic.dataset.box as string));
 }
+/* Previews are drawn as they scroll into view, so opening a page doesn't draw 30 or more at once. */
+const tileWatcher = new IntersectionObserver(entries => entries.forEach(entry => {
+  if (!entry.isIntersecting) return;
+  const pic = entry.target as HTMLElement, page = WARDROBE[studioPage], id = pic.dataset.item as string;
+  tileWatcher.unobserve(pic);
+  if (!page.key) return;
+  const look = { ...studioLook, pose: 'classic', [page.key]: id };
+  pic.innerHTML = page.key === 'pose' ? drawGhoul({ ...look, pose: id }, { box: page.box, plain: true }) : drawGhoul(look, { only: page.layers, box: page.box, plain: true });
+  if (pic.dataset.box) fitInBox(pic.querySelector('svg'), pic.dataset.box);
+}), { root: studioTiles, rootMargin: '160px' });
 function drawStudio(): void {
+  /* Nobody can see it on another page. It draws when it comes into view. */
+  if (!studioRoot.getClientRects().length) { studioStale = true; return; }
+  studioStale = false;
+  tileWatcher.disconnect();
   const page = WARDROBE[studioPage];
   const focused = (document.activeElement as HTMLElement | null)?.dataset?.w;
   studioTitle.textContent = page.title;
@@ -42,10 +63,9 @@ function drawStudio(): void {
   studioTiles.textContent = ''; studioSwatches.textContent = '';
   (page.items || []).forEach(([id, label]) => {
     const pic = el('span', { cls: 'wpic' });
-    const isPose = page.key === 'pose';
-    /* Clothes are shown laid flat in the classic pose, so only the Poses page shows the whole figure moving. */
-    pic.innerHTML = drawGhoul({ ...studioLook, pose: 'classic', [page.key as keyof Look]: id }, isPose ? { box: page.box } : { only: page.layers, box: page.box });
+    pic.dataset.item = id;
     if (!page.crop) pic.dataset.box = page.box;
+    tileWatcher.observe(pic);
     studioTiles.append(el('button', { cls: 'wtile', type: 'button', 'data-w': page.key + ':' + id, 'aria-pressed': studioLook[page.key as keyof Look] === id, onclick() { changeLook(page.key as keyof Look, id); } }, pic, el('small', { text: label })));
   });
   studioTiles.hidden = !page.items;
@@ -139,5 +159,5 @@ function renderProfile(): void {
     el('button', { cls: 'wnav wsave', type: 'button', onclick() { saveStudio(); } }, 'Save'));
   const right = el('div', { cls: 'wstage' }, el('div', { cls: 'locker' }, el('div', { cls: 'lockerinside' }, studioStage)), studioName, buttons, studioMsg);
   studioRoot.append(left, right);
-  new ResizeObserver(() => fitStudio()).observe(studioTiles);
+  new ResizeObserver(() => { if (studioStale && studioRoot.getClientRects().length) drawStudio(); else fitStudio(); }).observe(studioRoot);
 })();
