@@ -304,3 +304,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 /* the sliding strip gets its own layer, so it never repaints the page */
 .marquee{contain:paint}
 .marquee div{will-change:transform}
+.wpic canvas{display:block;width:100%;height:100%;object-fit:contain}
+.lockerdoll img{display:block;width:100%;height:100%;object-fit:contain}
+.wpic canvas{background:transparent;border:0;box-shadow:none;max-width:none;margin:0;touch-action:auto;aspect-ratio:auto}

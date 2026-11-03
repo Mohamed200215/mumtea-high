@@ -18,6 +18,7 @@ function changeLook(key: keyof Look, value: string): void {
     studioTiles.querySelectorAll<HTMLElement>('.wtile').forEach(t => t.setAttribute('aria-pressed', String(t.dataset.w === key + ':' + value)));
     drawStudioStage();
     fitStudio();
+    bakeInBackground();
     return;
   }
   drawStudio();
@@ -38,24 +39,92 @@ function fitInBox(svg: SVGSVGElement | null, box: string): void {
   } catch { /* not on screen yet: the observer below comes back to it */ }
 }
 function fitStudio(): void {
-  fitInBox(studioStage.querySelector('svg'), WIDE_BOX);
-  studioTiles.querySelectorAll<HTMLElement>('.wpic[data-box]').forEach(pic => fitInBox(pic.querySelector('svg'), pic.dataset.box as string));
+  const figure = studioStage.querySelector('svg');
+  if (!figure) return;
+  fitInBox(figure, WIDE_BOX);
+  const view = figure.viewBox.baseVal;
+  figure.setAttribute('width', String(view.width));
+  figure.setAttribute('height', String(view.height));
+  bakeSvg(figure);
 }
-/* Previews are drawn as they scroll into view, so opening a page doesn't draw 30 or more at once. */
-const tileWatcher = new IntersectionObserver(entries => entries.forEach(entry => {
-  if (!entry.isIntersecting) return;
-  const pic = entry.target as HTMLElement, page = WARDROBE[studioPage], id = pic.dataset.item as string;
-  tileWatcher.unobserve(pic);
-  if (!page.key) return;
-  const look = { ...studioLook, pose: 'classic', [page.key]: id };
-  pic.innerHTML = page.key === 'pose' ? drawGhoul({ ...look, pose: id }, { box: page.box, plain: true }) : drawGhoul(look, { only: page.layers, box: page.box, plain: true });
-  if (pic.dataset.box) { fitInBox(pic.querySelector('svg'), pic.dataset.box); bakeSvg(pic.querySelector('svg')); }
-}), { root: studioTiles, rootMargin: '160px' });
-function drawStudio(): void {
+/* Every page's previews are prepared in the background as finished pictures, so Next shows them at once. */
+const FACE_PARTS: Array<keyof Look> = ['skin', 'eye', 'lip', 'shadow', 'hair', 'hairStyle', 'eyeStyle', 'brow', 'browC', 'nose', 'lipSize'];
+const TILE_PARTS: Record<string, Array<keyof Look>> = {
+  hairStyle: ['hair', 'streak', 'skin'], lipSize: FACE_PARTS, eyeStyle: FACE_PARTS, brow: [...FACE_PARTS, 'trim'], nose: [...FACE_PARTS, 'trim'], mark: [...FACE_PARTS, 'trim'],
+  eyewear: ['skin', 'trim'], monster: [...FACE_PARTS, 'trim', 'streak'], top: ['topC', 'topP', 'trim'], bottom: ['bottomC', 'bottomP', 'trim', 'skin'], legs: ['legsC', 'trim', 'skin'], shoes: ['shoesC', 'trim', 'skin'],
+  headwear: ['trim', 'topC', 'skin'], neck: ['trim', 'skin'], gloves: ['gloveC', 'trim', 'skin'], wrist: ['trim', 'skin', 'gloves', 'gloveC', 'top', 'topC', 'topP'], back: ['trim', 'topC'], hold: ['trim'],
+};
+interface TileStore { sig: string; fresh: Record<string, string>; art: Record<string, HTMLCanvasElement> }
+const tileStores: Record<string, TileStore> = {};
+const measureHost = el('div', { style: 'position:fixed;left:-3000px;top:0;width:120px;height:120px;visibility:hidden' });
+const measureRoot = measureHost.attachShadow({ mode: 'open' });
+const tileSig = (page: WardrobePage): string => {
+  const parts = page.key === 'pose' ? (Object.keys(studioLook) as Array<keyof Look>).filter(k => k !== 'pose') : TILE_PARTS[page.key as string] || (Object.keys(studioLook) as Array<keyof Look>).filter(k => k !== page.key);
+  return parts.map(k => studioLook[k]).join('|');
+};
+function storeFor(page: WardrobePage): TileStore {
+  const store = tileStores[page.title] || (tileStores[page.title] = { sig: '', fresh: {}, art: {} });
+  const sig = tileSig(page);
+  if (store.sig !== sig) { store.sig = sig; store.fresh = {}; }
+  return store;
+}
+function bakeTile(page: WardrobePage, id: string): string {
+  const look = { ...studioLook, pose: 'classic', [page.key as keyof Look]: id };
+  measureRoot.innerHTML = page.key === 'pose' ? drawGhoul({ ...look, pose: id }, { box: page.box, plain: true }) : drawGhoul(look, { only: page.layers, box: page.box, plain: true });
+  const svg = measureRoot.querySelector('svg') as SVGSVGElement;
+  if (page.crop) {
+    /* A zoomed-in preview: widen its short side, so the picture fills the square tile. */
+    const [x, y, w, h] = page.box.split(' ').map(Number), side = Math.max(w, h);
+    svg.setAttribute('viewBox', [x - (side - w) / 2, y - (side - h) / 2, side, side].join(' '));
+  } else fitInBox(svg, page.box);
+  const view = svg.viewBox.baseVal, tall = 224;
+  svg.setAttribute('height', String(tall));
+  svg.setAttribute('width', String(Math.round(tall * view.width / view.height)));
+  const src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+  measureRoot.innerHTML = '';
+  return src;
+}
+/* Each preview ends up as a ready-made image, which the browser can show without any drawing work. */
+function keepTile(page: WardrobePage, store: TileStore, id: string, done?: () => void): string {
+  const src = store.fresh[id] = bakeTile(page, id);
+  const picture = new Image();
+  picture.onload = () => {
+    if (store.fresh[id] === src) {
+      const art = document.createElement('canvas');
+      art.width = picture.naturalWidth || 224; art.height = picture.naturalHeight || 224;
+      art.getContext('2d')?.drawImage(picture, 0, 0, art.width, art.height);
+      store.art[id] = art;
+      if (WARDROBE[studioPage] === page) studioTiles.querySelector('[data-w="' + page.key + ':' + id + '"] .wpic')?.replaceChildren(art);
+    }
+    done?.();
+  };
+  picture.onerror = () => done?.();
+  picture.src = src;
+  return src;
+}
+let bakingNow = 0;
+function bakeInBackground(): void {
+  clearTimeout(bakingNow);
+  const order = WARDROBE.map((_, i) => (studioPage + i) % WARDROBE.length);
+  const step = () => {
+    for (const index of order) {
+      const page = WARDROBE[index];
+      if (!page.items) continue;
+      const store = storeFor(page), todo = page.items.find(([id]) => !store.fresh[id]);
+      if (!todo) continue;
+      /* One at a time, staying out of the way of whatever the visitor is doing. */
+      keepTile(page, store, todo[0], () => { bakingNow = window.setTimeout(step, index === studioPage ? 0 : 6); });
+      return;
+    }
+  };
+  bakingNow = window.setTimeout(step, 0);
+}
+const page0 = (): TileStore | null => { const p = WARDROBE[studioPage]; return p.items ? storeFor(p) : null; };
+function drawStudio(redress = true): void {
   /* Nobody can see it on another page. It draws when it comes into view. */
   if (!studioRoot.getClientRects().length) { studioStale = true; return; }
   studioStale = false;
-  tileWatcher.disconnect();
+  const tiles = page0();
   const page = WARDROBE[studioPage];
   const focused = (document.activeElement as HTMLElement | null)?.dataset?.w;
   studioTitle.textContent = page.title;
@@ -63,9 +132,10 @@ function drawStudio(): void {
   studioTiles.textContent = ''; studioSwatches.textContent = '';
   (page.items || []).forEach(([id, label]) => {
     const pic = el('span', { cls: 'wpic' });
-    pic.dataset.item = id;
-    if (!page.crop) pic.dataset.box = page.box;
-    tileWatcher.observe(pic);
+    /* Finished already if the background got here first, otherwise it is made now, so a tile is never empty. */
+    const art = tiles?.art[id];
+    if (art) pic.append(art);
+    else { const img = el('img', { alt: '', draggable: 'false' }) as HTMLImageElement; img.src = tiles?.fresh[id] || keepTile(page, tiles as TileStore, id); pic.append(img); }
     studioTiles.append(el('button', { cls: 'wtile', type: 'button', 'data-w': page.key + ':' + id, 'aria-pressed': studioLook[page.key as keyof Look] === id, onclick() { changeLook(page.key as keyof Look, id); } }, pic, el('small', { text: label })));
   });
   studioTiles.hidden = !page.items;
@@ -79,8 +149,8 @@ function drawStudio(): void {
     const key = page.pattern;
     row('Pattern', PATTERNS.map(([id, label]) => el('button', { cls: 'wchip', type: 'button', 'data-w': key + ':' + id, 'aria-pressed': studioLook[key] === id, onclick() { changeLook(key, id); } }, label)));
   }
-  drawStudioStage();
-  fitStudio();
+  if (redress || !studioStage.firstChild) { drawStudioStage(); fitStudio(); }
+  bakeInBackground();
   if (focused) (studioRoot.querySelector('[data-w="' + focused + '"]') as HTMLElement | null)?.focus();
 }
 function syncStudio(): void {
@@ -151,7 +221,7 @@ function renderProfile(): void {
   box.append(el('h3', { cls: 'profilename', text: me.name }), ...facts.map(text => el('p', { cls: 'profilefact', text })));
 }
 (function () {
-  const nav = (dir: number) => el('button', { cls: 'wnav', type: 'button', onclick() { studioPage = (studioPage + dir + WARDROBE.length) % WARDROBE.length; drawStudio(); } }, dir < 0 ? 'Back' : 'Next');
+  const nav = (dir: number) => el('button', { cls: 'wnav', type: 'button', onclick() { studioPage = (studioPage + dir + WARDROBE.length) % WARDROBE.length; drawStudio(false); } }, dir < 0 ? 'Back' : 'Next');
   const left = el('div', { cls: 'wardrobe' }, el('div', { cls: 'wbar' }, nav(-1), el('div', { cls: 'wribbon' }, studioTitle, studioCount), nav(1)), el('div', { cls: 'wframe' }, studioTiles, studioSwatches));
   const buttons = el('div', { cls: 'stagebtns' },
     el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = studioSaved; studioDirty = false; studioMsg.textContent = 'Back to your last saved look.'; drawStudio(); } }, 'Restart'),
@@ -159,5 +229,6 @@ function renderProfile(): void {
     el('button', { cls: 'wnav wsave', type: 'button', onclick() { saveStudio(); } }, 'Save'));
   const right = el('div', { cls: 'wstage' }, el('div', { cls: 'locker' }, el('div', { cls: 'lockerinside' }, studioStage)), studioName, buttons, studioMsg);
   studioRoot.append(left, right);
-  new ResizeObserver(() => { if (studioStale && studioRoot.getClientRects().length) drawStudio(); else fitStudio(); }).observe(studioRoot);
+  document.body.append(measureHost);
+  new ResizeObserver(() => { if (!studioRoot.getClientRects().length) return; if (studioStale) drawStudio(); else fitStudio(); }).observe(studioRoot);
 })();
