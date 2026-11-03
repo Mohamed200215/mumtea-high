@@ -307,3 +307,23 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .wpic canvas{display:block;width:100%;height:100%;object-fit:contain}
 .lockerdoll img{display:block;width:100%;height:100%;object-fit:contain}
 .wpic canvas{background:transparent;border:0;box-shadow:none;max-width:none;margin:0;touch-action:auto;aspect-ratio:auto}
+
+/* academics */
+.classtally{font-weight:800;color:var(--paper);margin:0 0 10px}
+.classgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.classcard{display:flex;flex-direction:column;gap:4px;text-align:left;padding:14px;background:var(--damask);color:var(--white);border:3px solid var(--violet);cursor:pointer;font:inherit;min-width:0}
+.classcard:hover{border-color:var(--pink)}
+.classcard small{font-weight:800;color:var(--teal)}
+.classcard strong{font:400 22px/1.15 var(--display);color:var(--pink);letter-spacing:.03em}
+.classcard span{font-size:14px;line-height:1.4}
+.classcard em{margin-top:auto;padding-top:6px;font-style:normal;font-weight:800;color:var(--paper);font-size:13px}
+.classdone{border-color:var(--teal)}
+.classpanel{max-width:680px;margin-inline:0}
+.classpanel h3{margin:12px 0 8px;outline:none}
+.classhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;align-items:baseline;margin-bottom:8px}
+.classhead small{font-weight:800;color:var(--muted)}
+.classtext{font-size:17px;line-height:1.55;margin:0 0 14px}
+.classfeedback{margin-top:12px}
+.classfeedback p{margin:0 0 10px;font-weight:700}
+.opts button.rightanswer,.opts button.rightanswer:disabled{background:#0f766e;border-color:var(--teal);color:#fff;opacity:1}
+.opts button.wronganswer,.opts button.wronganswer:disabled{background:#a3121f;border-color:#fff;color:#fff;opacity:1}

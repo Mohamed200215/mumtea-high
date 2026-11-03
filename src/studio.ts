@@ -194,6 +194,7 @@ function mountStudio(parent: Element): void {
 /* Called whenever the page changes view. */
 function viewOpened(v: string): void {
   if (v === 'student') renderStudentPage();
+  if (v === 'academics') renderClasses();
   queueFit();
   if (v === 'admin') {
     renderAdmin();
