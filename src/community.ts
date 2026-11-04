@@ -183,6 +183,7 @@ function renderStudentPage(): void {
   const bones = allBones.find(b => b.user_id === s.id)?.bones || 0;
   const facts = el('dl', { cls: 'studentfacts' });
   ([['Monster', MONSTER_NAMES[s.look.monster] || 'Monster'], ['Joined', new Date(s.joined).toLocaleDateString()], ['Blend', s.blend || 'Not yet steeped'], ['Bones', String(bones)]] as Array<[string, string]>).forEach(([k, v]) => facts.append(el('dt', { text: k }), el('dd', { text: v })));
+  if (s.card && s.card.emblem !== 'none') facts.append(el('dt', { text: 'Emblem' }), el('dd', {}, emblemEl(s.card.emblem, s.card.metal, 'emblem studentemblem')));
   const scores = SCORED_GAMES.map(game => { const rows = boardFor(game), i = rows.findIndex(r => r.user_id === s.id); return i < 0 ? null : el('li', {}, el('strong', { text: titleOf(game) }), el('span', { text: rows[i].score.toLocaleString() + ' (number ' + (i + 1) + ')' })); }).filter(Boolean) as HTMLElement[];
   const posts = allPosts.filter(p => p.authorId === s.id);
   const actions = el('div', { cls: 'row' }, back);

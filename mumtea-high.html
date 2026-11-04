@@ -730,6 +730,52 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .gcard[data-game="closet"] .gart{background:#fff6fb}
 .gcard[data-game="closet"] .gart img{width:55%;max-width:none;filter:none}
 
+/* the student ID card */
+.idcard{--idbg:#fff6fb;--idink:#2a1430;--idhead:#c80e6e;--idtile:none;position:relative;background-color:var(--idbg);background-image:var(--idtile);background-size:var(--idtsize,auto);color:var(--idink);isolation:isolate}
+.idcard>*{position:relative;z-index:1}
+.idcard h3{color:var(--idhead);border-bottom-color:var(--idhead)}
+.idcard p b{color:var(--idhead)}
+.idcard[data-frame]:not([data-frame="none"]){border-color:transparent;border-width:0}
+.idcard[data-frame="zebra"]{padding:34px}
+.idcard[data-frame="swirl"]{padding:34px 36px 30px}
+.idcard[data-frame="swirl"] .iddeco,.idcard[data-frame="hearts"] .iddeco{z-index:0}
+.idcard[data-frame="baroque"]{padding:34px}
+.idcard[data-frame="curtain"]{padding:50px 17% 26px}
+.idcard[data-frame="hearts"]{padding:50px 22px 50px}
+.idcard[data-frame="curtain"]{grid-template-columns:minmax(0,96px) minmax(0,1fr)}
+.idcard.idholo{background-image:var(--idtile),linear-gradient(120deg,#ffc2e6,#c2e4ff,#c8ffdc,#fff3b8,#e2c2ff,#ffc2e6);background-size:var(--idtsize,auto),300% 300%;animation:idholo 9s linear infinite}
+@keyframes idholo{to{background-position:0 0,300% 0}}
+.idcard .idring,.idcard .iddeco,.idcard .idemblemslot{position:absolute;inset:0;pointer-events:none;z-index:2}
+.idring[hidden]{display:none}
+.idring{box-sizing:border-box;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.idcard .idemblemslot{z-index:3}
+.emblem{position:relative;display:block;line-height:0}
+.emblem canvas{display:block;width:100%;height:auto;aspect-ratio:1;background:transparent;border:0;touch-action:auto;max-width:none}
+.idemblem{position:absolute;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45))}
+.idcard[data-size="s"] .idemblem{width:58px}
+.idcard[data-size="m"] .idemblem{width:82px}
+.idcard[data-size="l"] .idemblem{width:112px}
+.idcard[data-place="corner"] .idemblem{top:-16px;right:-6px;transform:rotate(9deg)}
+.idcard[data-place="bottom"] .idemblem{bottom:-10px;right:-4px;transform:rotate(-8deg)}
+.idcard[data-place="photo"] .idemblem{bottom:-8px;left:-6px;transform:rotate(-10deg)}
+.idcard[data-frame="curtain"][data-place="corner"] .idemblem{right:8%}
+.emblemglint{position:absolute;inset:0;overflow:hidden;-webkit-mask:var(--art) center/80% no-repeat;mask:var(--art) center/80% no-repeat}
+.emblemglint::before{content:"";position:absolute;top:-30%;bottom:-30%;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:rotate(16deg);animation:emblemglint 4.2s ease-in-out infinite}
+@keyframes emblemglint{0%,55%{left:-60%}100%{left:130%}}
+.idmaker{margin-top:18px;max-width:440px}
+.idmaker h4{margin:0 0 10px;font:400 22px var(--display);color:var(--pink);text-transform:uppercase}
+.idrows{display:grid;gap:12px}
+.idtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;width:100%}
+.idtile{background:#2a1038;border:2px solid #14101a;padding:3px;cursor:pointer;min-width:0;aspect-ratio:1;display:grid;place-items:center}
+.idtile:hover{background:#4c1560}
+.idtile[aria-pressed="true"]{background:#ff4fa8;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--pink)}
+.idtile .emblem{width:100%}
+.idnone{color:#fff6fb;font:800 12px var(--body)}
+.idholoswatch{background:linear-gradient(120deg,#ffc2e6,#c2e4ff,#c8ffdc,#fff3b8,#e2c2ff)}
+.idnote{margin:10px 0 0;font:800 13px var(--body);min-height:18px}
+.studentemblem{width:72px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5))}
+@media (prefers-reduced-motion:reduce){.idcard.idholo,.emblemglint::before{animation:none}}
+
 /*ARCADE-CSS-END*/
 </style>
 
@@ -3874,6 +3920,8 @@ function renderStudentPage() {
     const bones = allBones.find(b => b.user_id === s.id)?.bones || 0;
     const facts = el('dl', { cls: 'studentfacts' });
     [['Monster', MONSTER_NAMES[s.look.monster] || 'Monster'], ['Joined', new Date(s.joined).toLocaleDateString()], ['Blend', s.blend || 'Not yet steeped'], ['Bones', String(bones)]].forEach(([k, v]) => facts.append(el('dt', { text: k }), el('dd', { text: v })));
+    if (s.card && s.card.emblem !== 'none')
+        facts.append(el('dt', { text: 'Emblem' }), el('dd', {}, emblemEl(s.card.emblem, s.card.metal, 'emblem studentemblem')));
     const scores = SCORED_GAMES.map(game => { const rows = boardFor(game), i = rows.findIndex(r => r.user_id === s.id); return i < 0 ? null : el('li', {}, el('strong', { text: titleOf(game) }), el('span', { text: rows[i].score.toLocaleString() + ' (number ' + (i + 1) + ')' })); }).filter(Boolean);
     const posts = allPosts.filter(p => p.authorId === s.id);
     const actions = el('div', { cls: 'row' }, back);
@@ -5240,6 +5288,238 @@ function drawGhoul(o, opt = {}) {
     const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
     return `<svg viewBox="${box}" style="overflow:${opt.head ? 'hidden' : 'visible'}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
 }
+const ID_EMBLEMS = [['i', 'Big bow'], ['b', 'Almond eyes'], ['cc', 'Drippy'], ['d', 'Swoop hair'], ['e', 'Spiky hair'], ['f', 'Bow tie'], ['g', 'Flame crown'], ['ii', 'Snakes'], ['k', 'Icing'], ['l', 'Cat-eye glasses'], ['m', 'Earmuffs'], ['n', 'Tiger kitty'], ['c', 'Masked cat'], ['p', 'Mummy'], ['s', 'Top knot'], ['u', 'Eye swirl'], ['v', 'Fire']];
+const ID_METALS = [
+    ['gold', 'Gold', ['#fff6c2', '#d4a017', '#fff9dc', '#a8770c', '#f7dc6f']],
+    ['silver', 'Silver', ['#ffffff', '#9aa0ac', '#f4f6fb', '#6d7280', '#d8dce6']],
+    ['rose', 'Rose gold', ['#ffe9ef', '#e88aa8', '#fff4f7', '#b9587a', '#f7b8cf']],
+    ['chrome', 'Black chrome', ['#7b7b8a', '#0e0e14', '#a8a8b8', '#14141c', '#44444f']],
+    ['holo', 'Holographic', ['#ff9de2', '#9dd6ff', '#b7ffcf', '#fff3a8', '#d5a8ff']],
+];
+const ID_PLACES = [['corner', 'Top corner'], ['bottom', 'Bottom corner'], ['photo', 'On my photo']];
+const ID_SIZES = [['s', 'Small'], ['m', 'Medium'], ['l', 'Large']];
+const ID_FRAMES = [['none', 'No frame'], ['zebra', 'Zebra'], ['swirl', 'Swirls'], ['baroque', 'Baroque'], ['curtain', 'Curtains'], ['hearts', 'Hearts']];
+const ID_FRAME_COLOURS = [['Hot pink', '#ff1f8f'], ['Soft pink', '#f58cc4'], ['Purple', '#6a2a9c'], ['Aqua', '#19b7c8'], ['Gold', '#d4a017'], ['Black', '#2c2436']];
+const ID_COLOURS = [
+    ['Cream', '#fff6fb', '#2a1430', '#c80e6e'], ['Blush', '#ffd3e8', '#2a1430', '#b00c5f'], ['Hot pink', '#ff4fa8', '#1c0f22', '#fff6fb'], ['Lilac', '#d9c8f2', '#2a1430', '#6a1f86'],
+    ['Aqua', '#a8f0ea', '#10303a', '#0d6b75'], ['Plum', '#3a1250', '#fff6fb', '#ff8cc8'], ['Black', '#14101a', '#fff6fb', '#ff5aae'], ['Holographic', 'holo', '#2a1430', '#8a0f6e'],
+];
+const ID_PATTERNS = [['plain', 'Plain'], ['argyle', 'Argyle'], ['stripes', 'Stripes'], ['dots', 'Dots'], ['hearts', 'Hearts'], ['zebra', 'Zebra']];
+const ID_PLAIN = { emblem: 'none', metal: 'gold', place: 'corner', size: 'm', frame: 'none', frameC: '#ff1f8f', colour: 'Cream', pattern: 'plain' };
+/* Other people's cards are drawn into this page too, so only known values get through. */
+function normalizeCard(raw) {
+    const r = raw || {}, oneOf = (v, ok, d) => (typeof v === 'string' && ok.includes(v) ? v : d);
+    return {
+        emblem: oneOf(r.emblem, ['none', ...ID_EMBLEMS.map(e => e[0])], 'none'), metal: oneOf(r.metal, ID_METALS.map(m => m[0]), 'gold'), place: oneOf(r.place, ID_PLACES.map(p => p[0]), 'corner'), size: oneOf(r.size, ID_SIZES.map(p => p[0]), 'm'),
+        frame: oneOf(r.frame, ID_FRAMES.map(f => f[0]), 'none'), frameC: oneOf(r.frameC, ID_FRAME_COLOURS.map(f => f[1]), '#ff1f8f'), colour: oneOf(r.colour, ID_COLOURS.map(c => c[0]), 'Cream'), pattern: oneOf(r.pattern, ID_PATTERNS.map(p => p[0]), 'plain'),
+    };
+}
+/* ---------- emblems: the cut-out picture, set in a metal rim with a glossy finish ---------- */
+const emblemPics = {};
+function emblemPicture(id) {
+    if (!emblemPics[id]) {
+        const img = new Image();
+        img.onerror = () => { delete emblemPics[id]; };
+        img.src = 'emblems/' + id + '.webp';
+        emblemPics[id] = img;
+    }
+    return emblemPics[id];
+}
+const EMBLEM_SIZE = 240, EMBLEM_FACE = 192;
+function polishEmblem(cv, img, metal) {
+    const stops = (ID_METALS.find(m => m[0] === metal) || ID_METALS[0])[2], S = EMBLEM_SIZE;
+    cv.width = S;
+    cv.height = S;
+    const k = EMBLEM_FACE / Math.max(img.naturalWidth, img.naturalHeight) || 1, w = img.naturalWidth * k, h = img.naturalHeight * k, x = (S - w) / 2, y = (S - h) / 2;
+    const c = cv.getContext('2d');
+    const rim = document.createElement('canvas');
+    rim.width = S;
+    rim.height = S;
+    const r = rim.getContext('2d');
+    for (let a = 0; a < 32; a++)
+        r.drawImage(img, x + Math.cos(a / 32 * Math.PI * 2) * 11, y + Math.sin(a / 32 * Math.PI * 2) * 11, w, h);
+    r.globalCompositeOperation = 'source-in';
+    const g = r.createLinearGradient(0, 0, S, S);
+    stops.forEach((col, i) => g.addColorStop(i / (stops.length - 1), col));
+    r.fillStyle = g;
+    r.fillRect(0, 0, S, S);
+    c.drawImage(rim, 0, 0);
+    /* a dark groove between the rim and the face */
+    c.save();
+    c.globalAlpha = .55;
+    c.filter = 'brightness(0)';
+    for (let a = 0; a < 16; a++)
+        c.drawImage(img, x + Math.cos(a / 16 * Math.PI * 2) * 2.5, y + Math.sin(a / 16 * Math.PI * 2) * 2.5, w, h);
+    c.restore();
+    c.drawImage(img, x, y, w, h);
+    /* enamel: a soft shade low down, and a bright sweep of light across the top */
+    c.globalCompositeOperation = 'source-atop';
+    const shadeUp = c.createLinearGradient(0, S * .3, 0, S);
+    shadeUp.addColorStop(0, 'rgba(70,30,120,0)');
+    shadeUp.addColorStop(1, 'rgba(70,30,120,.42)');
+    c.fillStyle = shadeUp;
+    c.fillRect(0, 0, S, S);
+    const shine = c.createLinearGradient(S * .1, 0, S * .55, S * .6);
+    shine.addColorStop(0, 'rgba(255,255,255,.95)');
+    shine.addColorStop(.55, 'rgba(255,255,255,.28)');
+    shine.addColorStop(.56, 'rgba(255,255,255,0)');
+    c.fillStyle = shine;
+    c.beginPath();
+    c.ellipse(S * .44, S * .24, S * .42, S * .22, -.35, 0, 7);
+    c.fill();
+    c.fillStyle = 'rgba(255,255,255,.9)';
+    c.beginPath();
+    c.ellipse(S * .28, S * .2, S * .05, S * .022, -.7, 0, 7);
+    c.fill();
+    c.globalCompositeOperation = 'source-over';
+}
+function emblemEl(id, metal, cls = 'emblem', moving = true) {
+    const cv = document.createElement('canvas'), img = emblemPicture(id);
+    const box = el('span', { cls, 'aria-hidden': 'true' }, cv);
+    const ready = () => polishEmblem(cv, img, metal);
+    if (img.complete && img.naturalWidth)
+        ready();
+    else
+        img.addEventListener('load', ready, { once: true });
+    if (moving) {
+        const glint = el('i', { cls: 'emblemglint' });
+        glint.style.setProperty('--art', 'url(emblems/' + id + '.webp)');
+        box.append(glint);
+    }
+    return box;
+}
+/* ---------- frames ---------- */
+const frameArt = (w, h, body, stretch = false) => "url(\"data:image/svg+xml," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 " + w + ' ' + h + "'" + (stretch ? " preserveAspectRatio='none'" : '') + '>' + body + '</svg>') + '")';
+function drawFrame(card, ring, deco) {
+    const c = card.frameC, dark = shade(c, -.32), light = shade(c, .42), pale = shade(c, .72), GOLD = '#e6bf4e';
+    ring.removeAttribute('style');
+    deco.removeAttribute('style');
+    ring.hidden = true;
+    const flip = (art, n) => [art(''), art("transform='translate(" + n + " 0) scale(-1 1)'"), art("transform='translate(0 " + n + ") scale(1 -1)'"), art("transform='translate(" + n + ' ' + n + ") scale(-1 -1)'")];
+    const place = (images, where) => { deco.style.backgroundImage = images.join(','); deco.style.backgroundRepeat = 'no-repeat'; deco.style.backgroundPosition = where.map(w => w.split('/')[0]).join(','); deco.style.backgroundSize = where.map(w => w.split('/')[1]).join(','); };
+    if (card.frame === 'zebra') {
+        const stripe = (y, t, a, b) => "<path fill='" + c + "' d='M0 " + y + 'C50 ' + (y - a) + ' 110 ' + (y + b) + ' 160 ' + y + 'V' + (y + t) + 'C110 ' + (y + t + b * .4) + ' 50 ' + (y + t - a * .4) + ' 0 ' + (y + t) + "Z'/><path fill='" + light + "' opacity='.5' d='M34 " + (y + 1) + 'L92 ' + (y + t * .4) + 'L44 ' + (y + t * .7) + "Z'/>";
+        ring.hidden = false;
+        ring.style.backgroundImage = frameArt(160, 80, "<rect width='160' height='80' fill='#0c0810'/>" + stripe(2, 13, 6, 4) + stripe(24, 9, -4, 6) + stripe(40, 14, 5, -4) + stripe(62, 11, -5, 5));
+        ring.style.backgroundSize = '130px 65px';
+        ring.style.padding = '22px';
+    }
+    if (card.frame === 'swirl') {
+        const arm = "<path stroke-width='3.400' d='M8 8C40 6 74 10 112 6'/><path stroke-width='2.600' d='M30 8C36 28 60 34 66 20C69 11 55 8 52 17'/><path stroke-width='2.200' d='M62 9C68 22 86 26 90 17C92 11 83 9 81 14'/><circle cx='52' cy='17' r='2.800' fill='" + c + "' stroke='none'/><circle cx='81' cy='14' r='2.200' fill='" + c + "' stroke='none'/>";
+        const corner = (t) => frameArt(120, 120, "<g " + t + " fill='none' stroke='" + c + "' stroke-linecap='round'>" + arm + "<g transform='matrix(0 1 1 0 0 0)'>" + arm + "</g><path stroke-width='4' d='M8 8C16 34 38 48 52 40C62 33 54 20 44 25C37 29 41 37 47 35'/><circle cx='47' cy='35' r='3' fill='" + c + "' stroke='none'/></g>");
+        place(flip(corner, 120), ['left 4px top 4px/78px 78px', 'right 4px top 4px/78px 78px', 'left 4px bottom 4px/78px 78px', 'right 4px bottom 4px/78px 78px']);
+    }
+    if (card.frame === 'baroque') {
+        const rosette = (x, y, r) => [0, 60, 120, 180, 240, 300].map(a => "<ellipse transform='translate(" + x + ' ' + y + ') rotate(' + a + ")' cy='" + -r * .62 + "' rx='" + r * .36 + "' ry='" + r * .5 + "' fill='" + light + "' stroke='" + dark + "' stroke-width='1'/>").join('') + "<circle cx='" + x + "' cy='" + y + "' r='" + r * .32 + "' fill='" + c + "' stroke='" + dark + "' stroke-width='1'/><circle cx='" + (x - r * .1) + "' cy='" + (y - r * .1) + "' r='" + r * .1 + "' fill='#fff'/>";
+        ring.hidden = false;
+        ring.style.backgroundImage = frameArt(40, 40, "<rect width='40' height='40' fill='" + c + "'/><rect width='40' height='40' fill='none' stroke='" + dark + "' stroke-width='3'/>" + rosette(20, 20, 15));
+        ring.style.backgroundSize = '20px 20px';
+        ring.style.padding = '20px';
+        ring.style.boxShadow = 'inset 0 0 0 1px ' + dark;
+        const corner = (t) => frameArt(100, 100, "<g " + t + "><path d='M2 40C2 18 18 2 40 2C58 2 72 8 72 20C72 30 58 30 54 24C60 40 44 56 26 52C30 58 30 72 20 72C8 72 2 58 2 40Z' fill='" + c + "' stroke='" + dark + "' stroke-width='2.500'/><path d='M12 44C10 26 26 10 44 12' fill='none' stroke='" + pale + "' stroke-width='3' stroke-linecap='round'/><ellipse cx='33' cy='33' rx='15' ry='11' transform='rotate(-45 33 33)' fill='" + light + "' stroke='" + dark + "' stroke-width='2'/><ellipse cx='29' cy='29' rx='5' ry='3' transform='rotate(-45 29 29)' fill='#fff'/>" + rosette(66, 12, 10) + rosette(12, 66, 10) + '</g>');
+        const centre = frameArt(120, 40, "<path d='M4 30C20 8 40 22 60 6C80 22 100 8 116 30C96 24 80 38 60 34C40 38 24 24 4 30Z' fill='" + c + "' stroke='" + dark + "' stroke-width='2.500'/><path d='M22 26C34 18 46 24 60 14' fill='none' stroke='" + pale + "' stroke-width='2.400' stroke-linecap='round'/>" + rosette(60, 22, 13) + rosette(30, 24, 7) + rosette(90, 24, 7));
+        const low = frameArt(120, 40, "<g transform='translate(0 40) scale(1 -1)'><path d='M4 30C20 8 40 22 60 6C80 22 100 8 116 30C96 24 80 38 60 34C40 38 24 24 4 30Z' fill='" + c + "' stroke='" + dark + "' stroke-width='2.500'/>" + rosette(60, 22, 13) + rosette(30, 24, 7) + rosette(90, 24, 7) + '</g>');
+        place([...flip(corner, 100), centre, low], ['left -6px top -6px/84px 84px', 'right -6px top -6px/84px 84px', 'left -6px bottom -6px/84px 84px', 'right -6px bottom -6px/84px 84px', 'center top -6px/124px 42px', 'center bottom -6px/124px 42px']);
+    }
+    if (card.frame === 'curtain') {
+        const swag = frameArt(400, 70, "<defs><linearGradient id='s' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='" + light + "'/><stop offset='1' stop-color='" + c + "'/></linearGradient></defs><path d='M0 0H400V34C370 62 320 60 280 34C250 62 150 62 120 34C80 60 30 62 0 34Z' fill='url(#s)' stroke='" + dark + "' stroke-width='1.500'/><path d='M0 34C30 62 80 60 120 34C150 62 250 62 280 34C320 60 370 62 400 34' fill='none' stroke='" + GOLD + "' stroke-width='3.500'/><path d='M10 16C50 40 90 34 116 18M284 18C310 34 350 40 390 16M132 14C170 38 230 38 268 14M150 6C180 22 220 22 250 6' fill='none' stroke='" + dark + "' stroke-width='1.600' opacity='.55'/><path d='M20 8C50 24 84 22 110 10M290 10C316 22 350 24 380 8' fill='none' stroke='" + pale + "' stroke-width='2' opacity='.8'/>", true);
+        const side = (t) => frameArt(70, 300, "<defs><linearGradient id='d' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='" + light + "'/><stop offset='.55' stop-color='" + c + "'/><stop offset='1' stop-color='" + dark + "'/></linearGradient></defs><g " + t + "><path d='M0 0H52C50 60 46 100 24 140C44 180 60 240 68 292H0Z' fill='url(#d)' stroke='" + dark + "' stroke-width='1.200'/><path d='M12 8C14 60 12 100 8 138M28 6C28 60 24 100 16 138M12 150C16 200 16 250 12 290M26 150C36 200 42 250 44 290' fill='none' stroke='" + dark + "' stroke-width='1.500' opacity='.5'/><path d='M0 292H68' stroke='" + GOLD + "' stroke-width='6' stroke-dasharray='3 2'/><path d='M0 136C10 146 20 146 30 136' fill='none' stroke='" + GOLD + "' stroke-width='5'/><path d='M12 144V164' stroke='" + GOLD + "' stroke-width='2'/><path d='M6 164H18L21 192H3Z' fill='" + dark + "' stroke='" + GOLD + "' stroke-width='1.500'/><path d='M46 40V96' stroke='" + GOLD + "' stroke-width='1.800'/><circle cx='46' cy='100' r='4' fill='#fff' stroke='" + GOLD + "' stroke-width='1.500'/></g>", true);
+        place([swag, side(''), side("transform='translate(70 0) scale(-1 1)'")], ['center top/100% 58px', 'left top/15% 100%', 'right top/15% 100%']);
+    }
+    if (card.frame === 'hearts') {
+        const beads = "stroke='" + c + "' stroke-width='3.600' stroke-linecap='round' stroke-dasharray='.1 5.200' fill='none'";
+        const flourish = (t) => frameArt(320, 54, "<g " + t + " " + beads + "><path d='M160 44C144 30 124 22 128 10C132 2 150 4 160 18C170 4 188 2 192 10C196 22 176 30 160 44Z'/><path d='M126 30C100 40 60 40 12 24'/><path d='M194 30C220 40 260 40 308 24'/><path d='M86 22C80 10 62 10 64 20C66 28 80 28 88 36'/><path d='M234 22C240 10 258 10 256 20C254 28 240 28 232 36'/></g>");
+        place([flourish(''), flourish("transform='translate(0 54) scale(1 -1)'")], ['center top 2px/84% auto', 'center bottom 2px/84% auto']);
+    }
+}
+/* ---------- the card itself ---------- */
+let idCardNow = { ...ID_PLAIN }, idSaveTimer = 0, idMakerRedraw = () => { };
+const idKey = () => 'idcard.' + (isAdmin() ? 'fang' : signedInId() || 'guest');
+function currentCard() {
+    const me = isAdmin() ? null : currentStudent();
+    return me?.card || normalizeCard(store.get(idKey(), null));
+}
+const ID_TILES = {
+    argyle: ink => frameArt(40, 40, "<path d='M20 0L40 20 20 40 0 20Z' fill='" + ink + "' opacity='.16'/><path d='M0 0L40 40M40 0L0 40' stroke='" + ink + "' stroke-width='.8' stroke-dasharray='3 3' opacity='.4'/>"),
+    stripes: ink => frameArt(24, 24, "<path d='M-6 6L6 -6M-6 30L30 -6M18 30L30 18' stroke='" + ink + "' stroke-width='6' opacity='.12'/>"),
+    dots: ink => frameArt(22, 22, "<circle cx='6' cy='6' r='3.400' fill='" + ink + "' opacity='.16'/><circle cx='17' cy='17' r='3.400' fill='" + ink + "' opacity='.16'/>"),
+    hearts: ink => frameArt(34, 34, "<path d='M17 26C5 17 7 8 12 8C15 8 17 11 17 13C17 11 19 8 22 8C27 8 29 17 17 26Z' fill='" + ink + "' opacity='.16'/>"),
+    zebra: ink => frameArt(80, 40, "<path d='M0 4C20 0 50 9 80 4V9C50 13 20 5 0 9ZM0 18C30 13 50 22 80 18V25C50 27 30 19 0 25ZM0 32C20 29 60 37 80 32V36C60 40 20 33 0 36Z' fill='" + ink + "' opacity='.18'/>"),
+};
+const idRing = el('div', { cls: 'idring', hidden: '' }), idDeco = el('div', { cls: 'iddeco' }), idEmblemSlot = el('div', { cls: 'idemblemslot' });
+function paintCard(card = currentCard()) {
+    idCardNow = card;
+    const box = $('#idcard');
+    if (!idRing.parentElement)
+        box.prepend(idRing, idDeco);
+    if (!idEmblemSlot.parentElement)
+        box.append(idEmblemSlot);
+    const [, bg, ink, head] = ID_COLOURS.find(c => c[0] === card.colour) || ID_COLOURS[0];
+    box.dataset.frame = card.frame;
+    box.dataset.place = card.place;
+    box.dataset.size = card.size;
+    box.classList.toggle('idholo', bg === 'holo');
+    box.style.setProperty('--idbg', bg === 'holo' ? '#fff' : bg);
+    box.style.setProperty('--idink', ink);
+    box.style.setProperty('--idhead', head);
+    const tile = ID_TILES[card.pattern]?.(ink);
+    box.style.setProperty('--idtile', tile || 'none');
+    box.style.setProperty('--idtsize', { argyle: '40px 40px', stripes: '24px 24px', dots: '22px 22px', hearts: '34px 34px', zebra: '120px 60px' }[card.pattern] || 'auto');
+    drawFrame(card, idRing, idDeco);
+    idEmblemSlot.textContent = '';
+    if (card.emblem !== 'none')
+        idEmblemSlot.append(emblemEl(card.emblem, card.metal, 'emblem idemblem'));
+}
+/* ---------- the maker under the card ---------- */
+(function () {
+    const rows = el('div', { cls: 'idrows' }), note = el('p', { cls: 'idnote', role: 'status' });
+    const maker = el('div', { cls: 'idmaker wframe' }, el('h4', { text: 'Customize your ID' }), rows, note);
+    function change(key, value) {
+        const card = { ...idCardNow, [key]: value };
+        store.set(idKey(), card);
+        const me = isAdmin() ? null : currentStudent();
+        if (me)
+            me.card = card;
+        paintCard(card);
+        drawMaker();
+        note.textContent = me ? 'Saving...' : isAdmin() ? 'Saved on this device.' : 'This stays on this device until you register.';
+        if (me) {
+            clearTimeout(idSaveTimer);
+            idSaveTimer = window.setTimeout(async () => {
+                const fresh = currentStudent();
+                const done = fresh ? await updateMe({ look: fresh.look }).catch(() => false) : false;
+                note.textContent = done ? 'Saved to your account.' : 'Saved on this device. It did not reach your account, so try again later.';
+            }, 700);
+        }
+    }
+    const row = (label, ...kids) => el('div', { cls: 'wrow' }, el('span', { text: label }), ...kids);
+    const chips = (key, list) => list.map(([id, name]) => el('button', { cls: 'wchip', type: 'button', 'data-id': key + ':' + id, 'aria-pressed': idCardNow[key] === id, onclick() { change(key, id); } }, name));
+    function drawMaker() {
+        const focused = document.activeElement?.dataset?.id;
+        rows.textContent = '';
+        const tiles = el('div', { cls: 'idtiles' });
+        tiles.append(el('button', { cls: 'idtile idnone', type: 'button', 'data-id': 'emblem:none', title: 'No emblem', 'aria-label': 'No emblem', 'aria-pressed': idCardNow.emblem === 'none', onclick() { change('emblem', 'none'); } }, 'None'));
+        ID_EMBLEMS.forEach(([id, name]) => tiles.append(el('button', { cls: 'idtile', type: 'button', 'data-id': 'emblem:' + id, title: name, 'aria-label': name, 'aria-pressed': idCardNow.emblem === id, onclick() { change('emblem', id); } }, emblemEl(id, idCardNow.metal, 'emblem', false))));
+        rows.append(row('Emblem', tiles), row('Emblem finish', ...chips('metal', ID_METALS.map(m => [m[0], m[1]]))), row('Emblem spot', ...chips('place', ID_PLACES)), row('Emblem size', ...chips('size', ID_SIZES)));
+        rows.append(row('Frame', ...chips('frame', ID_FRAMES)));
+        if (idCardNow.frame !== 'none')
+            rows.append(row('Frame colour', ...ID_FRAME_COLOURS.map(([name, col]) => {
+                const b = el('button', { cls: 'wswatch', type: 'button', 'data-id': 'frameC:' + col, title: name, 'aria-label': name, 'aria-pressed': idCardNow.frameC === col, onclick() { change('frameC', col); } });
+                b.style.background = col;
+                return b;
+            })));
+        rows.append(row('Card colour', ...ID_COLOURS.map(([name, bg]) => {
+            const b = el('button', { cls: 'wswatch' + (bg === 'holo' ? ' idholoswatch' : ''), type: 'button', 'data-id': 'colour:' + name, title: name, 'aria-label': name, 'aria-pressed': idCardNow.colour === name, onclick() { change('colour', name); } });
+            if (bg !== 'holo')
+                b.style.background = bg;
+            return b;
+        })), row('Pattern', ...chips('pattern', ID_PATTERNS)));
+        if (focused)
+            rows.querySelector('[data-id="' + focused + '"]')?.focus();
+    }
+    $('#idForm').after(maker);
+    idMakerRedraw = () => { note.textContent = ''; drawMaker(); };
+})();
 const MER_COLOURS = [
     ['Lagoon', '#35dcc8', '#7fd6ff'], ['Aqua', '#19b7e8', '#8df0d8'], ['Hot pink', '#ff1f8f', '#ffc2e0'], ['Violet', '#8a2be2', '#ff8cc8'],
     ['Gold', '#f4c23e', '#ff8c1a'], ['Coral', '#ff7a66', '#ffd1a8'], ['Midnight', '#2c2436', '#35dcc8'], ['Pearl', '#dcecff', '#f7b8cf'],
@@ -6690,7 +6970,7 @@ const STUDENT_LINES = [
 ];
 DOLLS.mumtea.look = FANG_LOOK;
 let everyone = [], sessionId = null, dataState = backendReady ? 'loading' : 'failed';
-const toStudent = (row) => ({ id: row.id, name: row.username, look: normalizeLook(row.look), joined: row.joined_at, blend: row.blend || undefined, styled: row.styled, muted: row.muted, verified: row.verified });
+const toStudent = (row) => ({ id: row.id, name: row.username, look: normalizeLook(row.look), joined: row.joined_at, blend: row.blend || undefined, styled: row.styled, muted: row.muted, verified: row.verified, card: row.look && row.look.card ? normalizeCard(row.look.card) : undefined });
 const loadRoster = () => everyone.filter(s => s.verified);
 const signedInId = () => sessionId;
 const myRecord = () => everyone.find(s => s.id === sessionId) || null;
@@ -6707,7 +6987,9 @@ async function refreshRoster() {
 }
 /* Saves columns on the signed-in person's profile, and reports whether it worked. */
 async function updateMe(change) {
-    const { error } = await sb.from('profiles').update(change).eq('id', sessionId);
+    /* The ID card travels inside the saved look, so saving a new outfit must carry it along. */
+    const card = myRecord()?.card;
+    const { error } = await sb.from('profiles').update(change.look && card ? { ...change, look: { ...change.look, card } } : change).eq('id', sessionId);
     if (error)
         return false;
     await refreshRoster();
@@ -6872,6 +7154,8 @@ function renderID() {
     }
     else
         box.append(el('div', { cls: 'idphoto idempty', text: '?' }));
+    paintCard();
+    idMakerRedraw();
     renderAccount();
 }
 /* ---------- account panel and header button ---------- */

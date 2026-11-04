@@ -498,3 +498,49 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .gcard[data-game="riptide"] .gart img{width:88%;max-width:none;filter:none}
 .gcard[data-game="closet"] .gart{background:#fff6fb}
 .gcard[data-game="closet"] .gart img{width:55%;max-width:none;filter:none}
+
+/* the student ID card */
+.idcard{--idbg:#fff6fb;--idink:#2a1430;--idhead:#c80e6e;--idtile:none;position:relative;background-color:var(--idbg);background-image:var(--idtile);background-size:var(--idtsize,auto);color:var(--idink);isolation:isolate}
+.idcard>*{position:relative;z-index:1}
+.idcard h3{color:var(--idhead);border-bottom-color:var(--idhead)}
+.idcard p b{color:var(--idhead)}
+.idcard[data-frame]:not([data-frame="none"]){border-color:transparent;border-width:0}
+.idcard[data-frame="zebra"]{padding:34px}
+.idcard[data-frame="swirl"]{padding:34px 36px 30px}
+.idcard[data-frame="swirl"] .iddeco,.idcard[data-frame="hearts"] .iddeco{z-index:0}
+.idcard[data-frame="baroque"]{padding:34px}
+.idcard[data-frame="curtain"]{padding:50px 17% 26px}
+.idcard[data-frame="hearts"]{padding:50px 22px 50px}
+.idcard[data-frame="curtain"]{grid-template-columns:minmax(0,96px) minmax(0,1fr)}
+.idcard.idholo{background-image:var(--idtile),linear-gradient(120deg,#ffc2e6,#c2e4ff,#c8ffdc,#fff3b8,#e2c2ff,#ffc2e6);background-size:var(--idtsize,auto),300% 300%;animation:idholo 9s linear infinite}
+@keyframes idholo{to{background-position:0 0,300% 0}}
+.idcard .idring,.idcard .iddeco,.idcard .idemblemslot{position:absolute;inset:0;pointer-events:none;z-index:2}
+.idring[hidden]{display:none}
+.idring{box-sizing:border-box;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.idcard .idemblemslot{z-index:3}
+.emblem{position:relative;display:block;line-height:0}
+.emblem canvas{display:block;width:100%;height:auto;aspect-ratio:1;background:transparent;border:0;touch-action:auto;max-width:none}
+.idemblem{position:absolute;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45))}
+.idcard[data-size="s"] .idemblem{width:58px}
+.idcard[data-size="m"] .idemblem{width:82px}
+.idcard[data-size="l"] .idemblem{width:112px}
+.idcard[data-place="corner"] .idemblem{top:-16px;right:-6px;transform:rotate(9deg)}
+.idcard[data-place="bottom"] .idemblem{bottom:-10px;right:-4px;transform:rotate(-8deg)}
+.idcard[data-place="photo"] .idemblem{bottom:-8px;left:-6px;transform:rotate(-10deg)}
+.idcard[data-frame="curtain"][data-place="corner"] .idemblem{right:8%}
+.emblemglint{position:absolute;inset:0;overflow:hidden;-webkit-mask:var(--art) center/80% no-repeat;mask:var(--art) center/80% no-repeat}
+.emblemglint::before{content:"";position:absolute;top:-30%;bottom:-30%;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:rotate(16deg);animation:emblemglint 4.2s ease-in-out infinite}
+@keyframes emblemglint{0%,55%{left:-60%}100%{left:130%}}
+.idmaker{margin-top:18px;max-width:440px}
+.idmaker h4{margin:0 0 10px;font:400 22px var(--display);color:var(--pink);text-transform:uppercase}
+.idrows{display:grid;gap:12px}
+.idtiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;width:100%}
+.idtile{background:#2a1038;border:2px solid #14101a;padding:3px;cursor:pointer;min-width:0;aspect-ratio:1;display:grid;place-items:center}
+.idtile:hover{background:#4c1560}
+.idtile[aria-pressed="true"]{background:#ff4fa8;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--pink)}
+.idtile .emblem{width:100%}
+.idnone{color:#fff6fb;font:800 12px var(--body)}
+.idholoswatch{background:linear-gradient(120deg,#ffc2e6,#c2e4ff,#c8ffdc,#fff3b8,#e2c2ff)}
+.idnote{margin:10px 0 0;font:800 13px var(--body);min-height:18px}
+.studentemblem{width:72px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5))}
+@media (prefers-reduced-motion:reduce){.idcard.idholo,.emblemglint::before{animation:none}}

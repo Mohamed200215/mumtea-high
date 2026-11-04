@@ -1,5 +1,5 @@
 /* ---------- accounts and the student roster, shared through Supabase ---------- */
-interface Student { id: string; name: string; look: Look; joined: string; blend?: string; styled?: boolean; muted?: boolean; verified?: boolean }
+interface Student { id: string; name: string; look: Look; joined: string; blend?: string; styled?: boolean; muted?: boolean; verified?: boolean; card?: IdCard }
 
 const FANG_NAMES = ['mumtea', 'mumtas', 'fangtastic', 'msfangtastic', 'ms.fangtastic', 'msfantastic', 'ms.fantastic'];
 const USERNAME_RULE = /^[A-Za-z0-9_.-]{3,20}$/;
@@ -19,7 +19,7 @@ DOLLS.mumtea.look = FANG_LOOK;
 
 let everyone: Student[] = [], sessionId: string | null = null, dataState: 'loading' | 'ready' | 'failed' = backendReady ? 'loading' : 'failed';
 
-const toStudent = (row: any): Student => ({ id: row.id, name: row.username, look: normalizeLook(row.look), joined: row.joined_at, blend: row.blend || undefined, styled: row.styled, muted: row.muted, verified: row.verified });
+const toStudent = (row: any): Student => ({ id: row.id, name: row.username, look: normalizeLook(row.look), joined: row.joined_at, blend: row.blend || undefined, styled: row.styled, muted: row.muted, verified: row.verified, card: row.look && row.look.card ? normalizeCard(row.look.card) : undefined });
 const loadRoster = (): Student[] => everyone.filter(s => s.verified);
 const signedInId = (): string | null => sessionId;
 const myRecord = (): Student | null => everyone.find(s => s.id === sessionId) || null;
@@ -35,7 +35,9 @@ async function refreshRoster(): Promise<void> {
 }
 /* Saves columns on the signed-in person's profile, and reports whether it worked. */
 async function updateMe(change: { look?: Look; blend?: string | null; styled?: boolean }): Promise<boolean> {
-  const { error } = await sb.from('profiles').update(change).eq('id', sessionId);
+  /* The ID card travels inside the saved look, so saving a new outfit must carry it along. */
+  const card = myRecord()?.card;
+  const { error } = await sb.from('profiles').update(change.look && card ? { ...change, look: { ...change.look, card } } : change).eq('id', sessionId);
   if (error) return false;
   await refreshRoster();
   return true;
@@ -169,6 +171,8 @@ function renderID(): void {
   else if (me) { box.innerHTML = drawGhoul(me.look, { head: true }); (box.firstChild as Element).setAttribute('class', 'idphoto'); }
   else if (boss) { box.innerHTML = doll(DOLLS.mumtea, { head: true }); (box.firstChild as Element).setAttribute('class', 'idphoto'); }
   else box.append(el('div', { cls: 'idphoto idempty', text: '?' }));
+  paintCard();
+  idMakerRedraw();
   renderAccount();
 }
 
