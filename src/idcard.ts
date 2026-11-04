@@ -148,7 +148,15 @@ function paintCard(card: IdCard = currentCard()): void {
 /* ---------- the maker under the card ---------- */
 (function () {
   const rows = el('div', { cls: 'idrows' }), note = el('p', { cls: 'idnote', role: 'status' });
-  const maker = el('div', { cls: 'idmaker wframe' }, el('h4', { text: 'Customize your ID' }), rows, note);
+  const save = el('button', { cls: 'pill idsave', type: 'button' }, 'Save my ID');
+  const maker = el('div', { cls: 'idmaker wframe' }, el('h4', { text: 'Customize your ID' }), rows, save, note);
+  const said = el('p', { cls: 'idsaid', role: 'status' });
+  /* a little skull in a hijab, like the one on the school crest */
+  const badge = '<svg viewBox="0 0 64 72" aria-hidden="true"><path d="M32 3C14 3 5 18 6 36C7 50 12 62 4 69H60C52 62 57 50 58 36C59 18 50 3 32 3Z" fill="#f08fb4" stroke="#14101a" stroke-width="3" stroke-linejoin="round"/><path d="M12 24C16 12 26 8 36 9" fill="none" stroke="#ffd0e8" stroke-width="3" stroke-linecap="round"/><path d="M4 69C16 62 22 58 24 52M60 69C48 62 42 58 40 52" fill="none" stroke="#b80e63" stroke-width="2.500"/><path d="M32 15C20 15 15 24 15 33C15 40 19 44 23 46V52H41V46C45 44 49 40 49 33C49 24 44 15 32 15Z" fill="#fff6fb" stroke="#14101a" stroke-width="2.600" stroke-linejoin="round"/><ellipse cx="25" cy="33" rx="5.200" ry="5.800" fill="#14101a"/><ellipse cx="39" cy="33" rx="5.200" ry="5.800" fill="#14101a"/><path d="M32 39L29.500 44H34.500Z" fill="#14101a"/><path d="M28 47V52M32 47V52M36 47V52" stroke="#14101a" stroke-width="1.600"/><circle cx="23.500" cy="31" r="1.400" fill="#fff"/><circle cx="37.500" cy="31" r="1.400" fill="#fff"/></svg>';
+  const open = el('button', { cls: 'idopen', type: 'button', hidden: '' }, 'Customize ID');
+  open.insertAdjacentHTML('afterbegin', badge);
+  let closed = store.get<boolean>('idMakerClosed', false);
+  const showMaker = (): void => { maker.hidden = closed; open.hidden = !closed; if (!closed) drawMaker(); };
   function change(key: keyof IdCard, value: string): void {
     const card = { ...idCardNow, [key]: value };
     store.set(idKey(), card);
@@ -188,6 +196,19 @@ function paintCard(card: IdCard = currentCard()): void {
     })), row('Pattern', ...chips('pattern', ID_PATTERNS)));
     if (focused) (rows.querySelector('[data-id="' + focused + '"]') as HTMLElement | null)?.focus();
   }
-  $('#idForm').after(maker);
-  idMakerRedraw = () => { note.textContent = ''; drawMaker(); };
+  async function saveCard(): Promise<void> {
+    clearTimeout(idSaveTimer);
+    closed = true; store.set('idMakerClosed', true); note.textContent = '';
+    showMaker();
+    open.focus();
+    const fresh = isAdmin() ? null : currentStudent();
+    if (!fresh) { said.textContent = isAdmin() ? 'Saved on this device.' : 'Saved on this device. Register to keep it.'; return; }
+    said.textContent = 'Saving...';
+    const done = await updateMe({ look: fresh.look }).catch(() => false);
+    said.textContent = done ? 'Saved to your account.' : 'Saved on this device. It did not reach your account, so try again later.';
+  }
+  save.addEventListener('click', () => { saveCard(); });
+  open.addEventListener('click', () => { closed = false; store.set('idMakerClosed', false); said.textContent = ''; showMaker(); maker.scrollIntoView({ block: 'nearest' }); });
+  $('#idForm').after(maker, open, said);
+  idMakerRedraw = () => { note.textContent = ''; showMaker(); };
 })();
