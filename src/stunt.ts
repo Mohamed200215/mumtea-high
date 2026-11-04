@@ -69,9 +69,11 @@ const STUNT_ROWS: Array<[keyof StuntOutfit, string, Array<[string, string]>]> = 
       t.fillStyle = '#16081f'; t.fillRect(0, 214, W, 40);
       for (let row = 0; row < 2; row++) for (let i = 0; i < 28; i++) {
         const hx = i * 24 + (row ? 12 : 0), hy = 226 + row * 16;
+        if (crowdArt.length) { t.drawImage(crowdArt[(i * 3 + row * 5) % crowdArt.length], hx - 20, hy - 16, 40, 35); continue; }
         t.fillStyle = row ? '#2c1a3a' : '#22132e'; t.beginPath(); t.arc(hx, hy, 8, 0, 7); t.fill(); t.fillRect(hx - 9, hy + 5, 18, 16);
-        if (i % 5 === 2) { t.beginPath(); t.moveTo(hx - 7, hy - 5); t.lineTo(hx - 10, hy - 14); t.lineTo(hx - 2, hy - 8); t.moveTo(hx + 7, hy - 5); t.lineTo(hx + 10, hy - 14); t.lineTo(hx + 2, hy - 8); t.fill(); }
       }
+      /* they sit in the shade of the tent */
+      t.fillStyle = 'rgba(22,8,31,.5)'; t.fillRect(0, 196, W, 58);
       /* ring floor */
       t.fillStyle = '#8a5a2b'; t.fillRect(0, 254, W, H - 254);
       for (let i = 0; i < 16; i++) { t.fillStyle = i % 2 ? '#7a4d23' : '#955f2e'; t.fillRect(i * 40, 254, 40, H - 254); }
@@ -96,13 +98,18 @@ const STUNT_ROWS: Array<[keyof StuntOutfit, string, Array<[string, string]>]> = 
     }
   }
   function crowd(): void {
-    const glad = mode === 'splash' ? 1 : 0;
+    const glad = mode === 'splash';
     for (let i = 0; i < 13; i++) {
-      const hx = 24 + i * 50, hop = glad ? Math.abs(Math.sin(clock / 120 + i)) * 12 : Math.sin(clock / 700 + i) * 1.5, hy = 352 - hop;
-      c.fillStyle = '#0c0512';
-      c.beginPath(); c.arc(hx, hy - 8, 15, 0, 7); c.fill(); c.fillRect(hx - 19, hy + 2, 38, 18);
-      if (i % 4 === 1) { c.beginPath(); c.moveTo(hx - 12, hy - 18); c.lineTo(hx - 15, hy - 32); c.lineTo(hx - 3, hy - 22); c.moveTo(hx + 12, hy - 18); c.lineTo(hx + 15, hy - 32); c.lineTo(hx + 3, hy - 22); c.fill(); }
-      if (glad) { c.strokeStyle = '#0c0512'; c.lineWidth = 6; c.lineCap = 'round'; c.beginPath(); c.moveTo(hx - 16, hy + 6); c.lineTo(hx - 22, hy - 22); c.moveTo(hx + 16, hy + 6); c.lineTo(hx + 22, hy - 22); c.stroke(); }
+      const hx = 24 + i * 50, hop = glad ? Math.abs(Math.sin(clock / 120 + i)) * 12 : Math.sin(clock / 700 + i) * 1.5, pic = crowdArt.length ? crowdArt[i % crowdArt.length] : null;
+      if (glad) {
+        const skin = crowdSkin[i % crowdSkin.length] || '#d9c8f2';
+        for (const dir of [-1, 1]) {
+          c.lineCap = 'round'; c.beginPath(); c.moveTo(hx + dir * 15, 356 - hop); c.lineTo(hx + dir * 24, 314 - hop);
+          c.strokeStyle = INK_LINE; c.lineWidth = 8; c.stroke(); c.strokeStyle = skin; c.lineWidth = 5; c.stroke();
+        }
+      }
+      if (pic) c.drawImage(pic, hx - 48, 300 - hop, 96, 84);
+      else { c.fillStyle = '#0c0512'; c.beginPath(); c.arc(hx, 344 - hop, 15, 0, 7); c.fill(); c.fillRect(hx - 19, 354 - hop, 38, 18); }
     }
   }
 
@@ -116,6 +123,8 @@ const STUNT_ROWS: Array<[keyof StuntOutfit, string, Array<[string, string]>]> = 
   };
   const art: Record<string, HTMLCanvasElement> = {};
   let bakedKey = '', bakeTurn = 0, petArt: HTMLCanvasElement | null = null;
+  const crowdArt: HTMLCanvasElement[] = [], crowdSkin: string[] = [];
+  let crowdAsked = false;
   function picture(text: string, w: number, h: number, ready: (a: HTMLCanvasElement) => void): void {
     const holder = document.createElement('div'); holder.innerHTML = text;
     const svg = holder.querySelector('svg') as SVGSVGElement; svg.setAttribute('width', String(w)); svg.setAttribute('height', String(h));
@@ -138,6 +147,10 @@ const STUNT_ROWS: Array<[keyof StuntOutfit, string, Array<[string, string]>]> = 
         kick(); next(i + 1);
       });
     };
+    if (!crowdAsked) {
+      crowdAsked = true;
+      schoolCrowd(8).forEach(person => picture(drawGhoulBack(person), 192, 168, a => { crowdArt.push(a); crowdSkin.push(person.skin); tent = null; kick(); }));
+    }
     petArt = null;
     if (look.pet && look.pet !== 'none') picture(drawGhoul(look, { only: ['pet'], box: '245 590 120 120' }), 180, 180, a => { if (turn === bakeTurn) { petArt = a; kick(); } });
     next(0);
@@ -342,7 +355,7 @@ const STUNT_ROWS: Array<[keyof StuntOutfit, string, Array<[string, string]>]> = 
       c.fillStyle = '#080308'; c.fillRect(0, 0, W, 26 * a); c.fillRect(0, H - 26 * a, W, 26 * a);
       c.globalAlpha = Math.max(0, a); write('ROUND ' + round, W / 2, 110, 54, '#ff7ab8'); c.globalAlpha = 1;
     }
-    if (mode === 'splash' || mode === 'miss') { c.globalAlpha = Math.min(1, noteT / 150); write(note.toUpperCase(), W / 2, 62, mode === 'splash' ? 40 : 30, mode === 'splash' ? '#fff3b0' : '#ff8cc8'); c.globalAlpha = 1; }
+    if (mode === 'splash' || mode === 'miss') { c.globalAlpha = Math.min(1, noteT / 150); write(note.toUpperCase(), W / 2, 92, mode === 'splash' ? 40 : 30, mode === 'splash' ? '#fff3b0' : '#ff8cc8'); c.globalAlpha = 1; }
     if (mode === 'idle') {
       write('CASKET SHOT', W / 2, 96, 50, '#ff7ab8');
       write('SUIT UP BELOW, THEN START THE SHOW', W / 2, 128, 16, '#fff6fb');

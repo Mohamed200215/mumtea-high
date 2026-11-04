@@ -626,6 +626,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .teacherbubble::after{content:"";position:absolute;left:50%;bottom:-10px;border:6px solid transparent;border-top:8px solid #000;margin-left:-6px}
 .roomkids{position:relative;z-index:3;margin-top:-84px;aspect-ratio:900/120;line-height:0;pointer-events:none}
 .roomkids svg{display:block;width:100%;height:100%}
+.roomkids svg svg{overflow:visible}
 .roomkids .kid{animation:kidbob 3.6s ease-in-out infinite}
 .roomkids .kidhand{display:none}
 .roomkids.asking .kidhand{display:block;animation:kidhand .8s ease-in-out infinite}
@@ -660,3 +661,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .roomsound{display:flex;gap:6px;justify-content:flex-end;padding:6px 10px;background:#120618;border-bottom:3px solid #000}
 .gcard[data-game="casket"] .gart{background:#fff}
 .gcard[data-game="casket"] .gart img{width:78%;max-width:none;filter:none}
+.idcard .idphoto,.idcard .idphoto svg,.idcard svg.idphoto{background:var(--idphoto,#3a1250)}
+.idcard[data-frame="leopard"],.idcard[data-frame="lace"],.idcard[data-frame="stars"]{padding:34px}
+.idcard[data-frame="skulls"]{padding:36px}
+.idactions{margin-top:14px}

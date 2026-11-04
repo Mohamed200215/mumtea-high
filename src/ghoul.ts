@@ -1231,3 +1231,23 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
   return `<svg viewBox="${box}" style="overflow:${opt.head ? 'hidden' : 'visible'}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
 }
+
+/* ---------- a ghoul seen from behind, for classrooms and audiences: the same hair, scarves, ears, wings and clothes as the front ---------- */
+const BACK_BOX = '-40 -50 400 350';
+const BACK_MONSTERS = ['bat', 'wolf', 'horns', 'cat', 'fox', 'bunny', 'dragon', 'fins'];
+const NOT_FROM_BEHIND = ['hoops', 'dangles', 'batears', 'tikka', 'band', 'bandana'];
+function drawGhoulBack(look: Look): string {
+  const o: Look = { ...look, hold: 'none', pose: 'relaxed', eyewear: 'none', mark: 'none', neck: 'none', monster: BACK_MONSTERS.includes(look.monster) ? look.monster : 'none', headwear: NOT_FROM_BEHIND.includes(look.headwear) ? 'none' : look.headwear };
+  const inner = (only: Layer[]): string => drawGhoul(o, { only, box: BACK_BOX }).replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '');
+  const hairD = shade(o.hair, -.22), hairL = shade(o.hair, .24);
+  const body = '<path d="M84 300C84 256 118 234 160 234C202 234 236 256 236 300Z" fill="' + o.topC + '" stroke="' + INK + '" stroke-width="3" stroke-linejoin="round"/><path d="M142 196H178V240Q160 248 142 240Z" fill="' + shade(o.skin, -.14) + '" stroke="' + INK + '" stroke-width="2.600"/><path d="M84 300H236" stroke="' + o.trim + '" stroke-width="6"/>';
+  const scalp = '<path d="M92 112C88 40 124 4 160 4C196 4 232 40 228 112C226 170 192 210 160 210C128 210 94 170 92 112Z" fill="' + o.hair + '" stroke="' + INK + '" stroke-width="3"/><path d="M160 10C146 60 146 130 158 204M126 26C112 70 112 130 128 186M194 26C208 70 208 130 192 186" fill="none" stroke="' + hairD + '" stroke-width="3" stroke-linecap="round"/><path d="M116 44C104 72 102 100 106 126" fill="none" stroke="' + hairL + '" stroke-width="5" stroke-linecap="round" opacity=".8"/>';
+  return '<svg viewBox="' + BACK_BOX + '" aria-hidden="true">' + inner(['back', 'wings']) + body + scalp + inner(['hairBack']) + inner(['monster', 'headwear']) + '</svg>';
+}
+/* Real students sit in the seats first, then made-up ghouls fill the rest. */
+function schoolCrowd(count: number): Look[] {
+  const real = (typeof loadRoster === 'function' ? loadRoster() : []).map(s => s.look).sort(() => Math.random() - .5).slice(0, Math.ceil(count / 2));
+  const out = [...real];
+  while (out.length < count) out.push(randomLook());
+  return out.sort(() => Math.random() - .5);
+}

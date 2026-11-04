@@ -122,15 +122,17 @@ function classHeader(c: SchoolClass, step: string): HTMLElement {
   return el('div', { cls: 'classhead' }, el('button', { cls: 'linkish', type: 'button', onclick() { renderClasses(); classRoomFocus(); } }, 'All classes'), el('small', { text: c.name + ': ' + step }));
 }
 /* ---------- the classroom: it is always Ms. Fangtastic at the chalkboard, whoever is logged in ---------- */
-const CLASS_KIDS = [['#17101c', ''], ['#f08fb4', 'scarf'], ['#35dcc8', 'horns'], ['#a0392a', ''], ['#6a1f86', 'ears'], ['#f4d35e', 'bow'], ['#19b7e8', ''], ['#5a2c17', 'scarf']];
-const classKids = (): string => '<svg viewBox="0 0 900 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><rect y="88" width="900" height="32" fill="#7a4a21"/><rect y="88" width="900" height="6" fill="#a8703a"/>' + CLASS_KIDS.map(([hair, extra], i) => {
-  const x = 62 + i * 112, line = 'stroke="#14101a" stroke-width="3" stroke-linejoin="round"';
-  const add = extra === 'horns' ? '<path d="M-24 -30L-34 -56L-12 -42ZM24 -30L34 -56L12 -42Z" fill="#fff6e6" ' + line + '/>' : extra === 'ears' ? '<path d="M-24 -30L-30 -60L-8 -42ZM24 -30L30 -60L8 -42Z" fill="' + hair + '" ' + line + '/>' : '';
-  const top = extra === 'bow' ? '<path d="M0 -46L-22 -60V-34ZM0 -46L22 -60V-34Z" fill="#ff1f8f" ' + line + '/>' : '';
-  const raised = i === 2 ? '<g class="kidhand"><path d="M34 40L52 -38" stroke="#14101a" stroke-width="16" stroke-linecap="round"/><path d="M34 40L52 -38" stroke="#c9f4d8" stroke-width="10" stroke-linecap="round"/></g>' : '';
-  const head = extra === 'scarf' ? '<path d="M-31 40C-36 -30 -22 -50 0 -50C22 -50 36 -30 31 40Z" fill="' + hair + '" ' + line + '/><path d="M-18 -36C-8 -42 8 -42 18 -36M-24 -10C-10 -2 10 -2 24 -10" fill="none" stroke="#14101a" stroke-opacity=".35" stroke-width="2"/>' : '<circle cy="-10" r="33" fill="' + hair + '" ' + line + '/><path d="M-14 -34C-8 -18 -12 6 -18 16M6 -38C12 -18 10 6 14 18" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="3"/>';
-  return '<g transform="translate(' + x + ' 64)"><g class="kid" style="animation-delay:' + (i * .45) + 's">' + raised + '<path d="M-44 60C-44 26 -24 18 0 18C24 18 44 26 44 60Z" fill="' + ['#2c2436', '#6a1f86', '#14101a', '#b80e63'][i % 4] + '" ' + line + '/>' + add + head + top + '</g></g>';
-}).join('') + '<rect y="104" width="900" height="16" fill="#5e3616"/></svg>';
+let classKidsArt = '';
+/* The same classmates stay in their seats for the whole visit. */
+const classKids = (): string => {
+  if (classKidsArt) return classKidsArt;
+  const seats = schoolCrowd(7).map((look, i) => {
+    const x = 6 + i * 127, hand = i === 2 ? '<g class="kidhand"><path d="M' + (x + 104) + ' 96L' + (x + 124) + ' 6" stroke="#14101a" stroke-width="17" stroke-linecap="round"/><path d="M' + (x + 104) + ' 96L' + (x + 124) + ' 6" stroke="' + look.skin + '" stroke-width="11" stroke-linecap="round"/></g>' : '';
+    return '<g class="kid" style="animation-delay:' + (i * .45) + 's">' + hand + drawGhoulBack(look).replace('<svg ', '<svg x="' + x + '" y="-8" width="150" height="131" ') + '</g>';
+  }).join('');
+  classKidsArt = '<svg viewBox="0 0 900 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true">' + seats + '<rect y="100" width="900" height="20" fill="#7a4a21"/><rect y="100" width="900" height="5" fill="#a8703a"/></svg>';
+  return classKidsArt;
+};
 const CLASS_TALK: Record<string, string[]> = {
   teach: ['Eyes on the board, ghouls.', 'Write this one down.', 'This will be on the test.', 'No talking in the back row.', 'Keep up. I only say it once.'],
   ask: ['Pencils out.', 'No peeking at your neighbour.', 'Think before you answer.', 'Well? We are waiting.'],
