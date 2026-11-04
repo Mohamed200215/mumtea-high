@@ -139,7 +139,7 @@
 .account .linkish{margin-top:10px}
 @media (max-width:520px){.teapost{grid-template-columns:46px minmax(0,1fr);gap:8px}.teaface{width:46px;height:46px}.timeline::before{left:21px}}
 /* Ms. Fangtastic, front and centre */
-.boss{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr);gap:22px;align-items:center;background:linear-gradient(120deg,var(--plum),#14081a 70%);border:4px solid var(--pink);box-shadow:6px 6px 0 #000;padding:16px 22px;margin-bottom:24px}
+.boss{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr);gap:22px;align-items:center;background:#170b20;border:4px solid var(--pink);box-shadow:6px 6px 0 #000;padding:16px 22px;margin-bottom:24px}
 .boss .doll{width:100%;filter:drop-shadow(0 4px 0 #000)}
 .bosscopy{min-width:0;display:flex;flex-direction:column;gap:10px}
 .bosscopy small{font:800 13px var(--body);color:var(--teal);letter-spacing:.04em;text-transform:uppercase}
@@ -572,3 +572,20 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .coffindots{opacity:.7;font-style:italic}
 .coffin .msg+.msg{margin-top:7px}
 .bonestally{text-align:center;margin:18px 0 0}
+/* every page has its own print behind it, and words sitting on a print get a dark plate so they stay easy to read */
+.band[data-view="games"]{background:#0c0710 url(backgrounds/zebra-purple.webp) 0 0/680px}
+.band[data-view="tea"]{background:#201024 url(backgrounds/skulls.webp) 0 0/640px}
+.band[data-view="fangtastic"]{background:#0a070c url(backgrounds/plaid.webp) 0 0/360px}
+.band[data-view="registration"]{background:#141016 url(backgrounds/zebra-pink.webp) 0 0/680px}
+.band[data-view="profile"]{background:#54309a url(backgrounds/leopard.webp) 0 0/620px}
+.band[data-view="admin"]{background:#201024 url(backgrounds/skulls.webp) 0 0/640px}
+.band[data-view="student"]{background:#54309a url(backgrounds/leopard.webp) 0 0/620px}
+.band[data-view="academics"]{background:#0a070c url(backgrounds/plaid.webp) 0 0/360px}
+.band[data-view="students"]{background:#54309a url(backgrounds/leopard.webp) 0 0/620px}
+.band .sec-h,.band .lede,.classtally{width:fit-content;max-width:100%;box-sizing:border-box;background:#0c0710ee;padding:4px 14px;box-shadow:3px 3px 0 #000}
+.band .sec-h{margin-bottom:0}
+.band .lede{margin-bottom:18px}
+.classtally{margin-top:0}
+.slide.s2 h2,.slide.s2 p,.slide.s3 h2,.slide.s3 p{width:fit-content;max-width:100%;box-sizing:border-box;background:#0c0710e8;padding:3px 12px}
+.view.band{min-height:72vh}
+.playerbar{background:#0c0710ee;padding:4px 10px}
