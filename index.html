@@ -814,8 +814,9 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .view.band{min-height:72vh}
 .playerbar{background:#0c0710ee;padding:4px 10px}
 .gpanel[data-game="spill"]{max-width:1040px}
-.gpanel[data-game="spill"] canvas{aspect-ratio:640/540;display:block;margin-inline:auto!important;max-height:88vh;border:3px solid #a50a68;border-radius:8px;box-shadow:0 0 0 3px #ff9ccb,0 0 0 6px #000;margin:6px}
-.gpanel[data-game="spill"] canvas{width:min(calc(100% - 12px),calc(88vh * 640 / 540))}
+.gpanel[data-game="spill"] .gameholder{width:min(calc(100% - 12px),calc(88vh * 640 / 540));margin:6px auto}
+.gpanel[data-game="spill"] canvas{aspect-ratio:640/540;display:block;margin:0!important;border:3px solid #a50a68;border-radius:8px;box-shadow:0 0 0 3px #ff9ccb,0 0 0 6px #000;margin:6px}
+.gpanel[data-game="spill"] canvas{width:100%}
 
 /* the classroom */
 .classroom{max-width:980px;margin:0 auto;border:4px solid #000;box-shadow:6px 7px 0 var(--ca);background:#3a1548;overflow:hidden}
@@ -871,7 +872,13 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 /* the buttons every game shares */
 .gametools{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .gametool[hidden]{display:none}
-.gamepause{background:var(--pink);color:#fff;border-color:#000}
+.gameholder{position:relative}
+.gamepause{position:absolute;left:50%;top:10px;z-index:4;width:clamp(38px,6vw,58px);height:clamp(38px,6vw,58px);margin-left:calc(clamp(38px,6vw,58px) / -2);padding:0;background:none;border:0;cursor:pointer;filter:drop-shadow(0 2px 2px #0009);transition:transform .12s;touch-action:manipulation}
+.gamepause[hidden]{display:none}
+.gamepause:hover{transform:scale(1.12) rotate(-5deg)}
+.gamepause:focus-visible{outline:3px solid #fff;outline-offset:2px;border-radius:50%}
+.gamepause svg{display:block;width:100%;height:100%}
+.merframe .gamepause{top:clamp(34px,8%,66px)}
 .gpanel[data-game="casket"]{max-width:960px}
 .gpanel[data-game="casket"] canvas{aspect-ratio:16/9;cursor:crosshair}
 .roomsound{display:flex;gap:6px;justify-content:flex-end;padding:6px 10px;background:#120618;border-bottom:3px solid #000}
@@ -1943,15 +1950,44 @@ function soundButtons() {
     return [music, sound];
 }
 document.addEventListener('soundchange', musicApply);
+/* The pause button sits inside the game's own frame, dressed for that game. */
+const PAUSE_ART = {
+    riptide: '<path d="M32 58C20 58 10 50 6 38C3 28 6 18 13 13C17 7 25 4 32 8C39 4 47 7 51 13C58 18 61 28 58 38C54 50 44 58 32 58Z" fill="#35dcc8" stroke="#0a3f4a" stroke-width="3" stroke-linejoin="round"/><path d="M32 56V10M32 56L18 13M32 56L46 13M32 56L8 28M32 56L56 28" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2"/><ellipse cx="22" cy="17" rx="7" ry="3" fill="#fff" fill-opacity=".7" transform="rotate(-25 22 17)"/>',
+    spill: '<path d="M47 26C60 22 62 42 44 43" fill="none" stroke="#1c0a1c" stroke-width="8" stroke-linecap="round"/><path d="M47 26C60 22 62 42 44 43" fill="none" stroke="#ff9ccb" stroke-width="4" stroke-linecap="round"/><ellipse cx="29" cy="55" rx="24" ry="5" fill="#ff9ccb" stroke="#1c0a1c" stroke-width="2.500"/><path d="M6 15H52C52 38 44 54 29 54C14 54 6 38 6 15Z" fill="#ff7ab8" stroke="#1c0a1c" stroke-width="3" stroke-linejoin="round"/><ellipse cx="29" cy="15" rx="23" ry="6" fill="#b5651d" stroke="#1c0a1c" stroke-width="2.500"/><path d="M12 28C14 38 18 44 24 47" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>',
+    casket: '<path d="M32 3L40 21L60 20L47 35L55 54L34 49L17 60L18 39L4 25L24 21Z" fill="#f7dc6f" stroke="#14081a" stroke-width="3" stroke-linejoin="round"/><circle cx="31" cy="32" r="15" fill="#ff1f8f" stroke="#14081a" stroke-width="2.500"/>',
+};
+const PAUSE_MARK = { riptide: [32, 34, '#0a3f4a'], spill: [29, 36, '#fff6fb'], casket: [31, 32, '#fff6fb'] };
+function pauseIcon(game, paused) {
+    const [x, y, col] = PAUSE_MARK[game];
+    const mark = paused ? '<path d="M' + (x - 6) + ' ' + (y - 9) + 'L' + (x + 9) + ' ' + y + 'L' + (x - 6) + ' ' + (y + 9) + 'Z" fill="' + col + '"/>'
+        : '<rect x="' + (x - 8) + '" y="' + (y - 9) + '" width="6" height="18" rx="2" fill="' + col + '"/><rect x="' + (x + 2) + '" y="' + (y - 9) + '" width="6" height="18" rx="2" fill="' + col + '"/>';
+    return '<svg viewBox="0 0 64 64" aria-hidden="true">' + PAUSE_ART[game] + mark + '</svg>';
+}
 function gameTools(panel, pause) {
-    const stop = pause ? el('button', { cls: 'chip gametool gamepause', type: 'button', hidden: '', onclick() { pause(); } }, 'Pause') : null;
-    const row = el('div', { cls: 'gametools' }, ...(stop ? [stop] : []), ...soundButtons());
+    const row = el('div', { cls: 'gametools' }, ...soundButtons());
     panel.querySelector('p').after(row);
-    return { show(running, paused) { if (stop) {
+    if (!pause)
+        return { show() { } };
+    const game = panel.dataset.game, canvas = panel.querySelector('canvas');
+    const stop = el('button', { cls: 'gamepause', type: 'button', hidden: '', 'data-theme': game, 'aria-label': 'Pause', title: 'Pause (P)', onclick() { pause(); } });
+    stop.innerHTML = pauseIcon(game, false);
+    /* The riptide canvas already has a frame to sit in. The others get a holder the same size as the game. */
+    let home = canvas.parentElement;
+    if (!home.classList.contains('merframe')) {
+        home = el('div', { cls: 'gameholder' });
+        canvas.before(home);
+        home.append(canvas);
+    }
+    home.append(stop);
+    return { show(running, paused) {
             stop.hidden = !running;
-            stop.textContent = paused ? 'Resume' : 'Pause';
-            stop.setAttribute('aria-pressed', String(paused));
-        } } };
+            const word = paused ? 'Resume' : 'Pause';
+            if (stop.getAttribute('aria-label') !== word) {
+                stop.setAttribute('aria-label', word);
+                stop.title = word + ' (P)';
+                stop.innerHTML = pauseIcon(game, paused);
+            }
+        } };
 }
 const isPauseKey = (e) => (e.key === 'p' || e.key === 'P' || e.key === 'Escape') && !['INPUT', 'TEXTAREA'].includes(e.target.tagName);
 /* ---------- arcade: extra games plus shelf search, filters and favourites ---------- */
@@ -7004,7 +7040,7 @@ function merCorner() {
             c.font = '800 15px Nunito, sans-serif';
             c.textAlign = 'center';
             c.fillStyle = '#7fe8ff';
-            c.fillText('Press Resume, or P, when you are ready', W / 2, H / 2 + 30);
+            c.fillText('Tap the play icon, or press P, when you are ready', W / 2, H / 2 + 30);
         }
         else
             kick();
@@ -8109,7 +8145,7 @@ $('#player').after(scoreBoard);
             c.font = '800 15px Nunito, sans-serif';
             c.textAlign = 'center';
             c.fillStyle = '#ffd3e8';
-            c.fillText('Press Resume, or P, when you are ready', W / 2, H / 2 + 32);
+            c.fillText('Tap the play icon, or press P, when you are ready', W / 2, H / 2 + 32);
         }
         else
             kick();
@@ -9688,7 +9724,7 @@ const STUNT_ROWS = [
         c.font = '800 15px Nunito, sans-serif';
         c.textAlign = 'center';
         c.fillStyle = '#ffd3e8';
-        c.fillText('Press Resume, or P, when you are ready', W / 2, H / 2 + 30);
+        c.fillText('Tap the play icon, or press P, when you are ready', W / 2, H / 2 + 30);
     }
     function frame(now) {
         looping = false;

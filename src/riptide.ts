@@ -634,7 +634,7 @@ function merCorner(): string {
       paint();
       c.fillStyle = 'rgba(8,3,24,.6)'; c.fillRect(0, 0, W, H);
       write('PAUSED', W / 2, H / 2, 50, '#fff6fb', 'center');
-      c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#7fe8ff'; c.fillText('Press Resume, or P, when you are ready', W / 2, H / 2 + 30);
+      c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#7fe8ff'; c.fillText('Tap the play icon, or press P, when you are ready', W / 2, H / 2 + 30);
     } else kick();
     stat();
   }

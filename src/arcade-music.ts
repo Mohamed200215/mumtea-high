@@ -137,11 +137,35 @@ function soundButtons(): HTMLElement[] {
   return [music, sound];
 }
 document.addEventListener('soundchange', musicApply);
+/* The pause button sits inside the game's own frame, dressed for that game. */
+const PAUSE_ART: Record<string, string> = {
+  riptide: '<path d="M32 58C20 58 10 50 6 38C3 28 6 18 13 13C17 7 25 4 32 8C39 4 47 7 51 13C58 18 61 28 58 38C54 50 44 58 32 58Z" fill="#35dcc8" stroke="#0a3f4a" stroke-width="3" stroke-linejoin="round"/><path d="M32 56V10M32 56L18 13M32 56L46 13M32 56L8 28M32 56L56 28" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2"/><ellipse cx="22" cy="17" rx="7" ry="3" fill="#fff" fill-opacity=".7" transform="rotate(-25 22 17)"/>',
+  spill: '<path d="M47 26C60 22 62 42 44 43" fill="none" stroke="#1c0a1c" stroke-width="8" stroke-linecap="round"/><path d="M47 26C60 22 62 42 44 43" fill="none" stroke="#ff9ccb" stroke-width="4" stroke-linecap="round"/><ellipse cx="29" cy="55" rx="24" ry="5" fill="#ff9ccb" stroke="#1c0a1c" stroke-width="2.500"/><path d="M6 15H52C52 38 44 54 29 54C14 54 6 38 6 15Z" fill="#ff7ab8" stroke="#1c0a1c" stroke-width="3" stroke-linejoin="round"/><ellipse cx="29" cy="15" rx="23" ry="6" fill="#b5651d" stroke="#1c0a1c" stroke-width="2.500"/><path d="M12 28C14 38 18 44 24 47" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>',
+  casket: '<path d="M32 3L40 21L60 20L47 35L55 54L34 49L17 60L18 39L4 25L24 21Z" fill="#f7dc6f" stroke="#14081a" stroke-width="3" stroke-linejoin="round"/><circle cx="31" cy="32" r="15" fill="#ff1f8f" stroke="#14081a" stroke-width="2.500"/>',
+};
+const PAUSE_MARK: Record<string, [number, number, string]> = { riptide: [32, 34, '#0a3f4a'], spill: [29, 36, '#fff6fb'], casket: [31, 32, '#fff6fb'] };
+function pauseIcon(game: string, paused: boolean): string {
+  const [x, y, col] = PAUSE_MARK[game];
+  const mark = paused ? '<path d="M' + (x - 6) + ' ' + (y - 9) + 'L' + (x + 9) + ' ' + y + 'L' + (x - 6) + ' ' + (y + 9) + 'Z" fill="' + col + '"/>'
+    : '<rect x="' + (x - 8) + '" y="' + (y - 9) + '" width="6" height="18" rx="2" fill="' + col + '"/><rect x="' + (x + 2) + '" y="' + (y - 9) + '" width="6" height="18" rx="2" fill="' + col + '"/>';
+  return '<svg viewBox="0 0 64 64" aria-hidden="true">' + PAUSE_ART[game] + mark + '</svg>';
+}
 interface GameTools { show(running: boolean, paused: boolean): void }
 function gameTools(panel: Element, pause?: () => void): GameTools {
-  const stop = pause ? el('button', { cls: 'chip gametool gamepause', type: 'button', hidden: '', onclick() { pause(); } }, 'Pause') : null;
-  const row = el('div', { cls: 'gametools' }, ...(stop ? [stop] : []), ...soundButtons());
+  const row = el('div', { cls: 'gametools' }, ...soundButtons());
   (panel.querySelector('p') as Element).after(row);
-  return { show(running, paused) { if (stop) { stop.hidden = !running; stop.textContent = paused ? 'Resume' : 'Pause'; stop.setAttribute('aria-pressed', String(paused)); } } };
+  if (!pause) return { show() {} };
+  const game = (panel as HTMLElement).dataset.game as string, canvas = panel.querySelector('canvas') as HTMLCanvasElement;
+  const stop = el('button', { cls: 'gamepause', type: 'button', hidden: '', 'data-theme': game, 'aria-label': 'Pause', title: 'Pause (P)', onclick() { pause(); } });
+  stop.innerHTML = pauseIcon(game, false);
+  /* The riptide canvas already has a frame to sit in. The others get a holder the same size as the game. */
+  let home = canvas.parentElement as HTMLElement;
+  if (!home.classList.contains('merframe')) { home = el('div', { cls: 'gameholder' }); canvas.before(home); home.append(canvas); }
+  home.append(stop);
+  return { show(running, paused) {
+    stop.hidden = !running;
+    const word = paused ? 'Resume' : 'Pause';
+    if (stop.getAttribute('aria-label') !== word) { stop.setAttribute('aria-label', word); stop.title = word + ' (P)'; stop.innerHTML = pauseIcon(game, paused); }
+  } };
 }
 const isPauseKey = (e: KeyboardEvent): boolean => (e.key === 'p' || e.key === 'P' || e.key === 'Escape') && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName);

@@ -400,7 +400,7 @@
       paint();
       c.fillStyle = 'rgba(16,4,24,.62)'; c.fillRect(0, 0, W, H);
       write('PAUSED', W / 2, H / 2, 54, '#fff6fb');
-      c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#ffd3e8'; c.fillText('Press Resume, or P, when you are ready', W / 2, H / 2 + 32);
+      c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#ffd3e8'; c.fillText('Tap the play icon, or press P, when you are ready', W / 2, H / 2 + 32);
     } else kick();
     stat();
   }

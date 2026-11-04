@@ -379,7 +379,7 @@ const STUNT_ROWS: Array<[keyof StuntOutfit, string, Array<[string, string]>]> = 
   function pauseCover(): void {
     c.fillStyle = 'rgba(10,2,16,.6)'; c.fillRect(0, 0, W, H);
     write('PAUSED', W / 2, H / 2, 50, '#fff6fb');
-    c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#ffd3e8'; c.fillText('Press Resume, or P, when you are ready', W / 2, H / 2 + 30);
+    c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#ffd3e8'; c.fillText('Tap the play icon, or press P, when you are ready', W / 2, H / 2 + 30);
   }
   function frame(now: number): void {
     looping = false;
