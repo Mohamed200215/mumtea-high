@@ -425,8 +425,8 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .fx{position:absolute;display:block;opacity:.72}
 .fx img{display:block}
 .fxspider img,.fxcoffin img{filter:brightness(1.7) drop-shadow(0 0 3px rgba(255,246,251,.45))}
-.side{display:none}
-@media (min-width:1180px){.side{display:block}}
+.fx.side{display:none}
+@media (min-width:1180px){.fx.side{display:block}}
 .fxweb{left:0;top:0;transform-origin:0 0;animation:fxsway 9s ease-in-out infinite}
 .fxspider{right:calc(25% - 270px - 17px);top:0;animation:fxdangle 11s ease-in-out infinite}
 .fxspider::before{content:"";position:absolute;left:50%;bottom:70%;width:1px;height:400px;background:rgba(255,246,251,.4)}
@@ -442,10 +442,10 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .fxcoffin{right:11%;top:84%;animation:fxfloat 9s ease-in-out infinite}
 .fxflyer{left:0;top:87%;animation:fxfly 44s linear infinite}
 .fxspark{animation:fxtwinkle 5s ease-in-out infinite}
-.s1{left:calc(25% - 270px - 11px);top:42%}
-.s2{right:calc(25% - 270px - 9px);top:46%;animation-delay:1.7s}
-.s3{right:24%;top:93%;animation-delay:3s}
-.s4{left:29%;top:83%;animation-delay:.9s}
+.fxspark.s1{left:calc(25% - 270px - 11px);top:42%}
+.fxspark.s2{right:calc(25% - 270px - 9px);top:46%;animation-delay:1.7s}
+.fxspark.s3{right:24%;top:93%;animation-delay:3s}
+.fxspark.s4{left:29%;top:83%;animation-delay:.9s}
 @keyframes fxsway{50%{transform:rotate(3deg)}}
 @keyframes fxdangle{50%{transform:translateY(120px)}}
 @keyframes fxfloat{50%{transform:translate(6px,-18px)}}
@@ -456,3 +456,8 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 @keyframes fxflicker{0%,100%{opacity:.72}40%{opacity:.55}70%{opacity:.8}}
 @keyframes fxfly{from{transform:translateX(-60px)}to{transform:translateX(calc(100vw + 60px))}}
 @keyframes fxtwinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:.85;transform:none}}
+
+/* empties the spirit meter once it is full */
+.meterreset{border:2px solid #000;background:var(--pink);color:#000;font:800 11px/1.15 var(--body);text-transform:uppercase;padding:5px 6px;cursor:pointer;box-shadow:2px 2px 0 #000}
+.meterreset:hover{background:var(--white)}
+.flaskbox .bones{white-space:normal;line-height:1.1}
