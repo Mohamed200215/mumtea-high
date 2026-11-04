@@ -440,6 +440,18 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .notecat{position:absolute;right:8px;bottom:0;width:112px;height:96px;pointer-events:none}
 @media (max-width:520px){.notepaper input{font-size:22px}.notepaper textarea{height:calc(var(--rule)*7)}}
 
+/* the headghoul's notes are written on punched sheets of lined paper */
+.diary,.bosscopy blockquote,.side-card{--rule:32px;--ink:#2a1430;position:relative;box-sizing:border-box;color:var(--ink);box-shadow:5px 6px 0 #000;background:radial-gradient(circle at 23px 50%,#14081a 0 8px,transparent 8.5px) 0 0/100% calc(100%/3),linear-gradient(90deg,transparent 44px,var(--pink) 44px,var(--pink) 46px,transparent 46px),repeating-linear-gradient(to bottom,transparent 0 calc(var(--rule) - 1px),rgba(106,31,134,.24) calc(var(--rule) - 1px) var(--rule)),#fdf6ea}
+.diary{padding:var(--rule) 22px var(--rule) 60px;transform:rotate(-.4deg)}
+.diary dl{position:relative;top:6px;gap:0 14px}
+.diary dt{font:800 13px/var(--rule) var(--body);color:var(--pink-deep)}
+.diary dd{font:16px/var(--rule) "Segoe Print","Bradley Hand","Comic Sans MS",cursive;overflow-wrap:anywhere}
+.bosscopy blockquote,.side-card{--rule:28px;padding:var(--rule) 16px var(--rule) 58px}
+.bosscopy blockquote span,.side-card p{display:block;position:relative;top:5px;margin:0;font:15px/var(--rule) "Segoe Print","Bradley Hand","Comic Sans MS",cursive}
+.bosscopy cite{position:relative;top:5px;margin:0;font:800 12px/var(--rule) var(--body);text-align:right}
+.side-card h3{margin:0;font-size:22px;line-height:var(--rule)}
+@media (max-width:520px){.diary dl{grid-template-columns:minmax(0,1fr);gap:0}.diary dd{margin:0 0 var(--rule)}.diary dd:last-child{margin-bottom:0}}
+
 /* every wardrobe item stays inside its own box */
 .wtile{overflow:hidden}
 .wpic{overflow:hidden}
