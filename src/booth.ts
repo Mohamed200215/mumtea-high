@@ -23,6 +23,7 @@ const CAM_FILTERS: CamFilter[] = [
   { name: 'Daydream', group: CUTE, ops: [['brightness', 1.08], ['saturate', 1.1]], tint: ['#a8c8ff', 'soft-light', .35], stickers: [['rainbow', .16, .16, .28, -8], ['star', .87, .13, .22, 12], ['butterfly', .09, .53, .16, -14], ['sparkles', .92, .55, .15, 0], ['kitty', .14, .86, .25, -8], ['butterfly', .86, .85, .22, 14]] },
 ];
 const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
+const POST_CARD = '#181019';
 const POLA_BLURB = 'Snapped at the Say Fangs photo booth.';
 
 const camCss = (f: CamFilter): string => f.ops.map(([n, v]) => (n === 'hue' ? 'hue-rotate(' + v + 'deg)' : n + '(' + v + ')')).join(' ') || 'none';
@@ -119,7 +120,6 @@ function drawPolaroid(photo: HTMLCanvasElement): HTMLCanvasElement {
     c.restore();
   };
 
-  c.fillStyle = '#181019'; c.fillRect(0, 0, POLA_W, POLA_H);
   c.fillStyle = '#f9e9a6'; c.fillRect(28, 28, 584, 724);
   c.fillStyle = 'rgba(255,31,143,.1)'; c.fillRect(28, 568, 584, 184);
   sketch([[28, 28], [612, 28], [612, 752], [28, 752]], 6);
@@ -134,7 +134,11 @@ function drawPolaroid(photo: HTMLCanvasElement): HTMLCanvasElement {
   c.font = '800 18px Nunito, sans-serif'; c.fillText(new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }), POLA_W / 2, 692, 240);
   return cv;
 }
-function polaroidData(cv: HTMLCanvasElement): string {
+/* Posts are stored as JPEGs, which cannot be see-through, so a posted picture sits on the colour of the post card behind it. */
+function polaroidData(shot: HTMLCanvasElement): string {
+  const cv = document.createElement('canvas'); cv.width = shot.width; cv.height = shot.height;
+  const c = cv.getContext('2d') as CanvasRenderingContext2D;
+  c.fillStyle = POST_CARD; c.fillRect(0, 0, cv.width, cv.height); c.drawImage(shot, 0, 0);
   for (let q = .86; q > .4; q -= .08) { const url = cv.toDataURL('image/jpeg', q); if (url.length <= MAX_PHOTO) return url; }
   return cv.toDataURL('image/jpeg', .4);
 }
@@ -328,8 +332,8 @@ function postPhoto(post: TeaPost): HTMLElement {
   }
 
   function showPrint(d: CamDevice, photo: HTMLCanvasElement): void {
-    const made = (words: string): string => polaroidData(d.polaroid ? drawPolaroid(photo) : drawDeviceShot(d, photo, shotWords(words)));
-    let url = made('');
+    const made = (words: string): HTMLCanvasElement => (d.polaroid ? drawPolaroid(photo) : drawDeviceShot(d, photo, shotWords(words)));
+    let shot = made(''), url = shot.toDataURL('image/png');
     const full = d.polaroid ? { w: POLA_W, h: POLA_H } : { w: Math.round(d.w * d.s), h: Math.round(d.h * d.s) };
     const img = el('img', { src: url, alt: 'Your ' + d.noun, width: full.w, height: full.h }) as HTMLImageElement;
     const print = el('div', { cls: 'polaprint' + (d.polaroid || d.develop ? '' : ' devshow') }, img);
@@ -341,10 +345,10 @@ function postPhoto(post: TeaPost): HTMLElement {
     if (full.w > full.h) print.style.width = 'min(100%,520px)';
     const note = el('p', { cls: 'polanote', role: 'status' });
     const caption = el('input', { type: 'text', maxlength: 200, placeholder: 'Add a caption (optional)', 'aria-label': 'Caption for your post' }) as HTMLInputElement;
-    const save = el('a', { cls: 'pill ghost', href: url, download: d.polaroid ? 'mumtea-polaroid.jpg' : 'mumtea-' + d.id + '.jpg' }, 'Save picture');
+    const save = el('a', { cls: 'pill ghost', href: url, download: d.polaroid ? 'mumtea-polaroid.png' : 'mumtea-' + d.id + '.png' }, 'Save picture');
     /* Most devices write the caption into the picture itself, so it redraws as you type. */
     let typingAt = 0;
-    const redraw = (): void => { clearTimeout(typingAt); typingAt = 0; url = made(caption.value.trim()); img.src = url; save.setAttribute('href', url); };
+    const redraw = (): void => { clearTimeout(typingAt); typingAt = 0; shot = made(caption.value.trim()); url = shot.toDataURL('image/png'); img.src = url; save.setAttribute('href', url); };
     if (!d.polaroid) caption.addEventListener('input', () => { clearTimeout(typingAt); typingAt = window.setTimeout(redraw, 220); });
     const again = el('button', { cls: 'pill ghost', type: 'button', onclick() { printSlot.textContent = ''; camera.scrollIntoView({ block: 'nearest' }); } }, 'Take another');
     const send = el('button', { cls: 'pill', type: 'button' }, 'Post my ' + d.noun);
@@ -354,13 +358,14 @@ function postPhoto(post: TeaPost): HTMLElement {
       if (typingAt) redraw();
       send.setAttribute('disabled', ''); note.textContent = 'Posting...';
       const words = caption.value.trim() || POLA_BLURB;
-      const { data, error } = isAdmin() ? await sb.rpc('admin_post_polaroid', { token: adminPass, caption: words, photo: url }) : await sb.rpc('post_polaroid', { caption: words, photo: url });
+      const posted = polaroidData(shot);
+      const { data, error } = isAdmin() ? await sb.rpc('admin_post_polaroid', { token: adminPass, caption: words, photo: posted }) : await sb.rpc('post_polaroid', { caption: words, photo: posted });
       if (error) {
         send.removeAttribute('disabled');
         note.textContent = error.code === 'PGRST202' ? 'Posting pictures is not switched on yet. You can still save your picture.' : /a day/.test(error.message || '') ? 'That is 30 pictures today. Try again tomorrow.' : 'That did not post. Your ' + d.noun + ' is still here, so try again.';
         return;
       }
-      photoCache.set(data, url);
+      photoCache.set(data, posted);
       caption.setAttribute('disabled', '');
       note.textContent = 'Posted. ';
       note.append(el('button', { cls: 'linkish', type: 'button', onclick() { go('tea', data); } }, 'See it on Spill the Tea'));

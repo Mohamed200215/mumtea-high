@@ -2,7 +2,7 @@
 interface ShotWords { caption: string; name: string; date: string }
 interface CamDevice {
   id: string; name: string; noun: string; hint: string;
-  w: number; h: number; s: number; bg: string;
+  w: number; h: number; s: number;
   sx: number; sy: number; sw: number; sh: number; sr: number;
   develop?: boolean; polaroid?: boolean;
   body(c: CanvasRenderingContext2D): void;
@@ -67,7 +67,7 @@ function gemHeart(c: CanvasRenderingContext2D, x: number, y: number, s: number):
 const CAM_DEVICES: CamDevice[] = [
   {
     id: 'fangcam', name: 'FangCam', noun: 'Polaroid', hint: 'The classic. Prints a Polaroid in the school colours.', polaroid: true,
-    w: 640, h: 480, s: 1, bg: '#181019', sx: 150, sy: 92, sw: 300, sh: 280, sr: 12,
+    w: 640, h: 480, s: 1, sx: 150, sy: 92, sw: 300, sh: 280, sr: 12,
     body(c) {
       devPath(c, 40, 60, 560, 370, 44); c.fillStyle = devFill(c, 0, 60, 0, 430, [0, '#ff8cc6'], [1, '#d40f72']); c.fill(); c.strokeStyle = '#000'; c.lineWidth = 8; c.stroke();
       devPath(c, 140, 82, 320, 300, 16); c.fillStyle = '#08050b'; c.fill();
@@ -77,7 +77,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'fluffy', name: 'Fluffy Polaroid', noun: 'fluffy Polaroid', hint: 'Prints your picture in a soft pink fur frame with cherries and a butterfly.', develop: true,
-    w: 965, h: 1135, s: .75, bg: '#fff7fa', sx: 100, sy: 105, sw: 760, sh: 750, sr: 6,
+    w: 965, h: 1135, s: .75, sx: 100, sy: 105, sw: 760, sh: 750, sr: 6,
     body(c) {
       let seed = 4242; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
       c.save(); c.shadowColor = 'rgba(150,60,90,.55)'; c.shadowBlur = 26; c.shadowOffsetY = 12;
@@ -141,7 +141,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'ds', name: 'Pink DS', noun: 'DS picture', hint: 'Your picture goes on the top screen. Your caption turns into a chat message on the touch screen.',
-    w: 1025, h: 1367, s: .7, bg: '#2a1420', sx: 235, sy: 120, sw: 556, sh: 417, sr: 2,
+    w: 1025, h: 1367, s: .7, sx: 235, sy: 120, sw: 556, sh: 417, sr: 2,
     body(c) {
       const lid = devFill(c, 0, 0, 0, 660, [0, '#f8d4dc'], [1, '#f3c0cc']), low = devFill(c, 0, 700, 0, 1367, [0, '#f6ccd6'], [1, '#efb9c7']);
       devPath(c, 2, 2, 1021, 660, 26); c.fillStyle = lid; c.fill(); c.strokeStyle = '#d58d9f'; c.lineWidth = 3; c.stroke();
@@ -191,7 +191,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'psp', name: 'Pink PSP', noun: 'PSP screenshot', hint: 'Your picture fills the big wide screen, like a saved screenshot.',
-    w: 1170, h: 540, s: .95, bg: '#fff5fb', sx: 258, sy: 58, sw: 643, sh: 368, sr: 2,
+    w: 1170, h: 540, s: .95, sx: 258, sy: 58, sw: 643, sh: 368, sr: 2,
     body(c) {
       c.save(); c.shadowColor = 'rgba(150,70,110,.45)'; c.shadowBlur = 14; c.shadowOffsetY = 5;
       c.beginPath(); c.moveTo(180, 26); c.lineTo(990, 26); c.quadraticCurveTo(1124, 34, 1142, 262); c.quadraticCurveTo(1148, 458, 1010, 494); c.lineTo(160, 494); c.quadraticCurveTo(22, 458, 28, 262); c.quadraticCurveTo(46, 34, 180, 26); c.closePath();
@@ -230,7 +230,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'ipod', name: 'Pink iPod', noun: 'iPod photo', hint: 'Your picture shows up in the Photos screen, ready to carry in your pocket.',
-    w: 736, h: 410, s: 1.45, bg: '#eef2fa', sx: 57, sy: 81, sw: 330, sh: 248, sr: 3,
+    w: 736, h: 410, s: 1.45, sx: 57, sy: 81, sw: 330, sh: 248, sr: 3,
     body(c) {
       c.save(); c.shadowColor = 'rgba(120,70,110,.35)'; c.shadowBlur = 10; c.shadowOffsetY = 4;
       devPath(c, 16, 40, 704, 330, 44); c.fillStyle = '#f2b6d2'; c.fill(); c.restore();
@@ -258,7 +258,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'phone', name: 'Y2K phone', noun: 'picture message', hint: 'Your picture arrives as a picture message, with your caption underneath it.',
-    w: 1152, h: 2048, s: .46, bg: '#fbeef5', sx: 200, sy: 295, sw: 785, sh: 975, sr: 8,
+    w: 1152, h: 2048, s: .46, sx: 200, sy: 295, sw: 785, sh: 975, sr: 8,
     body(c) {
       c.save(); c.shadowColor = 'rgba(70,70,90,.45)'; c.shadowBlur = 26; c.shadowOffsetY = 8;
       devPath(c, 50, 22, 1085, 2000, 90); c.fillStyle = devFill(c, 50, 0, 1135, 0, [0, '#52525e'], [.05, '#8b8b96'], [.12, '#b3b3bd'], [.88, '#b3b3bd'], [.95, '#8b8b96'], [1, '#52525e']); c.fill(); c.restore();
@@ -313,7 +313,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'tv', name: 'Retro TV', noun: 'TV moment', hint: 'You go on air, with scan lines, a channel number and your name across the bottom.',
-    w: 1015, h: 655, s: 1, bg: '#23102c', sx: 85, sy: 60, sw: 660, sh: 548, sr: 80,
+    w: 1015, h: 655, s: 1, sx: 85, sy: 60, sw: 660, sh: 548, sr: 80,
     body(c) {
       devPath(c, 6, 6, 1003, 643, 16); c.fillStyle = devFill(c, 0, 6, 0, 649, [0, '#f49ac3'], [1, '#e77aad']); c.fill(); c.strokeStyle = '#a1477c'; c.lineWidth = 3; c.stroke();
       devPath(c, 46, 34, 736, 600, 34); c.fillStyle = devFill(c, 46, 34, 46, 634, [0, '#d44a94'], [.5, '#ea6dab'], [1, '#cc4190']); c.fill(); c.strokeStyle = '#a42e72'; c.lineWidth = 3; c.stroke();
@@ -356,9 +356,8 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'music', name: 'Music player', noun: 'album cover', hint: 'You become the album cover. Your caption is the song title.',
-    w: 736, h: 1308, s: .9, bg: '#fba4c2', sx: 101, sy: 203, sw: 533, sh: 533, sr: 10,
+    w: 736, h: 1308, s: .9, sx: 101, sy: 203, sw: 533, sh: 533, sr: 10,
     body(c) {
-      c.fillStyle = '#fba4c2'; c.fillRect(0, 0, 736, 1308);
       c.save(); c.shadowColor = 'rgba(120,40,80,.25)'; c.shadowBlur = 30; c.shadowOffsetY = 10;
       devPath(c, 61, 163, 614, 984, 78); c.fillStyle = devFill(c, 0, 163, 0, 1147, [0, '#7c4158'], [1, '#8c4563']); c.fill(); c.restore();
       c.save(); c.shadowColor = 'rgba(30,5,20,.5)'; c.shadowBlur = 34; c.shadowOffsetY = 18; devPath(c, 101, 203, 533, 533, 10); c.fillStyle = '#25101c'; c.fill(); c.restore();
@@ -395,7 +394,6 @@ function deviceBody(d: CamDevice): HTMLCanvasElement {
 function drawDeviceShot(d: CamDevice, photo: HTMLCanvasElement | null, words: ShotWords): HTMLCanvasElement {
   const cv = document.createElement('canvas'); cv.width = Math.round(d.w * d.s); cv.height = Math.round(d.h * d.s);
   const c = cv.getContext('2d') as CanvasRenderingContext2D;
-  c.fillStyle = d.bg; c.fillRect(0, 0, cv.width, cv.height);
   c.drawImage(deviceBody(d), 0, 0);
   c.scale(d.s, d.s);
   if (photo) {

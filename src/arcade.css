@@ -395,7 +395,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .polaacts{flex:1 1 250px;min-width:0;padding-top:12px}
 .polaacts input{width:100%;margin-bottom:10px}
 .polanote{min-height:24px;margin:10px 0 0;font-weight:700}
-.postpola{display:block;width:min(100%,360px);height:auto;aspect-ratio:640/780;margin:8px 0;background:#181019}
+.postpola{display:block;width:min(100%,360px);height:auto;aspect-ratio:640/780;margin:8px 0}
 @media (max-width:640px){
   .fangcam{padding:10px 8px 14px;border-radius:18px}
   .cammain{grid-template-columns:minmax(0,1fr)}

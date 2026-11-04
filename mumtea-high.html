@@ -626,7 +626,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .polaacts{flex:1 1 250px;min-width:0;padding-top:12px}
 .polaacts input{width:100%;margin-bottom:10px}
 .polanote{min-height:24px;margin:10px 0 0;font-weight:700}
-.postpola{display:block;width:min(100%,360px);height:auto;aspect-ratio:640/780;margin:8px 0;background:#181019}
+.postpola{display:block;width:min(100%,360px);height:auto;aspect-ratio:640/780;margin:8px 0}
 @media (max-width:640px){
   .fangcam{padding:10px 8px 14px;border-radius:18px}
   .cammain{grid-template-columns:minmax(0,1fr)}
@@ -2154,7 +2154,7 @@ function gemHeart(c, x, y, s) {
 const CAM_DEVICES = [
     {
         id: 'fangcam', name: 'FangCam', noun: 'Polaroid', hint: 'The classic. Prints a Polaroid in the school colours.', polaroid: true,
-        w: 640, h: 480, s: 1, bg: '#181019', sx: 150, sy: 92, sw: 300, sh: 280, sr: 12,
+        w: 640, h: 480, s: 1, sx: 150, sy: 92, sw: 300, sh: 280, sr: 12,
         body(c) {
             devPath(c, 40, 60, 560, 370, 44);
             c.fillStyle = devFill(c, 0, 60, 0, 430, [0, '#ff8cc6'], [1, '#d40f72']);
@@ -2172,7 +2172,7 @@ const CAM_DEVICES = [
     },
     {
         id: 'fluffy', name: 'Fluffy Polaroid', noun: 'fluffy Polaroid', hint: 'Prints your picture in a soft pink fur frame with cherries and a butterfly.', develop: true,
-        w: 965, h: 1135, s: .75, bg: '#fff7fa', sx: 100, sy: 105, sw: 760, sh: 750, sr: 6,
+        w: 965, h: 1135, s: .75, sx: 100, sy: 105, sw: 760, sh: 750, sr: 6,
         body(c) {
             let seed = 4242;
             const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
@@ -2353,7 +2353,7 @@ const CAM_DEVICES = [
     },
     {
         id: 'ds', name: 'Pink DS', noun: 'DS picture', hint: 'Your picture goes on the top screen. Your caption turns into a chat message on the touch screen.',
-        w: 1025, h: 1367, s: .7, bg: '#2a1420', sx: 235, sy: 120, sw: 556, sh: 417, sr: 2,
+        w: 1025, h: 1367, s: .7, sx: 235, sy: 120, sw: 556, sh: 417, sr: 2,
         body(c) {
             const lid = devFill(c, 0, 0, 0, 660, [0, '#f8d4dc'], [1, '#f3c0cc']), low = devFill(c, 0, 700, 0, 1367, [0, '#f6ccd6'], [1, '#efb9c7']);
             devPath(c, 2, 2, 1021, 660, 26);
@@ -2526,7 +2526,7 @@ const CAM_DEVICES = [
     },
     {
         id: 'psp', name: 'Pink PSP', noun: 'PSP screenshot', hint: 'Your picture fills the big wide screen, like a saved screenshot.',
-        w: 1170, h: 540, s: .95, bg: '#fff5fb', sx: 258, sy: 58, sw: 643, sh: 368, sr: 2,
+        w: 1170, h: 540, s: .95, sx: 258, sy: 58, sw: 643, sh: 368, sr: 2,
         body(c) {
             c.save();
             c.shadowColor = 'rgba(150,70,110,.45)';
@@ -2623,7 +2623,7 @@ const CAM_DEVICES = [
     },
     {
         id: 'ipod', name: 'Pink iPod', noun: 'iPod photo', hint: 'Your picture shows up in the Photos screen, ready to carry in your pocket.',
-        w: 736, h: 410, s: 1.45, bg: '#eef2fa', sx: 57, sy: 81, sw: 330, sh: 248, sr: 3,
+        w: 736, h: 410, s: 1.45, sx: 57, sy: 81, sw: 330, sh: 248, sr: 3,
         body(c) {
             c.save();
             c.shadowColor = 'rgba(120,70,110,.35)';
@@ -2683,7 +2683,7 @@ const CAM_DEVICES = [
     },
     {
         id: 'phone', name: 'Y2K phone', noun: 'picture message', hint: 'Your picture arrives as a picture message, with your caption underneath it.',
-        w: 1152, h: 2048, s: .46, bg: '#fbeef5', sx: 200, sy: 295, sw: 785, sh: 975, sr: 8,
+        w: 1152, h: 2048, s: .46, sx: 200, sy: 295, sw: 785, sh: 975, sr: 8,
         body(c) {
             c.save();
             c.shadowColor = 'rgba(70,70,90,.45)';
@@ -2844,7 +2844,7 @@ const CAM_DEVICES = [
     },
     {
         id: 'tv', name: 'Retro TV', noun: 'TV moment', hint: 'You go on air, with scan lines, a channel number and your name across the bottom.',
-        w: 1015, h: 655, s: 1, bg: '#23102c', sx: 85, sy: 60, sw: 660, sh: 548, sr: 80,
+        w: 1015, h: 655, s: 1, sx: 85, sy: 60, sw: 660, sh: 548, sr: 80,
         body(c) {
             devPath(c, 6, 6, 1003, 643, 16);
             c.fillStyle = devFill(c, 0, 6, 0, 649, [0, '#f49ac3'], [1, '#e77aad']);
@@ -2964,10 +2964,8 @@ const CAM_DEVICES = [
     },
     {
         id: 'music', name: 'Music player', noun: 'album cover', hint: 'You become the album cover. Your caption is the song title.',
-        w: 736, h: 1308, s: .9, bg: '#fba4c2', sx: 101, sy: 203, sw: 533, sh: 533, sr: 10,
+        w: 736, h: 1308, s: .9, sx: 101, sy: 203, sw: 533, sh: 533, sr: 10,
         body(c) {
-            c.fillStyle = '#fba4c2';
-            c.fillRect(0, 0, 736, 1308);
             c.save();
             c.shadowColor = 'rgba(120,40,80,.25)';
             c.shadowBlur = 30;
@@ -3044,8 +3042,6 @@ function drawDeviceShot(d, photo, words) {
     cv.width = Math.round(d.w * d.s);
     cv.height = Math.round(d.h * d.s);
     const c = cv.getContext('2d');
-    c.fillStyle = d.bg;
-    c.fillRect(0, 0, cv.width, cv.height);
     c.drawImage(deviceBody(d), 0, 0);
     c.scale(d.s, d.s);
     if (photo) {
@@ -3078,6 +3074,7 @@ const CAM_FILTERS = [
     { name: 'Daydream', group: CUTE, ops: [['brightness', 1.08], ['saturate', 1.1]], tint: ['#a8c8ff', 'soft-light', .35], stickers: [['rainbow', .16, .16, .28, -8], ['star', .87, .13, .22, 12], ['butterfly', .09, .53, .16, -14], ['sparkles', .92, .55, .15, 0], ['kitty', .14, .86, .25, -8], ['butterfly', .86, .85, .22, 14]] },
 ];
 const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
+const POST_CARD = '#181019';
 const POLA_BLURB = 'Snapped at the Say Fangs photo booth.';
 const camCss = (f) => f.ops.map(([n, v]) => (n === 'hue' ? 'hue-rotate(' + v + 'deg)' : n + '(' + v + ')')).join(' ') || 'none';
 /* The same sums the browser uses for its picture filters, so the Polaroid matches the screen in every browser. */
@@ -3326,8 +3323,6 @@ function drawPolaroid(photo) {
         c.stroke();
         c.restore();
     };
-    c.fillStyle = '#181019';
-    c.fillRect(0, 0, POLA_W, POLA_H);
     c.fillStyle = '#f9e9a6';
     c.fillRect(28, 28, 584, 724);
     c.fillStyle = 'rgba(255,31,143,.1)';
@@ -3352,7 +3347,15 @@ function drawPolaroid(photo) {
     c.fillText(new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }), POLA_W / 2, 692, 240);
     return cv;
 }
-function polaroidData(cv) {
+/* Posts are stored as JPEGs, which cannot be see-through, so a posted picture sits on the colour of the post card behind it. */
+function polaroidData(shot) {
+    const cv = document.createElement('canvas');
+    cv.width = shot.width;
+    cv.height = shot.height;
+    const c = cv.getContext('2d');
+    c.fillStyle = POST_CARD;
+    c.fillRect(0, 0, cv.width, cv.height);
+    c.drawImage(shot, 0, 0);
     for (let q = .86; q > .4; q -= .08) {
         const url = cv.toDataURL('image/jpeg', q);
         if (url.length <= MAX_PHOTO)
@@ -3597,8 +3600,8 @@ function postPhoto(post) {
         showPrint(d, photo);
     }
     function showPrint(d, photo) {
-        const made = (words) => polaroidData(d.polaroid ? drawPolaroid(photo) : drawDeviceShot(d, photo, shotWords(words)));
-        let url = made('');
+        const made = (words) => (d.polaroid ? drawPolaroid(photo) : drawDeviceShot(d, photo, shotWords(words)));
+        let shot = made(''), url = shot.toDataURL('image/png');
         const full = d.polaroid ? { w: POLA_W, h: POLA_H } : { w: Math.round(d.w * d.s), h: Math.round(d.h * d.s) };
         const img = el('img', { src: url, alt: 'Your ' + d.noun, width: full.w, height: full.h });
         const print = el('div', { cls: 'polaprint' + (d.polaroid || d.develop ? '' : ' devshow') }, img);
@@ -3616,10 +3619,10 @@ function postPhoto(post) {
             print.style.width = 'min(100%,520px)';
         const note = el('p', { cls: 'polanote', role: 'status' });
         const caption = el('input', { type: 'text', maxlength: 200, placeholder: 'Add a caption (optional)', 'aria-label': 'Caption for your post' });
-        const save = el('a', { cls: 'pill ghost', href: url, download: d.polaroid ? 'mumtea-polaroid.jpg' : 'mumtea-' + d.id + '.jpg' }, 'Save picture');
+        const save = el('a', { cls: 'pill ghost', href: url, download: d.polaroid ? 'mumtea-polaroid.png' : 'mumtea-' + d.id + '.png' }, 'Save picture');
         /* Most devices write the caption into the picture itself, so it redraws as you type. */
         let typingAt = 0;
-        const redraw = () => { clearTimeout(typingAt); typingAt = 0; url = made(caption.value.trim()); img.src = url; save.setAttribute('href', url); };
+        const redraw = () => { clearTimeout(typingAt); typingAt = 0; shot = made(caption.value.trim()); url = shot.toDataURL('image/png'); img.src = url; save.setAttribute('href', url); };
         if (!d.polaroid)
             caption.addEventListener('input', () => { clearTimeout(typingAt); typingAt = window.setTimeout(redraw, 220); });
         const again = el('button', { cls: 'pill ghost', type: 'button', onclick() { printSlot.textContent = ''; camera.scrollIntoView({ block: 'nearest' }); } }, 'Take another');
@@ -3636,13 +3639,14 @@ function postPhoto(post) {
             send.setAttribute('disabled', '');
             note.textContent = 'Posting...';
             const words = caption.value.trim() || POLA_BLURB;
-            const { data, error } = isAdmin() ? await sb.rpc('admin_post_polaroid', { token: adminPass, caption: words, photo: url }) : await sb.rpc('post_polaroid', { caption: words, photo: url });
+            const posted = polaroidData(shot);
+            const { data, error } = isAdmin() ? await sb.rpc('admin_post_polaroid', { token: adminPass, caption: words, photo: posted }) : await sb.rpc('post_polaroid', { caption: words, photo: posted });
             if (error) {
                 send.removeAttribute('disabled');
                 note.textContent = error.code === 'PGRST202' ? 'Posting pictures is not switched on yet. You can still save your picture.' : /a day/.test(error.message || '') ? 'That is 30 pictures today. Try again tomorrow.' : 'That did not post. Your ' + d.noun + ' is still here, so try again.';
                 return;
             }
-            photoCache.set(data, url);
+            photoCache.set(data, posted);
             caption.setAttribute('disabled', '');
             note.textContent = 'Posted. ';
             note.append(el('button', { cls: 'linkish', type: 'button', onclick() { go('tea', data); } }, 'See it on Spill the Tea'));
