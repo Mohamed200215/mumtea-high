@@ -496,3 +496,5 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .mercrest{position:absolute;left:50%;top:0;width:clamp(84px,19%,180px);height:auto;transform:translate(-50%,-44%);pointer-events:none;z-index:2;filter:saturate(1.7) brightness(.8) drop-shadow(0 2px 2px rgba(4,50,60,.55))}
 .gcard[data-game="riptide"] .gart{background:#eafdfb}
 .gcard[data-game="riptide"] .gart img{width:88%;max-width:none;filter:none}
+.gcard[data-game="closet"] .gart{background:#fff6fb}
+.gcard[data-game="closet"] .gart img{width:55%;max-width:none;filter:none}
