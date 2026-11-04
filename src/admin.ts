@@ -31,7 +31,6 @@ async function refreshAdminStudents(): Promise<void> {
 function adminEnded(): void {
   setPass(null);
   adminStudents = [];
-  say('Earl Ghoul', 'Admin mode has ended. Enter the code again to get back in.');
 }
 /* From the "Got a code?" box on the main page. Returns what the box should say. */
 async function tryAdminCode(code: string): Promise<string | null> {
@@ -42,7 +41,6 @@ async function tryAdminCode(code: string): Promise<string | null> {
   if (!data?.ok) return null;
   setPass(data.token);
   await refreshAdminStudents();
-  say('Earl Ghoul', 'Everybody look busy. Ms. Fangtastic is in.');
   refreshAll('');
   go('admin');
   return 'Welcome, Ms. Fangtastic.';

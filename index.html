@@ -787,14 +787,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .idsaid{margin:8px 0 0;font:800 13px var(--body)}
 .idsaid:empty{display:none}
 
-/* the iCoffin's chat */
-.coffinform{display:flex;gap:4px;margin-inline:18px;position:relative;z-index:1}
-.coffinform input{flex:1;min-width:0;background:#14081a;color:var(--white);border:2px solid #000;padding:5px 7px;font:700 13px var(--body)}
-.coffinform input::placeholder{color:#c9a8d8}
-.coffinform button{margin:0;padding:4px 9px}
-.coffinform button:disabled{opacity:.55;cursor:default}
-.coffindots{opacity:.7;font-style:italic}
-.coffin .msg+.msg{margin-top:7px}
 .bonestally{text-align:center;margin:18px 0 0}
 /* every page has its own print behind it, and words sitting on a print get a dark plate so they stay easy to read */
 .band[data-view="games"]{background:#0c0710 url(backgrounds/zebra-purple.webp) 0 0/680px}
@@ -889,6 +881,17 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .idcard[data-frame="leopard"],.idcard[data-frame="lace"],.idcard[data-frame="stars"]{padding:34px}
 .idcard[data-frame="skulls"]{padding:36px}
 .idactions{margin-top:14px}
+
+/* the iCoffin's whisper of the day */
+.coffin .coffinquote{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;padding:12px 30px 22px;overflow:hidden}
+.coffinquote small{font:800 11px/1.25 var(--body);color:#c9a8d8}
+.coffinquote b{padding:2px 10px;border-radius:999px;background:#ff1f8f;color:#fff6fb;font:800 11px/1.5 var(--body);text-transform:uppercase;letter-spacing:.06em}
+.coffinquote b[data-kind="scary"]{background:#6a1f86}
+.coffinquote b[data-kind="sad"]{background:#19779c}
+.coffinquote b[data-kind="motivating"]{background:#c8500f}
+.coffinquote b[data-kind="inspiring"]{background:#0d7a6e}
+.coffinquote p{margin:0;font:700 clamp(16px,1.5vw,18px)/1.42 "Segoe Print","Bradley Hand","Comic Sans MS",cursive;color:#fff6fb}
+.coffinquote i{font:800 10px var(--body);font-style:normal;color:#a487b4}
 
 /*ARCADE-CSS-END*/
 </style>
@@ -985,7 +988,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
         </article>
         <div class="dots" id="dots"></div>
       </div>
-      <aside class="coffin" aria-label="iCoffin messages">
+      <aside class="coffin" aria-label="iCoffin: the whisper of the day">
         <svg class="coffinart" viewBox="0 0 260 460" preserveAspectRatio="none" aria-hidden="true">
           <defs>
             <linearGradient id="cfPlate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5aae"/><stop offset=".55" stop-color="#ff1f8f"/><stop offset="1" stop-color="#d40f72"/></linearGradient>
@@ -1002,8 +1005,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
           </g>
         </svg>
         <h3>iCoffin</h3>
-        <div class="screen" id="screen" aria-live="polite"></div>
-        <form class="coffinform" id="coffinForm"><input id="coffinWords" type="text" maxlength="500" autocomplete="off" placeholder="Say something..." aria-label="Talk to the Voice"><button type="submit" id="coffinSend">Send</button></form>
+        <div class="screen coffinquote" id="screen"><small id="coffinDate"></small><b id="coffinKind"></b><p id="coffinWords"></p><i>New whisper at midnight</i></div>
       </aside>
     </div>
     <button class="spillcta" type="button" id="homeSpill"><strong>Make a new post and spill the tea</strong><span>Write your thoughts. They go straight on the timeline.</span></button>
@@ -1232,8 +1234,6 @@ let bones=store.get('bones',0);
 function drawBones(){$('#bones').textContent=bones}
 function award(n){bones+=n;store.set('bones',bones);drawBones();saveBonesSoon()}
 
-/* ---------- iCoffin: the conversation itself lives in src/coffinvoice.ts ---------- */
-function say(who,t){const s=$('#screen');const m=el('div',{cls:'msg'},el('b',{text:who+': '}),t);s.append(m);s.scrollTop=s.scrollHeight;while(s.children.length>40)s.firstChild.remove()}
 let ctx;
 
 /* ---------- codes ---------- */
@@ -1620,7 +1620,6 @@ async function refreshAdminStudents() {
 function adminEnded() {
     setPass(null);
     adminStudents = [];
-    say('Earl Ghoul', 'Admin mode has ended. Enter the code again to get back in.');
 }
 /* From the "Got a code?" box on the main page. Returns what the box should say. */
 async function tryAdminCode(code) {
@@ -1635,7 +1634,6 @@ async function tryAdminCode(code) {
         return null;
     setPass(data.token);
     await refreshAdminStudents();
-    say('Earl Ghoul', 'Everybody look busy. Ms. Fangtastic is in.');
     refreshAll('');
     go('admin');
     return 'Welcome, Ms. Fangtastic.';
@@ -3761,187 +3759,128 @@ function postPhoto(post) {
     drawSwitch();
     aim();
 })();
-const VOICE_STORIES = [
-    { id: 'lockers', fears: /locker|school|hallway|corridor|class/, beats: [
-            ['The lockers on the third floor hum after dark. Nobody talks about it. Have you ever walked a hallway alone at night?'],
-            ['A girl named Odessa stayed late to fetch a book. Every locker was humming the same low note, until she stopped walking. Then they stopped too. Would you have kept walking?', 'Then you know how long a hallway gets.', 'Lucky. Stay lucky.'],
-            ['Her own locker was the last in the row. It was the only one still humming, and the sound had changed. It was humming the song she sang in the shower. Would you open it?', 'Most people say they would keep walking. They slow down anyway.', 'Sensible. She stopped anyway.'],
-            ['Inside was her book, her coat and a neat stack of notes in her own handwriting, dated next week. The top one said: do not read the last one. There are lockers on the third floor that have never been assigned. Odessa has one now.', 'That is what she did too.', 'She said no as well. Her hand did not listen.'],
-        ] },
-    { id: 'mirror', fears: /mirror|reflection|bathroom|glass/, beats: [
-            ['There is a mirror in the east washroom that nobody cleans, because it is never dirty. Do you look at yourself when you walk past a mirror?'],
-            ['A boy named Wick noticed his reflection blinked a moment after he did. Only a moment. Would you test it, or walk away?', 'Everyone does. A little glance.', 'Hm. I think you do. Just not on purpose.'],
-            ['He tested it. He smiled and watched. His reflection smiled too, a little too late and a little too long. Do you think he told anyone?', '', '', 'Maybe.'],
-            ['He did not need to. The next morning he was back at school, cheerful, on time, very polite. He only had one strange new habit. He parted his hair on the other side. The mirror in the east washroom is still very clean.'],
-        ] },
-    { id: 'dark', fears: /dark|night|closet|bed|sleep|monster|shadow/, beats: [
-            ['Everyone has a spot in their room the light never quite reaches. Do you have one?'],
-            ['Good. Keep it in mind. A student named Bea had one by her closet, and each night it was a little bigger. Only a little. Do you sleep with the door open or closed?', 'Thought so. Everyone does.', 'You just have not looked for it yet.'],
-            ['Bea measured it with a ruler, because she was that kind of girl. One finger each night, moving toward the bed. So she moved her lamp. Do you think that helped?', 'Doors do not matter much in this one.', 'Doors do not matter much in this one.', 'Doors do not matter much in this one.'],
-            ['It helped for a while. The dark stopped growing and began to wait instead. On the last night the lamp was fine and the bulb was new. It was only that the shadow on the wall had stopped matching her. Check your spot before you sleep, if you like. It is only a story.'],
-        ] },
-    { id: 'spiders', fears: /spider|bug|insect|web|crawl/, beats: [
-            ['The school spiders are very tidy. They only spin where nobody is looking. Do spiders bother you?'],
-            ['There was one web in the library that kept coming back, in the same corner, however often it was swept. Would you look at it closely?', 'They know. It is why they stay so still.', 'Good. They prefer calm people.'],
-            ['Librarian Moss did look, with her reading glasses on. The threads were not random. They were letters, very small, in very neat lines. What do you think they spelled?', '', '', 'Close.'],
-            ['It was a list of everyone who had walked under that corner, with dates. Her name was at the bottom, and the thread was still wet. The spider was already starting on the next line. It looked up, the way you might look up from homework.'],
-        ] },
-    { id: 'doll', fears: /doll|toy|puppet|clown|teddy/, beats: [
-            ['Somebody left a doll on the shelf in the Mumtea High lost and found. It has been claimed eleven times. It always comes back. Did you have a toy you were a bit afraid of?'],
-            ['Then you remember how they watch a room. This doll has one eye that closes when you tip it, and one that does not. If you found it, would you take it home?', 'They never really leave, you know. They wait in boxes.', 'Everyone did. They just forget.'],
-            ['A girl named Sable took it home. She put it on the shelf facing the wall. In the morning it was facing the wall still, but it was on a different shelf. Would you have got rid of it?', 'So did she.', 'Wise. She was not.'],
-            ['She left it at the bus stop, and it was gone by evening. That night, her little brother asked who the nice girl in his room was. She said she had come to bring something back. It is on the lost and found shelf again now. Twelve times.'],
-        ] },
-    { id: 'basement', fears: /basement|water|flood|drown|swim|ocean|deep|sea/, beats: [
-            ['The basement under the gym flooded years ago. Nobody ever drained it. Would you go down the steps if the door were open?'],
-            ['The water is black and quite still, and it stops exactly one step below where you stand. It does not matter which step. Do you see the problem with that?', 'A lot of people say that. From up here.', 'Good. Now imagine you were dared.'],
-            ['Try it and you go down a step, and the water goes down a step too, politely, as if it wants you to come further. Three students counted forty steps. How many do you think there are, on the plans?', 'Clever.', 'It lets you go lower, that is the problem.', ''],
-            ['Twelve. The plans say twelve. The caretaker keeps the door locked, and on quiet nights he sits by it, because something on the other side has started knocking from lower down, and it is learning to count.'],
-        ] },
-    { id: 'creepateria', fears: /food|lunch|creepateria|gruel|kitchen|eat/, beats: [
-            ['You should avoid the creepateria on Thursdays. Earl Ghoul has said so more than once. Do you ever wonder who makes school lunch?'],
-            ['Nobody has seen the lunch lady arrive. Nobody has seen her leave. She always knows what you want before you ask. Would you find that nice, or strange?', 'You should. Nobody on the staff list does that job.', 'Then you never ask for seconds. Good.'],
-            ['One Thursday, a boy named Tobin asked her name. She smiled, and she spooned him a bowl of something warm, and she said his grandmother\'s recipe was always her favourite. Would you have eaten it?', '', '', ''],
-            ['It tasted exactly like home. He had three bowls. Tobin is very happy now, and he works in the kitchen on Thursdays. He does not remember when he started. You should really bring your own lunch.', 'So did he, in the end.', 'You would, though. It smells wonderful.'],
-        ] },
-    { id: 'phone', fears: /phone|call|text|message|ring/, beats: [
-            ['Most people never get a call on an iCoffin at three in the morning. Would you answer one from a number you did not know?'],
-            ['A girl named Lux did. It was only breathing, slow and calm, and her own bedroom clock ticking in the background. Would you hang up?', 'Brave. Or polite. They look the same at that hour.', 'That is wise, though it does keep ringing.'],
-            ['She hung up. It rang again. This time the screen said the call was from her own number. Would you answer that one?', 'She did too, but only after she looked at the clock.', 'She could not help looking at the clock.'],
-            ['She answered. A voice said, very gently, in her own voice: do not go downstairs in the morning. Then it hung up. She stayed in bed until noon. Nothing happened. The next night it called again and said, thank you. Now it is your turn to warn me.'],
-        ] },
-    { id: 'stairs', fears: /stair|step|footstep|noise|sound|alone|home alone|house|attic/, beats: [
-            ['Count your stairs tonight. You probably think you know how many there are. Do you know?'],
-            ['A student named Harlow counted hers every night, going up in the dark. Thirteen, always. Have you ever gone up a step that was not there?', 'So did she. That was the trouble.', 'Most people do not. It is easier that way.'],
-            ['One night she counted fourteen. She went back down, and up again. Thirteen. Would you have gone to bed, or counted again?', 'That little drop in your stomach. Yes.', 'You will notice now.'],
-            ['She went to bed. Across the landing, the stairs creaked once more, slowly, as if someone who had been standing on the fourteenth had finally stepped off. She counts them in the daytime now. Have a good night.'],
-        ] },
-    { id: 'teacup', fears: /tea|cup|fortune|future|leaves/, beats: [
-            ['Ms. Fangtastic teaches that a cup of tea tells you about your week. Mostly it does. Do you believe in that kind of thing?'],
-            ['There is one cup in the staff room with a chipped handle. Everyone who drinks from it sees the same shape in the leaves, a small open door. Would you drink from it?', 'Then you will understand why she locks that cup away.', 'Neither did the new teacher.'],
-            ['The new teacher did. He laughed about the little door. The next week the shape was bigger. The week after that he could make out a hand on the handle. Would you stop drinking from it now?', '', 'Interesting. You are braver than he was.'],
-            ['He tried to stop. He said he could smell tea all the time. The cup is in the cupboard now, and it is always warm, and sometimes in the morning the leaves in it are wet. Nobody has seen him since the door finished opening.'],
-        ] },
-    { id: 'seat', fears: /ghost|spirit|haunt|empty|dead|death|grave|cemetery/, beats: [
-            ['Every class at Mumtea High has one seat that nobody picks. Nobody decided this. Have you ever noticed a seat like that?'],
-            ['In Mad Science it is the one by the window. The register has one extra name at the end, and no teacher reads it out. Would you read it?', 'Then you have felt how the room leans away from it.', 'Have a look tomorrow. It is usually near a window.'],
-            ['A girl named Fern read it, out loud, for a dare. Nobody answered. But the chair by the window was pulled out a little in the morning, the way a chair is when someone has just stood up. Would you sit there?', 'Everyone would. Everyone does not.', 'Sensible.'],
-            ['Fern did. It was warm. All lesson she felt someone patiently waiting for her to move. And when she got up at the bell, someone behind her said, very quietly: thanks. It is quite all right. There is an extra name on your register too.'],
-        ] },
-    { id: 'watcher', fears: /watch|stranger|window|outside|forest|woods|tree|following/, beats: [
-            ['There is an old tree outside the dormitory window that is slightly closer every autumn. Do you ever check a window at night?'],
-            ['A boy named Rook drew it each week for art class. Would you have noticed something odd, I wonder?', 'Everyone says they would not. Then everyone does.', 'You will now.'],
-            ['Week by week, his drawings showed the same thing. The tree. The gate. The bench. And a long thin shape behind the bench, then in front of it, then by the gate. He had not drawn that part on purpose. Would you keep drawing?', '', 'So he stopped. It did not matter.'],
-            ['He looked back through his sketchbook, in order. It made a very slow little film of something crossing the lawn, toward the page he had not drawn yet. He left that page blank. In the morning, someone had filled it in, quite neatly.'],
-        ] },
+/* ---------- the iCoffin: one new whisper a day, the same for everyone ---------- */
+const COFFIN_QUOTES = [
+    ['Scary', 'The house is never quiet. It is only listening.'],
+    ['Motivating', 'You have survived every night so far. The dark is starting to worry about you.'],
+    ['Sad', 'Even ghosts keep setting a place at the table for someone.'],
+    ['Inspiring', 'Bats find their way in total darkness. You can find yours with a little less sleep.'],
+    ['Sweet', 'Someone out there would haunt the whole world for you.'],
+    ['Scary', 'Count the stairs tonight. Then count them again.'],
+    ['Motivating', 'Rise like the thing at the end of the film. Everyone thought you were finished, too.'],
+    ['Sad', 'Some doors stay locked because we are the ones holding them shut.'],
+    ['Inspiring', 'Every monster was told it was too much, until the whole town knew its name.'],
+    ['Sweet', 'You are the warm spot in a very cold hallway.'],
+    ['Scary', 'If your reflection smiles first, do not smile back.'],
+    ['Motivating', 'Sharpen your fangs. Today has no idea who it is dealing with.'],
+    ['Sad', 'The saddest ghosts are the ones nobody noticed leaving.'],
+    ['Inspiring', 'A candle does not argue with the dark. It simply goes on burning.'],
+    ['Sweet', 'Pour two cups. Somebody is glad you are here.'],
+    ['Scary', 'That was not the wind. The wind does not know your name.'],
+    ['Motivating', 'Graveyards are full of people who waited for the perfect moment. Go now.'],
+    ['Sad', 'Grief is only love with nowhere left to haunt.'],
+    ['Inspiring', 'You were not built to fit in the coffin they made for you. Climb out.'],
+    ['Sweet', 'The moon came out tonight just to look at you.'],
+    ['Scary', 'Something under the bed has learned to breathe when you do.'],
+    ['Motivating', 'Fall down seven times, rise eight. Zombies have been doing this for years.'],
+    ['Sad', 'Sometimes the loudest thing in the room is the chair nobody sits in now.'],
+    ['Inspiring', 'Night is just the sky showing you how many lights it has been hiding.'],
+    ['Sweet', 'Your weirdness is the best room in this haunted house.'],
+    ['Scary', 'The last person to read this looked behind them too.'],
+    ['Motivating', 'Be the plot twist. Nobody saw you coming, and that is your advantage.'],
+    ['Sad', 'Old photographs are the politest ghosts we have.'],
+    ['Inspiring', 'Roots grow in the dark. So do you, even on days it feels like nothing is happening.'],
+    ['Sweet', 'Even the crypt feels cosier when you visit.'],
+    ['Scary', 'The attic light is on again. You never went up there.'],
+    ['Motivating', 'Your fear is a very small monster in a very large coat. Pull the coat off.'],
+    ['Sad', 'It is strange how a song can bring back someone the world has already buried.'],
+    ['Inspiring', 'Stitch yourself back together. Scars are just proof the seams held.'],
+    ['Sweet', 'If you were a ghost, I would leave the door open.'],
+    ['Scary', 'Nobody remembers who built the fourteenth step.'],
+    ['Motivating', 'Boots on. Chin up. Tea hot. Nothing out there is scarier than you.'],
+    ['Sad', 'Some people leave so quietly that you only hear it years later.'],
+    ['Inspiring', 'The bravest thing in any horror story is the one who goes back for a friend.'],
+    ['Sweet', 'Your laugh could wake the dead, and they would thank you for it.'],
+    ['Scary', 'The phone rings at three. The number is yours.'],
+    ['Motivating', 'Vampires do not wait to be invited twice. Go after what you want.'],
+    ['Sad', 'Lonely is a hallway that keeps its lights on for no one.'],
+    ['Inspiring', 'A phoenix does not ask the ashes for permission.'],
+    ['Sweet', 'There is a seat saved for you at every table in this school.'],
+    ['Scary', 'The dolls have moved again. Only a little. Only toward you.'],
+    ['Motivating', 'Haunt your goals. Show up every night until they give in.'],
+    ['Sad', 'Tea goes cold so quietly. So do some friendships. Call them today.'],
+    ['Inspiring', 'You are somebody\'s favourite legend, and you have not reached the good part yet.'],
+    ['Sweet', 'The bats saved you the best spot in the belfry.'],
+    ['Scary', 'Do not answer if you hear your mother calling from the basement. She is upstairs.'],
+    ['Motivating', 'They buried you in doubts. They forgot that dead things rise here.'],
+    ['Sad', 'The moon has been alone a long time, and still it shows up every night.'],
+    ['Inspiring', 'Darkness is only the part of the map nobody has been brave enough to draw.'],
+    ['Sweet', 'You make Friday the thirteenth feel lucky.'],
+    ['Scary', 'Your shadow was a little late this morning. Ask it where it has been.'],
+    ['Motivating', 'Small steps count. Even the slowest mummy always catches up.'],
+    ['Sad', 'Every abandoned house still remembers somebody\'s birthday.'],
+    ['Inspiring', 'Be the light in the window of the old house. Somebody lost is looking for it.'],
+    ['Sweet', 'I would share my last sugar skull with you.'],
+    ['Scary', 'You locked that door. You remember locking that door.'],
+    ['Motivating', 'Nobody ever defeated a monster by apologising to it. Stand your ground.'],
+    ['Sad', 'Some nights the heart is a very old house, and all of its floors creak.'],
+    ['Inspiring', 'The storm is how the lab comes alive. Hold on. Something great is about to wake.'],
+    ['Sweet', 'You have the kind of soul that even Death would hold the door for.'],
+    ['Scary', 'Everyone in the old school photo is smiling. One of them is looking at you.'],
+    ['Motivating', 'Rest in your coffin if you must, but set an alarm. You have things to do.'],
+    ['Sad', 'We leave the porch light on long after we know that no one is coming.'],
+    ['Inspiring', 'What they called cursed, you can call a gift. Rename it and walk on.'],
+    ['Sweet', 'The night is long, but you are not alone in it. Look at all these stars.'],
+    ['Scary', 'The whispering stopped the moment you started reading this.'],
+    ['Motivating', 'A wolf does not lose sleep over the opinions of sheep. Howl anyway.'],
+    ['Sad', 'Some goodbyes echo in the catacombs for years.'],
+    ['Inspiring', 'Every legend began as someone the village did not understand.'],
+    ['Sweet', 'You are proof that not everything that goes bump in the night is bad.'],
+    ['Scary', 'Do not count the people in the room when the lights come back on.'],
+    ['Motivating', 'If the road is cursed, walk it with better boots.'],
+    ['Sad', 'Forgotten things do not disappear. They wait in attics, hoping.'],
+    ['Inspiring', 'Your broken pieces make very good armour. Wear them well.'],
+    ['Sweet', 'Somebody smiled today because you exist. They just did not tell you.'],
+    ['Scary', 'There are four of you in the mirror tonight. Only three of you blinked.'],
+    ['Motivating', 'Be so fangtastic they check under the bed for you.'],
+    ['Sad', 'It is hard to be the only one who still sees the ghost. Keep them company anyway.'],
+    ['Inspiring', 'Even in the deepest grave, a seed knows exactly which way is up.'],
+    ['Sweet', 'Your friendship is the only spell that has ever really worked.'],
+    ['Scary', 'The thing in the woods can do your voice now. It is practising.'],
+    ['Motivating', 'Today is a blank tombstone. Write something better than they expected.'],
+    ['Sad', 'Tears dry and bones remain. Be gentle with what is left of you today.'],
+    ['Inspiring', 'You came through the dark forest once. You can draw the map for someone else.'],
+    ['Sweet', 'If I had a heart that beat, it would beat for this school.'],
+    ['Scary', 'Someone has been reading your diary. They left corrections.'],
+    ['Motivating', 'A closed gate only stops people who are not willing to climb.'],
+    ['Sad', 'Winter comes to the graveyard first. Spring comes there too, just a little later.'],
+    ['Inspiring', 'Monsters are only heroes the wrong person wrote about. Write your own story.'],
+    ['Sweet', 'Saving you a cup. Saving you a seat. Saving you from the bats.'],
+    ['Scary', 'The elevator stopped on a floor this school does not have.'],
+    ['Motivating', 'Dead tired is still not dead. Finish what you started.'],
+    ['Sad', 'Some songs only play in empty ballrooms now, and still they play beautifully.'],
+    ['Inspiring', 'Light one small candle today. You have no idea who is watching from the dark.'],
+    ['Sweet', 'You are somebody\'s reason to stay up past midnight.'],
+    ['Scary', 'Your name is already carved here. Nobody can say who did it.'],
+    ['Motivating', 'Rattle your chains. Let them know you are still here.'],
+    ['Sad', 'You can miss someone and still be walking forward. Ghosts travel well.'],
+    ['Inspiring', 'The moon has no light of its own, and it still got the whole night sky.'],
+    ['Sweet', 'Nobody does tragic and gorgeous like you do.'],
 ];
-const VOICE_PLACES = ['closet', 'stairs', 'attic', 'basement', 'hallway', 'bathroom', 'kitchen', 'window', 'door', 'garage', 'bed', 'garden', 'roof', 'shed'];
-function voiceBrain() {
-    let story = null, beat = 0, offered = false;
-    const told = [], turnOf = {};
-    const cycle = (key, lines) => { const i = turnOf[key] || 0; turnOf[key] = i + 1; return lines[i % lines.length]; };
-    const fresh = (want) => {
-        if (want)
-            return want;
-        const left = VOICE_STORIES.filter(s => !told.includes(s.id));
-        if (!left.length)
-            told.length = 0;
-        const pool = left.length ? left : VOICE_STORIES;
-        return pool[Math.floor(Math.random() * pool.length)];
-    };
-    const begin = (want, lead = '') => {
-        story = fresh(want);
-        beat = 0;
-        told.push(story.id);
-        return (lead ? lead + ' ' : '') + story.beats[0][0];
-    };
-    const carryOn = () => (story ? ' ' + cycle('back', ['Anyway. You never answered me.', 'Now, where was I. The question still stands.', 'We were in the middle of something.']) : ' ' + cycle('ask', ['Do you want a story?', 'Tell me what scares you.', 'Shall I tell you one?']));
-    const IS_YES = /^(yes|yeah|yea|yep|yup|ya|y|sure|ok|okay|maybe|probably|i do|i did|i would|i have|of course|definitely|always|sometimes|kind of|uh huh|go on|please|why not)\b/;
-    const IS_NO = /^(no|nope|nah|n|never|not really|not|i don'?t|i didn'?t|i wouldn'?t|i haven'?t|no way|hell no)\b/;
-    return (raw) => {
-        const t = raw.toLowerCase().replace(/[’]/g, "'").trim();
-        /* Real trouble comes first, and the game stops for it. */
-        if (/(kill|hurt|harm)(ing)? (myself|me)|suicid|want to die|end my life|self.?harm|someone is (hurting|following|touching)|abus(e|ed|ing)|not safe|i'?m in danger|call the police/.test(t)) {
-            story = null;
-            return 'I am stepping out of the story now, because this matters more. This is only a pre-written game and I cannot help the way a person can. Please tell someone you trust, like a parent, teacher or friend, right now. If you might be in danger, call your local emergency number. You deserve real help.';
-        }
-        if (/\b(stop|too scary|too scared|really scared|actually scared|scared for real|don'?t like this|i'?m done|make it stop|i want to stop|enough)\b/.test(t)) {
-            story = null;
-            offered = false;
-            return 'All right, we can stop. It was only a story, none of it is real, and nothing is behind you. Turn a light on if you like. I will be here if you ever want a gentler one.';
-        }
-        if (/\b(my name is|i'?m called|call me|i live (in|at|on)|my address|my school is|i go to|my number|years old|my age|i'?m \d+)\b|\d{5,}/.test(t))
-            return cycle('private', ['Keep that to yourself. Never hand your real details to a voice in a phone, not even me.', 'I do not want to know that. Stories work better when they do not know who you are.']) + carryOn();
-        if (/\b(are you|r u|you) (an? )?(ai|bot|robot|real|human|person|alive|chatgpt|computer)|who (made|wrote) you|real person/.test(t))
-            return 'No, there is no one here. I am pre-written whispers inside a coffin-shaped phone, made for Mumtea High. It works anyway, doesn\'t it?' + carryOn();
-        if (/(can|could) you (see|hear|watch)|are you watching|where (do )?(am|i live)|do you know where/.test(t))
-            return cycle('see', ['No. I am only words on a tiny screen, I cannot see or hear a thing. But you did just check behind you, didn\'t you?', 'Not at all. This is only a story on a screen. That is what makes it fun to be scared.']) + carryOn();
-        if (/(who|what) are you|your name|where are you|what do you want/.test(t))
-            return cycle('who', ['I am the Voice. I came with the iCoffin. Nobody remembers installing me.', 'People call me the Voice. I live under the lid, and I collect the stories nobody finishes.', 'I want what any story wants. For you to stay until the end.']) + carryOn();
-        if (/^(hi|hello|hey|hiya|yo|sup|good (morning|evening|night)|what'?s up)\b/.test(t))
-            return cycle('hi', ['Hello. You came back to the lid. They usually do.', 'Hello to you too. It is quiet in here.', 'There you are.']) + carryOn();
-        if (/\b(bye|goodbye|goodnight|good night|gotta go|got to go|see you|leaving)\b/.test(t)) {
-            story = null;
-            offered = false;
-            return 'Close the lid gently on your way out. Sleep well. It is only a story, after all.';
-        }
-        if (/\b(thank|thanks|thx|love (this|you|it)|cool|nice|awesome|so good)\b/.test(t) && t.length < 30)
-            return cycle('thanks', ['You are very welcome. Nobody ever thanks me.', 'Polite. The polite ones get the slow stories.']) + carryOn();
-        if (/\b(not scary|boring|bored|lame|not scared|that'?s it|weak)\b/.test(t))
-            return cycle('brave', ['Good. The ones who are not scared stop checking behind them.', 'Mm. You said the same thing in your last story too.', 'That is what I like about you. You will stay up later than you meant to.']) + carryOn();
-        if (/\b(haha|lol|lmao|funny|hehe)\b/.test(t))
-            return cycle('laugh', ['Laugh if it helps. It does help, a little.', 'Yes. That is the sound most people make first.']) + carryOn();
-        if (/\b(stupid|shut up|hate you|dumb|idiot|sucks)\b/.test(t))
-            return cycle('rude', ['Careful. I keep everything anyone says near the lid.', 'That is all right. I have been called worse by things with more teeth.']) + carryOn();
-        /* Naming a fear starts the story for it, even in the middle of another one. */
-        const named = VOICE_STORIES.find(s => s.fears.test(t) && s !== story && !told.includes(s.id));
-        if (named && (!story || /afraid|scared|fear|scare|story|tell me|about|hate|creep/.test(t) || t.split(/\s+/).length <= 3))
-            return begin(named, cycle('fear', ['Ah. Good choice. I know one about that.', 'Oh, that. Sit down.', 'People do not usually admit that so quickly.']));
-        if (story) {
-            const answer = IS_YES.test(t) ? 1 : IS_NO.test(t) ? 2 : 3, place = VOICE_PLACES.find(p => new RegExp('\\b' + p).test(t));
-            beat++;
-            const next = story.beats[beat], react = next[answer] || (answer === 3 && place ? 'The ' + place + '. Of course it was.' : answer === 3 ? cycle('other', ['Hm. I will remember you said that.', 'Is that so.', 'That is not what most people say.', 'Interesting.']) : '');
-            const line = (react ? react + ' ' : '') + next[0];
-            if (beat === story.beats.length - 1) {
-                story = null;
-                offered = true;
-                return line + ' ' + cycle('after', ['Another one? Or tell me what scares you.', 'Did you like that one? I have more.', 'Shall I tell you another, or would you like to sleep tonight?']);
-            }
-            return line;
-        }
-        if (offered && IS_NO.test(t)) {
-            offered = false;
-            return cycle('nomore', ['Very well. I will just be here, under the lid. Say something when you change your mind.', 'As you like. Tell me if you hear anything.']);
-        }
-        if (IS_YES.test(t) || /story|tell me|another|again|more|scare me|go ahead|start|another one/.test(t))
-            return begin();
-        if (IS_NO.test(t))
-            return 'Then tell me what you are afraid of. The dark, mirrors, spiders, dolls, deep water, footsteps on the stairs. I know something about all of them.';
-        return cycle('lost', ['I do not know that one yet. Do you want a story, or will you tell me what you are afraid of? The dark? Mirrors? Dolls?', 'Hm. Say that again in the dark and see how it sounds. Shall I tell you a story?', 'Words get strange in here. Try telling me what scares you. Spiders, deep water, stairs at night.']);
-    };
-}
 (function () {
-    const VOICE_NAME = 'The Voice';
-    const input = $('#coffinWords'), send = $('#coffinSend'), form = $('#coffinForm');
-    const answer = voiceBrain();
-    let waiting = false;
-    say(VOICE_NAME, "You opened the lid. Most people don't. Do you want a story, or do you want to tell me what you're afraid of?");
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const words = input.value.trim();
-        if (!words || waiting)
-            return;
-        input.value = '';
-        say('You', words);
-        waiting = true;
-        send.disabled = true;
-        const reply = answer(words), screen = $('#screen');
-        const dots = el('div', { cls: 'msg coffindots' }, 'The Voice is thinking...');
-        screen.append(dots);
-        screen.scrollTop = screen.scrollHeight;
-        /* a short pause, as if it is deciding how much to tell you */
-        window.setTimeout(() => { dots.remove(); say(VOICE_NAME, reply); waiting = false; send.disabled = false; input.focus(); }, Math.min(1900, 650 + reply.length * 5));
-    });
+    const when = $('#coffinDate'), kind = $('#coffinKind'), words = $('#coffinWords');
+    /* The same day gives everyone the same whisper, and the list goes all the way round before any repeat. */
+    function show() {
+        const now = new Date(), day = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+        const [type, text] = COFFIN_QUOTES[(day * 37) % COFFIN_QUOTES.length];
+        when.textContent = now.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+        kind.textContent = type;
+        kind.dataset.kind = type.toLowerCase();
+        words.textContent = text;
+        const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5).getTime();
+        window.setTimeout(show, midnight - now.getTime());
+    }
+    show();
 })();
 // Pictures are Microsoft Fluent Emoji (MIT licence), kept inside the page so they appear at once.
 const REACTIONS = [
@@ -8566,7 +8505,6 @@ async function register(rawName, rawEmail, password, confirm) {
     if (blend)
         await updateMe({ blend });
     award(10);
-    say('Earl Ghoul', name + ' just enrolled. New ghoul in the hallway!');
     return 'Welcome to Mumtea High, ' + name + '. Dress your new ghoul and press Save.';
 }
 /* The server function finds the email for this username, so the browser never sees anyone's address. */
@@ -8923,7 +8861,6 @@ async function startBackend() {
         if (blend)
             await updateMe({ blend });
         award(10);
-        say('Earl Ghoul', (myRecord()?.name || 'Someone') + ' just enrolled. New ghoul in the hallway!');
         refreshAll('');
         history.replaceState(null, '', '#profile');
         go('profile');

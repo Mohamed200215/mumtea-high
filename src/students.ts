@@ -75,7 +75,6 @@ async function register(rawName: string, rawEmail: string, password: string, con
   const blend = store.get<string | null>('blend', null);
   if (blend) await updateMe({ blend });
   award(10);
-  say('Earl Ghoul', name + ' just enrolled. New ghoul in the hallway!');
   return 'Welcome to Mumtea High, ' + name + '. Dress your new ghoul and press Save.';
 }
 /* The server function finds the email for this username, so the browser never sees anyone's address. */
@@ -336,7 +335,6 @@ async function startBackend(): Promise<void> {
     const blend = store.get<string | null>('blend', null);
     if (blend) await updateMe({ blend });
     award(10);
-    say('Earl Ghoul', (myRecord()?.name || 'Someone') + ' just enrolled. New ghoul in the hallway!');
     refreshAll('');
     history.replaceState(null, '', '#profile');
     go('profile');

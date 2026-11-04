@@ -15,6 +15,5 @@ declare function drawBones(): void;
 declare function openGame(id: string, scroll?: boolean): void;
 declare const supabase: { createClient(url: string, key: string, options?: unknown): any };
 declare function paintDolls(): void;
-declare function say(who: string, t: string): void;
 declare function go(v: string, postId?: string): void;
 declare function doll(o: Doll, opt?: { head?: boolean; label?: string }): string;
