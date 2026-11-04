@@ -440,13 +440,12 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .f10{left:27%;top:91%;animation:fxrock 7s ease-in-out infinite}
 .f11{right:27%;top:90%;animation:fxtumble 22s linear infinite}
 .f12{right:7%;top:84%;animation:fxrock 8s ease-in-out infinite reverse}
-.f13{left:0;top:78%;animation:fxshoot 38s linear infinite}
+.f13{left:14%;top:74%;animation:fxglow 7s ease-in-out infinite}
 .f14{left:47%;top:84%;animation:fxfloat 9s ease-in-out infinite reverse}
 @keyframes fxfloat{50%{transform:translate(5px,-16px)}}
 @keyframes fxrock{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) translateY(-6px)}}
 @keyframes fxtumble{to{transform:rotate(360deg)}}
 @keyframes fxglow{50%{opacity:.45;transform:scale(1.06)}}
-@keyframes fxshoot{from{transform:translateX(-140px)}to{transform:translateX(calc(100vw + 140px))}}
 
 /* empties the spirit meter once it is full */
 .meterreset{border:2px solid #000;background:var(--pink);color:#000;font:800 11px/1.15 var(--body);text-transform:uppercase;padding:5px 6px;cursor:pointer;box-shadow:2px 2px 0 #000}

@@ -1,9 +1,9 @@
 /* ---------- Say Fangs: take a picture on your choice of device, get what that device makes, choose to post it ---------- */
 type CamOp = [name: 'brightness' | 'contrast' | 'saturate' | 'sepia' | 'hue', amount: number];
-/* A sticker sits around the edge of the picture: art, across, down and size as parts of the picture, then its tilt. */
+/* A sticker sits around the edge of the picture: art, across and down as parts of the picture, width as a part of its shorter side, then its tilt. */
 type CamSticker = [art: string, x: number, y: number, size: number, tilt: number];
 interface CamFilter { name: string; group: string; ops: CamOp[]; tint?: [colour: string, blend: GlobalCompositeOperation, alpha: number]; vignette?: number; stickers?: CamSticker[] }
-const COLOUR = 'Colour filters', SPOOKY = 'Spooky stickers', CUTE = 'Cute stickers';
+const COLOUR = 'Colour filters', PICTURES = 'Picture filters';
 const CAM_FILTERS: CamFilter[] = [
   { name: 'No filter', group: COLOUR, ops: [] },
   { name: 'Graveyard', group: COLOUR, ops: [['saturate', 0], ['contrast', 1.25]], vignette: .55 },
@@ -15,12 +15,7 @@ const CAM_FILTERS: CamFilter[] = [
   { name: 'Ghostly', group: COLOUR, ops: [['brightness', 1.2], ['contrast', .8], ['saturate', .45]], tint: ['#d8fff8', 'screen', .18] },
   { name: 'Midnight Plum', group: COLOUR, ops: [['contrast', 1.15], ['brightness', .85]], tint: ['#6a1f86', 'soft-light', .8], vignette: .5 },
   { name: 'Tea Stain', group: COLOUR, ops: [['sepia', .35], ['saturate', 1.2]], tint: ['#c9812f', 'soft-light', .5] },
-  { name: 'Haunted', group: SPOOKY, ops: [['saturate', .6], ['contrast', 1.12]], tint: ['#35dcc8', 'soft-light', .3], vignette: .5, stickers: [['web', .13, .13, .27, 0], ['ghost', .87, .15, .24, 10], ['bat', .1, .52, .17, -14], ['spider', .91, .55, .14, 12], ['pumpkin', .13, .87, .25, -8], ['ghost', .87, .85, .19, -10]] },
-  { name: 'Coffin Club', group: SPOOKY, ops: [['saturate', .25], ['contrast', 1.2]], vignette: .6, stickers: [['crossbones', .13, .13, .23, -10], ['ball', .87, .13, .21, 8], ['candle', .09, .55, .18, -4], ['skull', .91, .52, .17, 12], ['coffin', .15, .85, .27, -10], ['headstone', .85, .85, .26, 6]] },
-  { name: 'Bloodsucker', group: SPOOKY, ops: [['saturate', 1.2], ['contrast', 1.15], ['brightness', .92]], tint: ['#c00028', 'soft-light', .6], vignette: .6, stickers: [['moon', .13, .13, .24, -12], ['bat', .85, .12, .25, 12], ['blood', .08, .47, .13, 0], ['blood', .93, .38, .11, 0], ['dagger', .12, .84, .24, -20], ['bat', .87, .82, .22, -14]] },
-  { name: 'Sweetheart', group: CUTE, ops: [['brightness', 1.06], ['saturate', 1.15]], tint: ['#ff7ac0', 'soft-light', .4], stickers: [['ribbon', .14, .13, .25, -14], ['heart', .87, .14, .24, 12], ['sparkles', .08, .52, .15, 0], ['heart', .92, .55, .14, -10], ['strawberry', .13, .86, .22, -12], ['lollipop', .87, .84, .25, 14]] },
-  { name: 'Bunny Tea', group: CUTE, ops: [['brightness', 1.05], ['sepia', .12]], tint: ['#fff0c0', 'soft-light', .4], stickers: [['bunny', .13, .14, .25, -10], ['blossom', .87, .12, .21, 10], ['blossom', .08, .54, .14, -18], ['sparkles', .92, .5, .15, 0], ['cup', .14, .85, .25, -6], ['cake', .86, .85, .24, 8]] },
-  { name: 'Daydream', group: CUTE, ops: [['brightness', 1.08], ['saturate', 1.1]], tint: ['#a8c8ff', 'soft-light', .35], stickers: [['rainbow', .16, .16, .28, -8], ['star', .87, .13, .22, 12], ['butterfly', .09, .53, .16, -14], ['sparkles', .92, .55, .15, 0], ['kitty', .14, .86, .25, -8], ['butterfly', .86, .85, .22, 14]] },
+  { name: 'Queen of the World', group: PICTURES, ops: [['brightness', 1.05], ['saturate', 1.1]], tint: ['#ff7ac0', 'soft-light', .3], stickers: [['crown', .19, .15, .34, -14], ['star', .74, .13, .48, 6], ['star', .26, .88, .44, -8], ['world', .83, .8, .34, 0]] },
 ];
 const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
 const POST_CARD = '#181019';
@@ -61,8 +56,8 @@ async function camStickers(c: CanvasRenderingContext2D, pw: number, ph: number, 
   const art = (f.stickers || []).map(st => { const img = new Image(); img.src = STICKER_ART[st[0]]; return img; });
   await Promise.all(art.map(img => img.decode().catch(() => {})));
   (f.stickers || []).forEach((st, i) => {
-    const w = st[3] * Math.min(pw, ph);
-    c.save(); c.translate(st[1] * pw, st[2] * ph); c.rotate(st[4] * Math.PI / 180); c.drawImage(art[i], -w / 2, -w / 2, w, w); c.restore();
+    const w = st[3] * Math.min(pw, ph), h = w * (art[i].naturalHeight / art[i].naturalWidth || 1);
+    c.save(); c.translate(st[1] * pw, st[2] * ph); c.rotate(st[4] * Math.PI / 180); c.drawImage(art[i], -w / 2, -h / 2, w, h); c.restore();
   });
 }
 
@@ -221,13 +216,13 @@ function postPhoto(post: TeaPost): HTMLElement {
     tint.style.background = f.tint ? f.tint[0] : 'none'; tint.style.opacity = f.tint ? String(f.tint[2]) : '0'; tint.style.mixBlendMode = f.tint ? f.tint[1] : 'normal';
     vig.style.background = f.vignette ? 'radial-gradient(circle,transparent 45%,rgba(0,0,0,' + f.vignette + ') 100%)' : 'none';
     stickerLayer.textContent = '';
-    (f.stickers || []).forEach((st, n) => stickerLayer.append(el('img', { cls: 'camsticker', src: STICKER_ART[st[0]], alt: '', style: 'left:' + st[1] * 100 + '%;top:' + st[2] * 100 + '%;width:' + st[3] * 100 + '%;--tilt:' + st[4] + 'deg;animation-delay:' + n * 70 + 'ms' })));
+    (f.stickers || []).forEach((st, n) => stickerLayer.append(el('img', { cls: 'camsticker', src: STICKER_ART[st[0]], alt: '', style: 'left:' + st[1] * 100 + '%;top:' + st[2] * 100 + '%;width:' + st[3] * 100 * Math.min(1, device.polaroid ? 1 : device.sh / device.sw) + '%;--tilt:' + st[4] + 'deg;animation-delay:' + n * 70 + 'ms' })));
     filterName.textContent = f.name;
     dial.setAttribute('aria-label', 'Filter: ' + f.name + '. Press for the next one.');
     dial.style.setProperty('--turn', filterAt * 360 / CAM_FILTERS.length + 'deg');
     $$('button', chips).forEach((b, n) => b.setAttribute('aria-pressed', String(n === filterAt)));
   }
-  [COLOUR, SPOOKY, CUTE].forEach(group => {
+  [COLOUR, PICTURES].forEach(group => {
     const row = el('div', { cls: 'chips', role: 'group', 'aria-label': group });
     CAM_FILTERS.forEach((f, i) => { if (f.group === group) row.append(el('button', { cls: 'chip', type: 'button', onclick() { setFilter(i); } }, f.name)); });
     chips.append(el('p', { cls: 'camgroup', text: group }), row);
@@ -255,6 +250,7 @@ function postPhoto(post: TeaPost): HTMLElement {
       screen.style.borderRadius = d.sr / d.sw * 100 + '% / ' + d.sr / d.sh * 100 + '%';
       devStage.append(screen); devSide.append(controls);
     }
+    setFilter(filterAt);
     if (stream) video.play().catch(() => {});
   }
   document.fonts.load('800 20px Nunito').catch(() => []).then(() => {
