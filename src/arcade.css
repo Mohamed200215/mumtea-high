@@ -592,3 +592,54 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .gpanel[data-game="spill"]{max-width:960px}
 .gpanel[data-game="spill"] canvas{aspect-ratio:16/9;border:3px solid #a50a68;border-radius:8px;box-shadow:0 0 0 3px #ff9ccb,0 0 0 6px #000;margin:6px}
 .gpanel[data-game="spill"] canvas{width:calc(100% - 12px)}
+
+/* the classroom */
+.classroom{max-width:980px;margin:0 auto;border:4px solid #000;box-shadow:6px 7px 0 var(--ca);background:#3a1548;overflow:hidden}
+.classroom .classhead{margin:0;padding:6px 14px;background:#120618;border-bottom:3px solid #000}
+.classroom .classhead small{color:var(--ca)}
+.roomwall{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:0;align-items:end;min-height:430px;padding:20px 0 0 20px;background:#3a1548 linear-gradient(#ffffff0d,#ffffff0d) 0 0/100% 8px no-repeat}
+.chalkboard{position:relative;align-self:start;margin-bottom:64px;background:#7a4a21;padding:12px;border:3px solid #000;box-shadow:3px 4px 0 #000}
+.chalkface{min-height:270px;padding:18px 22px 16px;background:#1f5c3a;border:3px solid #123b25;color:#f4fff4;box-shadow:inset 0 0 40px #0c331e;font-family:"Segoe Print","Bradley Hand","Comic Sans MS",cursive}
+.chalkface h3,.chalkface h3.q{margin:0 0 10px;color:var(--ca);font:400 clamp(22px,3vw,30px)/1.2 var(--display);text-transform:none;outline:none;text-shadow:0 0 1px #fff8,1px 1px 0 #0c331e}
+.chalkface .classtext{font-size:17px;line-height:1.6;color:#f4fff4;margin:0 0 14px;text-shadow:0 0 1px #fff6}
+.chalkface .progress{height:7px;margin:14px 0 0;background:#0c331e;border:1px dashed #f4fff477}
+.chalkface .progress i{background:#f4fff4}
+.chalkface .row{gap:8px}
+.chalkface .opts{gap:7px}
+.chalkface .opts button{background:transparent;color:#f4fff4;border:2px dashed #f4fff4aa;font:700 15px/1.35 "Segoe Print","Bradley Hand","Comic Sans MS",cursive;border-radius:8px}
+.chalkface .opts button:hover:not(:disabled){background:#f4fff41f;border-color:#fff}
+.chalkface .opts button:disabled{opacity:.6;cursor:default}
+.chalkface .opts button.rightanswer,.chalkface .opts button.rightanswer:disabled{background:#fff3b0;color:#123b25;border:2px solid #fff;opacity:1}
+.chalkface .opts button.wronganswer,.chalkface .opts button.wronganswer:disabled{background:#ff9db8;color:#3a0716;border:2px solid #fff;opacity:1}
+.chalkface .classfeedback p{margin:10px 0 8px;color:#fff3b0;font-size:15px;line-height:1.45}
+.chalktray{position:absolute;left:12px;right:12px;bottom:0;height:12px;background:#5e3616;border-top:2px solid #000}
+.chalktray i{position:absolute;top:-6px;left:9%;width:28px;height:7px;background:#fff6fb;border-radius:3px;border:1px solid #000}
+.chalktray i+i{left:15%;width:20px;background:#ff8cc8}
+.chalktray b{position:absolute;top:-10px;right:8%;width:46px;height:12px;background:#2c2436;border:2px solid #000;border-radius:3px}
+.roomposter{position:absolute;right:14px;top:14px;width:118px;line-height:0;border:3px solid #fff6fb;box-shadow:2px 3px 0 #000;transform:rotate(3deg);opacity:.92}
+.roomposter svg{display:block;width:100%;height:auto}
+.teacher{position:relative;z-index:2;align-self:end;margin:0 0 -12px -46px;height:396px;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none}
+.teacherart{height:330px;line-height:0}
+.teacherart svg{display:block;height:100%;width:100%;overflow:visible!important;transform:scaleX(-1);filter:drop-shadow(0 4px 2px #0007)}
+.teacherbubble{position:absolute;right:16px;top:46px;z-index:3;margin:0;max-width:150px;padding:6px 10px;background:#fff6fb;color:#2a1430;border:2px solid #000;border-radius:12px;font:800 13px/1.25 var(--body);box-shadow:2px 2px 0 #000}
+.teacherbubble::after{content:"";position:absolute;left:50%;bottom:-10px;border:6px solid transparent;border-top:8px solid #000;margin-left:-6px}
+.roomkids{position:relative;z-index:3;margin-top:-84px;aspect-ratio:900/120;line-height:0;pointer-events:none}
+.roomkids svg{display:block;width:100%;height:100%}
+.roomkids .kid{animation:kidbob 3.6s ease-in-out infinite}
+.roomkids .kidhand{display:none}
+.roomkids.asking .kidhand{display:block;animation:kidhand .8s ease-in-out infinite}
+@keyframes kidbob{50%{transform:translateY(-3px)}}
+@keyframes kidhand{50%{transform:rotate(4deg) translateY(-2px)}}
+@media (max-width:720px){
+  .roomwall{grid-template-columns:minmax(0,1fr);padding:12px 12px 0;min-height:0}
+  .chalkboard{margin-bottom:0;padding:8px}
+  .chalkface{padding:12px 14px;min-height:0}
+  .roomposter{display:none}
+  .teacher{height:230px;margin:6px 0 -8px;align-items:flex-end}
+  .teacherart{height:210px;width:130px;margin-right:8px}
+  .teacherbubble{right:150px;top:70px}
+  .roomkids{margin-top:-40px;aspect-ratio:auto;height:74px}
+}
+@media (prefers-reduced-motion:reduce){.roomkids .kid,.roomkids.asking .kidhand{animation:none}}
+.gcard[data-game="spill"] .gart{background:#fff6fb}
+.gcard[data-game="spill"] .gart img{width:58%;max-width:none;filter:none}

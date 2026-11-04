@@ -120,6 +120,40 @@ function renderClasses(): void {
 function classHeader(c: SchoolClass, step: string): HTMLElement {
   return el('div', { cls: 'classhead' }, el('button', { cls: 'linkish', type: 'button', onclick() { renderClasses(); classRoomFocus(); } }, 'All classes'), el('small', { text: c.name + ': ' + step }));
 }
+/* ---------- the classroom: it is always Ms. Fangtastic at the chalkboard, whoever is logged in ---------- */
+const CLASS_KIDS = [['#17101c', ''], ['#f08fb4', 'scarf'], ['#35dcc8', 'horns'], ['#a0392a', ''], ['#6a1f86', 'ears'], ['#f4d35e', 'bow'], ['#19b7e8', ''], ['#5a2c17', 'scarf']];
+const classKids = (): string => '<svg viewBox="0 0 900 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><rect y="88" width="900" height="32" fill="#7a4a21"/><rect y="88" width="900" height="6" fill="#a8703a"/>' + CLASS_KIDS.map(([hair, extra], i) => {
+  const x = 62 + i * 112, line = 'stroke="#14101a" stroke-width="3" stroke-linejoin="round"';
+  const add = extra === 'horns' ? '<path d="M-24 -30L-34 -56L-12 -42ZM24 -30L34 -56L12 -42Z" fill="#fff6e6" ' + line + '/>' : extra === 'ears' ? '<path d="M-24 -30L-30 -60L-8 -42ZM24 -30L30 -60L8 -42Z" fill="' + hair + '" ' + line + '/>' : '';
+  const top = extra === 'bow' ? '<path d="M0 -46L-22 -60V-34ZM0 -46L22 -60V-34Z" fill="#ff1f8f" ' + line + '/>' : '';
+  const raised = i === 2 ? '<g class="kidhand"><path d="M34 40L52 -38" stroke="#14101a" stroke-width="16" stroke-linecap="round"/><path d="M34 40L52 -38" stroke="#c9f4d8" stroke-width="10" stroke-linecap="round"/></g>' : '';
+  const head = extra === 'scarf' ? '<path d="M-31 40C-36 -30 -22 -50 0 -50C22 -50 36 -30 31 40Z" fill="' + hair + '" ' + line + '/><path d="M-18 -36C-8 -42 8 -42 18 -36M-24 -10C-10 -2 10 -2 24 -10" fill="none" stroke="#14101a" stroke-opacity=".35" stroke-width="2"/>' : '<circle cy="-10" r="33" fill="' + hair + '" ' + line + '/><path d="M-14 -34C-8 -18 -12 6 -18 16M6 -38C12 -18 10 6 14 18" fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="3"/>';
+  return '<g transform="translate(' + x + ' 64)"><g class="kid" style="animation-delay:' + (i * .45) + 's">' + raised + '<path d="M-44 60C-44 26 -24 18 0 18C24 18 44 26 44 60Z" fill="' + ['#2c2436', '#6a1f86', '#14101a', '#b80e63'][i % 4] + '" ' + line + '/>' + add + head + top + '</g></g>';
+}).join('') + '<rect y="104" width="900" height="16" fill="#5e3616"/></svg>';
+const CLASS_TALK: Record<string, string[]> = {
+  teach: ['Eyes on the board, ghouls.', 'Write this one down.', 'This will be on the test.', 'No talking in the back row.', 'Keep up. I only say it once.'],
+  ask: ['Pencils out.', 'No peeking at your neighbour.', 'Think before you answer.', 'Well? We are waiting.'],
+  right: ['Fangtastic!', 'Exactly right.', 'See? You were listening.'],
+  wrong: ['Nice try, ghoul.', 'Not quite. Look at the board.', 'We will work on that.'],
+  pass: ['Top of the class.'], fail: ['Back to your books. You can do this.'],
+};
+const classPick = (key: string): string => { const list = CLASS_TALK[key]; return list[Math.floor(Math.random() * list.length)]; };
+function classTeacher(holder: HTMLElement, pose: string, line: string): void {
+  holder.textContent = '';
+  const figure = el('div', { cls: 'teacherart' });
+  figure.innerHTML = drawGhoul(DOLLS.mumtea.look, { label: DOLLS.mumtea.name + ' teaching', pose: poseOf(pose), box: WIDE_BOX });
+  holder.append(el('p', { cls: 'teacherbubble', text: line }), figure);
+}
+function classroomScene(c: SchoolClass, step: string, pose: string, line: string, asking: boolean, ...board: Node[]): { scene: HTMLElement; teacher: HTMLElement } {
+  const look = CLASS_LOOKS[c.id], teacher = el('div', { cls: 'teacher' });
+  classTeacher(teacher, pose, line);
+  const poster = el('div', { cls: 'roomposter', 'aria-hidden': 'true' }); poster.innerHTML = look.art;
+  const kids = el('div', { cls: 'roomkids' + (asking ? ' asking' : ''), 'aria-hidden': 'true' }); kids.innerHTML = classKids();
+  const scene = el('section', { cls: 'classroom' }, classHeader(c, step),
+    el('div', { cls: 'roomwall' }, el('div', { cls: 'chalkboard' }, el('div', { cls: 'chalkface' }, ...board), el('div', { cls: 'chalktray', 'aria-hidden': 'true' }, el('i'), el('i'), el('b'))), poster, teacher), kids);
+  scene.style.setProperty('--ca', look.a);
+  return { scene, teacher };
+}
 /* The quiz only opens from the last page of the lesson. */
 function openLesson(c: SchoolClass, page: number): void {
   const room = $('#classRoom'), [title, text] = c.lesson[page], last = page === c.lesson.length - 1;
@@ -127,9 +161,9 @@ function openLesson(c: SchoolClass, page: number): void {
   const row = el('div', { cls: 'row' });
   if (page) row.append(el('button', { cls: 'pill ghost', type: 'button', onclick() { openLesson(c, page - 1); } }, 'Back'));
   row.append(el('button', { cls: 'pill', type: 'button', onclick() { if (last) openQuiz(c); else openLesson(c, page + 1); } }, last ? 'Take the quiz' : 'Next'));
-  room.append(el('section', { cls: 'panel classpanel' }, classHeader(c, 'lesson ' + (page + 1) + ' of ' + c.lesson.length),
-    el('div', { cls: 'progress' }, el('i', { style: 'width:' + ((page + 1) / c.lesson.length * 100) + '%' })),
-    el('h3', { tabindex: '-1', text: title }), el('p', { cls: 'classtext', text }), row));
+  room.append(classroomScene(c, 'lesson ' + (page + 1) + ' of ' + c.lesson.length, 'pointyou', classPick('teach'), false,
+    el('h3', { tabindex: '-1', text: title }), el('p', { cls: 'classtext', text }),
+    el('div', { cls: 'progress' }, el('i', { style: 'width:' + ((page + 1) / c.lesson.length * 100) + '%' })), row).scene);
   classRoomFocus();
 }
 function openQuiz(c: SchoolClass): void {
@@ -146,12 +180,13 @@ function openQuiz(c: SchoolClass): void {
       opts.querySelectorAll<HTMLButtonElement>('button').forEach(b => { b.disabled = true; if (b.textContent === q.a) b.classList.add('rightanswer'); });
       if (!isRight) (e.currentTarget as HTMLElement).classList.add('wronganswer');
       const final = at === c.quiz.length - 1;
+      classTeacher(room.querySelector('.teacher') as HTMLElement, isRight ? 'cheer' : 'shrug', classPick(isRight ? 'right' : 'wrong'));
       feedback.append(el('p', { text: (isRight ? 'Correct! ' : 'Not quite. ') + q.why }), el('button', { cls: 'pill', type: 'button', onclick() { if (final) finish(); else { at++; ask(); } } }, final ? 'See my result' : 'Next question'));
       feedback.querySelector('button')?.focus();
     } }, t)));
-    room.append(el('section', { cls: 'panel classpanel' }, classHeader(c, 'quiz question ' + (at + 1) + ' of ' + c.quiz.length),
-      el('div', { cls: 'progress' }, el('i', { style: 'width:' + (at / c.quiz.length * 100) + '%' })),
-      el('h3', { cls: 'q', tabindex: '-1', text: q.q }), opts, feedback));
+    room.append(classroomScene(c, 'quiz question ' + (at + 1) + ' of ' + c.quiz.length, 'pointyou', classPick('ask'), true,
+      el('h3', { cls: 'q', tabindex: '-1', text: q.q }), opts, feedback,
+      el('div', { cls: 'progress' }, el('i', { style: 'width:' + (at / c.quiz.length * 100) + '%' }))).scene);
     classRoomFocus();
   };
   const finish = (): void => {
@@ -164,9 +199,9 @@ function openQuiz(c: SchoolClass): void {
     const row = el('div', { cls: 'row' });
     if (passed) row.append(el('button', { cls: 'pill', type: 'button', onclick() { renderClasses(); classRoomFocus(); } }, 'Back to classes'));
     else row.append(el('button', { cls: 'pill', type: 'button', onclick() { openLesson(c, 0); } }, 'Read the lesson again'), el('button', { cls: 'pill ghost', type: 'button', onclick() { openQuiz(c); } }, 'Try the quiz again'));
-    room.append(el('section', { cls: 'panel classpanel' }, classHeader(c, 'result'),
+    room.append(classroomScene(c, 'result', passed ? 'y' : 'shrug', classPick(passed ? 'pass' : 'fail'), false,
       el('h3', { tabindex: '-1', text: passed ? 'Class finished!' : 'Not quite there' }),
-      el('p', { cls: 'classtext', text: 'You got ' + right + ' out of ' + c.quiz.length + '. ' + (passed ? (firstTime ? 'You earned ' + CLASS_BONES + ' bones.' : 'Nicely done.') : 'You need ' + PASS_MARK + ' to finish this class.') }), row));
+      el('p', { cls: 'classtext', text: 'You got ' + right + ' out of ' + c.quiz.length + '. ' + (passed ? (firstTime ? 'You earned ' + CLASS_BONES + ' bones.' : 'Nicely done.') : 'You need ' + PASS_MARK + ' to finish this class.') }), row).scene);
     classRoomFocus();
   };
   ask();
