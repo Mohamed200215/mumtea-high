@@ -395,7 +395,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .polaacts{flex:1 1 250px;min-width:0;padding-top:12px}
 .polaacts input{width:100%;margin-bottom:10px}
 .polanote{min-height:24px;margin:10px 0 0;font-weight:700}
-.postpola{display:block;width:min(100%,320px);height:auto;aspect-ratio:640/780;margin:8px 0;background:#181019}
+.postpola{display:block;width:min(100%,360px);height:auto;aspect-ratio:640/780;margin:8px 0;background:#181019}
 @media (max-width:640px){
   .fangcam{padding:10px 8px 14px;border-radius:18px}
   .cammain{grid-template-columns:minmax(0,1fr)}
@@ -418,44 +418,35 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .moregame:hover,.moregame:focus-visible{border-color:var(--pink);color:var(--paper)}
 .moregames .moreall{margin-top:16px}
 
-/* little figures drifting around the home page, behind everything */
+/* the school's own pictures drifting around the home page, behind everything */
 .stage{position:relative}
 .stage>.wrap{position:relative;z-index:1}
-.homefx{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.fx{position:absolute;display:block;opacity:.72}
-.fx img{display:block}
-.fxspider img,.fxcoffin img{filter:brightness(1.7) drop-shadow(0 0 3px rgba(255,246,251,.45))}
+.homefx{position:absolute;inset:0;overflow:hidden;pointer-events:none;--gutter:calc((100vw - 1080px) / 2)}
+.fx{position:absolute;display:block;opacity:.9}
+.fx img{display:block;max-width:100%;height:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
 .fx.side{display:none}
-@media (min-width:1180px){.fx.side{display:block}}
-.fxweb{left:0;top:0;transform-origin:0 0;animation:fxsway 9s ease-in-out infinite}
-.fxspider{right:calc(25% - 270px - 17px);top:0;animation:fxdangle 11s ease-in-out infinite}
-.fxspider::before{content:"";position:absolute;left:50%;bottom:70%;width:1px;height:400px;background:rgba(255,246,251,.4)}
-.fxghost{left:calc(25% - 270px - 26px);top:24%;animation:fxfloat 8s ease-in-out infinite}
-.fxbat{right:calc(25% - 270px - 22px);top:30%;animation:fxfloat 10s ease-in-out infinite reverse}
-.fxbat img,.fxflyer img{animation:fxflap .9s ease-in-out infinite;transform-origin:50% 40%}
-.fxskull{left:calc(25% - 270px - 20px);top:54%;animation:fxrock 7s ease-in-out infinite}
-.fxcup{right:calc(25% - 270px - 22px);top:58%;animation:fxrock 9s ease-in-out infinite}
-.fxcup i{position:absolute;top:-14px;left:38%;width:3px;height:13px;border-radius:3px;background:#fff6fb;filter:blur(1px);opacity:0;animation:fxsteam 3.6s ease-out infinite}
-.fxcup i+i{left:56%;animation-delay:1.8s}
-.fxmoon{left:9%;top:81%;animation:fxglow 7s ease-in-out infinite}
-.fxcandle{left:21%;top:91%;animation:fxflicker 2.8s ease-in-out infinite}
-.fxcoffin{right:11%;top:84%;animation:fxfloat 9s ease-in-out infinite}
-.fxflyer{left:0;top:87%;animation:fxfly 44s linear infinite}
-.fxspark{animation:fxtwinkle 5s ease-in-out infinite}
-.fxspark.s1{left:calc(25% - 270px - 11px);top:42%}
-.fxspark.s2{right:calc(25% - 270px - 9px);top:46%;animation-delay:1.7s}
-.fxspark.s3{right:24%;top:93%;animation-delay:3s}
-.fxspark.s4{left:29%;top:83%;animation-delay:.9s}
-@keyframes fxsway{50%{transform:rotate(3deg)}}
-@keyframes fxdangle{50%{transform:translateY(120px)}}
-@keyframes fxfloat{50%{transform:translate(6px,-18px)}}
-@keyframes fxflap{50%{transform:scaleY(.8)}}
+@media (min-width:1240px){.fx.side{display:flex;justify-content:center;width:calc(var(--gutter) - 14px)}}
+.fxl{left:6px}
+.fxr{right:6px}
+.f1{top:3%;animation:fxfloat 9s ease-in-out infinite}
+.f2{top:8%;animation:fxrock 7s ease-in-out infinite}
+.f3{top:27%;animation:fxfloat 11s ease-in-out infinite reverse}
+.f4{top:31%;animation:fxrock 8s ease-in-out infinite reverse}
+.f5{top:50%;animation:fxtumble 26s linear infinite}
+.f6{top:54%;animation:fxfloat 8s ease-in-out infinite}
+.f7{top:71%;animation:fxglow 6s ease-in-out infinite}
+.f8{top:72%;animation:fxtumble 34s linear infinite reverse}
+.f9{left:7%;top:84%;animation:fxfloat 10s ease-in-out infinite}
+.f10{left:27%;top:91%;animation:fxrock 7s ease-in-out infinite}
+.f11{right:27%;top:90%;animation:fxtumble 22s linear infinite}
+.f12{right:7%;top:84%;animation:fxrock 8s ease-in-out infinite reverse}
+.f13{left:0;top:78%;animation:fxshoot 38s linear infinite}
+.f14{left:47%;top:84%;animation:fxfloat 9s ease-in-out infinite reverse}
+@keyframes fxfloat{50%{transform:translate(5px,-16px)}}
 @keyframes fxrock{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) translateY(-6px)}}
-@keyframes fxsteam{0%{transform:none;opacity:0}30%{opacity:.5}100%{transform:translateY(-14px);opacity:0}}
-@keyframes fxglow{50%{opacity:.4;transform:scale(1.05)}}
-@keyframes fxflicker{0%,100%{opacity:.72}40%{opacity:.55}70%{opacity:.8}}
-@keyframes fxfly{from{transform:translateX(-60px)}to{transform:translateX(calc(100vw + 60px))}}
-@keyframes fxtwinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:.85;transform:none}}
+@keyframes fxtumble{to{transform:rotate(360deg)}}
+@keyframes fxglow{50%{opacity:.45;transform:scale(1.06)}}
+@keyframes fxshoot{from{transform:translateX(-140px)}to{transform:translateX(calc(100vw + 140px))}}
 
 /* empties the spirit meter once it is full */
 .meterreset{border:2px solid #000;background:var(--pink);color:#000;font:800 11px/1.15 var(--body);text-transform:uppercase;padding:5px 6px;cursor:pointer;box-shadow:2px 2px 0 #000}
@@ -469,3 +460,27 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .merlocker[hidden]{display:none}
 .merlocker h4{margin:0 0 10px;font:400 22px var(--display);color:var(--pink);text-transform:uppercase}
 .merrows{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px 18px}
+
+/* Say Fangs: the other devices */
+.devpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin:0 0 8px}
+.devtile{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--white);color:var(--paper-ink);border:2px solid #000;padding:6px 4px;cursor:pointer;box-shadow:2px 2px 0 #000;min-width:0}
+.devtile:hover{background:#ffe3f1}
+.devtile[aria-pressed="true"]{background:#ffc2e0;box-shadow:inset 0 0 0 3px var(--pink),2px 2px 0 #000}
+.devtile small{font:800 12px/1.15 var(--body);text-align:center}
+.devpic{display:flex;align-items:center;justify-content:center;height:66px;width:100%}
+.devpic canvas{width:auto;height:auto;max-width:100%;max-height:66px;aspect-ratio:auto;background:transparent;border:0;touch-action:auto}
+.devhint{margin:0 0 12px;font-weight:700}
+.fangcam[hidden],.devwrap[hidden]{display:none}
+.devwrap{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center;margin:0 0 12px}
+.devstage{position:relative;flex:0 1 auto;width:min(100%,calc(74vh * var(--ratio,1)),720px);line-height:0}
+.devbody{width:100%;height:auto;aspect-ratio:auto;background:transparent;border:0;touch-action:auto;border-radius:6px}
+.camscreen.indevice{position:absolute;aspect-ratio:auto}
+.indevice .camsquare{left:0;right:0;outline:0}
+.indevice .camside{display:none}
+.indevice .camwake{font-size:13px;padding:7px 12px}
+.devside{flex:0 0 auto;background:linear-gradient(160deg,#ff8cc6,#ff4fa8 40%,var(--pink-deep));border:3px solid #000;border-radius:20px;padding:12px;box-shadow:0 5px 0 #000}
+.polaprint.devshow{animation:devshow .45s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes devshow{from{transform:scale(.86);opacity:0}}
+@media (prefers-reduced-motion:reduce){.polaprint.devshow{animation:none}}
+.gcard[data-game="booth"] .gart{background:#fff6fb}
+.gcard[data-game="booth"] .gart img{width:82%;max-width:none;filter:none}

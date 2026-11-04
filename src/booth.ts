@@ -1,4 +1,4 @@
-/* ---------- Say Fangs: take a picture with the laptop camera, get a Polaroid, choose to post it ---------- */
+/* ---------- Say Fangs: take a picture on your choice of device, get what that device makes, choose to post it ---------- */
 type CamOp = [name: 'brightness' | 'contrast' | 'saturate' | 'sepia' | 'hue', amount: number];
 /* A sticker sits around the edge of the picture: art, across, down and size as parts of the picture, then its tilt. */
 type CamSticker = [art: string, x: number, y: number, size: number, tilt: number];
@@ -33,8 +33,8 @@ function camMatrix([n, v]: CamOp): number[] {
   const a = v * Math.PI / 180, cs = Math.cos(a), sn = Math.sin(a);
   return [.213 + cs * .787 - sn * .213, .715 - cs * .715 - sn * .715, .072 - cs * .072 + sn * .928, .213 - cs * .213 + sn * .143, .715 + cs * .285 + sn * .14, .072 - cs * .072 - sn * .283, .213 - cs * .213 - sn * .787, .715 - cs * .715 + sn * .715, .072 + cs * .928 + sn * .072];
 }
-function camShade(c: CanvasRenderingContext2D, size: number, f: CamFilter): void {
-  const img = c.getImageData(0, 0, size, size), d = img.data;
+function camShade(c: CanvasRenderingContext2D, w: number, h: number, f: CamFilter): void {
+  const img = c.getImageData(0, 0, w, h), d = img.data;
   f.ops.forEach(op => {
     if (op[0] === 'brightness' || op[0] === 'contrast') {
       const mul = op[1], add = op[0] === 'contrast' ? 127.5 * (1 - mul) : 0;
@@ -48,20 +48,20 @@ function camShade(c: CanvasRenderingContext2D, size: number, f: CamFilter): void
     }
   });
   c.putImageData(img, 0, 0);
-  if (f.tint) { c.save(); c.globalCompositeOperation = f.tint[1]; c.globalAlpha = f.tint[2]; c.fillStyle = f.tint[0]; c.fillRect(0, 0, size, size); c.restore(); }
+  if (f.tint) { c.save(); c.globalCompositeOperation = f.tint[1]; c.globalAlpha = f.tint[2]; c.fillStyle = f.tint[0]; c.fillRect(0, 0, w, h); c.restore(); }
   if (f.vignette) {
-    const g = c.createRadialGradient(size / 2, size / 2, size * .318, size / 2, size / 2, size * .707);
+    const size = Math.max(w, h), g = c.createRadialGradient(w / 2, h / 2, size * .318, w / 2, h / 2, size * .707);
     g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,' + f.vignette + ')');
-    c.fillStyle = g; c.fillRect(0, 0, size, size);
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
   }
 }
 
-async function camStickers(c: CanvasRenderingContext2D, size: number, f: CamFilter): Promise<void> {
+async function camStickers(c: CanvasRenderingContext2D, pw: number, ph: number, f: CamFilter): Promise<void> {
   const art = (f.stickers || []).map(st => { const img = new Image(); img.src = STICKER_ART[st[0]]; return img; });
   await Promise.all(art.map(img => img.decode().catch(() => {})));
   (f.stickers || []).forEach((st, i) => {
-    const w = st[3] * size;
-    c.save(); c.translate(st[1] * size, st[2] * size); c.rotate(st[4] * Math.PI / 180); c.drawImage(art[i], -w / 2, -w / 2, w, w); c.restore();
+    const w = st[3] * Math.min(pw, ph);
+    c.save(); c.translate(st[1] * pw, st[2] * ph); c.rotate(st[4] * Math.PI / 180); c.drawImage(art[i], -w / 2, -w / 2, w, w); c.restore();
   });
 }
 
@@ -159,7 +159,9 @@ async function showPostPhoto(img: HTMLImageElement): Promise<void> {
   img.src = photoCache.get(id) as string;
 }
 function postPhoto(post: TeaPost): HTMLElement {
-  const img = el('img', { cls: 'postpola', alt: 'Polaroid photo posted by ' + authorName(post), 'data-post': post.id, width: POLA_W, height: POLA_H }) as HTMLImageElement;
+  const img = el('img', { cls: 'postpola', alt: 'Photo posted by ' + authorName(post), 'data-post': post.id, width: POLA_W, height: POLA_H }) as HTMLImageElement;
+  /* Not every device makes a Polaroid shape: the post takes the shape of its picture once it arrives. */
+  img.addEventListener('load', () => { img.style.aspectRatio = img.naturalWidth + '/' + img.naturalHeight; });
   if (photoCache.has(post.id)) img.src = photoCache.get(post.id) as string;
   else if (photoWatch) photoWatch.observe(img);
   else showPostPhoto(img);
@@ -193,9 +195,13 @@ function postPhoto(post: TeaPost): HTMLElement {
           pad('up', 'Zoom in', '▲', () => setZoom(zoom + .25)), pad('left', 'Previous filter', '◀', () => setFilter(filterAt - 1)),
           shutter, pad('right', 'Next filter', '▶', () => setFilter(filterAt + 1)), pad('down', 'Zoom out', '▼', () => setZoom(zoom - .25))))));
   const printSlot = el('div', { cls: 'polaslot' });
-  const p = makePanel('booth', 'Say Fangs', 'Turn on your camera, pick a filter or some stickers, then press the pink button. Your picture stays on this device unless you choose to post it.', [chips, camera, printSlot], 'Turn on camera');
+  const cammain = camera.querySelector('.cammain') as HTMLElement, bezel = camera.querySelector('.cambezel') as HTMLElement, controls = camera.querySelector('.camcontrols') as HTMLElement;
+  const devBody = el('canvas', { cls: 'devbody', 'aria-hidden': 'true' }) as HTMLCanvasElement;
+  const devStage = el('div', { cls: 'devstage' }, devBody), devSide = el('div', { cls: 'devside' }), devWrap = el('div', { cls: 'devwrap', hidden: '' }, devStage, devSide);
+  const devPick = el('div', { cls: 'devpick', role: 'group', 'aria-label': 'Pick a device to shoot on' }), devHint = el('p', { cls: 'devhint' });
+  const p = makePanel('booth', 'Say Fangs', 'Pick a device, turn on your camera, choose a filter or some stickers, then press the pink button. Your picture stays on this device unless you choose to post it.', [devPick, devHint, chips, camera, devWrap, printSlot], 'Turn on camera');
 
-  let stream: MediaStream | null = null, asking = 0, filterAt = 0, zoom = 1, mirror = true, useTimer = false, countdown = 0;
+  let device = camDevice(store.get<string>('camDevice', 'fangcam')), stream: MediaStream | null = null, asking = 0, filterAt = 0, zoom = 1, mirror = true, useTimer = false, countdown = 0;
   const live = (): boolean => !!stream;
   const drawSwitch = (): void => {
     p.go.textContent = live() ? 'Turn off camera' : 'Turn on camera';
@@ -221,6 +227,39 @@ function postPhoto(post: TeaPost): HTMLElement {
     const row = el('div', { cls: 'chips', role: 'group', 'aria-label': group });
     CAM_FILTERS.forEach((f, i) => { if (f.group === group) row.append(el('button', { cls: 'chip', type: 'button', onclick() { setFilter(i); } }, f.name)); });
     chips.append(el('p', { cls: 'camgroup', text: group }), row);
+  });
+
+  const shotWords = (caption: string): ShotWords => ({ caption, name: isAdmin() ? DOLLS.mumtea.name : currentStudent()?.name || 'Mystery ghoul', date: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) });
+  /* The one screen moves between devices, so the camera keeps running as you switch. */
+  function setDevice(id: string): void {
+    device = camDevice(id); store.set('camDevice', device.id);
+    const d = device;
+    devHint.textContent = d.hint;
+    $$('button', devPick).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.device === d.id)));
+    printSlot.textContent = '';
+    if (d.polaroid) {
+      camera.hidden = false; devWrap.hidden = true;
+      screen.classList.remove('indevice'); screen.removeAttribute('style');
+      bezel.prepend(screen); cammain.append(controls);
+    } else {
+      camera.hidden = true; devWrap.hidden = false;
+      const art = drawDeviceShot(d, null, shotWords(''));
+      devBody.width = art.width; devBody.height = art.height; devBody.getContext('2d')?.drawImage(art, 0, 0);
+      devStage.style.setProperty('--ratio', String(d.w / d.h));
+      screen.classList.add('indevice');
+      screen.style.left = d.sx / d.w * 100 + '%'; screen.style.top = d.sy / d.h * 100 + '%'; screen.style.width = d.sw / d.w * 100 + '%'; screen.style.height = d.sh / d.h * 100 + '%';
+      screen.style.borderRadius = d.sr / d.sw * 100 + '% / ' + d.sr / d.sh * 100 + '%';
+      devStage.append(screen); devSide.append(controls);
+    }
+    if (stream) video.play().catch(() => {});
+  }
+  document.fonts.load('800 20px Nunito').catch(() => []).then(() => {
+    CAM_DEVICES.forEach(d => {
+      const pic = el('canvas', { cls: 'devthumb', width: Math.round(d.w / d.h >= 1 ? 120 : 120 * d.w / d.h), height: Math.round(d.w / d.h >= 1 ? 120 * d.h / d.w : 120), 'aria-hidden': 'true' }) as HTMLCanvasElement;
+      pic.getContext('2d')?.drawImage(drawDeviceShot(d, null, shotWords('')), 0, 0, pic.width, pic.height);
+      devPick.append(el('button', { cls: 'devtile', type: 'button', 'data-device': d.id, 'aria-pressed': d === device, onclick() { setDevice(d.id); } }, el('span', { cls: 'devpic' }, pic), el('small', { text: d.name })));
+    });
+    setDevice(device.id);
   });
 
   function stopCamera(): void {
@@ -272,36 +311,53 @@ function postPhoto(post: TeaPost): HTMLElement {
     if (!vw || !vh) { p.stat.textContent = 'The camera is still waking up. Try again in a moment.'; return; }
     tone(1200, .05);
     flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go');
-    /* The middle square of the 4:3 screen, exactly as framed. */
+    const d = device, wide = d.polaroid ? 1 : d.sw / d.sh;
+    /* The polaroid is the middle square of the 4:3 screen. Every other device crops to the shape of its own screen. */
     const side = 3 / Math.max(4 / vw, 3 / vh) / zoom;
-    const photo = el('canvas', { width: POLA_S, height: POLA_S }) as HTMLCanvasElement, c = photo.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
-    if (mirror) { c.translate(POLA_S, 0); c.scale(-1, 1); }
-    c.drawImage(video, (vw - side) / 2, (vh - side) / 2, side, side, 0, 0, POLA_S, POLA_S);
+    const cropW = d.polaroid ? side : (vw / vh > wide ? vh * wide : vw) / zoom, cropH = d.polaroid ? side : (vw / vh > wide ? vh : vw / wide) / zoom;
+    const pw = d.polaroid ? POLA_S : Math.round(d.sw * d.s * 1.2), ph = d.polaroid ? POLA_S : Math.round(d.sh * d.s * 1.2);
+    const photo = el('canvas', { width: pw, height: ph }) as HTMLCanvasElement, c = photo.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
+    if (mirror) { c.translate(pw, 0); c.scale(-1, 1); }
+    c.drawImage(video, (vw - cropW) / 2, (vh - cropH) / 2, cropW, cropH, 0, 0, pw, ph);
     c.setTransform(1, 0, 0, 1, 0, 0);
     const f = CAM_FILTERS[filterAt];
-    camShade(c, POLA_S, f);
-    await camStickers(c, POLA_S, f);
+    camShade(c, pw, ph, f);
+    await camStickers(c, pw, ph, f);
     await document.fonts.load('38px "Breath of the House"').catch(() => []);
-    showPrint(polaroidData(drawPolaroid(photo)));
+    showPrint(d, photo);
   }
 
-  function showPrint(url: string): void {
-    const img = el('img', { src: url, alt: 'Your Polaroid', width: POLA_W, height: POLA_H });
-    const print = el('div', { cls: 'polaprint' }, img, el('div', { cls: 'poladevelop', 'aria-hidden': 'true' }));
+  function showPrint(d: CamDevice, photo: HTMLCanvasElement): void {
+    const made = (words: string): string => polaroidData(d.polaroid ? drawPolaroid(photo) : drawDeviceShot(d, photo, shotWords(words)));
+    let url = made('');
+    const full = d.polaroid ? { w: POLA_W, h: POLA_H } : { w: Math.round(d.w * d.s), h: Math.round(d.h * d.s) };
+    const img = el('img', { src: url, alt: 'Your ' + d.noun, width: full.w, height: full.h }) as HTMLImageElement;
+    const print = el('div', { cls: 'polaprint' + (d.polaroid || d.develop ? '' : ' devshow') }, img);
+    if (d.polaroid || d.develop) {
+      const paper = el('div', { cls: 'poladevelop', 'aria-hidden': 'true' });
+      if (d.develop) { paper.style.left = d.sx / d.w * 100 + '%'; paper.style.top = d.sy / d.h * 100 + '%'; paper.style.width = d.sw / d.w * 100 + '%'; paper.style.height = d.sh / d.h * 100 + '%'; }
+      print.append(paper);
+    }
+    if (full.w > full.h) print.style.width = 'min(100%,520px)';
     const note = el('p', { cls: 'polanote', role: 'status' });
     const caption = el('input', { type: 'text', maxlength: 200, placeholder: 'Add a caption (optional)', 'aria-label': 'Caption for your post' }) as HTMLInputElement;
-    const save = el('a', { cls: 'pill ghost', href: url, download: 'mumtea-polaroid.jpg' }, 'Save picture');
+    const save = el('a', { cls: 'pill ghost', href: url, download: d.polaroid ? 'mumtea-polaroid.jpg' : 'mumtea-' + d.id + '.jpg' }, 'Save picture');
+    /* Most devices write the caption into the picture itself, so it redraws as you type. */
+    let typingAt = 0;
+    const redraw = (): void => { clearTimeout(typingAt); typingAt = 0; url = made(caption.value.trim()); img.src = url; save.setAttribute('href', url); };
+    if (!d.polaroid) caption.addEventListener('input', () => { clearTimeout(typingAt); typingAt = window.setTimeout(redraw, 220); });
     const again = el('button', { cls: 'pill ghost', type: 'button', onclick() { printSlot.textContent = ''; camera.scrollIntoView({ block: 'nearest' }); } }, 'Take another');
-    const send = el('button', { cls: 'pill', type: 'button' }, 'Post my Polaroid');
+    const send = el('button', { cls: 'pill', type: 'button' }, 'Post my ' + d.noun);
     const actions = el('div', { cls: 'polaacts' }, caption, el('div', { cls: 'row' }, send, save, again), note);
     send.addEventListener('click', async () => {
-      if (!canAct()) { note.textContent = 'Log in first to post it. Your Polaroid stays here while you do.'; go('registration'); return; }
+      if (!canAct()) { note.textContent = 'Log in first to post it. Your ' + d.noun + ' stays here while you do.'; go('registration'); return; }
+      if (typingAt) redraw();
       send.setAttribute('disabled', ''); note.textContent = 'Posting...';
       const words = caption.value.trim() || POLA_BLURB;
       const { data, error } = isAdmin() ? await sb.rpc('admin_post_polaroid', { token: adminPass, caption: words, photo: url }) : await sb.rpc('post_polaroid', { caption: words, photo: url });
       if (error) {
         send.removeAttribute('disabled');
-        note.textContent = error.code === 'PGRST202' ? 'Posting Polaroids is not switched on yet. You can still save your picture.' : /a day/.test(error.message || '') ? 'That is 30 Polaroids today. Try again tomorrow.' : 'That did not post. Your Polaroid is still here, so try again.';
+        note.textContent = error.code === 'PGRST202' ? 'Posting pictures is not switched on yet. You can still save your picture.' : /a day/.test(error.message || '') ? 'That is 30 pictures today. Try again tomorrow.' : 'That did not post. Your ' + d.noun + ' is still here, so try again.';
         return;
       }
       photoCache.set(data, url);
