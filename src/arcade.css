@@ -313,21 +313,36 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .teaface img,.cmtface img,.lbface img{display:block;width:100%;height:100%}
 .wpic img{display:block;width:100%;height:100%;object-fit:contain}
 /* the sliding strip gets its own layer, so it never repaints the page */
-.marquee{contain:paint}
-.marquee div{will-change:transform}
 .wpic canvas{display:block;width:100%;height:100%;object-fit:contain}
 .lockerdoll img{display:block;width:100%;height:100%;object-fit:contain}
 .wpic canvas{background:transparent;border:0;box-shadow:none;max-width:none;margin:0;touch-action:auto;aspect-ratio:auto}
 
 /* academics */
 .classtally{font-weight:800;color:var(--paper);margin:0 0 10px}
-.classgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.classcard{display:flex;flex-direction:column;gap:4px;text-align:left;padding:14px;background:var(--damask);color:var(--white);border:3px solid var(--violet);cursor:pointer;font:inherit;min-width:0}
-.classcard:hover{border-color:var(--pink)}
-.classcard small{font-weight:800;color:var(--teal)}
-.classcard strong{font:400 22px/1.15 var(--display);color:var(--pink);letter-spacing:.03em}
-.classcard span{font-size:14px;line-height:1.4}
-.classcard em{margin-top:auto;padding-top:6px;font-style:normal;font-weight:800;color:var(--paper);font-size:13px}
+.classgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px 18px;padding:6px 6px 8px}
+.classcard{position:relative;display:flex;flex-direction:column;gap:5px;text-align:left;padding:0 0 14px;background:var(--cb);color:var(--white);border:3px solid #000;box-shadow:6px 6px 0 var(--ca);cursor:pointer;font:inherit;min-width:0;transition:transform .15s,box-shadow .15s}
+.classcard:nth-child(odd){transform:rotate(-.7deg)}
+.classcard:nth-child(even){transform:rotate(.7deg)}
+.classcard:hover,.classcard:focus-visible{transform:translate(-2px,-4px) rotate(0);box-shadow:9px 10px 0 var(--ca)}
+.classart{position:relative;line-height:0;border-bottom:3px solid #000;overflow:hidden;aspect-ratio:320/150}
+.classart svg{display:block;width:100%;height:100%}
+.classcard small{align-self:flex-start;margin:-15px 0 2px 12px;position:relative;z-index:1;padding:3px 10px;background:var(--ca);color:#14101a;border:2px solid #000;font:800 12px/1.3 var(--body);text-transform:uppercase;letter-spacing:.04em;transform:rotate(-2deg)}
+.classcard strong{margin:0 14px;font:400 27px/1.1 var(--display);color:var(--ca);letter-spacing:.03em}
+.classcard span{margin:0 14px;font-size:14px;line-height:1.4}
+.classcard em{align-self:flex-start;margin:auto 14px 0;padding:4px 12px;background:#000;border:2px solid var(--ca);border-radius:999px;font-style:normal;font-weight:800;color:var(--ca);font-size:13px}
+.classcard:hover em{background:var(--ca);color:#14101a}
+.classstamp{position:absolute;top:10px;right:8px;padding:3px 9px;font:400 17px/1.2 var(--display);color:#fff6fb;background:rgba(200,14,110,.92);border:3px double #fff6fb;transform:rotate(9deg);text-transform:uppercase}
+.classart .cabob{transform-box:fill-box;transform-origin:center;animation:cabob 4.5s ease-in-out infinite}
+.classcard:hover .cabob{animation-duration:1.4s}
+.casteam{animation:casteam 3.4s ease-in-out infinite}
+.casteam.two{animation-delay:1.1s}
+.cabubble{animation:cabubble 2.8s ease-in infinite}
+.cabubble.two{animation-delay:.9s}
+.cabubble.three{animation-delay:1.7s}
+@keyframes cabob{50%{transform:translateY(-3px) rotate(-1deg)}}
+@keyframes casteam{0%,100%{opacity:.15;transform:translateY(5px)}50%{opacity:.9;transform:translateY(-3px)}}
+@keyframes cabubble{0%{opacity:0;transform:translateY(8px)}25%{opacity:1}100%{opacity:0;transform:translateY(-26px)}}
+@media (prefers-reduced-motion:reduce){.classart .cabob,.casteam,.cabubble{animation:none}.classcard,.classcard:nth-child(n){transition:none}}
 .classdone{border-color:var(--teal)}
 .classpanel{max-width:680px;margin-inline:0}
 .classpanel h3{margin:12px 0 8px;outline:none}

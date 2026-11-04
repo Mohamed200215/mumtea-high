@@ -540,21 +540,36 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .teaface img,.cmtface img,.lbface img{display:block;width:100%;height:100%}
 .wpic img{display:block;width:100%;height:100%;object-fit:contain}
 /* the sliding strip gets its own layer, so it never repaints the page */
-.marquee{contain:paint}
-.marquee div{will-change:transform}
 .wpic canvas{display:block;width:100%;height:100%;object-fit:contain}
 .lockerdoll img{display:block;width:100%;height:100%;object-fit:contain}
 .wpic canvas{background:transparent;border:0;box-shadow:none;max-width:none;margin:0;touch-action:auto;aspect-ratio:auto}
 
 /* academics */
 .classtally{font-weight:800;color:var(--paper);margin:0 0 10px}
-.classgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.classcard{display:flex;flex-direction:column;gap:4px;text-align:left;padding:14px;background:var(--damask);color:var(--white);border:3px solid var(--violet);cursor:pointer;font:inherit;min-width:0}
-.classcard:hover{border-color:var(--pink)}
-.classcard small{font-weight:800;color:var(--teal)}
-.classcard strong{font:400 22px/1.15 var(--display);color:var(--pink);letter-spacing:.03em}
-.classcard span{font-size:14px;line-height:1.4}
-.classcard em{margin-top:auto;padding-top:6px;font-style:normal;font-weight:800;color:var(--paper);font-size:13px}
+.classgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px 18px;padding:6px 6px 8px}
+.classcard{position:relative;display:flex;flex-direction:column;gap:5px;text-align:left;padding:0 0 14px;background:var(--cb);color:var(--white);border:3px solid #000;box-shadow:6px 6px 0 var(--ca);cursor:pointer;font:inherit;min-width:0;transition:transform .15s,box-shadow .15s}
+.classcard:nth-child(odd){transform:rotate(-.7deg)}
+.classcard:nth-child(even){transform:rotate(.7deg)}
+.classcard:hover,.classcard:focus-visible{transform:translate(-2px,-4px) rotate(0);box-shadow:9px 10px 0 var(--ca)}
+.classart{position:relative;line-height:0;border-bottom:3px solid #000;overflow:hidden;aspect-ratio:320/150}
+.classart svg{display:block;width:100%;height:100%}
+.classcard small{align-self:flex-start;margin:-15px 0 2px 12px;position:relative;z-index:1;padding:3px 10px;background:var(--ca);color:#14101a;border:2px solid #000;font:800 12px/1.3 var(--body);text-transform:uppercase;letter-spacing:.04em;transform:rotate(-2deg)}
+.classcard strong{margin:0 14px;font:400 27px/1.1 var(--display);color:var(--ca);letter-spacing:.03em}
+.classcard span{margin:0 14px;font-size:14px;line-height:1.4}
+.classcard em{align-self:flex-start;margin:auto 14px 0;padding:4px 12px;background:#000;border:2px solid var(--ca);border-radius:999px;font-style:normal;font-weight:800;color:var(--ca);font-size:13px}
+.classcard:hover em{background:var(--ca);color:#14101a}
+.classstamp{position:absolute;top:10px;right:8px;padding:3px 9px;font:400 17px/1.2 var(--display);color:#fff6fb;background:rgba(200,14,110,.92);border:3px double #fff6fb;transform:rotate(9deg);text-transform:uppercase}
+.classart .cabob{transform-box:fill-box;transform-origin:center;animation:cabob 4.5s ease-in-out infinite}
+.classcard:hover .cabob{animation-duration:1.4s}
+.casteam{animation:casteam 3.4s ease-in-out infinite}
+.casteam.two{animation-delay:1.1s}
+.cabubble{animation:cabubble 2.8s ease-in infinite}
+.cabubble.two{animation-delay:.9s}
+.cabubble.three{animation-delay:1.7s}
+@keyframes cabob{50%{transform:translateY(-3px) rotate(-1deg)}}
+@keyframes casteam{0%,100%{opacity:.15;transform:translateY(5px)}50%{opacity:.9;transform:translateY(-3px)}}
+@keyframes cabubble{0%{opacity:0;transform:translateY(8px)}25%{opacity:1}100%{opacity:0;transform:translateY(-26px)}}
+@media (prefers-reduced-motion:reduce){.classart .cabob,.casteam,.cabubble{animation:none}.classcard,.classcard:nth-child(n){transition:none}}
 .classdone{border-color:var(--teal)}
 .classpanel{max-width:680px;margin-inline:0}
 .classpanel h3{margin:12px 0 8px;outline:none}
@@ -1414,6 +1429,19 @@ const CLASSES = [
             { q: 'What is walking with the ball without dribbling called?', a: 'Travelling', wrong: ['Fouling out', 'Double jumping', 'Offside'], why: 'It is called travelling.' },
         ] },
 ];
+/* Each class gets its own picture and colours, printed with the same dotted look as the school's other art. */
+const INKED = 'stroke="#14101a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
+function classScene(id, top, low, body) {
+    return '<svg viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="cg' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + top + '"/><stop offset="1" stop-color="' + low + '"/></linearGradient><pattern id="cd' + id + '" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><circle cx="4.500" cy="4.500" r="1.900" fill="#fff" opacity=".2"/></pattern></defs><rect width="320" height="150" fill="url(#cg' + id + ')"/><rect width="320" height="150" fill="url(#cd' + id + ')"/>' + body + '</svg>';
+}
+const CLASS_LOOKS = {
+    biteology: { a: '#ff5c86', b: '#3a0716', art: classScene('bite', '#5c0822', '#e0245e', '<g class="cabob"><path d="M78 48Q160 8 242 48Q238 128 160 138Q82 128 78 48Z" fill="#2b0512" ' + INKED + '/><path d="M78 48Q160 8 242 48Q236 66 228 60Q160 34 92 60Q84 66 78 48Z" fill="#ff8fab" ' + INKED + '/><path d="M112 54L118 92L128 50ZM208 54L202 92L192 50Z" fill="#fff6fb" ' + INKED + '/>' + [136, 151, 166].map(x => '<rect x="' + x + '" y="44" width="15" height="20" rx="3" fill="#fff6fb" ' + INKED + '/>').join('') + [108, 128, 148, 168, 188].map(x => '<rect x="' + x + '" y="108" width="20" height="17" rx="4" fill="#fff6fb" ' + INKED + '/>').join('') + '<path d="M128 104Q160 80 192 104Q160 118 128 104Z" fill="#e0245e" ' + INKED + '/><path d="M118 92C114 98 113 104 118 106C123 104 122 98 118 92Z" fill="#ff1f3d" ' + INKED + '/></g><path d="M18 22C30 14 42 18 46 30C52 18 66 16 78 24C68 26 62 34 62 44C56 36 50 36 46 44C42 36 36 36 30 44C30 34 26 26 18 22Z" fill="#14101a"/><path d="M244 112C256 104 268 108 272 120C278 108 292 106 304 114C294 116 288 124 288 134C282 126 276 126 272 134C268 126 262 126 256 134C256 124 252 116 244 112Z" fill="#14101a"/>') },
+    clawculus: { a: '#3fe0cf', b: '#07302d', art: classScene('claw', '#0a4a46', '#1fbcab', '<g class="cabob"><rect x="54" y="16" width="212" height="112" rx="5" fill="#8a5a2b" ' + INKED + '/><rect x="64" y="26" width="192" height="92" fill="#123c33" ' + INKED + '/><text x="160" y="66" text-anchor="middle" font-size="34" fill="#f6fff8" font-family="Comic Sans MS, Segoe Print, cursive">x + 2 = 5</text><text x="160" y="100" text-anchor="middle" font-size="22" fill="#ffd0e8" font-family="Comic Sans MS, Segoe Print, cursive">so x = 3!</text><path d="M196 30L168 112M212 30L184 114M228 32L200 116" stroke="#dff" stroke-width="3.500" stroke-linecap="round" opacity=".55"/><rect x="50" y="128" width="220" height="9" rx="3" fill="#6d4420" ' + INKED + '/><rect x="74" y="122" width="34" height="7" rx="3" fill="#fff6fb" stroke="#14101a" stroke-width="2"/></g><g ' + INKED + '><path d="M276 112L294 104L310 112L292 121Z" fill="#fff"/><path d="M276 112V130L292 139V121Z" fill="#dfe6ea"/><path d="M310 112V130L292 139V121Z" fill="#b9c6cc"/></g><g ' + INKED + '><path d="M12 124L26 118L38 124L24 131Z" fill="#fff"/><path d="M12 124V138L24 145V131Z" fill="#dfe6ea"/><path d="M38 124V138L24 145V131Z" fill="#b9c6cc"/></g>') },
+    tealeaf: { a: '#ffd76a', b: '#26093a', art: classScene('leaf', '#2c0b49', '#8a2be2', '<g fill="none" stroke="#fff6fb" stroke-width="4" stroke-linecap="round" opacity=".85"><path class="casteam" d="M136 44C126 32 146 24 136 8"/><path class="casteam two" d="M160 44C150 30 170 22 160 4"/><path class="casteam" d="M184 44C174 32 194 24 184 8"/></g><g class="cabob"><ellipse cx="160" cy="130" rx="86" ry="13" fill="#f7dc6f" ' + INKED + '/><path d="M96 58C98 104 122 126 160 126C198 126 222 104 224 58Z" fill="#fff6fb" ' + INKED + '/><path d="M222 72C248 66 254 96 212 104" fill="none" stroke="#14101a" stroke-width="10" stroke-linecap="round"/><path d="M222 72C248 66 254 96 212 104" fill="none" stroke="#fff6fb" stroke-width="5" stroke-linecap="round"/><ellipse cx="160" cy="58" rx="64" ry="15" fill="#f4c23e" ' + INKED + '/><ellipse cx="160" cy="59" rx="55" ry="10" fill="#7a3f12"/><path d="M122 58Q136 50 140 60Q130 66 122 58ZM150 62Q162 52 170 60Q160 68 150 62ZM178 56Q190 52 196 60Q186 66 178 56Z" fill="#14310f"/><path d="M104 82Q160 100 216 82" fill="none" stroke="#ff1f8f" stroke-width="3"/></g><path d="M52 32A20 20 0 1 0 66 62A16 16 0 1 1 52 32Z" fill="#f7dc6f" ' + INKED + '/>' + [[270, 30, 11], [292, 66, 7], [28, 100, 8], [250, 62, 5]].map(([x, y, r]) => '<path transform="translate(' + x + ' ' + y + ')" d="M0 ' + -r + 'L' + r * .28 + ' ' + -r * .28 + 'L' + r + ' 0L' + r * .28 + ' ' + r * .28 + 'L0 ' + r + 'L' + -r * .28 + ' ' + r * .28 + 'L' + -r + ' 0L' + -r * .28 + ' ' + -r * .28 + 'Z" fill="#fff3b0"/>').join('')) },
+    creepateria: { a: '#a6f04a', b: '#132b08', art: classScene('lunch', '#17380c', '#6fc22e', '<g class="cabob"><path d="M88 62H232C236 104 222 132 200 138H120C98 132 84 104 88 62Z" fill="#231a2c" ' + INKED + '/><path d="M84 52Q160 34 236 52Q240 66 228 66Q226 86 216 82Q210 70 204 68Q198 92 188 86Q184 72 176 70Q166 70 160 72Q154 102 142 92Q140 74 126 72Q116 72 112 80Q104 86 100 66Q80 68 84 52Z" fill="#a6f04a" ' + INKED + '/><circle cx="182" cy="50" r="14" fill="#fff" ' + INKED + '/><circle cx="178" cy="50" r="7" fill="#ff1f8f" stroke="#14101a" stroke-width="2"/><circle cx="176" cy="50" r="3" fill="#14101a"/><path d="M78 72H64M242 72H256" stroke="#14101a" stroke-width="9" stroke-linecap="round"/></g><path d="M122 58L92 10" stroke="#14101a" stroke-width="11" stroke-linecap="round"/><path d="M122 58L92 10" stroke="#c0c6d8" stroke-width="5" stroke-linecap="round"/><g fill="#d6ff9c" stroke="#14101a" stroke-width="2.500"><circle class="cabubble" cx="146" cy="36" r="7"/><circle class="cabubble two" cx="214" cy="30" r="5"/><circle class="cabubble three" cx="232" cy="42" r="8"/></g><path d="M0 150L0 136Q40 124 70 142Q60 148 50 150ZM320 150V132Q282 124 256 144Q266 148 276 150Z" fill="#14101a"/>') },
+    madscience: { a: '#6fe3ff', b: '#0c0b3a', art: classScene('lab', '#14124f', '#19b7e8', '<path d="M40 14L22 56H38L24 92L66 44H48L62 14Z" fill="#fff06a" ' + INKED + '/><path d="M272 34L258 66H272L260 96L296 56H280L292 34Z" fill="#fff06a" ' + INKED + '/><g class="cabob"><path d="M142 14H178V52C206 66 222 86 220 106C218 128 194 140 160 140C126 140 102 128 100 106C98 86 114 66 142 52Z" fill="#eafcff" fill-opacity=".85" ' + INKED + '/><path d="M104 96Q132 84 160 96T216 96C220 124 196 136 160 136C124 136 100 124 104 96Z" fill="#ff4fa8" stroke="#14101a" stroke-width="2.500"/><rect x="136" y="8" width="48" height="11" rx="4" fill="#fff" ' + INKED + '/><path d="M122 80C126 72 132 66 140 62" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"/></g><g fill="#ffd0e8" stroke="#14101a" stroke-width="2"><circle class="cabubble" cx="146" cy="112" r="7"/><circle class="cabubble two" cx="176" cy="118" r="5"/><circle class="cabubble three" cx="160" cy="100" r="4"/></g>') },
+    casketball: { a: '#ffa04d', b: '#2c1004', art: classScene('ball', '#3b1606', '#f2761b', '<g ' + INKED + '><path d="M206 8H262L284 40L268 112H200L184 40Z" fill="#ff1f8f"/><path d="M212 18H256L272 42L258 102H210L196 42Z" fill="#b80e63"/><path d="M212 74H256V96H212Z" fill="none" stroke="#fff6fb" stroke-width="3"/><path d="M204 96H264" fill="none" stroke="#ff8c1a" stroke-width="7"/><path d="M210 100L220 134H248L258 100M222 100L228 134M246 100L240 134M214 116H254" fill="none" stroke="#fff6fb" stroke-width="2.200"/></g><path d="M36 136Q72 40 150 40" fill="none" stroke="#fff3b0" stroke-width="4" stroke-dasharray="3 11" stroke-linecap="round"/><g class="cabob"><circle cx="134" cy="66" r="34" fill="#ff8c1a" ' + INKED + '/><path d="M100 66H168M134 32V100M110 42Q126 66 110 90M158 42Q142 66 158 90" fill="none" stroke="#14101a" stroke-width="3"/><path d="M114 48Q120 40 128 38" fill="none" stroke="#ffd9a8" stroke-width="4" stroke-linecap="round"/></g>') },
+};
 const classKey = () => 'classes.' + (isAdmin() ? 'fang' : signedInId() || 'guest');
 const classesDone = () => store.get(classKey(), {});
 function classRoomFocus() {
@@ -1425,7 +1453,16 @@ function renderClasses() {
     const room = $('#classRoom'), done = classesDone(), finished = CLASSES.filter(c => c.id in done).length;
     room.textContent = '';
     room.append(el('p', { cls: 'classtally', text: finished + ' of ' + CLASSES.length + ' classes finished' }));
-    room.append(el('div', { cls: 'classgrid' }, ...CLASSES.map(c => el('button', { cls: 'classcard' + (c.id in done ? ' classdone' : ''), type: 'button', onclick() { openLesson(c, 0); } }, el('small', { text: c.period === 'Lunch' ? 'Lunch' : c.period + ' period' }), el('strong', { text: c.name }), el('span', { text: c.blurb }), el('em', { text: c.id in done ? 'Finished: ' + done[c.id] + ' of ' + c.quiz.length : 'Start the lesson' })))));
+    room.append(el('div', { cls: 'classgrid' }, ...CLASSES.map(c => {
+        const look = CLASS_LOOKS[c.id], art = el('div', { cls: 'classart' });
+        art.innerHTML = look.art;
+        if (c.id in done)
+            art.append(el('b', { cls: 'classstamp', text: 'Passed ' + done[c.id] + '/' + c.quiz.length }));
+        const card = el('button', { cls: 'classcard' + (c.id in done ? ' classdone' : ''), type: 'button', onclick() { openLesson(c, 0); } }, art, el('small', { text: c.period === 'Lunch' ? 'Lunch' : c.period + ' period' }), el('strong', { text: c.name }), el('span', { text: c.blurb }), el('em', { text: c.id in done ? 'Take it again' : 'Start the lesson' }));
+        card.style.setProperty('--ca', look.a);
+        card.style.setProperty('--cb', look.b);
+        return card;
+    })));
 }
 function classHeader(c, step) {
     return el('div', { cls: 'classhead' }, el('button', { cls: 'linkish', type: 'button', onclick() { renderClasses(); classRoomFocus(); } }, 'All classes'), el('small', { text: c.name + ': ' + step }));
