@@ -52,7 +52,7 @@ const FACE_PARTS: Array<keyof Look> = ['skin', 'eye', 'lip', 'shadow', 'hair', '
 const TILE_PARTS: Record<string, Array<keyof Look>> = {
   hairStyle: ['hair', 'streak', 'skin'], lipSize: FACE_PARTS, eyeStyle: FACE_PARTS, brow: [...FACE_PARTS, 'trim'], nose: [...FACE_PARTS, 'trim'], mark: [...FACE_PARTS, 'trim'],
   eyewear: ['skin', 'trim'], monster: [...FACE_PARTS, 'trim', 'streak'], top: ['topC', 'topP', 'trim'], bottom: ['bottomC', 'bottomP', 'trim', 'skin'], legs: ['legsC', 'trim', 'skin'], shoes: ['shoesC', 'trim', 'skin'],
-  headwear: ['trim', 'topC', 'skin'], neck: ['trim', 'skin'], gloves: ['gloveC', 'trim', 'skin'], wrist: ['trim', 'skin', 'gloves', 'gloveC', 'top', 'topC', 'topP'], back: ['trim', 'topC'], hold: ['trim'],
+  headwear: ['trim', 'topC', 'skin'], neck: ['trim', 'skin'], gloves: ['gloveC', 'trim', 'skin'], wrist: ['trim', 'skin', 'gloves', 'gloveC', 'top', 'topC', 'topP'], back: ['trim', 'topC'], hold: ['trim'], pet: ['petC'],
 };
 interface TileStore { sig: string; fresh: Record<string, string>; art: Record<string, HTMLCanvasElement> }
 const tileStores: Record<string, TileStore> = {};

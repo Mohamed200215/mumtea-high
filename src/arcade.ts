@@ -1,7 +1,7 @@
 /* ---------- arcade: extra games plus shelf search, filters and favourites ---------- */
 const DISPLAY_FONT = '"Breath of the House", Impact, fantasy';
 const NEW_GAMES: MenuRow[] = [
-  ['riptide', 'Riptide Run', 'Arcade', 'Swim the flooded basement. Hold to rise, let go to sink.', '🌊'],
+  ['riptide', 'Riptide Run', 'Arcade', 'Pick a mermaid outfit and swim the flooded basement. Hold to rise, let go to sink.', '🌊'],
   ['casket', 'Casket Shot', 'Arcade', 'Pull back, aim, and sink skulls into the casket.', '⚰️'],
   ['booth', 'Say Fangs', 'Camera', 'Take a picture with your camera, pick a filter, and get a Polaroid.', '📸'],
 ];
@@ -47,121 +47,6 @@ const toCanvas = (cv: HTMLCanvasElement, e: PointerEvent): { x: number; y: numbe
 };
 const typing = (e: KeyboardEvent): boolean => (e.target as HTMLElement).tagName === 'INPUT';
 const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)];
-
-/* ---------- Riptide Run ---------- */
-(function () {
-  const [cv, c] = makeCanvas('Riptide Run game area');
-  const p = makePanel('riptide', 'Riptide Run', 'You swim as the ghoul you made, or as Ms. Fangtastic until you have one. Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three stings and you surface.', [cv]);
-  interface Thing { x: number; y: number; r: number; pearl: boolean; phase: number }
-  let run = false, rise = false, y = 180, vy = 0, things: Thing[] = [], score = 0, lives = 3, safe = 0, last = 0, gap = 0, far = 0, shown = 0, hunt = false;
-  const stat = () => { p.stat.textContent = (run ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('riptide'); };
-  function scene(): void {
-    const g = c.createLinearGradient(0, 0, 0, 360); g.addColorStop(0, '#0b6f9c'); g.addColorStop(1, '#14081a');
-    c.fillStyle = g; c.fillRect(0, 0, 480, 360);
-    c.strokeStyle = 'rgba(255,255,255,.14)'; c.lineWidth = 2;
-    for (let i = 0; i < 4; i++) { c.beginPath(); for (let x = 0; x <= 480; x += 24) c.lineTo(x, 50 + i * 85 + Math.sin((x + far * (1 + i * .3)) / 40) * 6); c.stroke(); }
-  }
-  /* The player's own ghoul, arms out in front, kept as a ready-made picture so drawing it every frame stays cheap. */
-  const SWIM_SPOTS = [-32, 0, 32]; // feet, middle and head, since a swimming ghoul is long and thin
-  const SWIM_LONG = 136, SWIM_WIDE = SWIM_LONG * 420 / 730;
-  let swimArt: HTMLCanvasElement | null = null, swimKey = '';
-  function dressSwimmer(done: () => void): void {
-    const look = (!isAdmin() && currentStudent()?.look) || DOLLS.mumtea.look, key = JSON.stringify(look);
-    if (key === swimKey) { done(); return; }
-    const holder = document.createElement('div');
-    holder.innerHTML = drawGhoul({ ...look, pose: 'cheer' }, { box: WIDE_BOX });
-    const svg = holder.querySelector('svg') as SVGSVGElement;
-    svg.setAttribute('width', String(SWIM_WIDE * 2)); svg.setAttribute('height', String(SWIM_LONG * 2));
-    const picture = new Image();
-    picture.onload = () => {
-      const art = document.createElement('canvas');
-      art.width = SWIM_WIDE * 2; art.height = SWIM_LONG * 2;
-      art.getContext('2d')?.drawImage(picture, 0, 0, art.width, art.height);
-      swimArt = art; swimKey = key; done();
-    };
-    picture.onerror = () => { swimArt = null; done(); };
-    picture.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
-  }
-  function swimmer(): void {
-    if (safe > 0 && Math.floor(safe / 100) % 2) return;
-    for (let i = 0; i < 3; i++) {
-      const up = (far / 60 + i / 3) % 1;
-      c.fillStyle = 'rgba(255,255,255,' + (.5 * (1 - up)) + ')';
-      c.beginPath(); c.arc(90 - SWIM_LONG / 2 + 4 - up * 24, y - up * 22 + i * 4, 2 + i, 0, 7); c.fill();
-    }
-    c.save(); c.translate(90, y); c.rotate(Math.max(-.32, Math.min(.32, vy / 500)));
-    if (swimArt) {
-      c.rotate(Math.PI / 2 + Math.sin(far / 16) * .05);
-      c.drawImage(swimArt, -SWIM_WIDE / 2, -SWIM_LONG / 2, SWIM_WIDE, SWIM_LONG);
-      c.restore();
-      return;
-    }
-    c.strokeStyle = '#000'; c.lineWidth = 3; c.fillStyle = '#35dcc8';
-    c.beginPath(); c.moveTo(-18, 0); c.lineTo(-38, -14); c.lineTo(-34, 0); c.lineTo(-38, 14); c.closePath(); c.fill(); c.stroke();
-    c.fillStyle = '#19b7e8'; c.beginPath(); c.ellipse(0, 0, 24, 15, 0, 0, 7); c.fill(); c.stroke();
-    c.fillStyle = '#ff1f8f'; c.beginPath(); c.moveTo(-6, -14); c.lineTo(4, -28); c.lineTo(10, -13); c.closePath(); c.fill(); c.stroke();
-    c.fillStyle = '#fff'; c.beginPath(); c.arc(11, -4, 5, 0, 7); c.fill(); c.fillStyle = '#000'; c.beginPath(); c.arc(13, -4, 2.4, 0, 7); c.fill();
-    c.restore();
-  }
-  function thing(t: Thing): void {
-    if (t.pearl) {
-      c.fillStyle = '#fff6fb'; c.strokeStyle = '#000'; c.lineWidth = 2; c.beginPath(); c.arc(t.x, t.y, t.r, 0, 7); c.fill(); c.stroke();
-      return;
-    }
-    c.strokeStyle = '#ff1f8f'; c.lineWidth = 3;
-    for (let i = -2; i <= 2; i++) { c.beginPath(); c.moveTo(t.x + i * 6, t.y); c.quadraticCurveTo(t.x + i * 6 + Math.sin(t.phase + i) * 6, t.y + 18, t.x + i * 6, t.y + 32); c.stroke(); }
-    c.fillStyle = '#c77dff'; c.strokeStyle = '#000'; c.beginPath(); c.arc(t.x, t.y, t.r, Math.PI, 0); c.closePath(); c.fill(); c.stroke();
-  }
-  function frame(now: number): void {
-    if (!run) return;
-    const dt = Math.min(40, now - last); last = now;
-    const speed = .15 + score * .0004;
-    vy += (rise ? -.75 : .55) * dt; vy = Math.max(-230, Math.min(230, vy));
-    y += vy * dt / 1000;
-    if (y < 32) { y = 32; vy = 0; }
-    if (y > 322) { y = 322; vy = 0; }
-    far += dt * speed; score += dt * .01; safe = Math.max(0, safe - dt); gap -= dt;
-    if (gap <= 0) {
-      gap = Math.max(420, 1000 - score * 2) * (.7 + Math.random() * .6);
-      const pearl = Math.random() < .3;
-      // every other jellyfish swims at the player's depth, so parking at the top or bottom doesn't work
-      const hunting = !pearl && (hunt = !hunt);
-      things.push({ x: 510, y: hunting ? Math.max(20, Math.min(320, y - 8)) : 30 + Math.random() * 290, r: pearl ? 9 : 17, pearl, phase: Math.random() * 6 });
-    }
-    scene();
-    things = things.filter(t => {
-      t.x -= dt * speed; t.phase += dt * .006;
-      if (SWIM_SPOTS.some(dx => Math.hypot(t.x - 90 - dx, t.y + (t.pearl ? 0 : 8) - y) < t.r + 11)) {
-        if (t.pearl) { score += 5; tone(780, .08); return false; }
-        if (safe <= 0) { lives--; safe = 1200; tone(150, .25); }
-      }
-      thing(t);
-      return t.x > -40;
-    });
-    swimmer();
-    if (lives <= 0) { finish(); return; }
-    if (Math.floor(score) !== shown) { shown = Math.floor(score); stat(); }
-    requestAnimationFrame(frame);
-  }
-  function finish(): void {
-    run = false; rise = false;
-    const s = Math.floor(score); p.bestOf(s); award(Math.ceil(s / 20)); stat(); submitScore('riptide', s);
-    banner(c, 'Surfaced!', s + ' points'); p.go.textContent = 'Play again';
-  }
-  p.go.addEventListener('click', () => {
-    dressSwimmer(() => {
-      run = true; y = 180; vy = 0; things = []; score = 0; lives = 3; safe = 0; gap = 300; shown = 0; last = performance.now();
-      p.go.textContent = 'Restart'; p.go.blur(); stat(); requestAnimationFrame(frame);
-    });
-  });
-  cv.addEventListener('pointerdown', e => { rise = true; e.preventDefault(); });
-  addEventListener('pointerup', () => { rise = false; });
-  const isRise = (e: KeyboardEvent) => e.key === ' ' || e.key === 'ArrowUp';
-  addEventListener('keydown', e => { if (run && isRise(e) && !typing(e)) { rise = true; e.preventDefault(); } });
-  addEventListener('keyup', e => { if (isRise(e)) rise = false; });
-  stops.push(() => { if (run) { run = false; rise = false; scene(); banner(c, 'Riptide Run'); } });
-  scene(); banner(c, 'Riptide Run'); stat();
-})();
 
 /* ---------- Casket Shot ---------- */
 (function () {

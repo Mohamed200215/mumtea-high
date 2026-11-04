@@ -7,10 +7,11 @@ interface Look {
   bottom: string; bottomC: string; bottomP: string;
   legs: string; legsC: string;
   shoes: string; shoesC: string;
+  pet: string; petC: string;
   pose: string; nose: string; lipSize: string; eyeStyle: string; brow: string; browC: string; eyewear: string; neck: string; gloves: string; gloveC: string; wrist: string; mark: string; back: string;
 }
-type Layer = 'back' | 'neck' | 'mark' | 'eyewear' | 'armsFront' | 'wings' | 'hairBack' | 'legs' | 'legwear' | 'pants' | 'shoes' | 'torso' | 'bottom' | 'top' | 'arms' | 'sleeves' | 'hold' | 'head' | 'face' | 'monster' | 'hairFront' | 'headwear';
-const LAYER_ORDER: Layer[] = ['back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront'];
+type Layer = 'back' | 'neck' | 'mark' | 'eyewear' | 'armsFront' | 'wings' | 'hairBack' | 'legs' | 'legwear' | 'pants' | 'shoes' | 'torso' | 'bottom' | 'top' | 'arms' | 'sleeves' | 'hold' | 'head' | 'face' | 'monster' | 'hairFront' | 'headwear' | 'pet';
+const LAYER_ORDER: Layer[] = ['back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront', 'pet'];
 const HEAD_LAYERS: Layer[] = ['hairBack', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear'];
 const INK = '#1c0f22';
 
@@ -126,6 +127,7 @@ const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
 const WARDROBE: WardrobePage[] = [
   { title: 'Poses', key: 'pose', items: POSES.map(p => [p.id, p.name] as [string, string]), colours: [], box: WIDE_BOX, layers: [] },
+  { title: 'Pets', key: 'pet', items: [['none', 'No pet'], ['bat', 'Bat'], ['cat', 'Black cat'], ['ghost', 'Ghost'], ['spider', 'Spider'], ['piranha', 'Piranha'], ['snake', 'Snake'], ['dragon', 'Baby dragon'], ['owl', 'Owl'], ['pup', 'Wolf pup'], ['bunny', 'Were-bunny'], ['jelly', 'Jellyfish'], ['frog', 'Frog prince']], colours: [['petC', 'Pet colour', ['#14101a', '#6a1f86', '#ff1f8f', '#f08fb4', '#19b7e8', '#35dcc8', '#8df04a', '#f4d35e', '#ff8c1a', '#c0392b', '#7d5136', '#9aa0ac', '#f6f0ff']]], box: '245 590 120 120', layers: ['pet'], crop: true },
   { title: 'Hair', key: 'hairStyle', items: [['long', 'Long'], ['pony', 'High pony'], ['twins', 'Twin tails'], ['bob', 'Bob'], ['curls', 'Curls'], ['side', 'Side sweep'], ['buns', 'Space buns'], ['afro', 'Afro'], ['braids', 'Long braids'], ['waves', 'Mermaid waves'], ['pixie', 'Pixie'], ['mohawk', 'Mohawk'], ['halfup', 'Half up'], ['lob', 'Long bob'], ['shag', 'Shaggy layers'], ['fishtail', 'Fishtail braid'], ['lowpony', 'Low pony'], ['topknot', 'Top knot'], ['lowbuns', 'Low buns'], ['boxbraids', 'Box braids'], ['locs', 'Locs'], ['bantu', 'Bantu knots'], ['puffs', 'Afro puffs'], ['hime', 'Blunt fringe'], ['beehive', 'Beehive'], ['rolls', 'Victory rolls'], ['crimped', 'Crimped'], ['ringlets', 'Ringlets'], ['undercut', 'Side shave'], ['spiky', 'Spiky']], colours: [['hair', 'Colour', HAIR_COLOURS], ['streak', 'Streak or folds', BRIGHT]], box: '10 0 300 330', layers: ['hairBack', 'head', 'hairFront'] },
   { title: 'Hijabs', key: 'hairStyle', items: HIJABS.map(h => [h.id, h.name] as [string, string]), colours: [['hair', 'Scarf colour', HAIR_COLOURS], ['streak', 'Second colour', BRIGHT]], box: '10 0 300 400', layers: ['hairBack', 'head', 'hairFront'] },
   { title: 'Skin and lips', key: 'lipSize', items: [['tiny', 'Tiny lips'], ['small', 'Small lips'], ['medium', 'Medium lips'], ['full', 'Full lips'], ['big', 'Big lips']], colours: [['skin', 'Skin', SKINS], ['lip', 'Lips', ['#b80e63', '#ff1f8f', '#d62828', '#5a0f7a', '#14101a', '#b5694f', '#e58f9e', '#c76b5a', '#8a3324', '#ff8c1a', '#19b7e8', '#6a1f86', '#8df04a', '#f7b8cf']]], box: '108 142 104 72', layers: ['head', 'face'], crop: true },
@@ -148,7 +150,33 @@ const WARDROBE: WardrobePage[] = [
   { title: 'In hand', key: 'hold', items: [['none', 'Nothing'], ['cup', 'Teacup'], ['purse', 'Purse'], ['skull', 'Skull bag'], ['wand', 'Wand'], ['phone', 'iCoffin'], ['mic', 'Microphone'], ['rose', 'Black rose'], ['book', 'Spell book'], ['brolly', 'Bat umbrella'], ['boba', 'Bubble tea'], ['lipstick', 'Lipstick'], ['icecream', 'Ice cream'], ['lollipop', 'Lollipop'], ['mirror', 'Mirror'], ['fan', 'Fan'], ['candle', 'Candle'], ['potion', 'Potion'], ['orb', 'Crystal ball'], ['teddy', 'Teddy'], ['pumpkin', 'Pumpkin'], ['balloon', 'Balloon'], ['bouquet', 'Bouquet'], ['camera', 'Camera'], ['lantern', 'Lantern'], ['donut', 'Donut'], ['cupcake', 'Cupcake'], ['cat', 'Kitten'], ['brush', 'Paintbrush'], ['scroll', 'Scroll']], colours: [], box: '-40 240 230 260', layers: ['hold'] },
 ];
 
-const FANG_LOOK: Look = { skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
+const FANG_LOOK: Look = { pet: 'none', petC: '#6a1f86', skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
+
+/* ---------- pets: each is drawn around 0,0 and stands at the ghoul's feet ---------- */
+function drawPet(id: string, c: string): string {
+  const d = shade(c, -.28), l = shade(c, .34), eyeline = INK;
+  const p = (path: string, fill = c, w = 2.6) => '<path d="' + path + '" fill="' + fill + '" stroke="' + eyeline + '" stroke-width="' + w + '" stroke-linejoin="round" stroke-linecap="round"/>';
+  const o = (cx: number, cy: number, rx: number, ry: number, fill = c, w = 2.6) => '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + fill + '" stroke="' + eyeline + '" stroke-width="' + w + '"/>';
+  const dot = (cx: number, cy: number, r: number, fill: string) => '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fill + '"/>';
+  const eye = (cx: number, cy: number, r: number, iris = '#14101a') => o(cx, cy, r, r, '#fff', 2) + dot(cx, cy + r * .12, r * .62, iris) + dot(cx, cy + r * .12, r * .34, '#000') + dot(cx - r * .24, cy - r * .22, r * .22, '#fff');
+  const both = (a: string) => a + '<g transform="scale(-1 1)">' + a + '</g>';
+  const art: Record<string, () => string> = {
+    bat: () => both(p('M-14 0C-28 -24 -50 -28 -60 -16C-52 -12 -50 -3 -52 6C-46 1 -40 3 -36 11C-30 5 -22 7 -14 13Z', d)) + both(p('M-20 -18L-25 -46L-5 -27Z')) + o(0, -2, 25, 24) + o(0, 8, 13, 12, l, 1.6) + eye(-10, -8, 8, '#ff1f8f') + eye(10, -8, 8, '#ff1f8f') + both(p('M-7 6l3 8 3-8z', '#fff', 1.6)) + both(p('M-9 22l-2 8 6-4z', d, 2)),
+    cat: () => p('M18 44C46 46 56 22 42 2C38 14 34 28 14 30Z', d) + o(0, 26, 24, 22) + o(-9, 44, 10, 6) + o(9, 44, 10, 6) + both(p('M-24 -24L-26 -50L-5 -32Z')) + both(p('M-20 -28L-21 -41L-11 -32Z', '#f7b8cf', 1.2)) + o(0, -8, 27, 25) + eye(-11, -11, 9, '#8df04a') + eye(11, -11, 9, '#8df04a') + p('M-3 0h6l-3 4z', '#ff1f8f', 1.2) + both('<path d="M-14 3L-34 -1M-14 7L-34 9" stroke="#fff6fb" stroke-width="1.400"/>'),
+    ghost: () => p('M-30 44V-8C-30 -52 30 -52 30 -8V44Q22 32 15 44T0 44T-15 44T-30 44Z', shade(c, .62)) + p('M30 2Q44 -4 42 -18', shade(c, .62)) + p('M-30 2Q-44 -4 -42 -18', shade(c, .62)) + o(-11, -10, 7, 10, '#14101a', 1) + o(11, -10, 7, 10, '#14101a', 1) + dot(-13, -14, 2.4, '#fff') + dot(9, -14, 2.4, '#fff') + dot(-20, 4, 5, '#f7b8cf') + dot(20, 4, 5, '#f7b8cf') + p('M-6 6Q0 18 6 6Z', '#14101a', 1.4),
+    spider: () => both('<path d="M-18 4L-44 -18L-56 4M-20 10L-48 4L-60 26M-20 18L-46 24L-54 46M-16 26L-34 40L-38 54" fill="none" stroke="' + INK + '" stroke-width="4.500" stroke-linejoin="round" stroke-linecap="round"/>') + o(0, 18, 25, 24) + p('M-9 16Q0 8 9 16Q0 24 -9 16Z', l, 1.4) + o(0, -14, 21, 19, d) + eye(-9, -16, 8, '#ff1f8f') + eye(9, -16, 8, '#ff1f8f') + dot(-3, -28, 2.2, '#fff') + dot(3, -28, 2.2, '#fff') + both(p('M-6 2l1 8 5-6z', '#fff', 1.4)),
+    piranha: () => o(0, 8, 44, 44, 'rgba(170,235,255,.45)') + p('M-29 -8Q0 -2 29 -8Q40 30 0 48Q-40 30 -29 -8Z', 'rgba(25,183,232,.45)', 1.2) + p('M18 10L40 -6L36 12L40 28Z', d) + o(-4, 10, 26, 18) + p('M-8 -8L6 -18L12 -4Z', d) + p('M-30 12h16l-3 6-3-5-3 5-3-5z', '#fff', 1.4) + eye(-14, 2, 6, '#c0392b') + '<path d="M-22 -5L-8 0" stroke="' + INK + '" stroke-width="2.600"/>' + dot(24, -22, 3, '#fff') + dot(16, -14, 2, '#fff') + o(0, -36, 24, 6, 'rgba(240,250,255,.8)', 2.2),
+    snake: () => o(0, 40, 38, 11) + o(0, 27, 31, 10) + o(0, 15, 24, 9) + p('M-14 12C-22 -4 -6 -8 -6 -18L10 -14C12 0 16 4 14 12Z') + [[-22, 39], [0, 44], [22, 39], [-16, 27], [8, 30], [-6, 16]].map(([x, y]) => dot(x, y, 3, l)).join('') + o(2, -24, 21, 16) + eye(-6, -30, 7, '#f4d35e') + eye(12, -30, 7, '#f4d35e') + '<path d="M-14 -16Q-22 -14 -28 -14M-28 -14l-6 -4M-28 -14l-6 3" fill="none" stroke="#ff1f8f" stroke-width="2.200" stroke-linecap="round"/>',
+    dragon: () => p('M18 36C44 44 56 28 54 12L46 20L42 8C38 22 30 28 16 24Z', d) + p('M-14 4C-40 -22 -56 -10 -58 8C-50 4 -46 10 -46 18C-38 12 -30 16 -18 20Z', d) + p('M14 4C40 -22 56 -10 58 8C50 4 46 10 46 18C38 12 30 16 18 20Z', d) + o(0, 24, 24, 24) + o(0, 30, 14, 16, l, 1.6) + o(-11, 46, 10, 6) + o(11, 46, 10, 6) + both(p('M-14 -30L-20 -50L-4 -36Z', '#f4d35e')) + o(0, -14, 26, 22) + o(0, -3, 15, 10, l, 1.8) + dot(-5, -5, 1.8, INK) + dot(5, -5, 1.8, INK) + eye(-11, -20, 8, '#ffb703') + eye(11, -20, 8, '#ffb703') + both(p('M-6 5l2 6 3-5z', '#fff', 1.2)),
+    owl: () => both(p('M-26 -10C-42 6 -42 30 -28 40L-20 18Z', d)) + both(p('M-22 -30L-26 -52L-6 -38Z', d)) + o(0, 6, 30, 40) + o(0, 22, 19, 21, l, 1.6) + [12, 22, 32].map(y => both('<path d="M-12 ' + y + 'q4 5 8 0" fill="none" stroke="' + INK + '" stroke-width="1.600"/>')).join('') + eye(-13, -14, 13, '#ffb703') + eye(13, -14, 13, '#ffb703') + p('M-5 -6h10l-5 10z', '#ff8c1a', 1.8) + both(p('M-16 44l-4 6h10l-1-6z', '#ff8c1a', 1.8)),
+    pup: () => p('M18 26C34 22 42 4 34 -8C30 2 22 8 12 12Z', d) + o(0, 28, 24, 21) + o(-11, 45, 10, 6, l) + o(11, 45, 10, 6, l) + p('M-18 12Q0 20 18 12V20Q0 28 -18 20Z', '#14101a', 1.6) + both(dot(-9, 19, 2.2, '#c0c0d8')) + o(0, -10, 28, 25) + both(p('M-22 -28C-40 -26 -42 -2 -32 8C-24 4 -20 -10 -16 -24Z', d)) + o(0, 2, 15, 12, l, 1.8) + p('M-5 -4h10l-5 6z', '#14101a', 1.2) + p('M-5 8Q0 22 5 8Z', '#ff1f8f', 1.4) + eye(-11, -14, 8, '#35dcc8') + eye(11, -14, 8, '#35dcc8'),
+    bunny: () => p('M-16 -22C-24 -54 -20 -64 -11 -62C-3 -58 -3 -36 -5 -24Z') + p('M6 -24C8 -38 14 -48 34 -44C42 -38 28 -30 16 -22Z') + p('M-14 -26C-18 -44 -16 -52 -12 -52C-8 -50 -8 -36 -9 -26Z', '#f7b8cf', 1.2) + p('M14 -34l10 -4 3 7-10 4z', '#fff6e0', 1.4) + o(0, 28, 23, 21) + o(0, 32, 12, 13, l, 1.6) + o(-11, 46, 10, 6) + o(11, 46, 10, 6) + o(24, 34, 7, 7, '#fff') + o(0, -6, 26, 23) + eye(-10, -9, 9, '#c0392b') + eye(10, -9, 9, '#c0392b') + p('M-3 3h6l-3 4z', '#ff1f8f', 1.2) + p('M-5 8h10v6h-10zM0 8v6', '#fff', 1.4),
+    jelly: () => [-22, -11, 0, 11, 22].map((x, i) => '<path d="M' + x + ' 2q' + (i % 2 ? 8 : -8) + ' 12 0 22t0 22" fill="none" stroke="' + d + '" stroke-width="4" stroke-linecap="round"/>').join('') + p('M-32 -2C-32 -50 32 -50 32 -2Q22 8 11 -2T-11 -2T-32 -2Z', l) + p('M-20 -30Q-12 -40 -2 -40', 'none', 2) + eye(-11, -16, 8, '#ff1f8f') + eye(11, -16, 8, '#ff1f8f') + dot(-20, -6, 4, '#ff1f8f') + dot(20, -6, 4, '#ff1f8f'),
+    frog: () => both(p('M-24 28C-48 20 -50 42 -36 48H-14Z', d)) + o(0, 26, 30, 24) + o(0, 32, 18, 15, l, 1.6) + both(o(-16, 46, 11, 5, d)) + o(0, -2, 32, 22) + eye(-17, -21, 11, '#f4d35e') + eye(17, -21, 11, '#f4d35e') + '<path d="M-20 6Q0 18 20 6" fill="none" stroke="' + INK + '" stroke-width="2.600" stroke-linecap="round"/>' + dot(-24, 2, 4, '#f7b8cf') + dot(24, 2, 4, '#f7b8cf') + p('M-10 -24l-2 -14 7 6 5 -9 5 9 7 -6 -2 14z', '#f4d35e', 1.8),
+  };
+  const body = art[id];
+  return body ? '<g transform="translate(305 648)">' + body() + '</g>' : '';
+}
 
 function randomLook(): Look {
   const look = { ...FANG_LOOK, hairStyle: 'long' };
@@ -210,9 +238,9 @@ function drawHand(shape: string, skin: string, fill: string, tips: string, tipSt
 }
 
 /* plain: small previews skip the costly shading and hair streaks. detail: the big wardrobe figure shades each layer on its own. */
-function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[]; box?: string; plain?: boolean; detail?: boolean } = {}): string {
+function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[]; box?: string; plain?: boolean; detail?: boolean; pose?: Pose; shaded?: boolean; stream?: boolean; merBelt?: string } = {}): string {
   const uid = 'g' + (++ghoulCounter);
-  const pose = opt.head ? POSES[0] : poseOf(o.pose);
+  const pose = opt.pose || (opt.head ? POSES[0] : poseOf(o.pose));
   let defs = '';
   const texture = (kind: string, a: string, b: string, name: string): string => {
     if (kind === 'solid' || !kind) return a;
@@ -233,6 +261,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       spots: [30, 30, `<rect width="30" height="30" fill="${a}"/><ellipse cx="8" cy="9" rx="6" ry="4.500" fill="${b}"/><ellipse cx="22" cy="22" rx="6" ry="4.500" fill="${b}"/><ellipse cx="8" cy="9" rx="2.600" ry="1.800" fill="${a}"/><ellipse cx="22" cy="22" rx="2.600" ry="1.800" fill="${a}"/>`],
       diamonds: [22, 22, `<rect width="22" height="22" fill="${a}"/><path d="M11 2L20 11 11 20 2 11z" fill="${b}"/>`],
       flowers: [30, 30, `<rect width="30" height="30" fill="${a}"/><g fill="${b}"><circle cx="15" cy="8" r="4"/><circle cx="22" cy="13" r="4"/><circle cx="19" cy="21" r="4"/><circle cx="11" cy="21" r="4"/><circle cx="8" cy="13" r="4"/></g><circle cx="15" cy="15" r="3" fill="#f4d35e"/>`],
+      merscales: [16, 12, `<rect width="16" height="12" fill="${a}"/><path d="M0 0a8 8 0 0 0 16 0M-8 6a8 8 0 0 0 16 0M8 6a8 8 0 0 0 16 0" fill="${b}" fill-opacity=".3" stroke="${INK}" stroke-opacity=".55" stroke-width="1"/>`],
       rainbow: [10, 42, ['#ff1f8f', '#ff8c1a', '#f4d35e', '#8df04a', '#19b7e8', '#6a1f86'].map((c, i) => `<rect y="${i * 7}" width="10" height="7" fill="${c}"/>`).join('')],
     } as Record<string, [number, number, string]>)[kind];
     if (!inner) return a;
@@ -561,6 +590,9 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     parts.bottom = lifted + parts.bottom;
   }
   parts.top = ({
+    merscale: strokeLine('M136 262Q142 240 150 228M184 262Q178 240 170 228', 4, o.trim) + shape('M122 262Q142 250 160 270Q178 250 198 262L192 304Q160 316 128 304Z', texture('merscales', o.topC, o.trim, 'ms')) + strokeLine('M128 304Q160 316 192 304', 4, o.trim),
+    mershell: strokeLine('M146 228Q130 248 128 268M174 228Q190 248 192 268M126 282Q160 298 194 282', 3, '#fff6fb', 'stroke-dasharray="0 7"') + [[138, 278], [182, 278]].map(([x, y]) => '<g transform="translate(' + x + ' ' + y + ')"><path d="M-23 -6Q-26 -22 -14 -24Q-8 -32 0 -28Q8 -32 14 -24Q26 -22 23 -6Q14 16 0 20Q-14 16 -23 -6Z" fill="' + o.topC + '" stroke="' + INK + '" stroke-width="2.600"/><path d="M0 18L-14 -21M0 18L-5 -27M0 18L5 -27M0 18L14 -21M0 18L-20 -8M0 18L20 -8" stroke="' + o.trim + '" stroke-width="2" stroke-linecap="round"/></g>').join(''),
+    mernet: shape('M148 230L160 268L172 230Q188 240 196 262L192 300Q186 322 188 344L132 344Q134 322 128 300L124 262Q132 240 148 230Z', o.topC) + '<path d="M128 262L188 344M140 248L190 316M160 268L188 300M124 288L168 344M128 320L146 344M192 262L132 344M180 248L130 316M160 268L132 300M196 288L152 344M192 320L174 344" stroke="' + o.trim + '" stroke-width="1.500"/>' + [[160, 268], [145, 282], [175, 282], [160, 296], [132, 296], [188, 296], [146, 310], [174, 310], [160, 324], [134, 326], [186, 326]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="3" fill="#fff6fb" stroke="' + INK + '" stroke-width=".8"/>').join(''),
     tank: strokeLine('M132 254L128 238M188 254L192 238', 6, o.topC) + shape('M130 252Q160 288 190 252L194 296Q186 318 186 344L134 344Q134 318 126 296Z', topFill) + strokeLine('M132 340h56', 5, o.trim),
     tee: shape('M116 246Q134 236 146 240Q160 256 174 240Q186 236 204 246L194 296Q186 318 186 346L134 346Q134 318 126 296Z', topFill) + `<path d="M160 280c-5-7-18-9-24-3 6 1 8 7 7 11 5-3 11-3 17 3 6-6 12-6 17-3-1-4 1-10 7-11-6-6-19-4-24 3z" fill="${o.trim}"/>` + strokeLine('M146 241Q160 256 174 241', 4, o.trim),
     stripey: shape('M116 266Q160 280 204 266L194 298Q186 318 186 346L134 346Q134 318 126 298Z', topFill) + strokeLine('M116 266Q160 280 204 266', 5, o.trim),
@@ -631,6 +663,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
 
   /* ---------- necklaces, on-your-back things and face details ---------- */
   parts.neck = ({
+    mercoral: [[146, 226], [149, 234], [153, 241], [157, 246], [163, 246], [167, 241], [171, 234], [174, 226]].map(([x, y], i) => '<ellipse cx="' + x + '" cy="' + y + '" rx="4.200" ry="3.400" fill="' + (i % 3 === 1 ? '#7fe8ff' : '#ff7a66') + '" stroke="' + INK + '" stroke-width="1"/>').join('') + '<path d="M153 250h14l-3 10h-8z" fill="#7fe8ff" stroke="' + INK + '" stroke-width="1.200"/>',
     choker: strokeLine('M147 222Q160 230 173 222', 6, o.trim),
     skull: strokeLine('M146 226Q160 262 174 226', 2.4, INK) + '<circle cx="160" cy="254" r="8" fill="#fff6fb" stroke="' + INK + '" stroke-width="1.8"/><circle cx="157" cy="253" r="1.8" fill="' + INK + '"/><circle cx="163" cy="253" r="1.8" fill="' + INK + '"/>',
     pearls: [[146, 228], [150, 238], [155, 245], [160, 248], [165, 245], [170, 238], [174, 228]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="3.6" fill="#fff6fb" stroke="' + INK + '" stroke-width="1"/>').join(''),
@@ -1119,6 +1152,9 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
 
   /* ---------- headwear ---------- */
   parts.headwear = ({
+    mershell: '<g transform="translate(92 86)"><path d="M26 -30C8 -36 -14 -30 -24 -10C-34 12 -18 34 6 32C24 30 32 12 22 0C14 -8 2 -4 2 6" fill="#f4d35e" stroke="' + INK + '" stroke-width="2.800" stroke-linejoin="round"/><path d="M2 6C2 14 14 16 16 6C18 -6 2 -16 -10 -6C-22 6 -14 26 6 24C20 22 28 8 22 -6C18 -18 8 -24 -2 -24" fill="none" stroke="#b9851f" stroke-width="2.400"/><path d="M-10 -20Q-22 -8 -18 10" fill="none" stroke="#fff3b0" stroke-width="3" stroke-linecap="round"/></g>',
+    merflower: '<g transform="translate(212 66) rotate(14)">' + [0, 72, 144, 216, 288].map(a => '<path transform="rotate(' + a + ')" d="M0 -3C-16 -14 -14 -36 0 -40C14 -36 16 -14 0 -3Z" fill="#ff8cc8" stroke="' + INK + '" stroke-width="2.400"/><path transform="rotate(' + a + ')" d="M0 -8V-28" stroke="#ff1f8f" stroke-width="2"/>').join('') + '<circle r="8" fill="#ff1f8f" stroke="' + INK + '" stroke-width="2"/><path d="M0 0L14 14" stroke="#f4d35e" stroke-width="3"/><circle cx="14" cy="14" r="3" fill="#f4d35e" stroke="' + INK + '" stroke-width="1"/></g>',
+    merstar: '<g transform="translate(210 62) rotate(-14)"><path d="M0 -32C5 -16 10 -12 30 -10C18 0 15 8 20 26C6 16 -6 16 -20 26C-15 8 -18 0 -30 -10C-10 -12 -5 -16 0 -32Z" fill="#ff7a66" stroke="' + INK + '" stroke-width="2.600" stroke-linejoin="round"/>' + [[0, -18], [0, -8], [14, -6], [8, 2], [10, 14], [-8, 2], [-10, 14], [-14, -6]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="2" fill="#ffd1a8"/>').join('') + '</g>',
     bow: `<path d="M160 30L114 4q-12 26 6 46zM160 30l46-26q12 26-6 46z" fill="${o.trim}" stroke="${INK}" stroke-width="2.6"/><circle cx="160" cy="30" r="10" fill="#fff6fb" stroke="${INK}" stroke-width="2.6"/>`,
     tiara: `<path d="M118 50l-6-30 22 14 26-26 26 26 22-14-6 30q-42-14-84 0z" fill="#f4d35e" stroke="${INK}" stroke-width="2.6"/><circle cx="160" cy="28" r="5.5" fill="${o.trim}" stroke="${INK}" stroke-width="1.5"/>`,
     hat: `<g transform="rotate(-10 196 34)"><ellipse cx="196" cy="48" rx="42" ry="9" fill="${o.topC}" stroke="${INK}" stroke-width="2.6"/><path d="M170 46V14q26-8 52 0v32q-26 8-52 0z" fill="${o.topC}" stroke="${INK}" stroke-width="2.6"/><path d="M170 36q26 8 52 0v10q-26 8-52 0z" fill="${o.trim}"/></g>`,
@@ -1150,21 +1186,33 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     spider: strokeLine('M186 54l-14-10M186 60h-18M186 66l-14 8M206 54l14-10M206 60h18M206 66l14 8', 2.400, '#14101a') + `<ellipse cx="196" cy="62" rx="14" ry="11" fill="#14101a" stroke="${INK}" stroke-width="1.400"/><circle cx="196" cy="50" r="6" fill="#14101a"/><circle cx="193" cy="49" r="1.200" fill="#c0392b"/><circle cx="199" cy="49" r="1.200" fill="#c0392b"/>`,
 } as Record<string, string>)[o.headwear] || '';
 
+  parts.pet = drawPet(o.pet, o.petC);
+  if (parts.pet) needsRoom = true;
+  /* A mermaid has no hips or legs here: the game draws her tail, and this band hides where it joins. */
+  if (opt.merBelt) {
+    parts.torso = shape('M148 186L148 232Q160 240 172 232L172 186Z', SD) + shape('M116 244Q138 232 148 232Q160 240 172 232Q182 232 204 244L194 296Q186 318 184 338V352H136V338Q134 318 126 296Z', S);
+    parts.top = (parts.top || '') + shape('M130 340Q160 351 190 340L194 358Q160 370 126 358Z', opt.merBelt) + strokeLine('M128 349Q160 361 192 349', 2.4, o.trim);
+  }
   const lean = pose.lean || 0, tilt = pose.tilt || 0, lift = pose.lift || 0;
   const LOWER: Layer[] = ['legs', 'legwear', 'pants', 'shoes'];
-  const shading = !opt.plain && !opt.head && !opt.only;
+  const shading = !opt.plain && !opt.head && (!opt.only || !!opt.shaded);
   if (shading) defs += '<filter id="' + uid + 'cel" filterUnits="userSpaceOnUse" x="-150" y="-120" width="620" height="880" color-interpolation-filters="sRGB"><feOffset in="SourceAlpha" dx="-7" dy="-3" result="o"/><feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#1c0f22" flood-opacity=".3"/><feComposite in2="edge" operator="in" result="sh"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter>';
   const SHADED: Layer[] = ['legs', 'pants', 'shoes', 'torso', 'bottom', 'top', 'arms', 'sleeves', 'hairBack'];
   const THIN: Layer[] = ['torso', 'bottom', 'top', 'neck'];
   const placed = (l: Layer): string => {
     let out = parts[l] || '';
     if (!out) return '';
+    if (l === 'pet') return out;
     if (THIN.includes(l)) out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
     if (shading && opt.detail && SHADED.includes(l)) out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
     if (l === 'hairBack' && !scarfOn) out = '<g transform="translate(160 110) scale(1.16 1.04) translate(-160 -110)">' + out + '</g>';
     if (l === 'hairFront' && !scarfOn) out = '<g transform="translate(160 0) scale(1.1 1) translate(-160 0)">' + out + '</g>';
     if (HEAD_LAYERS.includes(l)) out = '<g transform="translate(160 205) scale(1.05) translate(-160 -205)">' + out + '</g>';
-    if (tilt && HEAD_LAYERS.includes(l)) out = '<g transform="rotate(' + tilt + ' 160 195)">' + out + '</g>';
+    /* Swimming hair stays with the head but streams back along the body instead of turning with it. */
+    if (opt.stream && l === 'hairBack') {
+      const a = tilt * Math.PI / 180;
+      out = '<g transform="translate(' + (85 * Math.sin(a)).toFixed(1) + ' ' + (85 - 85 * Math.cos(a)).toFixed(1) + ') rotate(-12 160 110) translate(160 110) scale(.66 1) translate(-160 -110)">' + out + '</g>';
+    } else if (tilt && HEAD_LAYERS.includes(l)) out = '<g transform="rotate(' + tilt + ' 160 195)">' + out + '</g>';
     if (lean && !LOWER.includes(l)) out = '<g transform="rotate(' + lean + ' 160 385)">' + out + '</g>';
     return lift ? '<g transform="translate(0 ' + (-lift) + ')">' + out + '</g>' : out;
   };
