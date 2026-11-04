@@ -51,7 +51,7 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
 /* ---------- Riptide Run ---------- */
 (function () {
   const [cv, c] = makeCanvas('Riptide Run game area');
-  const p = makePanel('riptide', 'Riptide Run', 'Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three stings and you surface.', [cv]);
+  const p = makePanel('riptide', 'Riptide Run', 'You swim as the ghoul you made, or as Ms. Fangtastic until you have one. Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three stings and you surface.', [cv]);
   interface Thing { x: number; y: number; r: number; pearl: boolean; phase: number }
   let run = false, rise = false, y = 180, vy = 0, things: Thing[] = [], score = 0, lives = 3, safe = 0, last = 0, gap = 0, far = 0, shown = 0, hunt = false;
   const stat = () => { p.stat.textContent = (run ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('riptide'); };
@@ -61,9 +61,41 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
     c.strokeStyle = 'rgba(255,255,255,.14)'; c.lineWidth = 2;
     for (let i = 0; i < 4; i++) { c.beginPath(); for (let x = 0; x <= 480; x += 24) c.lineTo(x, 50 + i * 85 + Math.sin((x + far * (1 + i * .3)) / 40) * 6); c.stroke(); }
   }
+  /* The player's own ghoul, arms out in front, kept as a ready-made picture so drawing it every frame stays cheap. */
+  const SWIM_SPOTS = [-32, 0, 32]; // feet, middle and head, since a swimming ghoul is long and thin
+  const SWIM_LONG = 136, SWIM_WIDE = SWIM_LONG * 420 / 730;
+  let swimArt: HTMLCanvasElement | null = null, swimKey = '';
+  function dressSwimmer(done: () => void): void {
+    const look = (!isAdmin() && currentStudent()?.look) || DOLLS.mumtea.look, key = JSON.stringify(look);
+    if (key === swimKey) { done(); return; }
+    const holder = document.createElement('div');
+    holder.innerHTML = drawGhoul({ ...look, pose: 'cheer' }, { box: WIDE_BOX });
+    const svg = holder.querySelector('svg') as SVGSVGElement;
+    svg.setAttribute('width', String(SWIM_WIDE * 2)); svg.setAttribute('height', String(SWIM_LONG * 2));
+    const picture = new Image();
+    picture.onload = () => {
+      const art = document.createElement('canvas');
+      art.width = SWIM_WIDE * 2; art.height = SWIM_LONG * 2;
+      art.getContext('2d')?.drawImage(picture, 0, 0, art.width, art.height);
+      swimArt = art; swimKey = key; done();
+    };
+    picture.onerror = () => { swimArt = null; done(); };
+    picture.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+  }
   function swimmer(): void {
     if (safe > 0 && Math.floor(safe / 100) % 2) return;
+    for (let i = 0; i < 3; i++) {
+      const up = (far / 60 + i / 3) % 1;
+      c.fillStyle = 'rgba(255,255,255,' + (.5 * (1 - up)) + ')';
+      c.beginPath(); c.arc(90 - SWIM_LONG / 2 + 4 - up * 24, y - up * 22 + i * 4, 2 + i, 0, 7); c.fill();
+    }
     c.save(); c.translate(90, y); c.rotate(Math.max(-.5, Math.min(.5, vy / 300)));
+    if (swimArt) {
+      c.rotate(Math.PI / 2 + Math.sin(far / 16) * .05);
+      c.drawImage(swimArt, -SWIM_WIDE / 2, -SWIM_LONG / 2, SWIM_WIDE, SWIM_LONG);
+      c.restore();
+      return;
+    }
     c.strokeStyle = '#000'; c.lineWidth = 3; c.fillStyle = '#35dcc8';
     c.beginPath(); c.moveTo(-18, 0); c.lineTo(-38, -14); c.lineTo(-34, 0); c.lineTo(-38, 14); c.closePath(); c.fill(); c.stroke();
     c.fillStyle = '#19b7e8'; c.beginPath(); c.ellipse(0, 0, 24, 15, 0, 0, 7); c.fill(); c.stroke();
@@ -99,7 +131,7 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
     scene();
     things = things.filter(t => {
       t.x -= dt * speed; t.phase += dt * .006;
-      if (Math.hypot(t.x - 90, t.y + (t.pearl ? 0 : 8) - y) < t.r + 15) {
+      if (SWIM_SPOTS.some(dx => Math.hypot(t.x - 90 - dx, t.y + (t.pearl ? 0 : 8) - y) < t.r + 11)) {
         if (t.pearl) { score += 5; tone(780, .08); return false; }
         if (safe <= 0) { lives--; safe = 1200; tone(150, .25); }
       }
@@ -117,8 +149,10 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
     banner(c, 'Surfaced!', s + ' points'); p.go.textContent = 'Play again';
   }
   p.go.addEventListener('click', () => {
-    run = true; y = 180; vy = 0; things = []; score = 0; lives = 3; safe = 0; gap = 300; shown = 0; last = performance.now();
-    p.go.textContent = 'Restart'; p.go.blur(); stat(); requestAnimationFrame(frame);
+    dressSwimmer(() => {
+      run = true; y = 180; vy = 0; things = []; score = 0; lives = 3; safe = 0; gap = 300; shown = 0; last = performance.now();
+      p.go.textContent = 'Restart'; p.go.blur(); stat(); requestAnimationFrame(frame);
+    });
   });
   cv.addEventListener('pointerdown', e => { rise = true; e.preventDefault(); });
   addEventListener('pointerup', () => { rise = false; });

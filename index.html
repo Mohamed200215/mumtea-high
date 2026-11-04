@@ -649,6 +649,45 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .moregame:hover,.moregame:focus-visible{border-color:var(--pink);color:var(--paper)}
 .moregames .moreall{margin-top:16px}
 
+/* little figures drifting around the home page, behind everything */
+.stage{position:relative}
+.stage>.wrap{position:relative;z-index:1}
+.homefx{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.fx{position:absolute;display:block;opacity:.72}
+.fx img{display:block}
+.fxspider img,.fxcoffin img{filter:brightness(1.7) drop-shadow(0 0 3px rgba(255,246,251,.45))}
+.side{display:none}
+@media (min-width:1180px){.side{display:block}}
+.fxweb{left:0;top:0;transform-origin:0 0;animation:fxsway 9s ease-in-out infinite}
+.fxspider{right:calc(25% - 270px - 17px);top:0;animation:fxdangle 11s ease-in-out infinite}
+.fxspider::before{content:"";position:absolute;left:50%;bottom:70%;width:1px;height:400px;background:rgba(255,246,251,.4)}
+.fxghost{left:calc(25% - 270px - 26px);top:24%;animation:fxfloat 8s ease-in-out infinite}
+.fxbat{right:calc(25% - 270px - 22px);top:30%;animation:fxfloat 10s ease-in-out infinite reverse}
+.fxbat img,.fxflyer img{animation:fxflap .9s ease-in-out infinite;transform-origin:50% 40%}
+.fxskull{left:calc(25% - 270px - 20px);top:54%;animation:fxrock 7s ease-in-out infinite}
+.fxcup{right:calc(25% - 270px - 22px);top:58%;animation:fxrock 9s ease-in-out infinite}
+.fxcup i{position:absolute;top:-14px;left:38%;width:3px;height:13px;border-radius:3px;background:#fff6fb;filter:blur(1px);opacity:0;animation:fxsteam 3.6s ease-out infinite}
+.fxcup i+i{left:56%;animation-delay:1.8s}
+.fxmoon{left:9%;top:81%;animation:fxglow 7s ease-in-out infinite}
+.fxcandle{left:21%;top:91%;animation:fxflicker 2.8s ease-in-out infinite}
+.fxcoffin{right:11%;top:84%;animation:fxfloat 9s ease-in-out infinite}
+.fxflyer{left:0;top:87%;animation:fxfly 44s linear infinite}
+.fxspark{animation:fxtwinkle 5s ease-in-out infinite}
+.s1{left:calc(25% - 270px - 11px);top:42%}
+.s2{right:calc(25% - 270px - 9px);top:46%;animation-delay:1.7s}
+.s3{right:24%;top:93%;animation-delay:3s}
+.s4{left:29%;top:83%;animation-delay:.9s}
+@keyframes fxsway{50%{transform:rotate(3deg)}}
+@keyframes fxdangle{50%{transform:translateY(120px)}}
+@keyframes fxfloat{50%{transform:translate(6px,-18px)}}
+@keyframes fxflap{50%{transform:scaleY(.8)}}
+@keyframes fxrock{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) translateY(-6px)}}
+@keyframes fxsteam{0%{transform:none;opacity:0}30%{opacity:.5}100%{transform:translateY(-14px);opacity:0}}
+@keyframes fxglow{50%{opacity:.4;transform:scale(1.05)}}
+@keyframes fxflicker{0%,100%{opacity:.72}40%{opacity:.55}70%{opacity:.8}}
+@keyframes fxfly{from{transform:translateX(-60px)}to{transform:translateX(calc(100vw + 60px))}}
+@keyframes fxtwinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:.85;transform:none}}
+
 /*ARCADE-CSS-END*/
 </style>
 
@@ -700,7 +739,22 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 <div class="marquee" aria-hidden="true"><div>FANGS OUT &#9733; GLOSS ON &#9733; TEA HOT &#9733; BOOTS HIGH &#9733; STAY FANGTASTIC &#9733; FANGS OUT &#9733; GLOSS ON &#9733; TEA HOT &#9733; BOOTS HIGH &#9733; STAY FANGTASTIC &#9733; FANGS OUT &#9733; GLOSS ON &#9733; TEA HOT &#9733; BOOTS HIGH &#9733; STAY FANGTASTIC &#9733; FANGS OUT &#9733; GLOSS ON &#9733; TEA HOT &#9733; BOOTS HIGH &#9733; STAY FANGTASTIC &#9733; </div></div>
 
 <main>
-  <section class="view stage" data-view="home"><div class="wrap">
+  <section class="view stage" data-view="home"><div class="homefx" aria-hidden="true">
+    <span class="fx fxweb side"><img src="emoji/1f578.webp" alt="" width="76" height="76" loading="lazy"></span>
+    <span class="fx fxspider side"><img src="emoji/1f577.webp" alt="" width="34" height="34" loading="lazy"></span>
+    <span class="fx fxghost side"><img src="emoji/1f47b.webp" alt="" width="52" height="52" loading="lazy"></span>
+    <span class="fx fxbat side"><img src="emoji/1f987.webp" alt="" width="44" height="44" loading="lazy"></span>
+    <span class="fx fxskull side"><img src="emoji/1f480.webp" alt="" width="40" height="40" loading="lazy"></span>
+    <span class="fx fxcup side"><img src="emoji/1f375.webp" alt="" width="44" height="44" loading="lazy"><i></i><i></i></span>
+    <span class="fx fxmoon"><img src="emoji/1f319.webp" alt="" width="50" height="50" loading="lazy"></span>
+    <span class="fx fxcandle"><img src="emoji/1f56f.webp" alt="" width="44" height="44" loading="lazy"></span>
+    <span class="fx fxcoffin"><img src="emoji/26b0.webp" alt="" width="46" height="46" loading="lazy"></span>
+    <span class="fx fxflyer"><img src="emoji/1f987.webp" alt="" width="36" height="36" loading="lazy"></span>
+    <span class="fx fxspark s1 side"><img src="emoji/2728.webp" alt="" width="22" height="22" loading="lazy"></span>
+    <span class="fx fxspark s2 side"><img src="emoji/2728.webp" alt="" width="18" height="18" loading="lazy"></span>
+    <span class="fx fxspark s3"><img src="emoji/2728.webp" alt="" width="24" height="24" loading="lazy"></span>
+    <span class="fx fxspark s4"><img src="emoji/2728.webp" alt="" width="18" height="18" loading="lazy"></span>
+  </div><div class="wrap">
     <section class="boss" aria-labelledby="bossTitle">
       <span class="doll" data-doll="mumtea" data-label="Ms. Fangtastic"></span>
       <div class="bosscopy">
@@ -1017,8 +1071,8 @@ function say(who,t){const s=$('#screen');const m=el('div',{cls:'msg'},el('b',{te
 say(...lines[li++]);
 let ctx;
 const screamSound=new Audio('Scary_Sound_Effects_Horror_Scream.mp3');
-function scream(){screamSound.currentTime=0;screamSound.play().catch(()=>{})}
-$('#scream').addEventListener('click',()=>{say('You','AAAAAAAAH!');say(...lines[li++%lines.length]);award(1)});
+function scream(){if(store.get('mute',false))return;screamSound.volume=.2+.8*Math.min(1,bones/FULL);screamSound.currentTime=0;screamSound.play().catch(()=>{})}
+$('#scream').addEventListener('click',()=>{say('You','AAAAAAAAH!');say(...lines[li++%lines.length]);award(1);scream()});
 $('#listen').addEventListener('click',scream);
 
 /* ---------- codes ---------- */
@@ -1610,7 +1664,7 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
 /* ---------- Riptide Run ---------- */
 (function () {
     const [cv, c] = makeCanvas('Riptide Run game area');
-    const p = makePanel('riptide', 'Riptide Run', 'Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three stings and you surface.', [cv]);
+    const p = makePanel('riptide', 'Riptide Run', 'You swim as the ghoul you made, or as Ms. Fangtastic until you have one. Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three stings and you surface.', [cv]);
     let run = false, rise = false, y = 180, vy = 0, things = [], score = 0, lives = 3, safe = 0, last = 0, gap = 0, far = 0, shown = 0, hunt = false;
     const stat = () => { p.stat.textContent = (run ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('riptide'); };
     function scene() {
@@ -1628,12 +1682,53 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
             c.stroke();
         }
     }
+    /* The player's own ghoul, arms out in front, kept as a ready-made picture so drawing it every frame stays cheap. */
+    const SWIM_SPOTS = [-32, 0, 32]; // feet, middle and head, since a swimming ghoul is long and thin
+    const SWIM_LONG = 136, SWIM_WIDE = SWIM_LONG * 420 / 730;
+    let swimArt = null, swimKey = '';
+    function dressSwimmer(done) {
+        const look = (!isAdmin() && currentStudent()?.look) || DOLLS.mumtea.look, key = JSON.stringify(look);
+        if (key === swimKey) {
+            done();
+            return;
+        }
+        const holder = document.createElement('div');
+        holder.innerHTML = drawGhoul({ ...look, pose: 'cheer' }, { box: WIDE_BOX });
+        const svg = holder.querySelector('svg');
+        svg.setAttribute('width', String(SWIM_WIDE * 2));
+        svg.setAttribute('height', String(SWIM_LONG * 2));
+        const picture = new Image();
+        picture.onload = () => {
+            const art = document.createElement('canvas');
+            art.width = SWIM_WIDE * 2;
+            art.height = SWIM_LONG * 2;
+            art.getContext('2d')?.drawImage(picture, 0, 0, art.width, art.height);
+            swimArt = art;
+            swimKey = key;
+            done();
+        };
+        picture.onerror = () => { swimArt = null; done(); };
+        picture.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
+    }
     function swimmer() {
         if (safe > 0 && Math.floor(safe / 100) % 2)
             return;
+        for (let i = 0; i < 3; i++) {
+            const up = (far / 60 + i / 3) % 1;
+            c.fillStyle = 'rgba(255,255,255,' + (.5 * (1 - up)) + ')';
+            c.beginPath();
+            c.arc(90 - SWIM_LONG / 2 + 4 - up * 24, y - up * 22 + i * 4, 2 + i, 0, 7);
+            c.fill();
+        }
         c.save();
         c.translate(90, y);
         c.rotate(Math.max(-.5, Math.min(.5, vy / 300)));
+        if (swimArt) {
+            c.rotate(Math.PI / 2 + Math.sin(far / 16) * .05);
+            c.drawImage(swimArt, -SWIM_WIDE / 2, -SWIM_LONG / 2, SWIM_WIDE, SWIM_LONG);
+            c.restore();
+            return;
+        }
         c.strokeStyle = '#000';
         c.lineWidth = 3;
         c.fillStyle = '#35dcc8';
@@ -1727,7 +1822,7 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
         things = things.filter(t => {
             t.x -= dt * speed;
             t.phase += dt * .006;
-            if (Math.hypot(t.x - 90, t.y + (t.pearl ? 0 : 8) - y) < t.r + 15) {
+            if (SWIM_SPOTS.some(dx => Math.hypot(t.x - 90 - dx, t.y + (t.pearl ? 0 : 8) - y) < t.r + 11)) {
                 if (t.pearl) {
                     score += 5;
                     tone(780, .08);
@@ -1765,20 +1860,22 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
         p.go.textContent = 'Play again';
     }
     p.go.addEventListener('click', () => {
-        run = true;
-        y = 180;
-        vy = 0;
-        things = [];
-        score = 0;
-        lives = 3;
-        safe = 0;
-        gap = 300;
-        shown = 0;
-        last = performance.now();
-        p.go.textContent = 'Restart';
-        p.go.blur();
-        stat();
-        requestAnimationFrame(frame);
+        dressSwimmer(() => {
+            run = true;
+            y = 180;
+            vy = 0;
+            things = [];
+            score = 0;
+            lives = 3;
+            safe = 0;
+            gap = 300;
+            shown = 0;
+            last = performance.now();
+            p.go.textContent = 'Restart';
+            p.go.blur();
+            stat();
+            requestAnimationFrame(frame);
+        });
     });
     cv.addEventListener('pointerdown', e => { rise = true; e.preventDefault(); });
     addEventListener('pointerup', () => { rise = false; });

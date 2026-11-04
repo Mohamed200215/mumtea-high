@@ -417,3 +417,42 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .moregame{display:flex;align-items:center;min-height:48px;padding:8px 12px;background:#000;color:var(--white);border:2px solid var(--violet);font:800 14px var(--body);text-decoration:none;overflow-wrap:anywhere}
 .moregame:hover,.moregame:focus-visible{border-color:var(--pink);color:var(--paper)}
 .moregames .moreall{margin-top:16px}
+
+/* little figures drifting around the home page, behind everything */
+.stage{position:relative}
+.stage>.wrap{position:relative;z-index:1}
+.homefx{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.fx{position:absolute;display:block;opacity:.72}
+.fx img{display:block}
+.fxspider img,.fxcoffin img{filter:brightness(1.7) drop-shadow(0 0 3px rgba(255,246,251,.45))}
+.side{display:none}
+@media (min-width:1180px){.side{display:block}}
+.fxweb{left:0;top:0;transform-origin:0 0;animation:fxsway 9s ease-in-out infinite}
+.fxspider{right:calc(25% - 270px - 17px);top:0;animation:fxdangle 11s ease-in-out infinite}
+.fxspider::before{content:"";position:absolute;left:50%;bottom:70%;width:1px;height:400px;background:rgba(255,246,251,.4)}
+.fxghost{left:calc(25% - 270px - 26px);top:24%;animation:fxfloat 8s ease-in-out infinite}
+.fxbat{right:calc(25% - 270px - 22px);top:30%;animation:fxfloat 10s ease-in-out infinite reverse}
+.fxbat img,.fxflyer img{animation:fxflap .9s ease-in-out infinite;transform-origin:50% 40%}
+.fxskull{left:calc(25% - 270px - 20px);top:54%;animation:fxrock 7s ease-in-out infinite}
+.fxcup{right:calc(25% - 270px - 22px);top:58%;animation:fxrock 9s ease-in-out infinite}
+.fxcup i{position:absolute;top:-14px;left:38%;width:3px;height:13px;border-radius:3px;background:#fff6fb;filter:blur(1px);opacity:0;animation:fxsteam 3.6s ease-out infinite}
+.fxcup i+i{left:56%;animation-delay:1.8s}
+.fxmoon{left:9%;top:81%;animation:fxglow 7s ease-in-out infinite}
+.fxcandle{left:21%;top:91%;animation:fxflicker 2.8s ease-in-out infinite}
+.fxcoffin{right:11%;top:84%;animation:fxfloat 9s ease-in-out infinite}
+.fxflyer{left:0;top:87%;animation:fxfly 44s linear infinite}
+.fxspark{animation:fxtwinkle 5s ease-in-out infinite}
+.s1{left:calc(25% - 270px - 11px);top:42%}
+.s2{right:calc(25% - 270px - 9px);top:46%;animation-delay:1.7s}
+.s3{right:24%;top:93%;animation-delay:3s}
+.s4{left:29%;top:83%;animation-delay:.9s}
+@keyframes fxsway{50%{transform:rotate(3deg)}}
+@keyframes fxdangle{50%{transform:translateY(120px)}}
+@keyframes fxfloat{50%{transform:translate(6px,-18px)}}
+@keyframes fxflap{50%{transform:scaleY(.8)}}
+@keyframes fxrock{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) translateY(-6px)}}
+@keyframes fxsteam{0%{transform:none;opacity:0}30%{opacity:.5}100%{transform:translateY(-14px);opacity:0}}
+@keyframes fxglow{50%{opacity:.4;transform:scale(1.05)}}
+@keyframes fxflicker{0%,100%{opacity:.72}40%{opacity:.55}70%{opacity:.8}}
+@keyframes fxfly{from{transform:translateX(-60px)}to{transform:translateX(calc(100vw + 60px))}}
+@keyframes fxtwinkle{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:.85;transform:none}}
