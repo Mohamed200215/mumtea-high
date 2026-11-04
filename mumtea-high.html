@@ -53,11 +53,11 @@ nav.tabs button[aria-current="page"]{background:var(--pink);color:var(--white)}
 /* stage */
 .stage{background:linear-gradient(180deg,var(--plum),#21092f 60%,var(--ink));border-bottom:2px solid #000;padding-block:18px 26px}
 .view[hidden]{display:none}
-.deck{display:grid;grid-template-columns:minmax(0,1fr) 210px 74px;gap:16px;align-items:stretch}
-.film{position:relative;background:#000;padding:26px 14px;min-width:0;transform:rotate(-.6deg);
+.deck{display:grid;grid-template-columns:minmax(0,1fr) 260px 92px;gap:16px;align-items:stretch}
+.film{position:relative;display:flex;flex-direction:column;background:#000;padding:26px 14px;min-width:0;transform:rotate(-.6deg);
   background-image:repeating-linear-gradient(90deg,var(--white) 0 16px,transparent 16px 34px),repeating-linear-gradient(90deg,var(--white) 0 16px,transparent 16px 34px);
   background-size:100% 11px,100% 11px;background-repeat:no-repeat;background-position:0 8px,0 calc(100% - 8px)}
-.slide{min-height:290px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;justify-content:center;position:relative;overflow:hidden;background:var(--damask)}
+.slide{flex:1;min-height:290px;padding:20px 22px;display:flex;flex-direction:column;gap:12px;justify-content:center;position:relative;overflow:hidden;background:var(--damask)}
 .slide h2{font-size:clamp(30px,5vw,50px);color:var(--pink)}
 .slide p{margin:0;max-width:52ch}
 .slide.s2{background:linear-gradient(135deg,#123c4e,var(--damask) 70%)}.slide.s2 h2{color:var(--teal)}
@@ -66,16 +66,16 @@ nav.tabs button[aria-current="page"]{background:var(--pink);color:var(--white)}
 .dots{position:absolute;right:20px;bottom:30px;display:flex;gap:6px}
 .dots button{width:13px;height:13px;border-radius:50%;border:2px solid var(--white);background:transparent;padding:0;cursor:pointer}
 .dots button[aria-pressed="true"]{background:var(--pink)}
-.coffin{background:var(--pink);padding:18px 28px 16px;display:flex;flex-direction:column;gap:8px;
-  clip-path:polygon(28% 0,72% 0,100% 15%,90% 100%,10% 100%,0 15%);min-height:360px;align-items:stretch}
-.coffin .screen{flex:1;background:#14081a;border-radius:6px;padding:8px;font-size:13px;line-height:1.35;overflow:auto;max-height:215px;display:flex;flex-direction:column;gap:6px}
+.coffin{position:relative;isolation:isolate;box-sizing:border-box;padding:66px 38px 34px;display:flex;flex-direction:column;gap:8px;height:460px;width:100%;max-width:260px;justify-self:center;align-self:center;align-items:stretch}
+.coffinart{position:absolute;inset:0;width:100%;height:100%;z-index:-1;overflow:visible;filter:drop-shadow(4px 5px 0 #000)}
+.coffin .screen{flex:1;min-height:0;background:#14081a;clip-path:polygon(0 0,100% 0,88% 100%,12% 100%);padding:10px 26px;font-size:13px;line-height:1.35;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:6px}
 .coffin h3{text-align:center;font-size:20px;color:#000}
 .msg b{color:var(--teal)}
-.coffin button{border:2px solid #000;background:#000;color:var(--white);font:12px var(--label);padding:4px;cursor:pointer}
+.coffin button{margin-inline:20px;border:2px solid #000;background:#000;color:var(--white);font:12px var(--label);padding:4px;cursor:pointer}
 .coffin button:hover{background:var(--plum)}
 .flaskbox{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
 .flaskbox small{font:11px/1.2 var(--label);color:var(--paper)}
-.flaskbox svg{flex:1;min-height:250px;width:70px}
+.flaskbox svg{flex:1;min-height:250px;width:100%;max-width:88px;overflow:visible;filter:drop-shadow(3px 4px 0 #000)}
 .bones{font:400 22px var(--display);color:var(--slime)}
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px;align-items:stretch}
 .tile{background:var(--paper);color:var(--paper-ink);border:0;cursor:pointer;text-align:left;padding:14px 18px 18px;display:flex;flex-direction:column;gap:6px;
@@ -207,14 +207,14 @@ nav.tabs button{font-size:14px}
 .bones{font-size:13px;white-space:nowrap}
 
 @media (max-width:820px){
-  .deck{grid-template-columns:minmax(0,1fr) 74px}
+  .deck{grid-template-columns:minmax(0,1fr) 92px}
   .film{grid-column:1/-1}
   .blog,.profile,.two{grid-template-columns:minmax(0,1fr)}
   .lineup{grid-template-columns:repeat(3,minmax(0,1fr))}
   .profile .doll{max-width:220px;margin-inline:auto}
   .tiles{grid-template-columns:minmax(0,1fr)}
   .tile:nth-child(n){transform:none}
-  .coffin{min-height:330px}
+  @media (max-width:360px){.deck{grid-template-columns:minmax(0,1fr) 74px}.coffin{padding-inline:26px}.coffin button{margin-inline:6px}.coffin .screen{padding-inline:20px}}
 }
 @media (max-width:520px){
   .cast .extra{display:none}
@@ -281,6 +281,7 @@ nav.tabs button{font-size:14px}
 /* cartoon sizes */
 .cast .doll{width:clamp(58px,8vw,112px)}
 .film .slide .doll{width:24%;max-width:118px;bottom:4px;right:14px}
+@media (min-width:1000px){.film .slide .doll{bottom:28px}}
 .lineup .doll{max-width:140px;margin-inline:auto}
 .idphoto svg,svg.idphoto{background:var(--plum)}
 .gpanel[data-game="closet"]{max-width:1040px}
@@ -731,6 +732,21 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
         <div class="dots" id="dots"></div>
       </div>
       <aside class="coffin" aria-label="iCoffin messages">
+        <svg class="coffinart" viewBox="0 0 260 460" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="cfPlate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5aae"/><stop offset=".55" stop-color="#ff1f8f"/><stop offset="1" stop-color="#d40f72"/></linearGradient>
+            <linearGradient id="cfFace" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3a9c"/><stop offset="1" stop-color="#f0137f"/></linearGradient>
+          </defs>
+          <g stroke-linejoin="round">
+            <path d="M62 8H198L254 110 216 452H44L6 110Z" transform="translate(5 6)" fill="#8f0a52" stroke="#8f0a52" stroke-width="8"/>
+            <path d="M62 8H198L254 110 216 452H44L6 110Z" fill="url(#cfPlate)" stroke="url(#cfPlate)" stroke-width="8"/>
+            <path d="M72 20H188L240 110 206 440H54L20 110Z" fill="#b80d63" stroke="#ff8cc8" stroke-width="2"/>
+            <path d="M80 32H180L228 110 196 428H64L32 110Z" fill="url(#cfFace)" stroke="url(#cfFace)" stroke-width="6"/>
+            <path d="M80 30H180L230 110" fill="none" stroke="#ff9ed0" stroke-width="2"/>
+            <path d="M30 110L80 30" fill="none" stroke="#ff9ed0" stroke-width="2"/>
+            <path d="M230 110L198 430H62" fill="none" stroke="#a80b5a" stroke-width="2"/>
+          </g>
+        </svg>
         <h3>iCoffin</h3>
         <div class="screen" id="screen" aria-live="polite"></div>
         <button type="button" id="scream">Send a Scream</button>
@@ -740,16 +756,21 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
         <small>School Spirit Meter</small>
         <svg viewBox="0 0 70 260" role="img" aria-label="Flask filled with spirit" id="flask">
           <defs>
-            <clipPath id="fclip"><path d="M26 6h18v150c16 8 22 24 22 44a31 31 0 01-62 0c0-20 6-36 22-44z"/></clipPath>
+            <clipPath id="fclip"><path d="M26 14H44L56 58 45 231H25L14 58Z"/></clipPath>
             <linearGradient id="fgrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#7a23a8"/><stop offset="1" stop-color="#8df04a"/></linearGradient>
           </defs>
+          <g stroke-linejoin="round">
+            <path d="M19 3H51L67 58 52 250H18L3 58Z" transform="translate(2 3)" fill="#8f0a52" stroke="#8f0a52" stroke-width="4"/>
+            <path d="M19 3H51L67 58 52 250H18L3 58Z" fill="url(#cfPlate)" stroke="url(#cfPlate)" stroke-width="4"/>
+            <path d="M23 8H47L62 58 49 241H21L8 58Z" fill="#b80d63" stroke="#ff8cc8" stroke-width="1.2"/>
+          </g>
           <g clip-path="url(#fclip)">
             <rect width="70" height="260" fill="#14081a"/>
             <rect id="fluid" x="0" y="201" width="70" height="30" fill="url(#fgrad)"/>
-            <g id="eyes"><circle cx="25" cy="212" r="7" fill="#fff"/><circle cx="26" cy="213" r="3" fill="#000"/><circle cx="46" cy="217" r="6" fill="#fff"/><circle cx="45" cy="218" r="2.6" fill="#000"/></g>
+            <g id="eyes"><circle cx="30" cy="212" r="5" fill="#fff"/><circle cx="31" cy="213" r="2.2" fill="#000"/><circle cx="41" cy="216" r="4.4" fill="#fff"/><circle cx="40" cy="217" r="2" fill="#000"/></g>
           </g>
-          <path d="M26 6h18v150c16 8 22 24 22 44a31 31 0 01-62 0c0-20 6-36 22-44z" fill="none" stroke="#fff6fb" stroke-width="3"/>
-          <path d="M20 5h30" stroke="#ff1f8f" stroke-width="7" stroke-linecap="round"/>
+          <path d="M43 80h7M44 115h5M44 150h5M45 185h3" stroke="#fff6fb" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+          <path d="M26 14H44L56 58 45 231H25L14 58Z" fill="none" stroke="#ff9ed0" stroke-width="1.6" stroke-linejoin="round"/>
         </svg>
         <span class="bones"><span id="bones">0</span> bones</span>
       </aside>
@@ -995,13 +1016,8 @@ let li=0;
 function say(who,t){const s=$('#screen');const m=el('div',{cls:'msg'},el('b',{text:who+': '}),t);s.append(m);s.scrollTop=s.scrollHeight;while(s.children.length>6)s.firstChild.remove()}
 say(...lines[li++]);
 let ctx;
-function scream(){
-  try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();ctx.resume&&ctx.resume();
-    const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime;o.type='sawtooth';
-    o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(1500,t+.35);o.frequency.exponentialRampToValueAtTime(380,t+.9);
-    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.08);g.gain.exponentialRampToValueAtTime(.0001,t+.95);
-    o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+1)}catch(e){}
-}
+const screamSound=new Audio('Scary_Sound_Effects_Horror_Scream.mp3');
+function scream(){screamSound.currentTime=0;screamSound.play().catch(()=>{})}
 $('#scream').addEventListener('click',()=>{say('You','AAAAAAAAH!');say(...lines[li++%lines.length]);award(1)});
 $('#listen').addEventListener('click',scream);
 

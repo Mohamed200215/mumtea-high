@@ -50,6 +50,7 @@
 /* cartoon sizes */
 .cast .doll{width:clamp(58px,8vw,112px)}
 .film .slide .doll{width:24%;max-width:118px;bottom:4px;right:14px}
+@media (min-width:1000px){.film .slide .doll{bottom:28px}}
 .lineup .doll{max-width:140px;margin-inline:auto}
 .idphoto svg,svg.idphoto{background:var(--plum)}
 .gpanel[data-game="closet"]{max-width:1040px}
