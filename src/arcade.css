@@ -589,9 +589,9 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .slide.s2 h2,.slide.s2 p,.slide.s3 h2,.slide.s3 p{width:fit-content;max-width:100%;box-sizing:border-box;background:#0c0710e8;padding:3px 12px}
 .view.band{min-height:72vh}
 .playerbar{background:#0c0710ee;padding:4px 10px}
-.gpanel[data-game="spill"]{max-width:960px}
-.gpanel[data-game="spill"] canvas{aspect-ratio:16/9;border:3px solid #a50a68;border-radius:8px;box-shadow:0 0 0 3px #ff9ccb,0 0 0 6px #000;margin:6px}
-.gpanel[data-game="spill"] canvas{width:calc(100% - 12px)}
+.gpanel[data-game="spill"]{max-width:1040px}
+.gpanel[data-game="spill"] canvas{aspect-ratio:640/540;display:block;margin-inline:auto!important;max-height:88vh;border:3px solid #a50a68;border-radius:8px;box-shadow:0 0 0 3px #ff9ccb,0 0 0 6px #000;margin:6px}
+.gpanel[data-game="spill"] canvas{width:min(calc(100% - 12px),calc(88vh * 640 / 540))}
 
 /* the classroom */
 .classroom{max-width:980px;margin:0 auto;border:4px solid #000;box-shadow:6px 7px 0 var(--ca);background:#3a1548;overflow:hidden}
@@ -643,3 +643,11 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 @media (prefers-reduced-motion:reduce){.roomkids .kid,.roomkids.asking .kidhand{animation:none}}
 .gcard[data-game="spill"] .gart{background:#fff6fb}
 .gcard[data-game="spill"] .gart img{width:58%;max-width:none;filter:none}
+
+/* the buttons every game shares */
+.gametools{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.gametool[hidden]{display:none}
+.gamepause{background:var(--pink);color:#fff;border-color:#000}
+.gpanel[data-game="casket"]{max-width:960px}
+.gpanel[data-game="casket"] canvas{aspect-ratio:16/9;cursor:crosshair}
+.roomsound{display:flex;gap:6px;justify-content:flex-end;padding:6px 10px;background:#120618;border-bottom:3px solid #000}

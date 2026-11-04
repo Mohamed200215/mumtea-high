@@ -2,7 +2,7 @@
 const DISPLAY_FONT = '"Breath of the House", Impact, fantasy';
 const NEW_GAMES: MenuRow[] = [
   ['riptide', 'Riptide Run', 'Arcade', 'Pick a mermaid outfit and swim the flooded basement. Hold to rise, let go to sink.', '🌊'],
-  ['casket', 'Casket Shot', 'Arcade', 'Pull back, aim, and sink skulls into the casket.', '⚰️'],
+  ['casket', 'Casket Shot', 'Arcade', 'Fire yourself from a coffin cannon into a pot of hot tea. Pick your stunt suit.', '⚰️'],
   ['booth', 'Say Fangs', 'Camera', 'Take a picture on a pink DS, PSP, iPod, Y2K phone, retro TV and more.', '📸'],
 ];
 MENU.push(...NEW_GAMES);
@@ -27,117 +27,8 @@ function makeCanvas(label: string): [HTMLCanvasElement, CanvasRenderingContext2D
   const cv = el('canvas', { width: 480, height: 360, 'aria-label': label }) as HTMLCanvasElement;
   return [cv, cv.getContext('2d') as CanvasRenderingContext2D];
 }
-function banner(c: CanvasRenderingContext2D, big: string, small = ''): void {
-  c.fillStyle = 'rgba(12,7,16,.72)'; c.fillRect(0, 120, 480, 120);
-  c.fillStyle = '#fff6fb'; c.textAlign = 'center'; c.font = '32px ' + DISPLAY_FONT;
-  c.fillText(big.toUpperCase(), 240, small ? 175 : 190);
-  if (small) { c.font = '800 15px Nunito, sans-serif'; c.fillText(small, 240, 208); }
-}
-function drawEarl(c: CanvasRenderingContext2D, x: number, y: number, s: number): void {
-  c.save(); c.translate(x, y); c.scale(s, s);
-  c.fillStyle = '#fff6fb'; c.strokeStyle = '#000'; c.lineWidth = 3;
-  c.beginPath(); c.moveTo(-18, -10); c.lineTo(18, -10); c.quadraticCurveTo(17, 14, 0, 14); c.quadraticCurveTo(-17, 14, -18, -10); c.fill(); c.stroke();
-  c.fillStyle = '#b80e63'; c.beginPath(); c.ellipse(0, -10, 18, 4, 0, 0, 7); c.fill(); c.stroke();
-  c.fillStyle = '#000'; c.beginPath(); c.arc(-6, 0, 3, 0, 7); c.arc(6, 0, 3, 0, 7); c.fill();
-  c.restore();
-}
-const toCanvas = (cv: HTMLCanvasElement, e: PointerEvent): { x: number; y: number } => {
-  const r = cv.getBoundingClientRect();
-  return { x: (e.clientX - r.left) * cv.width / r.width, y: (e.clientY - r.top) * cv.height / r.height };
-};
 const typing = (e: KeyboardEvent): boolean => (e.target as HTMLElement).tagName === 'INPUT';
 const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)];
-
-/* ---------- Casket Shot ---------- */
-(function () {
-  const [cv, c] = makeCanvas('Casket Shot game area');
-  const p = makePanel('casket', 'Casket Shot', 'Drag back from the skull and let go, like a slingshot. On a keyboard, arrows aim and space shoots. Forty-five seconds.', [cv]);
-  const HOME = { x: 70, y: 280 }, G = .00055;
-  let run = false, left = 0, score = 0, streak = 0, last = 0, aim = { x: -.6, y: .65 }, power = .62;
-  let ball: { x: number; y: number; vx: number; vy: number } | null = null, drag = false;
-  let box = { x: 340, y: 210, w: 92, dir: 1 }, moving = false, note = '';
-  const stat = () => { p.stat.textContent = (run ? 'Time: ' + Math.ceil(left / 1000) + '  Score: ' + score + '  ' : '') + 'Best: ' + displayBest('casket'); };
-  function skull(x: number, y: number): void {
-    c.fillStyle = '#fff6fb'; c.strokeStyle = '#000'; c.lineWidth = 3;
-    c.beginPath(); c.arc(x, y, 14, 0, 7); c.fill(); c.stroke();
-    c.fillStyle = '#000'; c.beginPath(); c.arc(x - 5, y - 2, 3, 0, 7); c.arc(x + 5, y - 2, 3, 0, 7); c.fill();
-  }
-  function scene(): void {
-    c.fillStyle = '#14081a'; c.fillRect(0, 0, 480, 360);
-    c.fillStyle = '#3a1250'; c.fillRect(0, 310, 480, 50);
-    c.fillStyle = '#6a1f86'; c.strokeStyle = '#000'; c.lineWidth = 4;
-    c.beginPath(); c.moveTo(box.x, box.y); c.lineTo(box.x + box.w, box.y); c.lineTo(box.x + box.w - 12, 310); c.lineTo(box.x + 12, 310); c.closePath(); c.fill(); c.stroke();
-    c.strokeStyle = '#ff1f8f'; c.lineWidth = 6; c.beginPath(); c.moveTo(box.x - 4, box.y); c.lineTo(box.x + box.w + 4, box.y); c.stroke();
-    if (run && !ball) {
-      c.fillStyle = 'rgba(255,246,251,.65)';
-      let x = HOME.x, y = HOME.y, vx = -aim.x * power, vy = -aim.y * power;
-      for (let i = 0; i < 18; i++) { for (let k = 0; k < 40; k++) { x += vx; y += vy; vy += G; } c.beginPath(); c.arc(x, y, 3, 0, 7); c.fill(); }
-    }
-    const b = ball || HOME; skull(b.x, b.y);
-    if (note) { c.fillStyle = '#8df04a'; c.textAlign = 'center'; c.font = '24px ' + DISPLAY_FONT; c.fillText(note, 240, 60); }
-  }
-  function shoot(): void {
-    if (!run || ball) return;
-    ball = { x: HOME.x, y: HOME.y, vx: -aim.x * power, vy: -aim.y * power }; tone(320, .08);
-  }
-  function step(dt: number): void {
-    if (!ball) return;
-    for (let i = 0; i < dt; i++) {
-      const prevY = ball.y;
-      ball.x += ball.vx; ball.y += ball.vy; ball.vy += G;
-      const mouth = prevY < box.y && ball.y >= box.y;
-      if (mouth && ball.x > box.x + 8 && ball.x < box.x + box.w - 8) {
-        streak++;
-        const pts = 2 + (streak > 2 ? 1 : 0) + (moving ? 1 : 0);
-        score += pts; note = '+' + pts + (streak > 2 ? ' streak!' : ''); tone(700, .15);
-        ball = null; box.x = 200 + Math.random() * 180; box.y = 170 + Math.random() * 70; moving = score >= 10;
-        stat();
-        return;
-      }
-      if (mouth && (Math.abs(ball.x - box.x) < 10 || Math.abs(ball.x - box.x - box.w) < 10)) { ball.vy = -ball.vy * .55; ball.vx *= .6; tone(240, .05); }
-      if (ball.y > 322 || ball.x > 500 || ball.x < -20) { streak = 0; note = ''; ball = null; return; }
-    }
-  }
-  function frame(now: number): void {
-    if (!run) return;
-    const dt = Math.min(40, now - last); last = now;
-    const before = Math.ceil(left / 1000);
-    left -= dt;
-    if (moving) { box.x += box.dir * dt * .05; if (box.x < 190 || box.x > 380) box.dir *= -1; }
-    step(dt); scene();
-    if (Math.ceil(left / 1000) !== before) stat();
-    if (left <= 0) {
-      run = false; ball = null; p.bestOf(score); award(Math.ceil(score / 2)); stat(); submitScore('casket', score);
-      scene(); banner(c, 'Time!', score + ' points'); p.go.textContent = 'Play again';
-      return;
-    }
-    requestAnimationFrame(frame);
-  }
-  function setAim(px: number, py: number): void {
-    const dx = px - HOME.x, dy = py - HOME.y, d = Math.hypot(dx, dy) || 1;
-    aim = { x: dx / d, y: dy / d }; power = Math.max(.2, Math.min(.85, d / 170));
-  }
-  cv.addEventListener('pointerdown', e => {
-    if (!run || ball) return;
-    drag = true; cv.setPointerCapture(e.pointerId); const q = toCanvas(cv, e); setAim(q.x, q.y);
-  });
-  cv.addEventListener('pointermove', e => { if (drag) { const q = toCanvas(cv, e); setAim(q.x, q.y); } });
-  cv.addEventListener('pointerup', () => { if (drag) { drag = false; shoot(); } });
-  addEventListener('keydown', e => {
-    if (!run || typing(e)) return;
-    if (e.key === ' ') { shoot(); e.preventDefault(); return; }
-    const turn = e.key === 'ArrowUp' ? .07 : e.key === 'ArrowDown' ? -.07 : 0;
-    if (turn) { const a = Math.atan2(aim.y, aim.x) + turn; aim = { x: Math.cos(a), y: Math.sin(a) }; e.preventDefault(); }
-    if (e.key === 'ArrowRight') { power = Math.min(.85, power + .02); e.preventDefault(); }
-    if (e.key === 'ArrowLeft') { power = Math.max(.2, power - .02); e.preventDefault(); }
-  });
-  p.go.addEventListener('click', () => {
-    run = true; left = 45000; score = 0; streak = 0; note = ''; ball = null; moving = false; box = { x: 340, y: 210, w: 92, dir: 1 }; last = performance.now();
-    p.go.textContent = 'Restart'; p.go.blur(); stat(); requestAnimationFrame(frame);
-  });
-  stops.push(() => { if (run) { run = false; ball = null; scene(); banner(c, 'Casket Shot'); } });
-  scene(); banner(c, 'Casket Shot'); stat();
-})();
 
 /* ---------- shelf: search, filters, favourites ---------- */
 let shelfGenre = 'All', shelfQuery = '', currentGame = 'closet';
@@ -182,6 +73,7 @@ function arcadeOpened(id: string): void {
   currentGame = id; store.set('lastGame', id); syncPlayerBar();
   if (SCORED_GAMES.includes(id)) { scoreTab = id; renderScores(); }
   if (id === 'closet') mountStudio($('#closetHome'));
+  if (!$('.view[data-view="games"]').hidden) musicPlay(id);
 }
 (function () {
   const chips = el('div', { cls: 'chips', role: 'group', 'aria-label': 'Filter games' });
@@ -194,10 +86,12 @@ function arcadeOpened(id: string): void {
   const search = el('input', { type: 'search', placeholder: 'Search ' + MENU.length + ' games', 'aria-label': 'Search games' }) as HTMLInputElement;
   search.addEventListener('input', () => { shelfQuery = search.value.trim(); renderMenu(); });
   const drawSound = () => { const m = store.get('mute', false); sound.textContent = m ? 'Sound off' : 'Sound on'; sound.setAttribute('aria-pressed', String(!m)); };
-  const sound = el('button', { cls: 'chip', type: 'button', onclick() { store.set('mute', !store.get('mute', false)); drawSound(); } });
+  const sound = el('button', { cls: 'chip', type: 'button', onclick() { store.set('mute', !store.get('mute', false)); document.dispatchEvent(new Event('soundchange')); } });
   drawSound();
+  document.addEventListener('soundchange', drawSound);
   const random = el('button', { cls: 'chip', type: 'button', onclick() { openGame(pick(MENU)[0], true); } }, 'Random game');
   $('#shelf').before(el('div', { cls: 'arcadebar' }, search, chips, random, sound));
+  gameTools($('.gpanel[data-game="closet"]'));
 
   const player = $('#player');
   const tools = el('div', {}, favBtn, el('button', { cls: 'chip', type: 'button', onclick() { $('.arcadebar').scrollIntoView({ block: 'start' }); } }, 'All games'));

@@ -103,6 +103,7 @@ function classRoomFocus(): void {
   room.scrollIntoView({ block: 'start' });
 }
 function renderClasses(): void {
+  musicStop();
   const room = $('#classRoom'), done = classesDone(), finished = CLASSES.filter(c => c.id in done).length;
   room.textContent = '';
   room.append(el('p', { cls: 'classtally', text: finished + ' of ' + CLASSES.length + ' classes finished' }));
@@ -149,7 +150,9 @@ function classroomScene(c: SchoolClass, step: string, pose: string, line: string
   classTeacher(teacher, pose, line);
   const poster = el('div', { cls: 'roomposter', 'aria-hidden': 'true' }); poster.innerHTML = look.art;
   const kids = el('div', { cls: 'roomkids' + (asking ? ' asking' : ''), 'aria-hidden': 'true' }); kids.innerHTML = classKids();
-  const scene = el('section', { cls: 'classroom' }, classHeader(c, step),
+  musicPlay('class');
+  const sound = el('div', { cls: 'roomsound' }, ...soundButtons());
+  const scene = el('section', { cls: 'classroom' }, classHeader(c, step), sound,
     el('div', { cls: 'roomwall' }, el('div', { cls: 'chalkboard' }, el('div', { cls: 'chalkface' }, ...board), el('div', { cls: 'chalktray', 'aria-hidden': 'true' }, el('i'), el('i'), el('b'))), poster, teacher), kids);
   scene.style.setProperty('--ca', look.a);
   return { scene, teacher };

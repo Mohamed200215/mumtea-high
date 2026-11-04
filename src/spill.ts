@@ -1,19 +1,20 @@
 /* ---------- Spill Proof: sit in your teacup at a midnight tea party and catch sugar skulls ---------- */
 (function () {
-  const W = 640, H = 360, ZOOM = 2, INK_LINE = '#1c0a1c';
+  const W = 640, H = 540, TOP = 180, ZOOM = 2, INK_LINE = '#1c0a1c';
   const cv = $<HTMLCanvasElement>('#spill'), c = cv.getContext('2d') as CanvasRenderingContext2D;
   cv.width = W * ZOOM; cv.height = H * ZOOM; c.scale(ZOOM, ZOOM);
   const go = $('#spillGo'), status = $('#spillStat');
+  const tools = gameTools($('.gpanel[data-game="spill"]'), togglePause);
   type Mode = 'idle' | 'pour' | 'play' | 'cold' | 'done';
   interface Drop { x: number; y: number; bat: boolean; spin: number; phase: number }
   interface Bit { x: number; y: number; vx: number; vy: number; life: number; max: number; col: string; size: number }
   interface Pop { x: number; y: number; text: string; life: number }
   let mode: Mode = 'idle', x = W / 2, aimX = W / 2, vx = 0, tilt = 0, items: Drop[] = [], score = 0, lives = 3, modeT = 0, clock = 0, last = 0, keys: Record<string, boolean> = {};
-  let bits: Bit[] = [], pops: Pop[] = [], flash = 0, shake = 0, cheer = 0, ouch = 0, slosh = 0, looping = false, visible = false, finalBest = 0;
+  let paused = false, bits: Bit[] = [], pops: Pop[] = [], flash = 0, shake = 0, cheer = 0, ouch = 0, slosh = 0, looping = false, visible = false, finalBest = 0;
   const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const POUR = 5000, COLD = 1500, CUP_Y = 232;
   const active = () => mode === 'pour' || mode === 'play' || mode === 'cold';
-  const stat = () => { status.textContent = (mode === 'play' || mode === 'pour' ? 'Score: ' + score + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('spill'); };
+  const stat = () => { tools.show(active(), paused); status.textContent = (mode === 'play' || mode === 'pour' ? 'Score: ' + score + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('spill'); };
   const ease = (t: number) => { const k = Math.min(1, Math.max(0, t)); return k * k * (3 - 2 * k); };
   const round = (p: CanvasRenderingContext2D, rx: number, ry: number, w: number, h: number, r: number) => { p.beginPath(); p.moveTo(rx + r, ry); p.arcTo(rx + w, ry, rx + w, ry + h, r); p.arcTo(rx + w, ry + h, rx, ry + h, r); p.arcTo(rx, ry + h, rx, ry, r); p.arcTo(rx, ry, rx + w, ry, r); p.closePath(); };
   const inked = (p: CanvasRenderingContext2D, w = 2.5) => { p.strokeStyle = INK_LINE; p.lineWidth = w; p.lineJoin = 'round'; p.stroke(); };
@@ -24,9 +25,10 @@
     if (room) return;
     const sheet = (w: number, h: number, paint: (p: CanvasRenderingContext2D) => void) => { const s = document.createElement('canvas'); s.width = w * ZOOM; s.height = h * ZOOM; const p = s.getContext('2d') as CanvasRenderingContext2D; p.scale(ZOOM, ZOOM); paint(p); return s; };
     room = sheet(W + 60, H, p => {
-      p.fillStyle = '#2b0f35'; p.fillRect(0, 0, W + 60, H);
+      p.translate(0, TOP);
+      p.fillStyle = '#2b0f35'; p.fillRect(0, -TOP, W + 60, H);
       /* damask wallpaper */
-      for (let row = 0; row < 8; row++) for (let col = 0; col < 13; col++) {
+      for (let row = -4; row < 8; row++) for (let col = 0; col < 13; col++) {
         const dx = col * 56 + (row % 2 ? 28 : 0), dy = row * 44 + 6;
         p.fillStyle = '#3a1548'; p.beginPath(); p.moveTo(dx, dy - 18); p.bezierCurveTo(dx + 16, dy - 4, dx + 12, dy + 12, dx, dy + 20); p.bezierCurveTo(dx - 12, dy + 12, dx - 16, dy - 4, dx, dy - 18); p.fill();
         p.fillStyle = '#2b0f35'; p.beginPath(); p.ellipse(dx, dy + 2, 4, 7, 0, 0, 7); p.fill();
@@ -58,8 +60,8 @@
   }
   function chandelier(): void {
     const sway = Math.sin(clock / 1600) * .035;
-    c.save(); c.translate(W / 2, -4); c.rotate(sway);
-    c.strokeStyle = '#120618'; c.lineWidth = 3; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(0, 0); c.lineTo(0, 40); c.stroke(); c.setLineDash([]);
+    c.save(); c.translate(W / 2, -60); c.rotate(sway);
+    c.strokeStyle = '#120618'; c.lineWidth = 3; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(0, -TOP); c.lineTo(0, 40); c.stroke(); c.setLineDash([]);
     c.fillStyle = '#d4a017'; c.beginPath(); c.ellipse(0, 46, 62, 7, 0, 0, 7); c.fill(); inked(c, 2);
     c.fillStyle = '#f7dc6f'; c.beginPath(); c.arc(0, 46, 9, 0, 7); c.fill(); inked(c, 2);
     for (const cx of [-52, -26, 0, 26, 52]) {
@@ -76,7 +78,7 @@
     beam(500, .11 + .03 * Math.sin(clock / 1800)); beam(120, .05);
     c.restore();
     for (let i = 0; i < 26; i++) {
-      const dx = ((i * 83 + clock * .006 * (1 + i % 3)) % W), dy = (i * 47 + Math.sin(clock / 1400 + i) * 8) % 300;
+      const dx = ((i * 83 + clock * .006 * (1 + i % 3)) % W), dy = (i * 47 + Math.sin(clock / 1400 + i) * 8) % 470 - TOP;
       c.fillStyle = 'rgba(255,235,245,' + (.12 + (i % 4) * .08) + ')'; c.beginPath(); c.arc(dx, dy, 1 + (i % 3) * .5, 0, 7); c.fill();
     }
   }
@@ -276,7 +278,7 @@
       tilt += (Math.max(-.2, Math.min(.2, vx * .22)) - tilt) * Math.min(1, dt * .012);
       slosh += (Math.min(9, Math.abs(vx) * 14 + .8) - slosh) * Math.min(1, dt * .006);
       const speed = .11 + score * .0035;
-      if (Math.random() < dt * (.0016 + score * .00004)) items.push({ x: 26 + Math.random() * (W - 52), y: -24, bat: Math.random() < .28 + Math.min(.22, score * .004), spin: 0, phase: Math.random() * 6 });
+      if (Math.random() < dt * (.0016 + score * .00004)) items.push({ x: 26 + Math.random() * (W - 52), y: -24 - TOP, bat: Math.random() < .28 + Math.min(.22, score * .004), spin: 0, phase: Math.random() * 6 });
       items = items.filter(d => {
         d.y += dt * speed; d.phase += dt * .006;
         const far = Math.abs(d.x - x);
@@ -308,11 +310,12 @@
   function paint(): void {
     buildRoom();
     c.save();
+    c.translate(0, TOP);
     let zoom = 1, fx = W / 2, fy = CUP_Y;
-    if (mode === 'pour') zoom = 1 + .5 * (1 - ease((modeT - 3500) / 1200));
+    if (mode === 'pour') zoom = 1 + .62 * (1 - ease((modeT - 3500) / 1200));
     if (shake > 0) { zoom = Math.max(zoom, 1.04); c.translate(Math.sin(clock * .09) * shake * .6, Math.cos(clock * .11) * shake * .6); }
     if (zoom !== 1) { c.translate(fx, fy); c.scale(zoom, zoom); c.translate(-fx, -fy); }
-    c.drawImage(room as HTMLCanvasElement, -30 - (x - W / 2) * .05, 0, W + 60, H);
+    c.drawImage(room as HTMLCanvasElement, -30 - (x - W / 2) * .05, -TOP, W + 60, H);
     moonlight();
     chandelier();
     items.forEach(d => (d.bat ? bat(d) : sugarSkull(d)));
@@ -358,35 +361,48 @@
     if (mode === 'pour') {
       bars(30 * (1 - ease((modeT - 3900) / 900)));
       c.globalAlpha = Math.max(0, Math.min(1, modeT / 300, (POUR - modeT) / 500));
-      if (modeT < 3400) { flourish(170, 30, .7, 1); write('TEA TIME', 170, 66, 34, '#ff7ab8'); }
-      else write('CATCH THE SUGAR SKULLS', W / 2, 94, 30, '#fff6fb');
+      if (modeT < 3400) { flourish(W / 2, 60, 1, 1); write('TEA TIME', W / 2, 108, 44, '#ff7ab8'); }
+      else write('CATCH THE SUGAR SKULLS', W / 2, 150, 32, '#fff6fb');
       c.font = '800 12px Nunito, sans-serif'; c.textAlign = 'right'; c.fillStyle = '#ffd3e8'; c.fillText('Tap to skip', W - 14, H - 11);
       c.globalAlpha = 1;
     }
     if (mode === 'idle') {
-      flourish(W / 2, 34, 1, 1);
-      write('SPILL PROOF', W / 2, 88, 44, '#ff7ab8');
-      flourish(W / 2, 104, 1, -1);
+      flourish(W / 2, 90, 1, 1);
+      write('SPILL PROOF', W / 2, 150, 54, '#ff7ab8');
+      flourish(W / 2, 170, 1, -1);
     }
     if (mode === 'done') {
       c.fillStyle = 'rgba(16,4,24,.6)'; c.fillRect(0, 0, W, H);
-      flourish(W / 2, 92, 1, 1);
-      write('COLD TEA!', W / 2, 150, 54, '#ff7ab8');
-      write(score + (score === 1 ? ' SKULL' : ' SKULLS'), W / 2, 190, 26, '#fff6fb');
-      c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#ffd3e8'; c.fillText('Best: ' + finalBest, W / 2, 216);
-      flourish(W / 2, 234, 1, -1);
+      flourish(W / 2, 150, 1, 1);
+      write('COLD TEA!', W / 2, 212, 58, '#ff7ab8');
+      write(score + (score === 1 ? ' SKULL' : ' SKULLS'), W / 2, 254, 26, '#fff6fb');
+      c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#ffd3e8'; c.fillText('Best: ' + finalBest, W / 2, 282);
+      flourish(W / 2, 300, 1, -1);
     }
   }
   function frame(now: number): void {
     looping = false;
     if (!cv.getClientRects().length) { if (active()) quit(); return; }
+    if (paused) return;
     const dt = Math.min(40, now - last); last = now;
     step(dt); paint();
     if (active() || (visible && !calm && document.visibilityState === 'visible')) { looping = true; requestAnimationFrame(frame); }
   }
   function kick(): void {
-    if (looping || !cv.getClientRects().length) return;
+    if (looping || paused || !cv.getClientRects().length) return;
     looping = true; last = performance.now(); requestAnimationFrame(frame);
+  }
+  function togglePause(): void {
+    if (!active()) return;
+    paused = !paused; keys = {};
+    musicHold(paused);
+    if (paused) {
+      paint();
+      c.fillStyle = 'rgba(16,4,24,.62)'; c.fillRect(0, 0, W, H);
+      write('PAUSED', W / 2, H / 2, 54, '#fff6fb');
+      c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#ffd3e8'; c.fillText('Press Resume, or P, when you are ready', W / 2, H / 2 + 32);
+    } else kick();
+    stat();
   }
   function finish(): void {
     mode = 'cold'; modeT = 0; flash = 0;
@@ -395,17 +411,18 @@
     award(Math.ceil(score / 2)); submitScore('spill', score); stat();
     go.textContent = 'Play again'; tone(220, .4);
   }
-  function quit(): void { mode = 'idle'; items = []; bits = []; pops = []; keys = {}; go.textContent = 'Start'; stat(); }
+  function quit(): void { paused = false; musicHold(false); mode = 'idle'; items = []; bits = []; pops = []; keys = {}; go.textContent = 'Start'; stat(); }
   go.addEventListener('click', () => {
     dress(() => {
-      items = []; bits = []; pops = []; score = 0; lives = 3; x = W / 2; aimX = x; tilt = 0; cheer = 0; ouch = 0; flash = 0; shake = 0;
+      paused = false; musicHold(false); items = []; bits = []; pops = []; score = 0; lives = 3; x = W / 2; aimX = x; tilt = 0; cheer = 0; ouch = 0; flash = 0; shake = 0;
       mode = 'pour'; modeT = 0; go.textContent = 'Restart'; go.blur(); stat(); tone(330, .3); kick();
     });
   });
   const aim = (e: PointerEvent): void => { const r = cv.getBoundingClientRect(); aimX = (e.clientX - r.left) / r.width * W; };
   cv.addEventListener('pointermove', aim);
   cv.addEventListener('pointerdown', e => { aim(e); if (mode === 'pour' && modeT < 3700) modeT = 3700; });
-  addEventListener('keydown', e => { if (mode === 'play' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { keys[e.key] = true; e.preventDefault(); } });
+  addEventListener('keydown', e => { if (isPauseKey(e) && active()) { togglePause(); e.preventDefault(); } });
+  addEventListener('keydown', e => { if (!paused && mode === 'play' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { keys[e.key] = true; e.preventDefault(); } });
   addEventListener('keyup', e => { keys[e.key] = false; });
   stops.push(() => { if (active()) quit(); });
   new IntersectionObserver(entries => {

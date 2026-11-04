@@ -74,7 +74,9 @@ function merCorner(): string {
   const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const INTRO = 2300, OUTRO = 1800;
   const active = () => mode === 'intro' || mode === 'play' || mode === 'outro';
-  const stat = () => { p.stat.textContent = (mode === 'play' || mode === 'intro' ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('riptide'); };
+  let paused = false;
+  const tools = gameTools(p.root, togglePause);
+  const stat = () => { tools.show(active(), paused); p.stat.textContent = (mode === 'play' || mode === 'intro' ? 'Score: ' + Math.floor(score) + '  Lives: ' + lives + '  ' : '') + 'Best: ' + displayBest('riptide'); };
   const colours = () => MER_COLOURS.find(m => m[0] === outfit.colour) || MER_COLOURS[0];
 
   /* ---------- the world, painted once and slid past ---------- */
@@ -615,13 +617,26 @@ function merCorner(): string {
   function frame(now: number): void {
     looping = false;
     if (!cv.getClientRects().length) { if (active()) quit(); return; }
+    if (paused) return;
     const dt = Math.min(40, now - last); last = now;
     step(dt); paint();
     if (active() || (visible && !calm && document.visibilityState === 'visible')) { looping = true; requestAnimationFrame(frame); }
   }
   function kick(): void {
-    if (looping || !cv.getClientRects().length) return;
+    if (looping || paused || !cv.getClientRects().length) return;
     looping = true; last = performance.now(); requestAnimationFrame(frame);
+  }
+  function togglePause(): void {
+    if (!active()) return;
+    paused = !paused; rise = false;
+    musicHold(paused);
+    if (paused) {
+      paint();
+      c.fillStyle = 'rgba(8,3,24,.6)'; c.fillRect(0, 0, W, H);
+      write('PAUSED', W / 2, H / 2, 50, '#fff6fb', 'center');
+      c.font = '800 15px Nunito, sans-serif'; c.textAlign = 'center'; c.fillStyle = '#7fe8ff'; c.fillText('Press Resume, or P, when you are ready', W / 2, H / 2 + 30);
+    } else kick();
+    stat();
   }
   function finish(): void {
     mode = 'outro'; modeT = 0; rise = false;
@@ -629,18 +644,19 @@ function merCorner(): string {
     p.go.textContent = 'Dive again';
   }
   function quit(): void {
-    mode = 'idle'; rise = false; things = []; sparks = []; floats = []; locker.hidden = false; p.go.textContent = 'Dive in'; stat();
+    mode = 'idle'; paused = false; musicHold(false); rise = false; things = []; sparks = []; floats = []; locker.hidden = false; p.go.textContent = 'Dive in'; stat();
   }
   p.go.addEventListener('click', () => {
     dress(() => {
-      mode = 'intro'; modeT = 0; swimX = -170; y = 180; vy = 0; things = []; sparks = []; floats = []; score = 0; lives = 3; safe = 0; gap = 300; shown = 0; shake = 0; flash = 0; slow = 0; petY = 230;
+      paused = false; musicHold(false); mode = 'intro'; modeT = 0; swimX = -170; y = 180; vy = 0; things = []; sparks = []; floats = []; score = 0; lives = 3; safe = 0; gap = 300; shown = 0; shake = 0; flash = 0; slow = 0; petY = 230;
       locker.hidden = true; p.go.textContent = 'Restart'; p.go.blur(); stat(); tone(220, .4); kick();
     });
   });
-  cv.addEventListener('pointerdown', e => { rise = true; e.preventDefault(); });
+  cv.addEventListener('pointerdown', e => { if (paused) return; rise = true; e.preventDefault(); });
   addEventListener('pointerup', () => { rise = false; });
   const isRise = (e: KeyboardEvent) => e.key === ' ' || e.key === 'ArrowUp';
-  addEventListener('keydown', e => { if ((mode === 'intro' || mode === 'play') && isRise(e) && !typing(e)) { rise = true; e.preventDefault(); } });
+  addEventListener('keydown', e => { if (isPauseKey(e) && active()) { togglePause(); e.preventDefault(); } });
+  addEventListener('keydown', e => { if (paused) return; if ((mode === 'intro' || mode === 'play') && isRise(e) && !typing(e)) { rise = true; e.preventDefault(); } });
   addEventListener('keyup', e => { if (isRise(e)) rise = false; });
   stops.push(() => { if (active()) quit(); });
   new IntersectionObserver(entries => {

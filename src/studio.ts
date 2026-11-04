@@ -195,6 +195,7 @@ function mountStudio(parent: Element): void {
 function viewOpened(v: string): void {
   if (v === 'student') renderStudentPage();
   if (v === 'academics') renderClasses();
+  if (v === 'games') musicPlay(currentGame); else if (v !== 'academics') musicStop();
   queueFit();
   if (v === 'admin') {
     renderAdmin();
