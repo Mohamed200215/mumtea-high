@@ -559,30 +559,3 @@ grant execute on function public.admin_post_polaroid(text, text, text) to anon, 
 
 alter table public.post_reactions drop constraint if exists post_reactions_kind_check;
 alter table public.post_reactions add constraint post_reactions_kind_check check (kind in ('fang', 'tea', 'skull', 'heart', 'fire', 'laugh'));
-
--- The iCoffin's Voice: who may talk to it, and a daily limit so it can't run up a bill.
-create table if not exists private.story_turns (
-  subject text not null,
-  day date not null default current_date,
-  turns integer not null default 0,
-  primary key (subject, day)
-);
-create or replace function public.story_take_turn(token text default null) returns boolean
-language plpgsql security definer set search_path = '' as $$
-declare who text; most integer := 40; taken integer;
-begin
-  if token is not null then
-    perform private.require_admin(token);
-    who := 'fang'; most := 200;
-  else
-    if auth.uid() is null or not exists (select 1 from public.profiles where id = auth.uid() and verified) then return false; end if;
-    who := auth.uid()::text;
-  end if;
-  if (select coalesce(sum(turns), 0) from private.story_turns where day = current_date) >= 1500 then return false; end if;
-  insert into private.story_turns (subject, day, turns) values (who, current_date, 1)
-    on conflict (subject, day) do update set turns = private.story_turns.turns + 1 where private.story_turns.turns < most
-    returning turns into taken;
-  return taken is not null;
-end $$;
-revoke all on function public.story_take_turn(text) from public;
-grant execute on function public.story_take_turn(text) to anon, authenticated;
