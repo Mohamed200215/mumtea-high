@@ -584,3 +584,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .slide.s2 h2,.slide.s2 p,.slide.s3 h2,.slide.s3 p{width:fit-content;max-width:100%;box-sizing:border-box;background:#0c0710e8;padding:3px 12px}
 .view.band{min-height:72vh}
 .playerbar{background:#0c0710ee;padding:4px 10px}
+.gpanel[data-game="spill"]{max-width:960px}
+.gpanel[data-game="spill"] canvas{aspect-ratio:16/9;border:3px solid #a50a68;border-radius:8px;box-shadow:0 0 0 3px #ff9ccb,0 0 0 6px #000;margin:6px}
+.gpanel[data-game="spill"] canvas{width:calc(100% - 12px)}
