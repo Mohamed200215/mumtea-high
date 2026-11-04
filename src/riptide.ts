@@ -11,6 +11,28 @@ const MER_ROWS: Array<[keyof MerOutfit, string, Array<[string, string]>]> = [
   ['hair', 'In your hair', [['shell', 'Gold shell'], ['flower', 'Sea flower'], ['star', 'Starfish'], ['none', 'Nothing']]],
   ['neck', 'Necklace', [['coral', 'Coral'], ['pearls', 'Pearls'], ['own', 'My own']]],
 ];
+/* One corner of the game's frame: vines, curls, leaves and flowers growing along both edges from the corner. */
+function merCorner(): string {
+  const DEEP = '#159aa3', MID = '#27bfc4', AQUA = '#5fe6ea', PALE = '#b9f2f2';
+  const flower = (x: number, y: number, r: number, turn = 0) => '<g transform="translate(' + x + ' ' + y + ') rotate(' + turn + ') scale(' + r / 20 + ')">' + [0, 72, 144, 216, 288].map(a => '<path transform="rotate(' + a + ')" d="M0 -3C-13 -7 -13 -21 -4 -23Q0 -20 4 -23C13 -21 13 -7 0 -3Z" fill="' + AQUA + '" stroke="#e8ffff" stroke-width="1"/>').join('') + '<circle r="4.500" fill="#eafffe"/>' + [0, 72, 144, 216, 288].map(a => '<path transform="rotate(' + a + ')" d="M0 -3V-8" stroke="' + DEEP + '" stroke-width="1.400" stroke-linecap="round"/>').join('') + '</g>';
+  const leaf = (x: number, y: number, turn: number, s = 1) => '<g transform="translate(' + x + ' ' + y + ') rotate(' + turn + ') scale(' + s + ')"><path d="M0 0C14 -15 42 -18 66 0C42 16 14 15 0 0Z" fill="' + DEEP + '"/><path d="M4 0C22 -2 42 -2 60 0M20 -1L30 -9M30 -1L42 -8M20 0L30 7M30 0L42 7" fill="none" stroke="#c9fbfa" stroke-width="1.300" stroke-linecap="round"/></g>';
+  const line = (d: string, w: number, c = MID) => '<path d="' + d + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  const dot = (x: number, y: number, r = 2.6, c = DEEP) => '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '"/>';
+  const half = line('M92 40A44 44 0 1 1 150 86', 2.6, PALE) + line('M118 56A20 20 0 0 1 132 74', 1.5, PALE)
+    + '<path d="M20 30C66 14 112 40 170 24C208 13 244 16 284 3C248 25 208 28 172 36C112 50 66 28 22 40Z" fill="' + DEEP + '"/>'
+    + line('M40 34C50 62 86 66 96 46C102 30 80 22 74 36', 4, DEEP) + dot(74, 36, 4)
+    + line('M110 38C122 16 152 14 156 30C158 42 140 44 138 32', 3.2, MID) + dot(138, 32, 3.2, MID)
+    + leaf(150, 36, 26, .9) + leaf(226, 21, -28, .72)
+    + line('M196 24C208 44 236 46 240 32C242 22 226 20 224 31', 2.8, DEEP) + dot(224, 31, 2.8)
+    + line('M112 40C118 54 118 64 112 74', 2, MID) + dot(112, 76, 2.2) + line('M178 30C186 44 188 54 184 66', 2, MID) + dot(184, 68, 2.2)
+    + flower(262, 36, 20, 12) + flower(92, 86, 11, 30)
+    + dot(288, 6, 2.4, MID);
+  const twin = '<g transform="matrix(0 1 1 0 0 0)">' + half + '</g>';
+  return '<svg viewBox="0 0 300 300" aria-hidden="true">' + half + twin
+    + line('M18 18C48 22 66 44 62 64C58 80 38 78 38 62C38 52 50 50 52 58', 5, DEEP) + dot(52, 58, 4.4)
+    + line('M18 18C24 40 18 70 8 92M18 18C40 24 70 18 92 8', 3, MID)
+    + flower(24, 24, 22, 8) + flower(82, 28, 8, 0) + flower(28, 84, 8, 20) + '</svg>';
+}
 (function () {
   const W = 640, H = 360, ZOOM = 2;
   const [cv, c] = makeCanvas('Riptide Run game area');
@@ -38,7 +60,7 @@ const MER_ROWS: Array<[keyof MerOutfit, string, Array<[string, string]>]> = [
     if (mode === 'done') mode = 'idle';
     dress(); kick();
   }
-  const p = makePanel('riptide', 'Riptide Run', 'Pick your mermaid outfit, then dive in. You swim as the ghoul you made, or as Ms. Fangtastic until you have one. Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three hits and you surface.', [cv], 'Dive in');
+  const p = makePanel('riptide', 'Riptide Run', 'Pick your mermaid outfit, then dive in. You swim as the ghoul you made, or as Ms. Fangtastic until you have one. Hold the screen, the space bar or the up arrow to rise. Let go to sink. Pearls are worth 5. Three hits and you surface.', [el('div', { cls: 'merframe' }, cv, ...['tl', 'tr', 'bl', 'br'].map(at => { const corner = el('div', { cls: 'mercorner ' + at }); corner.innerHTML = merCorner(); return corner; }), el('img', { cls: 'mercrest', src: GAME_ART.riptide, alt: '' }))], 'Dive in');
   p.root.append(locker);
 
   /* ---------- game state ---------- */
@@ -445,11 +467,11 @@ const MER_ROWS: Array<[keyof MerOutfit, string, Array<[string, string]>]> = [
     c.fillStyle = fill; c.fillText(text, x, at);
   }
   function hud(): void {
-    write('SCORE', 16, 26, 12, '#7fe8ff');
-    write(String(Math.floor(score)), 16, 54, 28, '#fff6fb');
+    write('SCORE', 46, 34, 12, '#7fe8ff');
+    write(String(Math.floor(score)), 46, 62, 28, '#fff6fb');
     for (let i = 0; i < 3; i++) {
       const full = i < lives;
-      c.save(); c.translate(W - 28 - i * 28, 26);
+      c.save(); c.translate(W - 60 - i * 28, 36);
       c.fillStyle = full ? '#ff1f8f' : 'rgba(18,10,28,.55)';
       c.beginPath(); c.moveTo(0, 10); c.bezierCurveTo(-16, -1, -9, -13, 0, -5); c.bezierCurveTo(9, -13, 16, -1, 0, 10); c.closePath(); c.fill(); outline(c, 2);
       if (full) { c.fillStyle = 'rgba(255,255,255,.7)'; c.beginPath(); c.arc(-5, -4, 2, 0, 7); c.fill(); }
