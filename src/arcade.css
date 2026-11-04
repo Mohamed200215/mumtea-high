@@ -559,7 +559,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .idsave{margin-top:14px}
 .idopen{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:5px 12px 5px 6px;background:#ffd3e8;color:#2a1430;border:2px solid #14101a;border-radius:999px;font:800 13px var(--body);cursor:pointer;box-shadow:2px 2px 0 #14101a}
 .idopen:hover{background:#ffc2e0}
-.idopen svg{width:28px;height:32px;display:block}
+.idopen img{width:30px;height:auto;display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
 .idsaid{margin:8px 0 0;font:800 13px var(--body)}
 .idsaid:empty{display:none}
 

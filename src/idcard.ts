@@ -1,6 +1,6 @@
 /* ---------- the student ID card: shiny emblems, frames, colours and patterns ---------- */
 interface IdCard { emblem: string; metal: string; place: string; size: string; frame: string; frameC: string; colour: string; pattern: string }
-const ID_EMBLEMS: Array<[string, string]> = [['i', 'Big bow'], ['b', 'Almond eyes'], ['cc', 'Drippy'], ['d', 'Swoop hair'], ['e', 'Spiky hair'], ['f', 'Bow tie'], ['g', 'Flame crown'], ['ii', 'Snakes'], ['k', 'Icing'], ['l', 'Cat-eye glasses'], ['m', 'Earmuffs'], ['n', 'Tiger kitty'], ['c', 'Masked cat'], ['p', 'Mummy'], ['s', 'Top knot'], ['u', 'Eye swirl'], ['v', 'Fire']];
+const ID_EMBLEMS: Array<[string, string]> = [['h', 'Hijab'], ['i', 'Big bow'], ['b', 'Almond eyes'], ['cc', 'Drippy'], ['d', 'Swoop hair'], ['e', 'Spiky hair'], ['f', 'Bow tie'], ['g', 'Flame crown'], ['ii', 'Snakes'], ['k', 'Icing'], ['l', 'Cat-eye glasses'], ['m', 'Earmuffs'], ['n', 'Tiger kitty'], ['c', 'Masked cat'], ['p', 'Mummy'], ['s', 'Top knot'], ['u', 'Eye swirl'], ['v', 'Fire']];
 const ID_METALS: Array<[string, string, string[]]> = [
   ['gold', 'Gold', ['#fff6c2', '#d4a017', '#fff9dc', '#a8770c', '#f7dc6f']],
   ['silver', 'Silver', ['#ffffff', '#9aa0ac', '#f4f6fb', '#6d7280', '#d8dce6']],
@@ -151,10 +151,8 @@ function paintCard(card: IdCard = currentCard()): void {
   const save = el('button', { cls: 'pill idsave', type: 'button' }, 'Save my ID');
   const maker = el('div', { cls: 'idmaker wframe' }, el('h4', { text: 'Customize your ID' }), rows, save, note);
   const said = el('p', { cls: 'idsaid', role: 'status' });
-  /* a little skull in a hijab, like the one on the school crest */
-  const badge = '<svg viewBox="0 0 64 72" aria-hidden="true"><path d="M32 3C14 3 5 18 6 36C7 50 12 62 4 69H60C52 62 57 50 58 36C59 18 50 3 32 3Z" fill="#f08fb4" stroke="#14101a" stroke-width="3" stroke-linejoin="round"/><path d="M12 24C16 12 26 8 36 9" fill="none" stroke="#ffd0e8" stroke-width="3" stroke-linecap="round"/><path d="M4 69C16 62 22 58 24 52M60 69C48 62 42 58 40 52" fill="none" stroke="#b80e63" stroke-width="2.500"/><path d="M32 15C20 15 15 24 15 33C15 40 19 44 23 46V52H41V46C45 44 49 40 49 33C49 24 44 15 32 15Z" fill="#fff6fb" stroke="#14101a" stroke-width="2.600" stroke-linejoin="round"/><ellipse cx="25" cy="33" rx="5.200" ry="5.800" fill="#14101a"/><ellipse cx="39" cy="33" rx="5.200" ry="5.800" fill="#14101a"/><path d="M32 39L29.500 44H34.500Z" fill="#14101a"/><path d="M28 47V52M32 47V52M36 47V52" stroke="#14101a" stroke-width="1.600"/><circle cx="23.500" cy="31" r="1.400" fill="#fff"/><circle cx="37.500" cy="31" r="1.400" fill="#fff"/></svg>';
   const open = el('button', { cls: 'idopen', type: 'button', hidden: '' }, 'Customize ID');
-  open.insertAdjacentHTML('afterbegin', badge);
+  open.prepend(el('img', { src: 'emblems/h.webp', alt: '' }));
   let closed = store.get<boolean>('idMakerClosed', false);
   const showMaker = (): void => { maker.hidden = closed; open.hidden = !closed; if (!closed) drawMaker(); };
   function change(key: keyof IdCard, value: string): void {
