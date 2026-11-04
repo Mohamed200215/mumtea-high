@@ -89,7 +89,7 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
       c.fillStyle = 'rgba(255,255,255,' + (.5 * (1 - up)) + ')';
       c.beginPath(); c.arc(90 - SWIM_LONG / 2 + 4 - up * 24, y - up * 22 + i * 4, 2 + i, 0, 7); c.fill();
     }
-    c.save(); c.translate(90, y); c.rotate(Math.max(-.5, Math.min(.5, vy / 300)));
+    c.save(); c.translate(90, y); c.rotate(Math.max(-.32, Math.min(.32, vy / 500)));
     if (swimArt) {
       c.rotate(Math.PI / 2 + Math.sin(far / 16) * .05);
       c.drawImage(swimArt, -SWIM_WIDE / 2, -SWIM_LONG / 2, SWIM_WIDE, SWIM_LONG);
@@ -118,8 +118,8 @@ const pick = <T,>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
     const speed = .15 + score * .0004;
     vy += (rise ? -.75 : .55) * dt; vy = Math.max(-230, Math.min(230, vy));
     y += vy * dt / 1000;
-    if (y < 18) { y = 18; vy = 0; }
-    if (y > 342) { y = 342; vy = 0; }
+    if (y < 32) { y = 32; vy = 0; }
+    if (y > 322) { y = 322; vy = 0; }
     far += dt * speed; score += dt * .01; safe = Math.max(0, safe - dt); gap -= dt;
     if (gap <= 0) {
       gap = Math.max(420, 1000 - score * 2) * (.7 + Math.random() * .6);
