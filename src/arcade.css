@@ -651,3 +651,5 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .gpanel[data-game="casket"]{max-width:960px}
 .gpanel[data-game="casket"] canvas{aspect-ratio:16/9;cursor:crosshair}
 .roomsound{display:flex;gap:6px;justify-content:flex-end;padding:6px 10px;background:#120618;border-bottom:3px solid #000}
+.gcard[data-game="casket"] .gart{background:#fff}
+.gcard[data-game="casket"] .gart img{width:78%;max-width:none;filter:none}
