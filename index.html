@@ -53,7 +53,7 @@ nav.tabs button[aria-current="page"]{background:var(--pink);color:var(--white)}
 /* stage */
 .stage{background:linear-gradient(180deg,var(--plum),#21092f 60%,var(--ink));border-bottom:2px solid #000;padding-block:18px 26px}
 .view[hidden]{display:none}
-.deck{display:grid;grid-template-columns:minmax(0,1fr) 260px 92px;gap:16px;align-items:stretch}
+.deck{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:stretch}
 .film{position:relative;display:flex;flex-direction:column;background:#000;padding:26px 14px;min-width:0;transform:rotate(-.6deg);
   background-image:repeating-linear-gradient(90deg,var(--white) 0 16px,transparent 16px 34px),repeating-linear-gradient(90deg,var(--white) 0 16px,transparent 16px 34px);
   background-size:100% 11px,100% 11px;background-repeat:no-repeat;background-position:0 8px,0 calc(100% - 8px)}
@@ -66,16 +66,13 @@ nav.tabs button[aria-current="page"]{background:var(--pink);color:var(--white)}
 .dots{position:absolute;right:20px;bottom:30px;display:flex;gap:6px}
 .dots button{width:13px;height:13px;border-radius:50%;border:2px solid var(--white);background:transparent;padding:0;cursor:pointer}
 .dots button[aria-pressed="true"]{background:var(--pink)}
-.coffin{position:relative;isolation:isolate;box-sizing:border-box;padding:66px 38px 34px;display:flex;flex-direction:column;gap:8px;height:460px;width:100%;max-width:260px;justify-self:center;align-self:center;align-items:stretch}
+.coffin{position:relative;isolation:isolate;box-sizing:border-box;padding:66px 38px 34px;display:flex;flex-direction:column;gap:8px;height:460px;width:100%;max-width:300px;justify-self:center;align-self:center;align-items:stretch}
 .coffinart{position:absolute;inset:0;width:100%;height:100%;z-index:-1;overflow:visible;filter:drop-shadow(4px 5px 0 #000)}
 .coffin .screen{flex:1;min-height:0;background:#14081a;clip-path:polygon(0 0,100% 0,88% 100%,12% 100%);padding:10px 26px;font-size:13px;line-height:1.35;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:6px}
 .coffin h3{text-align:center;font-size:20px;color:#000}
 .msg b{color:var(--teal)}
 .coffin button{margin-inline:20px;border:2px solid #000;background:#000;color:var(--white);font:12px var(--label);padding:4px;cursor:pointer}
 .coffin button:hover{background:var(--plum)}
-.flaskbox{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
-.flaskbox small{font:11px/1.2 var(--label);color:var(--paper)}
-.flaskbox svg{flex:1;min-height:250px;width:100%;max-width:88px;overflow:visible;filter:drop-shadow(3px 4px 0 #000)}
 .bones{font:400 22px var(--display);color:var(--slime)}
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px;align-items:stretch}
 .tile{background:var(--paper);color:var(--paper-ink);border:0;cursor:pointer;text-align:left;padding:14px 18px 18px;display:flex;flex-direction:column;gap:6px;
@@ -182,7 +179,7 @@ footer p{margin:0 0 6px;max-width:80ch}
 
 h1,h2,h3,.strip b,.pill,nav.tabs button,.tile strong,.bones,.code label,.coffin button,.linkish,.lineup button,.student h3,.q,.hello,.filters button{text-transform:uppercase}
 h1,h2,h3{line-height:1.35;letter-spacing:0}
-.meta,.hello,.gamebar,#codeMsg,#saveMsg,.diary dt,.stack label,.idcard p b,.student small,.gbody em,th,.flaskbox small,.crypt button,.code input,.q,.coffin button{font-family:var(--body);font-weight:800;letter-spacing:.01em}
+.meta,.hello,.gamebar,#codeMsg,#saveMsg,.diary dt,.stack label,.idcard p b,.student small,.gbody em,th,.crypt button,.code input,.q,.coffin button{font-family:var(--body);font-weight:800;letter-spacing:.01em}
 .gamebar .pill{font-family:var(--label);font-size:13px}
 .q{font-size:19px;text-transform:none}
 .tile strong{font-size:16px}
@@ -203,14 +200,14 @@ nav.tabs button{font-size:14px}
 .bones{font-size:13px;white-space:nowrap}
 
 @media (max-width:820px){
-  .deck{grid-template-columns:minmax(0,1fr) 92px}
+  .deck{grid-template-columns:minmax(0,1fr)}
   .film{grid-column:1/-1}
   .blog,.profile,.two{grid-template-columns:minmax(0,1fr)}
   .lineup{grid-template-columns:repeat(3,minmax(0,1fr))}
   .profile .doll{max-width:220px;margin-inline:auto}
   .tiles{grid-template-columns:minmax(0,1fr)}
   .tile:nth-child(n){transform:none}
-  @media (max-width:360px){.deck{grid-template-columns:minmax(0,1fr) 74px}.coffin{padding-inline:26px}.coffin button{margin-inline:6px}.coffin .screen{padding-inline:20px}}
+  @media (max-width:360px){.coffin{padding-inline:26px}.coffin button{margin-inline:6px}.coffin .screen{padding-inline:20px}}
 }
 @media (max-width:520px){
   .cast .extra{display:none}
@@ -689,10 +686,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 @keyframes fxtumble{to{transform:rotate(360deg)}}
 @keyframes fxglow{50%{opacity:.45;transform:scale(1.06)}}
 
-/* empties the spirit meter once it is full */
-.meterreset{border:2px solid #000;background:var(--pink);color:#000;font:800 11px/1.15 var(--body);text-transform:uppercase;padding:5px 6px;cursor:pointer;box-shadow:2px 2px 0 #000}
-.meterreset:hover{background:var(--white)}
-.flaskbox .bones{white-space:normal;line-height:1.1}
 
 /* Riptide Run: wide screen, with the mermaid locker under it */
 .gpanel[data-game="riptide"]{max-width:960px}
@@ -793,6 +786,16 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .idopen svg{width:28px;height:32px;display:block}
 .idsaid{margin:8px 0 0;font:800 13px var(--body)}
 .idsaid:empty{display:none}
+
+/* the iCoffin's chat */
+.coffinform{display:flex;gap:4px;margin-inline:18px;position:relative;z-index:1}
+.coffinform input{flex:1;min-width:0;background:#14081a;color:var(--white);border:2px solid #000;padding:5px 7px;font:700 13px var(--body)}
+.coffinform input::placeholder{color:#c9a8d8}
+.coffinform button{margin:0;padding:4px 9px}
+.coffinform button:disabled{opacity:.55;cursor:default}
+.coffindots{opacity:.7;font-style:italic}
+.coffin .msg+.msg{margin-top:7px}
+.bonestally{text-align:center;margin:18px 0 0}
 
 /*ARCADE-CSS-END*/
 </style>
@@ -907,31 +910,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
         </svg>
         <h3>iCoffin</h3>
         <div class="screen" id="screen" aria-live="polite"></div>
-        <button type="button" id="scream">Send a Scream</button>
-        <button type="button" id="listen">Listen</button>
-      </aside>
-      <aside class="flaskbox" aria-label="School spirit meter">
-        <small>School Spirit Meter</small>
-        <svg viewBox="0 0 70 260" role="img" aria-label="Flask filled with spirit" id="flask">
-          <defs>
-            <clipPath id="fclip"><path d="M26 14H44L56 58 45 231H25L14 58Z"/></clipPath>
-            <linearGradient id="fgrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#7a23a8"/><stop offset="1" stop-color="#8df04a"/></linearGradient>
-          </defs>
-          <g stroke-linejoin="round">
-            <path d="M19 3H51L67 58 52 250H18L3 58Z" transform="translate(2 3)" fill="#8f0a52" stroke="#8f0a52" stroke-width="4"/>
-            <path d="M19 3H51L67 58 52 250H18L3 58Z" fill="url(#cfPlate)" stroke="url(#cfPlate)" stroke-width="4"/>
-            <path d="M23 8H47L62 58 49 241H21L8 58Z" fill="#b80d63" stroke="#ff8cc8" stroke-width="1.2"/>
-          </g>
-          <g clip-path="url(#fclip)">
-            <rect width="70" height="260" fill="#14081a"/>
-            <rect id="fluid" x="0" y="201" width="70" height="30" fill="url(#fgrad)"/>
-            <g id="eyes"><circle cx="30" cy="212" r="5" fill="#fff"/><circle cx="31" cy="213" r="2.2" fill="#000"/><circle cx="41" cy="216" r="4.4" fill="#fff"/><circle cx="40" cy="217" r="2" fill="#000"/></g>
-          </g>
-          <path d="M43 80h7M44 115h5M44 150h5M45 185h3" stroke="#fff6fb" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
-          <path d="M26 14H44L56 58 45 231H25L14 58Z" fill="none" stroke="#ff9ed0" stroke-width="1.6" stroke-linejoin="round"/>
-        </svg>
-        <span class="bones"><span id="bones">0</span> bones</span>
-        <button class="meterreset" type="button" id="meterReset" hidden>Reset meter</button>
+        <form class="coffinform" id="coffinForm"><input id="coffinWords" type="text" maxlength="500" autocomplete="off" placeholder="Say something..." aria-label="Talk to the Voice"><button type="submit" id="coffinSend">Send</button></form>
       </aside>
     </div>
     <button class="spillcta" type="button" id="homeSpill"><strong>Make a new post and spill the tea</strong><span>Write your thoughts. They go straight on the timeline.</span></button>
@@ -940,6 +919,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
       <button class="tile" type="button" data-go="registration"><strong>Register as a spooky student!</strong><span>Sign up with your email, a username and a password, then dress your ghoul.</span></button>
       <button class="tile" type="button" data-go="games"><strong>Play a frightfully fun game!</strong><span>Four games, from dress up to a flooded-basement swim.</span></button>
     </div>
+    <p class="bonestally"><span class="bones"><span id="bones">0</span> bones</span></p>
     <form class="code" id="codeForm">
       <label for="codeIn">Got a code?</label>
       <input id="codeIn" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="100" placeholder="Try MUMTEA">
@@ -960,7 +940,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 
   <section class="view band" data-view="games" hidden><div class="wrap">
     <h2 class="sec-h">The Arcade</h2>
-    <p class="lede">Pick a game. Every round earns bones for the School Spirit Meter.</p>
+    <p class="lede">Pick a game. Every round earns bones.</p>
     <div class="shelf" id="shelf"></div>
     <div id="player">
       <div class="panel gpanel" data-game="closet">
@@ -1154,37 +1134,14 @@ function go(v,postId){
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)});
 
-/* ---------- bones + spirit flask ---------- */
+/* ---------- bones ---------- */
 let bones=store.get('bones',0);
-const FULL=200;
-/* Resetting empties the meter but keeps the bones, which also show on student pages: it just counts again from that total. */
-const meterKey=()=>'meterFrom.'+(signedInId()||'guest');
-const spirit=()=>Math.min(1,Math.max(0,bones-store.get(meterKey(),0))/FULL);
-function drawBones(){
-  if(store.get(meterKey(),0)>bones)store.set(meterKey(),0);
-  $('#bones').textContent=bones;
-  const pct=spirit(), h=30+pct*195;
-  const f=$('#fluid');f.setAttribute('y',231-h);f.setAttribute('height',h);
-  $('#eyes').setAttribute('transform','translate(0,'+(-(h-30)*.75)+')');
-  $('#flask').setAttribute('aria-label','Flask '+Math.round(pct*100)+' percent full of school spirit');
-  $('#meterReset').hidden=pct<1;
-}
-function award(n){
-  const was=spirit();bones+=n;store.set('bones',bones);drawBones();saveBonesSoon();
-  if(was<1&&spirit()>=1)say('Earl Ghoul','Spirit meter full! Your secret code is BOOBREW.');
-}
+function drawBones(){$('#bones').textContent=bones}
+function award(n){bones+=n;store.set('bones',bones);drawBones();saveBonesSoon()}
 
-/* ---------- iCoffin ---------- */
-const lines=[['Earl Ghoul','Um, hi. You might want to avoid the creepateria today.'],['Ms. Fangtastic','New tea on the blog. Go read it before someone tells you the wrong version.'],['Earl Ghoul','Someone left their fangs in the staff room again.'],['Ms. Fangtastic','You are doing fangtastic. Now go play something.'],['Earl Ghoul','The Catacombs are closed. Nobody knows why. Everyone knows why.'],['Ms. Fangtastic','Boots on. Chin up. Tea hot.']];
-let li=0;
-function say(who,t){const s=$('#screen');const m=el('div',{cls:'msg'},el('b',{text:who+': '}),t);s.append(m);s.scrollTop=s.scrollHeight;while(s.children.length>6)s.firstChild.remove()}
-say(...lines[li++]);
+/* ---------- iCoffin: the conversation itself lives in src/coffinvoice.ts ---------- */
+function say(who,t){const s=$('#screen');const m=el('div',{cls:'msg'},el('b',{text:who+': '}),t);s.append(m);s.scrollTop=s.scrollHeight;while(s.children.length>40)s.firstChild.remove()}
 let ctx;
-const screamSound=new Audio('Scary_Sound_Effects_Horror_Scream.mp3');
-function scream(){if(store.get('mute',false))return;screamSound.volume=.2+.8*spirit();screamSound.currentTime=0;screamSound.play().catch(()=>{})}
-$('#scream').addEventListener('click',()=>{say('You','AAAAAAAAH!');say(...lines[li++%lines.length]);award(1)});
-$('#listen').addEventListener('click',scream);
-$('#meterReset').addEventListener('click',()=>{store.set(meterKey(),bones);drawBones();say('Earl Ghoul','Meter emptied. Your bones are safe, so go fill it again.')});
 
 /* ---------- codes ---------- */
 const CODES={MUMTEA:25,FANGTASTIC:50,MSFANTASTIC:50,EARLGHOUL:25,BOOBREW:100};
@@ -3732,6 +3689,58 @@ function postPhoto(post) {
     setFilter(0);
     drawSwitch();
     aim();
+})();
+/* ---------- the iCoffin: a voice in a coffin that tells scary stories and talks back ---------- */
+(function () {
+    const VOICE_NAME = 'The Voice', OPENER = "You opened the lid. Most people don't. Do you want a story, or do you want to tell me what you're afraid of?";
+    const input = $('#coffinWords'), send = $('#coffinSend'), form = $('#coffinForm');
+    const history = [];
+    let waiting = false;
+    say(VOICE_NAME, OPENER);
+    const setWaiting = (on) => { waiting = on; send.disabled = on; };
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const words = input.value.trim();
+        if (!words || waiting)
+            return;
+        if (!signedInId() && !isAdmin()) {
+            say(VOICE_NAME, 'Log in first, so I know who is listening.');
+            return;
+        }
+        input.value = '';
+        say('You', words);
+        history.push({ role: 'user', content: words });
+        setWaiting(true);
+        const dots = el('div', { cls: 'msg coffindots' }, 'The Voice is thinking...');
+        $('#screen').append(dots);
+        $('#screen').scrollTop = $('#screen').scrollHeight;
+        let out = 'The lid is stuck. Try again in a moment.', keep = false;
+        try {
+            const { data, error } = await sb.functions.invoke('coffin-voice', { body: { messages: history, token: isAdmin() ? adminPass : null } });
+            if (error)
+                out = 'The Voice is not awake yet. Try again later.';
+            else if (data.text) {
+                out = data.text;
+                keep = true;
+            }
+            else if (data.limit)
+                out = 'That is enough for one night. Come back tomorrow, if you still want to.';
+            else if (data.denied)
+                out = 'I cannot hear you yet. Check that your email is verified, then come back.';
+            else if (data.asleep)
+                out = 'The Voice is not awake yet. Try again later.';
+        }
+        catch { /* the message above is already right */ }
+        dots.remove();
+        /* A word that got no answer comes off the history, so the conversation stays in turn. */
+        if (keep)
+            history.push({ role: 'assistant', content: out });
+        else
+            history.pop();
+        say(VOICE_NAME, out);
+        setWaiting(false);
+        input.focus();
+    });
 })();
 // Pictures are Microsoft Fluent Emoji (MIT licence), kept inside the page so they appear at once.
 const REACTIONS = [

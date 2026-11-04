@@ -462,10 +462,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 @keyframes fxtumble{to{transform:rotate(360deg)}}
 @keyframes fxglow{50%{opacity:.45;transform:scale(1.06)}}
 
-/* empties the spirit meter once it is full */
-.meterreset{border:2px solid #000;background:var(--pink);color:#000;font:800 11px/1.15 var(--body);text-transform:uppercase;padding:5px 6px;cursor:pointer;box-shadow:2px 2px 0 #000}
-.meterreset:hover{background:var(--white)}
-.flaskbox .bones{white-space:normal;line-height:1.1}
 
 /* Riptide Run: wide screen, with the mermaid locker under it */
 .gpanel[data-game="riptide"]{max-width:960px}
@@ -566,3 +562,13 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .idopen svg{width:28px;height:32px;display:block}
 .idsaid{margin:8px 0 0;font:800 13px var(--body)}
 .idsaid:empty{display:none}
+
+/* the iCoffin's chat */
+.coffinform{display:flex;gap:4px;margin-inline:18px;position:relative;z-index:1}
+.coffinform input{flex:1;min-width:0;background:#14081a;color:var(--white);border:2px solid #000;padding:5px 7px;font:700 13px var(--body)}
+.coffinform input::placeholder{color:#c9a8d8}
+.coffinform button{margin:0;padding:4px 9px}
+.coffinform button:disabled{opacity:.55;cursor:default}
+.coffindots{opacity:.7;font-style:italic}
+.coffin .msg+.msg{margin-top:7px}
+.bonestally{text-align:center;margin:18px 0 0}
