@@ -969,6 +969,25 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .reactbtn.glamreact[aria-pressed="true"]{background:#ffc2e0;border-color:#000;box-shadow:0 3px 0 var(--pink)}
 .typedemoji.glamtyped{width:2.6em;height:2.6em;vertical-align:-.95em;margin:.1em .1em;padding:.08em;background:#fff6fb;border-radius:.4em;box-sizing:border-box}
 
+/* the notification bell */
+.bellbtn{position:relative;display:inline-grid;place-items:center;width:38px;height:38px;padding:0;background:#14101a;color:var(--paper);border:2px solid var(--pink);border-radius:50%;cursor:pointer}
+.bellbtn[hidden]{display:none}
+.bellbtn:hover,.bellbtn:focus-visible,.bellbtn[aria-expanded="true"]{background:var(--pink);color:#fff}
+.bellcount{position:absolute;right:-6px;top:-6px;min-width:19px;padding:0 4px;background:#35dcc8;color:#14101a;border:2px solid #000;border-radius:999px;font:800 11px/15px var(--body);text-align:center}
+.bellcount[hidden]{display:none}
+.bellpanel{position:fixed;right:12px;top:60px;z-index:80;width:min(380px,calc(100vw - 24px));max-height:min(70vh,520px);display:flex;flex-direction:column;background:#181019;color:var(--white);border:3px solid #000;box-shadow:6px 6px 0 var(--pink)}
+.bellpanel[hidden]{display:none}
+.bellhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:2px solid var(--pink)}
+.bellhead h3{margin:0;font:22px var(--label);color:var(--pink)}
+.belllist{overflow-y:auto}
+.bellempty{margin:0;padding:18px 14px;font-weight:700}
+.bellrow{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;background:none;color:inherit;border:0;border-bottom:1px solid #3a2a48;text-align:left;font:600 14px/1.35 var(--body);cursor:pointer}
+.bellrow:hover,.bellrow:focus-visible{background:#2c1140}
+.bellnew{background:#3a1250;box-shadow:inset 4px 0 0 var(--teal)}
+.belltext{flex:1;min-width:0;overflow-wrap:anywhere}
+.belltext time{display:block;font-size:12px;color:var(--muted)}
+.bellrow img{flex:none;padding:2px;background:#fff6fb;border-radius:6px}
+
 /* the opening */
 html.introon,html.introon body{overflow:hidden}
 .intro{position:fixed;inset:0;z-index:99999;background:#140a1c url(backgrounds/skulls.webp);transition:opacity 1.3s ease}
@@ -3442,7 +3461,7 @@ function drawDeviceShot(d, photo, words) {
     d.after?.(c, words);
     return cv;
 }
-const PIN_DB = 'mumteaGallery', PIN_STORE = 'polaroids';
+const PIN_DB = 'mumteaGallery', PIN_STORE = 'polaroids', PIN_BUCKET = 'polaroids';
 /* The pictures are too big for the site's usual storage, so they live in the browser's picture-sized one. */
 function pinOpen() {
     return new Promise((done, fail) => {
@@ -3465,8 +3484,10 @@ async function pinDo(mode, act) {
         db.close();
     }
 }
-/* Whatever device took it, the gallery print is the same Polaroid in the school's colours. */
-async function pinPolaroid(square, caption, at) {
+/* Every Polaroid in the school looks the same: the FangCam's print and everything in the gallery. */
+const PIN_CRESTS = ['crestHijab', 'crestBow'].map(name => { const img = new Image(); img.src = STICKER_ART[name]; return img; });
+const pinCrestsReady = () => Promise.all(PIN_CRESTS.map(img => img.decode().catch(() => { })));
+function schoolPolaroid(square, caption, at) {
     const cv = el('canvas', { width: POLA_W, height: POLA_H }), c = cv.getContext('2d');
     c.fillStyle = '#ffe3f1';
     c.fillRect(0, 0, POLA_W, POLA_H);
@@ -3480,8 +3501,7 @@ async function pinPolaroid(square, caption, at) {
             c.fillStyle = (x + y) % 2 ? '#ff1f8f' : '#000';
             c.fillRect(x * CHECK, POLA_H - (y + 1) * CHECK, CHECK, CHECK);
         }
-    const crests = await Promise.all(['crestHijab', 'crestBow'].map(async (name) => { const img = new Image(); img.src = STICKER_ART[name]; await img.decode().catch(() => { }); return img; }));
-    crests.forEach((img, i) => {
+    PIN_CRESTS.forEach((img, i) => {
         const h = 124, w = h * (img.naturalWidth / img.naturalHeight || 1), x = i ? POLA_W - 42 - w : 42;
         c.save();
         c.translate(x + w / 2, 650);
@@ -3502,7 +3522,11 @@ async function pinPolaroid(square, caption, at) {
     c.strokeStyle = '#000';
     c.lineWidth = 6;
     c.strokeRect(3, 3, POLA_W - 6, POLA_H - 6);
-    const blob = await new Promise(done => cv.toBlob(done, 'image/jpeg', .92));
+    return cv;
+}
+async function pinPolaroid(square, caption, at) {
+    await pinCrestsReady();
+    const blob = await new Promise(done => schoolPolaroid(square, caption, at).toBlob(done, 'image/jpeg', .92));
     if (!blob)
         throw new Error('no picture');
     return blob;
@@ -3554,8 +3578,9 @@ function makeGallery() {
     const keep = el('button', { cls: 'pill', type: 'button', onclick() { keepActive(); } }, 'Save to my device');
     const drop = el('button', { cls: 'pill ghost', type: 'button', onclick() { dropActive(); } }, 'Remove');
     const bar = el('div', { cls: 'plbar' }, el('div', { cls: 'plcap' }, title, count), el('div', { cls: 'placts' }, prevBtn, nextBtn, keep, drop));
+    const help = el('p', { cls: 'plhelp' });
     const empty = el('p', { cls: 'plempty', text: 'Nothing on the line yet. Take a picture and press Save to gallery.' });
-    const root = el('section', { cls: 'plgallery', 'aria-label': 'My Polaroids' }, el('h4', { text: 'My Polaroids' }), el('p', { cls: 'plhelp', text: 'Every picture you save hangs here as a Polaroid. Drag the line or use the arrows. They stay on this device and in this browser.' }), empty, stage, bar, said);
+    const root = el('section', { cls: 'plgallery', 'aria-label': 'My Polaroids' }, el('h4', { text: 'My Polaroids' }), help, empty, stage, bar, said);
     const calm = () => matchMedia('(prefers-reduced-motion:reduce)').matches;
     const go = (i) => { target = lineClamp(i, 0, Math.max(0, shots.length - 1)) * gap; };
     const step = (dir) => go(active + dir);
@@ -3722,6 +3747,14 @@ function makeGallery() {
             return;
         }
         try {
+            if (s.remoteId && canSync()) {
+                const path = signedInId() + '/' + s.remoteId + '.jpg', gone = await sb.storage.from(PIN_BUCKET).remove([path]);
+                if (gone.error)
+                    throw gone.error;
+                const row = await sb.from('gallery_polaroids').delete().eq('id', s.remoteId);
+                if (row.error)
+                    throw row.error;
+            }
             await pinDo('readwrite', st => st.delete(s.id));
             if (s.url)
                 URL.revokeObjectURL(s.url);
@@ -3733,16 +3766,107 @@ function makeGallery() {
             said.textContent = 'That Polaroid would not come off the line. Please try again.';
         }
     }
-    pinDo('readonly', st => st.getAll()).then(all => { shots = all.reverse(); build(); }).catch(() => { build(); said.textContent = 'This browser cannot keep a gallery. A private window is the usual reason.'; });
+    /* Whose gallery this is: an account, Ms. Fangtastic on her code (kept on this device), or a guest. */
+    const ownerNow = () => (isAdmin() ? 'fang' : signedInId() || null);
+    const canSync = () => backendReady && !isAdmin() && !!signedInId();
+    const clean = (s) => { const { url, ...rest } = s; void url; return rest; };
+    const allLocal = () => pinDo('readonly', st => st.getAll());
+    function showHelp() { help.textContent = 'Every picture you save hangs here as a Polaroid. Drag the line or use the arrows. ' + (canSync() ? 'They are private to your account, and follow you to any device you log in on.' : 'They stay on this device. Log in to keep them on your account, on every device.'); }
+    async function loadShots() {
+        const me = ownerNow(), keep = shots;
+        const mine = (await allLocal()).filter(s => (s.owner ?? null) === me).sort((a, b) => b.at - a.at);
+        keep.forEach(s => { if (s.url)
+            URL.revokeObjectURL(s.url); });
+        shots = mine;
+        active = Math.min(active, Math.max(0, shots.length - 1));
+        build();
+    }
+    let syncing = false, syncAgain = false;
+    /* Local pictures go up, pictures from other devices come down, and anything removed elsewhere goes here too. */
+    async function sync() {
+        if (!canSync())
+            return;
+        if (syncing) {
+            syncAgain = true;
+            return;
+        }
+        syncing = true;
+        const me = signedInId();
+        try {
+            const everything = await allLocal();
+            for (const s of everything)
+                if ((s.owner ?? null) === null) {
+                    s.owner = me;
+                    await pinDo('readwrite', st => st.put(s));
+                }
+            const { data, error } = await sb.from('gallery_polaroids').select('id, caption, taken_at');
+            if (error)
+                return;
+            const rows = data, ids = new Set(rows.map(r => r.id));
+            const local = everything.filter(s => s.owner === me), known = new Set(local.map(s => s.remoteId));
+            for (const s of local) {
+                if (s.remoteId && !ids.has(s.remoteId)) {
+                    await pinDo('readwrite', st => st.delete(s.id));
+                    continue;
+                }
+                if (s.remoteId)
+                    continue;
+                const made = await sb.from('gallery_polaroids').insert({ caption: s.caption.slice(0, 200), taken_at: new Date(s.at).toISOString() }).select('id').single();
+                if (made.error)
+                    continue;
+                const up = await sb.storage.from(PIN_BUCKET).upload(me + '/' + made.data.id + '.jpg', s.blob, { contentType: 'image/jpeg' });
+                if (up.error) {
+                    await sb.from('gallery_polaroids').delete().eq('id', made.data.id);
+                    continue;
+                }
+                s.remoteId = made.data.id;
+                known.add(s.remoteId);
+                await pinDo('readwrite', st => st.put(s));
+            }
+            for (const r of rows) {
+                if (known.has(r.id))
+                    continue;
+                const down = await sb.storage.from(PIN_BUCKET).download(me + '/' + r.id + '.jpg');
+                if (down.error || !down.data)
+                    continue;
+                const record = { blob: down.data, caption: r.caption, at: new Date(r.taken_at).getTime(), owner: me, remoteId: r.id };
+                await pinDo('readwrite', st => st.add(record));
+            }
+            if (signedInId() === me)
+                await loadShots();
+        }
+        catch { /* offline: the pictures stay here and try again next time */ }
+        finally {
+            syncing = false;
+            if (syncAgain) {
+                syncAgain = false;
+                sync();
+            }
+        }
+    }
+    let seenOwner;
+    function watchOwner() {
+        const me = ownerNow();
+        if (me === seenOwner)
+            return;
+        seenOwner = me;
+        showHelp();
+        loadShots().then(sync).catch(() => { build(); said.textContent = 'This browser cannot keep a gallery. A private window is the usual reason.'; });
+    }
+    window.setInterval(watchOwner, 2500);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden)
+        sync(); });
+    window.setTimeout(watchOwner, 0);
     showActive();
     return {
         root,
         async add(square, caption) {
-            const at = Date.now(), blob = await pinPolaroid(square, caption, at), record = { blob, caption, at };
+            const at = Date.now(), blob = await pinPolaroid(square, caption, at), record = { blob, caption, at, owner: ownerNow() };
             const id = await pinDo('readwrite', st => st.add(record));
             shots.unshift({ id, ...record });
             active = 0;
             build();
+            sync();
         },
     };
 }
@@ -3825,216 +3949,6 @@ async function camStickers(c, pw, ph, f, d) {
         c.drawImage(art[i], -w / 2, -h / 2, w, h);
         c.restore();
     });
-}
-/* ---------- the Polaroid frame, hand-drawn in the school's colours ---------- */
-function drawPolaroid(photo) {
-    const cv = el('canvas', { width: POLA_W, height: POLA_H }), c = cv.getContext('2d');
-    let seed = 7;
-    const jig = () => { seed = (seed * 16807) % 2147483647; return (seed / 2147483647 - .5) * 2.6; };
-    const sketch = (pts, width = 5, colour = '#000') => {
-        c.lineCap = c.lineJoin = 'round';
-        c.strokeStyle = colour;
-        c.lineWidth = width;
-        c.beginPath();
-        pts.forEach((p, i) => {
-            const q = pts[(i + 1) % pts.length], steps = Math.ceil(Math.hypot(q[0] - p[0], q[1] - p[1]) / 26);
-            if (!i)
-                c.moveTo(p[0], p[1]);
-            for (let s = 1; s <= steps; s++)
-                c.lineTo(p[0] + (q[0] - p[0]) * s / steps + (s < steps ? jig() : 0), p[1] + (q[1] - p[1]) * s / steps + (s < steps ? jig() : 0));
-        });
-        c.closePath();
-        c.stroke();
-    };
-    const ticks = (colour, lines) => {
-        c.strokeStyle = colour;
-        c.lineWidth = 7;
-        c.lineCap = 'round';
-        lines.forEach(l => { c.beginPath(); c.moveTo(l[0], l[1]); c.lineTo(l[2], l[3]); c.stroke(); });
-    };
-    const heart = (x, y, s) => {
-        c.save();
-        c.translate(x, y);
-        c.scale(s, s);
-        c.rotate(-.12);
-        c.beginPath();
-        c.moveTo(0, 18);
-        c.bezierCurveTo(-30, -4, -24, -26, -10, -24);
-        c.bezierCurveTo(-4, -24, 0, -18, 0, -13);
-        c.bezierCurveTo(0, -18, 5, -24, 11, -24);
-        c.bezierCurveTo(25, -26, 30, -4, 0, 18);
-        c.closePath();
-        c.fillStyle = '#ff1f8f';
-        c.fill();
-        c.strokeStyle = '#000';
-        c.lineWidth = 4.5;
-        c.lineJoin = 'round';
-        c.stroke();
-        c.fillStyle = '#ffd0e8';
-        c.beginPath();
-        c.ellipse(-12, -13, 4, 2.8, -.6, 0, 7);
-        c.fill();
-        c.restore();
-    };
-    const star = (x, y, r) => {
-        c.save();
-        c.translate(x, y);
-        c.rotate(.2);
-        c.beginPath();
-        for (let i = 0; i < 10; i++) {
-            const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? r * .48 : r;
-            c.lineTo(Math.cos(a) * d, Math.sin(a) * d);
-        }
-        c.closePath();
-        c.fillStyle = '#35dcc8';
-        c.fill();
-        c.strokeStyle = '#000';
-        c.lineWidth = 4.5;
-        c.lineJoin = 'round';
-        c.stroke();
-        c.restore();
-    };
-    const bat = (x, y, s) => {
-        c.save();
-        c.translate(x, y);
-        c.scale(s, s);
-        c.rotate(-.14);
-        c.fillStyle = '#3a1250';
-        c.strokeStyle = '#000';
-        c.lineWidth = 4;
-        c.lineJoin = 'round';
-        c.beginPath();
-        c.moveTo(-8, -6);
-        c.quadraticCurveTo(-30, -26, -54, -14);
-        c.quadraticCurveTo(-46, -4, -48, 8);
-        c.quadraticCurveTo(-37, 1, -30, 12);
-        c.quadraticCurveTo(-21, 5, -13, 16);
-        c.lineTo(13, 16);
-        c.quadraticCurveTo(21, 5, 30, 12);
-        c.quadraticCurveTo(37, 1, 48, 8);
-        c.quadraticCurveTo(46, -4, 54, -14);
-        c.quadraticCurveTo(30, -26, 8, -6);
-        c.closePath();
-        c.fill();
-        c.stroke();
-        c.beginPath();
-        c.moveTo(-14, -8);
-        c.lineTo(-17, -29);
-        c.lineTo(-5, -18);
-        c.lineTo(5, -18);
-        c.lineTo(17, -29);
-        c.lineTo(14, -8);
-        c.closePath();
-        c.fill();
-        c.stroke();
-        c.beginPath();
-        c.arc(0, -4, 17, 0, 7);
-        c.fill();
-        c.stroke();
-        c.fillStyle = '#ff1f8f';
-        c.beginPath();
-        c.arc(-6.5, -7, 3.6, 0, 7);
-        c.arc(6.5, -7, 3.6, 0, 7);
-        c.fill();
-        c.fillStyle = '#fff6fb';
-        c.beginPath();
-        c.moveTo(-6, 3);
-        c.lineTo(-3, 9);
-        c.lineTo(-1, 3);
-        c.moveTo(1, 3);
-        c.lineTo(3, 9);
-        c.lineTo(6, 3);
-        c.fill();
-        c.restore();
-    };
-    const skull = (x, y, s) => {
-        c.save();
-        c.translate(x, y);
-        c.scale(s, s);
-        c.rotate(-.1);
-        c.fillStyle = '#fff6fb';
-        c.strokeStyle = '#000';
-        c.lineWidth = 4.5;
-        c.lineJoin = 'round';
-        c.beginPath();
-        c.moveTo(-14, 16);
-        c.lineTo(-14, 28);
-        c.lineTo(14, 28);
-        c.lineTo(14, 16);
-        c.bezierCurveTo(30, 10, 34, -6, 30, -14);
-        c.bezierCurveTo(24, -38, -24, -38, -30, -14);
-        c.bezierCurveTo(-34, -6, -30, 10, -14, 16);
-        c.closePath();
-        c.fill();
-        c.stroke();
-        c.fillStyle = '#000';
-        c.beginPath();
-        c.ellipse(-12, -3, 8, 9, .15, 0, 7);
-        c.ellipse(12, -3, 8, 9, -.15, 0, 7);
-        c.fill();
-        c.beginPath();
-        c.moveTo(0, 7);
-        c.lineTo(-4, 14);
-        c.lineTo(4, 14);
-        c.fill();
-        c.lineWidth = 3;
-        c.beginPath();
-        c.moveTo(-5, 20);
-        c.lineTo(-5, 28);
-        c.moveTo(5, 20);
-        c.lineTo(5, 28);
-        c.stroke();
-        c.fillStyle = '#ff7ab8';
-        c.beginPath();
-        c.arc(-19, 9, 5, 0, 7);
-        c.arc(19, 9, 5, 0, 7);
-        c.fill();
-        c.translate(21, -27);
-        c.fillStyle = '#ff1f8f';
-        c.lineWidth = 3.5;
-        c.beginPath();
-        c.moveTo(0, 0);
-        c.lineTo(-17, -11);
-        c.lineTo(-17, 11);
-        c.closePath();
-        c.fill();
-        c.stroke();
-        c.beginPath();
-        c.moveTo(0, 0);
-        c.lineTo(17, -11);
-        c.lineTo(17, 11);
-        c.closePath();
-        c.fill();
-        c.stroke();
-        c.beginPath();
-        c.arc(0, 0, 5, 0, 7);
-        c.fill();
-        c.stroke();
-        c.restore();
-    };
-    c.fillStyle = '#f9e9a6';
-    c.fillRect(28, 28, 584, 724);
-    c.fillStyle = 'rgba(255,31,143,.1)';
-    c.fillRect(28, 568, 584, 184);
-    sketch([[28, 28], [612, 28], [612, 752], [28, 752]], 6);
-    c.drawImage(photo, POLA_X, POLA_Y, POLA_S, POLA_S);
-    sketch([[POLA_X, POLA_Y], [POLA_X + POLA_S, POLA_Y], [POLA_X + POLA_S, POLA_Y + POLA_S], [POLA_X, POLA_Y + POLA_S]], 5);
-    bat(62, 54, 1);
-    ticks('#ff1f8f', [[122, 18, 130, 7], [132, 30, 148, 24]]);
-    heart(586, 58, 1.1);
-    ticks('#35dcc8', [[585, 92, 607, 92], [572, 102, 588, 114]]);
-    skull(112, 668, 1.15);
-    ticks('#19b7e8', [[168, 660, 192, 654], [168, 684, 190, 694]]);
-    heart(506, 640, 1);
-    star(556, 694, 34);
-    ticks('#ff1f8f', [[462, 668, 482, 674], [468, 696, 488, 690]]);
-    c.fillStyle = '#2a1420';
-    c.textAlign = 'center';
-    c.font = '38px ' + DISPLAY_FONT;
-    c.fillText('MUMTEA HIGH', POLA_W / 2, 662, 240);
-    c.font = '800 18px Nunito, sans-serif';
-    c.fillText(new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }), POLA_W / 2, 692, 240);
-    return cv;
 }
 /* Posts are stored as JPEGs, which cannot be see-through, so a posted picture sits on the colour of the post card behind it. */
 function polaroidData(shot) {
@@ -4298,10 +4212,11 @@ function postPhoto(post) {
         if (square !== photo)
             await camStickers(square.getContext('2d'), POLA_S, POLA_S, f, camDevice('fangcam'));
         await document.fonts.load('38px "Breath of the House"').catch(() => []);
+        await pinCrestsReady();
         showPrint(d, photo, square);
     }
     function showPrint(d, photo, square) {
-        const made = (words) => (d.polaroid ? drawPolaroid(photo) : drawDeviceShot(d, photo, shotWords(words)));
+        const takenAt = Date.now(), made = (words) => (d.polaroid ? schoolPolaroid(photo, words, takenAt) : drawDeviceShot(d, photo, shotWords(words)));
         let shot = made(''), url = shot.toDataURL('image/png');
         const full = d.polaroid ? { w: POLA_W, h: POLA_H } : { w: Math.round(d.w * d.s), h: Math.round(d.h * d.s) };
         const img = el('img', { src: url, alt: 'Your ' + d.noun, width: full.w, height: full.h });
@@ -4321,11 +4236,10 @@ function postPhoto(post) {
         const note = el('p', { cls: 'polanote', role: 'status' });
         const caption = el('input', { type: 'text', maxlength: 200, placeholder: 'Add a caption (optional)', 'aria-label': 'Caption for your post' });
         const save = el('a', { cls: 'pill ghost', href: url, download: d.polaroid ? 'mumtea-polaroid.png' : 'mumtea-' + d.id + '.png' }, 'Save picture');
-        /* Most devices write the caption into the picture itself, so it redraws as you type. */
+        /* Every device writes the caption into the picture itself, so it redraws as you type. */
         let typingAt = 0;
         const redraw = () => { clearTimeout(typingAt); typingAt = 0; shot = made(caption.value.trim()); url = shot.toDataURL('image/png'); img.src = url; save.setAttribute('href', url); };
-        if (!d.polaroid)
-            caption.addEventListener('input', () => { clearTimeout(typingAt); typingAt = window.setTimeout(redraw, 220); });
+        caption.addEventListener('input', () => { clearTimeout(typingAt); typingAt = window.setTimeout(redraw, 220); });
         const again = el('button', { cls: 'pill ghost', type: 'button', onclick() { printSlot.textContent = ''; camera.scrollIntoView({ block: 'nearest' }); } }, 'Take another');
         const send = el('button', { cls: 'pill', type: 'button' }, 'Post my ' + d.noun);
         const pin = el('button', { cls: 'pill', type: 'button' }, 'Save to gallery');
@@ -4502,7 +4416,7 @@ const COFFIN_QUOTES = [
 })();
 const REACTIONS = [
     ['fang', GLAM_ART.clock, 'Clock it girl', 'Clock it'],
-    ['tea', GLAM_ART.goggles, 'Yes to this', 'Yes'],
+    ['tea', GLAM_ART.goggles, 'Scuba', 'Scuba'],
     ['skull', GLAM_ART.dead, 'Dead', 'Dead'],
     ['heart', GLAM_ART.bows, 'Too cute', 'Cute'],
     ['fire', GLAM_ART.wink, 'Wink', 'Wink'],
@@ -4513,7 +4427,7 @@ let laughReady = false;
 // Emojis people type become the same 3D pictures on every device. Each one is fetched from emoji/ only when it is used; if there is no picture the device's own emoji stays.
 const TYPED_EMOJI = /\p{RI}\p{RI}|[0-9#*]\uFE0F?\u20E3|\p{Extended_Pictographic}(?:\uFE0F|\p{EMod})?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\p{EMod})?)*/gu;
 /* These typed emojis always show as the glam set. The rest of the emoji keyboard keeps its 3D pictures. */
-const GLAM_TYPED = [['1f485', 'clock', 'Clock it girl', 'Clock it'], ['1f44d', 'goggles', 'Yes to this', 'Yes'], ['1f480', 'dead', 'Dead', 'Dead'], ['1f97a', 'bows', 'Too cute', 'Cute'], ['1f609', 'wink', 'Wink', 'Wink'], ['1f602', 'laugh', 'Dead funny', 'LOL'], ['1f60d', 'love', 'In love', 'Love']];
+const GLAM_TYPED = [['1f485', 'clock', 'Clock it girl', 'Clock it'], ['1f44d', 'goggles', 'Scuba', 'Scuba'], ['1f480', 'dead', 'Dead', 'Dead'], ['1f97a', 'bows', 'Too cute', 'Cute'], ['1f609', 'wink', 'Wink', 'Wink'], ['1f602', 'laugh', 'Dead funny', 'LOL'], ['1f60d', 'love', 'In love', 'Love']];
 function emojiRow(area) {
     return el('div', { cls: 'glamrow', role: 'group', 'aria-label': 'Add an emoji' }, ...GLAM_TYPED.map(([code, art, label, short]) => el('button', { cls: 'glamadd', type: 'button', title: label, 'aria-label': 'Add emoji: ' + label, onclick() {
             const ch = String.fromCodePoint(parseInt(code, 16)), at = area.selectionStart ?? area.value.length, end = area.selectionEnd ?? at;
@@ -8604,6 +8518,134 @@ function themeToggle() {
     document.addEventListener('soundchange', draw);
     return btn;
 }
+(function () {
+    let notes = [], who = '', channel = null, loading = false;
+    const count = el('b', { cls: 'bellcount', hidden: '' });
+    const bell = el('button', { cls: 'bellbtn', type: 'button', hidden: '', 'aria-expanded': 'false', 'aria-controls': 'bellPanel', 'aria-label': 'Notifications', onclick(e) { e.stopPropagation(); toggle(); } });
+    bell.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 2.500a2 2 0 0 1 2 2v.7c3 .9 5 3.600 5 7v3.300l2 2.500v1H3v-1l2-2.500v-3.300c0-3.400 2-6.100 5-7v-.7a2 2 0 0 1 2-2Z" fill="currentColor"/><path d="M9.500 20.500a2.500 2.500 0 0 0 5 0Z" fill="currentColor"/></svg>';
+    bell.append(count);
+    const list = el('div', { cls: 'belllist' }), panel = el('section', { cls: 'bellpanel', id: 'bellPanel', hidden: '', 'aria-label': 'Notifications' }, el('div', { cls: 'bellhead' }, el('h3', { text: 'Notifications' }), el('button', { cls: 'linkish', type: 'button', onclick() { panel.hidden = true; bell.setAttribute('aria-expanded', 'false'); bell.focus(); } }, 'Close')), list);
+    panel.addEventListener('click', e => e.stopPropagation());
+    $('#hello').after(bell);
+    document.body.append(panel);
+    const myKey = () => (isAdmin() ? 'fang' : signedInId() || '');
+    const postName = (id) => { const p = allPosts.find(x => x.id === id); return p ? (p.title || p.body).slice(0, 34) + ((p.title || p.body).length > 34 ? '...' : '') : 'your post'; };
+    const reactionName = (kind) => (REACTIONS.find(r => r[0] === kind) || [])[3] || 'a reaction';
+    function words(n) {
+        const name = nameOf(n.actorId);
+        if (n.kind === 'comment')
+            return name + ' commented on your post: ' + postName(n.postId);
+        if (n.kind === 'reply')
+            return name + ' also commented on: ' + postName(n.postId);
+        if (n.kind === 'reaction')
+            return name + ' reacted "' + reactionName(n.detail) + '" to your post: ' + postName(n.postId);
+        return name + ' beat your score in ' + titleOf(n.detail);
+    }
+    function badge() {
+        const unread = notes.filter(n => !n.read).length;
+        count.hidden = !unread;
+        count.textContent = unread > 99 ? '99+' : String(unread);
+        bell.setAttribute('aria-label', unread ? 'Notifications, ' + unread + ' new' : 'Notifications');
+    }
+    function draw() {
+        list.textContent = '';
+        if (!notes.length) {
+            list.append(el('p', { cls: 'bellempty', text: 'Nothing yet. When someone comments on your posts, reacts to them or beats your score, it shows up here.' }));
+            return;
+        }
+        notes.forEach(n => {
+            const row = el('button', { cls: 'bellrow' + (n.read ? '' : ' bellnew'), type: 'button', onclick() {
+                    panel.hidden = true;
+                    bell.setAttribute('aria-expanded', 'false');
+                    if (n.kind === 'score') {
+                        go('games');
+                        openGame(n.detail, true);
+                    }
+                    else
+                        go('tea', n.postId ?? undefined);
+                } }, faceFor(n.actorId, 'cmtface'));
+            const icon = n.kind === 'reaction' ? (REACTIONS.find(r => r[0] === n.detail) || [])[1] : '';
+            row.append(el('span', { cls: 'belltext' }, el('span', { text: words(n) }), el('time', { datetime: n.at, text: timeAgo(n.at) })));
+            if (icon)
+                row.append(el('img', { src: icon, alt: '', width: 34, height: 34 }));
+            list.append(row);
+        });
+    }
+    async function load() {
+        if (!backendReady || loading || !myKey())
+            return;
+        loading = true;
+        try {
+            const { data, error } = isAdmin() ? await sb.rpc('admin_notifications', { token: adminPass }) : await sb.from('notifications').select('id, actor_id, kind, post_id, detail, read_at, created_at').order('created_at', { ascending: false }).limit(60);
+            if (error)
+                return;
+            notes = data.map(r => ({ id: r.id, actorId: r.actor_id, kind: r.kind, postId: r.post_id, detail: r.detail, read: !!r.read_at, at: r.created_at }));
+            badge();
+            if (!panel.hidden)
+                draw();
+        }
+        finally {
+            loading = false;
+        }
+    }
+    async function markRead() {
+        if (!notes.some(n => !n.read))
+            return;
+        const { error } = isAdmin() ? await sb.rpc('admin_read_notifications', { token: adminPass }) : await sb.from('notifications').update({ read_at: new Date().toISOString() }).is('read_at', null).eq('user_id', signedInId());
+        if (error)
+            return;
+        notes.forEach(n => { n.read = true; });
+        badge();
+    }
+    function toggle() {
+        panel.hidden = !panel.hidden;
+        bell.setAttribute('aria-expanded', String(!panel.hidden));
+        if (panel.hidden) {
+            draw();
+            return;
+        }
+        /* New ones stay highlighted while the list is open, and count as seen straight away. */
+        draw();
+        const r = bell.getBoundingClientRect();
+        panel.style.top = Math.round(r.bottom + 8) + 'px';
+        markRead();
+    }
+    document.addEventListener('click', () => { if (!panel.hidden) {
+        panel.hidden = true;
+        bell.setAttribute('aria-expanded', 'false');
+    } });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) {
+        panel.hidden = true;
+        bell.setAttribute('aria-expanded', 'false');
+        bell.focus();
+    } });
+    /* Whoever is logged in can change at any moment, so this keeps checking. */
+    function watch() {
+        const key = myKey();
+        if (key === who)
+            return;
+        who = key;
+        notes = [];
+        badge();
+        panel.hidden = true;
+        bell.hidden = !key;
+        if (channel) {
+            sb.removeChannel(channel);
+            channel = null;
+        }
+        if (!key)
+            return;
+        load();
+        if (backendReady && key !== 'fang')
+            channel = sb.channel('notes-' + key).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + key }, () => { tone(880, .08); load(); }).subscribe();
+    }
+    window.setInterval(watch, 2500);
+    window.setInterval(() => { if (!document.hidden)
+        load(); }, 60000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden)
+        load(); });
+    window.setTimeout(watch, 300);
+})();
 const PAGEANT_ITEMS = {
     top: { glam: ['corset', 'lacetop', 'peplum', 'ruffle', 'kimono', 'blazer'], street: ['hoodie', 'varsity', 'tee', 'jersey', 'biker', 'sweater'], monster: ['bat', 'coat', 'vest', 'bolero', 'stripey'] },
     bottom: { glam: ['maxi', 'mermaid', 'tulle', 'pleatmaxi', 'rufflemaxi', 'gypsy'], street: ['cargo', 'ripped', 'joggers', 'flares', 'straight', 'track'], monster: ['shred', 'batwing', 'chains', 'leather', 'corsetskirt', 'hilow'] },

@@ -745,6 +745,25 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .reactbtn.glamreact[aria-pressed="true"]{background:#ffc2e0;border-color:#000;box-shadow:0 3px 0 var(--pink)}
 .typedemoji.glamtyped{width:2.6em;height:2.6em;vertical-align:-.95em;margin:.1em .1em;padding:.08em;background:#fff6fb;border-radius:.4em;box-sizing:border-box}
 
+/* the notification bell */
+.bellbtn{position:relative;display:inline-grid;place-items:center;width:38px;height:38px;padding:0;background:#14101a;color:var(--paper);border:2px solid var(--pink);border-radius:50%;cursor:pointer}
+.bellbtn[hidden]{display:none}
+.bellbtn:hover,.bellbtn:focus-visible,.bellbtn[aria-expanded="true"]{background:var(--pink);color:#fff}
+.bellcount{position:absolute;right:-6px;top:-6px;min-width:19px;padding:0 4px;background:#35dcc8;color:#14101a;border:2px solid #000;border-radius:999px;font:800 11px/15px var(--body);text-align:center}
+.bellcount[hidden]{display:none}
+.bellpanel{position:fixed;right:12px;top:60px;z-index:80;width:min(380px,calc(100vw - 24px));max-height:min(70vh,520px);display:flex;flex-direction:column;background:#181019;color:var(--white);border:3px solid #000;box-shadow:6px 6px 0 var(--pink)}
+.bellpanel[hidden]{display:none}
+.bellhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border-bottom:2px solid var(--pink)}
+.bellhead h3{margin:0;font:22px var(--label);color:var(--pink)}
+.belllist{overflow-y:auto}
+.bellempty{margin:0;padding:18px 14px;font-weight:700}
+.bellrow{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;background:none;color:inherit;border:0;border-bottom:1px solid #3a2a48;text-align:left;font:600 14px/1.35 var(--body);cursor:pointer}
+.bellrow:hover,.bellrow:focus-visible{background:#2c1140}
+.bellnew{background:#3a1250;box-shadow:inset 4px 0 0 var(--teal)}
+.belltext{flex:1;min-width:0;overflow-wrap:anywhere}
+.belltext time{display:block;font-size:12px;color:var(--muted)}
+.bellrow img{flex:none;padding:2px;background:#fff6fb;border-radius:6px}
+
 /* the opening */
 html.introon,html.introon body{overflow:hidden}
 .intro{position:fixed;inset:0;z-index:99999;background:#140a1c url(backgrounds/skulls.webp);transition:opacity 1.3s ease}

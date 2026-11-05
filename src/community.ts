@@ -3,7 +3,7 @@ interface TeaComment { id: string; postId: string; authorId: string | null; body
 interface TeaReaction { postId: string; userId: string | null; kind: string }
 const REACTIONS: Array<[string, string, string, string]> = [
   ['fang', GLAM_ART.clock, 'Clock it girl', 'Clock it'],
-  ['tea', GLAM_ART.goggles, 'Yes to this', 'Yes'],
+  ['tea', GLAM_ART.goggles, 'Scuba', 'Scuba'],
   ['skull', GLAM_ART.dead, 'Dead', 'Dead'],
   ['heart', GLAM_ART.bows, 'Too cute', 'Cute'],
   ['fire', GLAM_ART.wink, 'Wink', 'Wink'],
@@ -14,7 +14,7 @@ let laughReady = false;
 // Emojis people type become the same 3D pictures on every device. Each one is fetched from emoji/ only when it is used; if there is no picture the device's own emoji stays.
 const TYPED_EMOJI = /\p{RI}\p{RI}|[0-9#*]\uFE0F?\u20E3|\p{Extended_Pictographic}(?:\uFE0F|\p{EMod})?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\p{EMod})?)*/gu;
 /* These typed emojis always show as the glam set. The rest of the emoji keyboard keeps its 3D pictures. */
-const GLAM_TYPED: Array<[code: string, art: string, label: string, short: string]> = [['1f485', 'clock', 'Clock it girl', 'Clock it'], ['1f44d', 'goggles', 'Yes to this', 'Yes'], ['1f480', 'dead', 'Dead', 'Dead'], ['1f97a', 'bows', 'Too cute', 'Cute'], ['1f609', 'wink', 'Wink', 'Wink'], ['1f602', 'laugh', 'Dead funny', 'LOL'], ['1f60d', 'love', 'In love', 'Love']];
+const GLAM_TYPED: Array<[code: string, art: string, label: string, short: string]> = [['1f485', 'clock', 'Clock it girl', 'Clock it'], ['1f44d', 'goggles', 'Scuba', 'Scuba'], ['1f480', 'dead', 'Dead', 'Dead'], ['1f97a', 'bows', 'Too cute', 'Cute'], ['1f609', 'wink', 'Wink', 'Wink'], ['1f602', 'laugh', 'Dead funny', 'LOL'], ['1f60d', 'love', 'In love', 'Love']];
 function emojiRow(area: HTMLTextAreaElement): HTMLElement {
   return el('div', { cls: 'glamrow', role: 'group', 'aria-label': 'Add an emoji' }, ...GLAM_TYPED.map(([code, art, label, short]) => el('button', { cls: 'glamadd', type: 'button', title: label, 'aria-label': 'Add emoji: ' + label, onclick() {
     const ch = String.fromCodePoint(parseInt(code, 16)), at = area.selectionStart ?? area.value.length, end = area.selectionEnd ?? at;

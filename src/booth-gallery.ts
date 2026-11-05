@@ -1,6 +1,7 @@
 /* ---------- My Polaroids: every saved picture becomes a Polaroid, pegged to a sagging string ---------- */
-interface PinnedShot { id: number; blob: Blob; caption: string; at: number; url?: string }
-const PIN_DB = 'mumteaGallery', PIN_STORE = 'polaroids';
+/* owner: the account it belongs to, or nothing for a guest on this device. remoteId: its copy on the account, once uploaded. */
+interface PinnedShot { id: number; blob: Blob; caption: string; at: number; owner?: string | null; remoteId?: string; url?: string }
+const PIN_DB = 'mumteaGallery', PIN_STORE = 'polaroids', PIN_BUCKET = 'polaroids';
 
 /* The pictures are too big for the site's usual storage, so they live in the browser's picture-sized one. */
 function pinOpen(): Promise<IDBDatabase> {
@@ -22,16 +23,17 @@ async function pinDo<T>(mode: IDBTransactionMode, act: (s: IDBObjectStore) => ID
   } finally { db.close(); }
 }
 
-/* Whatever device took it, the gallery print is the same Polaroid in the school's colours. */
-async function pinPolaroid(square: HTMLCanvasElement, caption: string, at: number): Promise<Blob> {
+/* Every Polaroid in the school looks the same: the FangCam's print and everything in the gallery. */
+const PIN_CRESTS = ['crestHijab', 'crestBow'].map(name => { const img = new Image(); img.src = STICKER_ART[name]; return img; });
+const pinCrestsReady = (): Promise<unknown> => Promise.all(PIN_CRESTS.map(img => img.decode().catch(() => {})));
+function schoolPolaroid(square: HTMLCanvasElement, caption: string, at: number): HTMLCanvasElement {
   const cv = el('canvas', { width: POLA_W, height: POLA_H }) as HTMLCanvasElement, c = cv.getContext('2d') as CanvasRenderingContext2D;
   c.fillStyle = '#ffe3f1'; c.fillRect(0, 0, POLA_W, POLA_H);
   c.drawImage(square, POLA_X, POLA_Y, POLA_S, POLA_S);
   c.strokeStyle = '#000'; c.lineWidth = 5; c.strokeRect(POLA_X, POLA_Y, POLA_S, POLA_S);
   const CHECK = 16;
   for (let x = 0; x * CHECK < POLA_W; x++) for (let y = 0; y < 2; y++) { c.fillStyle = (x + y) % 2 ? '#ff1f8f' : '#000'; c.fillRect(x * CHECK, POLA_H - (y + 1) * CHECK, CHECK, CHECK); }
-  const crests = await Promise.all(['crestHijab', 'crestBow'].map(async name => { const img = new Image(); img.src = STICKER_ART[name]; await img.decode().catch(() => {}); return img; }));
-  crests.forEach((img, i) => {
+  PIN_CRESTS.forEach((img, i) => {
     const h = 124, w = h * (img.naturalWidth / img.naturalHeight || 1), x = i ? POLA_W - 42 - w : 42;
     c.save(); c.translate(x + w / 2, 650); c.rotate(i ? .1 : -.1); c.drawImage(img, -w / 2, -h / 2, w, h); c.restore();
   });
@@ -42,7 +44,11 @@ async function pinPolaroid(square: HTMLCanvasElement, caption: string, at: numbe
   if (words) c.fillText(words, POLA_W / 2, 662, 310);
   c.font = '700 16px Nunito, sans-serif'; c.fillText(new Date(at).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }), POLA_W / 2, words ? 694 : 676, 310);
   c.strokeStyle = '#000'; c.lineWidth = 6; c.strokeRect(3, 3, POLA_W - 6, POLA_H - 6);
-  const blob = await new Promise<Blob | null>(done => cv.toBlob(done, 'image/jpeg', .92));
+  return cv;
+}
+async function pinPolaroid(square: HTMLCanvasElement, caption: string, at: number): Promise<Blob> {
+  await pinCrestsReady();
+  const blob = await new Promise<Blob | null>(done => schoolPolaroid(square, caption, at).toBlob(done, 'image/jpeg', .92));
   if (!blob) throw new Error('no picture');
   return blob;
 }
@@ -87,9 +93,10 @@ function makeGallery(): { root: HTMLElement; add(square: HTMLCanvasElement, capt
   const keep = el('button', { cls: 'pill', type: 'button', onclick() { keepActive(); } }, 'Save to my device');
   const drop = el('button', { cls: 'pill ghost', type: 'button', onclick() { dropActive(); } }, 'Remove');
   const bar = el('div', { cls: 'plbar' }, el('div', { cls: 'plcap' }, title, count), el('div', { cls: 'placts' }, prevBtn, nextBtn, keep, drop));
+  const help = el('p', { cls: 'plhelp' });
   const empty = el('p', { cls: 'plempty', text: 'Nothing on the line yet. Take a picture and press Save to gallery.' });
   const root = el('section', { cls: 'plgallery', 'aria-label': 'My Polaroids' },
-    el('h4', { text: 'My Polaroids' }), el('p', { cls: 'plhelp', text: 'Every picture you save hangs here as a Polaroid. Drag the line or use the arrows. They stay on this device and in this browser.' }), empty, stage, bar, said);
+    el('h4', { text: 'My Polaroids' }), help, empty, stage, bar, said);
   const calm = (): boolean => matchMedia('(prefers-reduced-motion:reduce)').matches;
   const go = (i: number): void => { target = lineClamp(i, 0, Math.max(0, shots.length - 1)) * gap; };
   const step = (dir: number): void => go(active + dir);
@@ -193,21 +200,84 @@ function makeGallery(): { root: HTMLElement; add(square: HTMLCanvasElement, capt
     if (!s) return;
     if (drop.dataset.sure !== '1') { drop.dataset.sure = '1'; drop.textContent = 'Press again to remove'; return; }
     try {
+      if (s.remoteId && canSync()) {
+        const path = signedInId() + '/' + s.remoteId + '.jpg', gone = await sb.storage.from(PIN_BUCKET).remove([path]);
+        if (gone.error) throw gone.error;
+        const row = await sb.from('gallery_polaroids').delete().eq('id', s.remoteId);
+        if (row.error) throw row.error;
+      }
       await pinDo('readwrite', st => st.delete(s.id));
       if (s.url) URL.revokeObjectURL(s.url);
       shots.splice(active, 1); said.textContent = 'Removed from your gallery.';
       build();
     } catch { said.textContent = 'That Polaroid would not come off the line. Please try again.'; }
   }
-  pinDo<PinnedShot[]>('readonly', st => st.getAll() as IDBRequest<PinnedShot[]>).then(all => { shots = all.reverse(); build(); }).catch(() => { build(); said.textContent = 'This browser cannot keep a gallery. A private window is the usual reason.'; });
+  /* Whose gallery this is: an account, Ms. Fangtastic on her code (kept on this device), or a guest. */
+  const ownerNow = (): string | null => (isAdmin() ? 'fang' : signedInId() || null);
+  const canSync = (): boolean => backendReady && !isAdmin() && !!signedInId();
+  const clean = (s: PinnedShot): PinnedShot => { const { url, ...rest } = s; void url; return rest; };
+  const allLocal = (): Promise<PinnedShot[]> => pinDo<PinnedShot[]>('readonly', st => st.getAll() as IDBRequest<PinnedShot[]>);
+  function showHelp(): void { help.textContent = 'Every picture you save hangs here as a Polaroid. Drag the line or use the arrows. ' + (canSync() ? 'They are private to your account, and follow you to any device you log in on.' : 'They stay on this device. Log in to keep them on your account, on every device.'); }
+  async function loadShots(): Promise<void> {
+    const me = ownerNow(), keep = shots;
+    const mine = (await allLocal()).filter(s => (s.owner ?? null) === me).sort((a, b) => b.at - a.at);
+    keep.forEach(s => { if (s.url) URL.revokeObjectURL(s.url); });
+    shots = mine; active = Math.min(active, Math.max(0, shots.length - 1)); build();
+  }
+  let syncing = false, syncAgain = false;
+  /* Local pictures go up, pictures from other devices come down, and anything removed elsewhere goes here too. */
+  async function sync(): Promise<void> {
+    if (!canSync()) return;
+    if (syncing) { syncAgain = true; return; }
+    syncing = true;
+    const me = signedInId() as string;
+    try {
+      const everything = await allLocal();
+      for (const s of everything) if ((s.owner ?? null) === null) { s.owner = me; await pinDo('readwrite', st => st.put(s)); }
+      const { data, error } = await sb.from('gallery_polaroids').select('id, caption, taken_at');
+      if (error) return;
+      const rows = data as Array<{ id: string; caption: string; taken_at: string }>, ids = new Set(rows.map(r => r.id));
+      const local = everything.filter(s => s.owner === me), known = new Set(local.map(s => s.remoteId));
+      for (const s of local) {
+        if (s.remoteId && !ids.has(s.remoteId)) { await pinDo('readwrite', st => st.delete(s.id)); continue; }
+        if (s.remoteId) continue;
+        const made = await sb.from('gallery_polaroids').insert({ caption: s.caption.slice(0, 200), taken_at: new Date(s.at).toISOString() }).select('id').single();
+        if (made.error) continue;
+        const up = await sb.storage.from(PIN_BUCKET).upload(me + '/' + made.data.id + '.jpg', s.blob, { contentType: 'image/jpeg' });
+        if (up.error) { await sb.from('gallery_polaroids').delete().eq('id', made.data.id); continue; }
+        s.remoteId = made.data.id; known.add(s.remoteId); await pinDo('readwrite', st => st.put(s));
+      }
+      for (const r of rows) {
+        if (known.has(r.id)) continue;
+        const down = await sb.storage.from(PIN_BUCKET).download(me + '/' + r.id + '.jpg');
+        if (down.error || !down.data) continue;
+        const record = { blob: down.data as Blob, caption: r.caption, at: new Date(r.taken_at).getTime(), owner: me, remoteId: r.id };
+        await pinDo('readwrite', st => st.add(record));
+      }
+      if (signedInId() === me) await loadShots();
+    } catch { /* offline: the pictures stay here and try again next time */ } finally {
+      syncing = false;
+      if (syncAgain) { syncAgain = false; sync(); }
+    }
+  }
+  let seenOwner: string | null | undefined;
+  function watchOwner(): void {
+    const me = ownerNow();
+    if (me === seenOwner) return;
+    seenOwner = me; showHelp();
+    loadShots().then(sync).catch(() => { build(); said.textContent = 'This browser cannot keep a gallery. A private window is the usual reason.'; });
+  }
+  window.setInterval(watchOwner, 2500);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) sync(); });
+  window.setTimeout(watchOwner, 0);
   showActive();
   return {
     root,
     async add(square, caption) {
-      const at = Date.now(), blob = await pinPolaroid(square, caption, at), record = { blob, caption, at };
+      const at = Date.now(), blob = await pinPolaroid(square, caption, at), record: Omit<PinnedShot, 'id'> = { blob, caption, at, owner: ownerNow() };
       const id = await pinDo('readwrite', st => st.add(record)) as number;
       shots.unshift({ id, ...record });
-      active = 0; build();
+      active = 0; build(); sync();
     },
   };
 }

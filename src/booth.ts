@@ -63,74 +63,6 @@ async function camStickers(c: CanvasRenderingContext2D, pw: number, ph: number, 
   });
 }
 
-/* ---------- the Polaroid frame, hand-drawn in the school's colours ---------- */
-function drawPolaroid(photo: HTMLCanvasElement): HTMLCanvasElement {
-  const cv = el('canvas', { width: POLA_W, height: POLA_H }) as HTMLCanvasElement, c = cv.getContext('2d') as CanvasRenderingContext2D;
-  let seed = 7;
-  const jig = (): number => { seed = (seed * 16807) % 2147483647; return (seed / 2147483647 - .5) * 2.6; };
-  const sketch = (pts: number[][], width = 5, colour = '#000'): void => {
-    c.lineCap = c.lineJoin = 'round'; c.strokeStyle = colour; c.lineWidth = width; c.beginPath();
-    pts.forEach((p, i) => {
-      const q = pts[(i + 1) % pts.length], steps = Math.ceil(Math.hypot(q[0] - p[0], q[1] - p[1]) / 26);
-      if (!i) c.moveTo(p[0], p[1]);
-      for (let s = 1; s <= steps; s++) c.lineTo(p[0] + (q[0] - p[0]) * s / steps + (s < steps ? jig() : 0), p[1] + (q[1] - p[1]) * s / steps + (s < steps ? jig() : 0));
-    });
-    c.closePath(); c.stroke();
-  };
-  const ticks = (colour: string, lines: number[][]): void => {
-    c.strokeStyle = colour; c.lineWidth = 7; c.lineCap = 'round';
-    lines.forEach(l => { c.beginPath(); c.moveTo(l[0], l[1]); c.lineTo(l[2], l[3]); c.stroke(); });
-  };
-  const heart = (x: number, y: number, s: number): void => {
-    c.save(); c.translate(x, y); c.scale(s, s); c.rotate(-.12);
-    c.beginPath(); c.moveTo(0, 18); c.bezierCurveTo(-30, -4, -24, -26, -10, -24); c.bezierCurveTo(-4, -24, 0, -18, 0, -13); c.bezierCurveTo(0, -18, 5, -24, 11, -24); c.bezierCurveTo(25, -26, 30, -4, 0, 18); c.closePath();
-    c.fillStyle = '#ff1f8f'; c.fill(); c.strokeStyle = '#000'; c.lineWidth = 4.5; c.lineJoin = 'round'; c.stroke();
-    c.fillStyle = '#ffd0e8'; c.beginPath(); c.ellipse(-12, -13, 4, 2.8, -.6, 0, 7); c.fill();
-    c.restore();
-  };
-  const star = (x: number, y: number, r: number): void => {
-    c.save(); c.translate(x, y); c.rotate(.2); c.beginPath();
-    for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? r * .48 : r; c.lineTo(Math.cos(a) * d, Math.sin(a) * d); }
-    c.closePath(); c.fillStyle = '#35dcc8'; c.fill(); c.strokeStyle = '#000'; c.lineWidth = 4.5; c.lineJoin = 'round'; c.stroke(); c.restore();
-  };
-  const bat = (x: number, y: number, s: number): void => {
-    c.save(); c.translate(x, y); c.scale(s, s); c.rotate(-.14); c.fillStyle = '#3a1250'; c.strokeStyle = '#000'; c.lineWidth = 4; c.lineJoin = 'round';
-    c.beginPath(); c.moveTo(-8, -6); c.quadraticCurveTo(-30, -26, -54, -14); c.quadraticCurveTo(-46, -4, -48, 8); c.quadraticCurveTo(-37, 1, -30, 12); c.quadraticCurveTo(-21, 5, -13, 16); c.lineTo(13, 16);
-    c.quadraticCurveTo(21, 5, 30, 12); c.quadraticCurveTo(37, 1, 48, 8); c.quadraticCurveTo(46, -4, 54, -14); c.quadraticCurveTo(30, -26, 8, -6); c.closePath(); c.fill(); c.stroke();
-    c.beginPath(); c.moveTo(-14, -8); c.lineTo(-17, -29); c.lineTo(-5, -18); c.lineTo(5, -18); c.lineTo(17, -29); c.lineTo(14, -8); c.closePath(); c.fill(); c.stroke();
-    c.beginPath(); c.arc(0, -4, 17, 0, 7); c.fill(); c.stroke();
-    c.fillStyle = '#ff1f8f'; c.beginPath(); c.arc(-6.5, -7, 3.6, 0, 7); c.arc(6.5, -7, 3.6, 0, 7); c.fill();
-    c.fillStyle = '#fff6fb'; c.beginPath(); c.moveTo(-6, 3); c.lineTo(-3, 9); c.lineTo(-1, 3); c.moveTo(1, 3); c.lineTo(3, 9); c.lineTo(6, 3); c.fill();
-    c.restore();
-  };
-  const skull = (x: number, y: number, s: number): void => {
-    c.save(); c.translate(x, y); c.scale(s, s); c.rotate(-.1); c.fillStyle = '#fff6fb'; c.strokeStyle = '#000'; c.lineWidth = 4.5; c.lineJoin = 'round';
-    c.beginPath(); c.moveTo(-14, 16); c.lineTo(-14, 28); c.lineTo(14, 28); c.lineTo(14, 16); c.bezierCurveTo(30, 10, 34, -6, 30, -14); c.bezierCurveTo(24, -38, -24, -38, -30, -14); c.bezierCurveTo(-34, -6, -30, 10, -14, 16); c.closePath(); c.fill(); c.stroke();
-    c.fillStyle = '#000'; c.beginPath(); c.ellipse(-12, -3, 8, 9, .15, 0, 7); c.ellipse(12, -3, 8, 9, -.15, 0, 7); c.fill();
-    c.beginPath(); c.moveTo(0, 7); c.lineTo(-4, 14); c.lineTo(4, 14); c.fill();
-    c.lineWidth = 3; c.beginPath(); c.moveTo(-5, 20); c.lineTo(-5, 28); c.moveTo(5, 20); c.lineTo(5, 28); c.stroke();
-    c.fillStyle = '#ff7ab8'; c.beginPath(); c.arc(-19, 9, 5, 0, 7); c.arc(19, 9, 5, 0, 7); c.fill();
-    c.translate(21, -27); c.fillStyle = '#ff1f8f'; c.lineWidth = 3.5;
-    c.beginPath(); c.moveTo(0, 0); c.lineTo(-17, -11); c.lineTo(-17, 11); c.closePath(); c.fill(); c.stroke();
-    c.beginPath(); c.moveTo(0, 0); c.lineTo(17, -11); c.lineTo(17, 11); c.closePath(); c.fill(); c.stroke();
-    c.beginPath(); c.arc(0, 0, 5, 0, 7); c.fill(); c.stroke();
-    c.restore();
-  };
-
-  c.fillStyle = '#f9e9a6'; c.fillRect(28, 28, 584, 724);
-  c.fillStyle = 'rgba(255,31,143,.1)'; c.fillRect(28, 568, 584, 184);
-  sketch([[28, 28], [612, 28], [612, 752], [28, 752]], 6);
-  c.drawImage(photo, POLA_X, POLA_Y, POLA_S, POLA_S);
-  sketch([[POLA_X, POLA_Y], [POLA_X + POLA_S, POLA_Y], [POLA_X + POLA_S, POLA_Y + POLA_S], [POLA_X, POLA_Y + POLA_S]], 5);
-  bat(62, 54, 1); ticks('#ff1f8f', [[122, 18, 130, 7], [132, 30, 148, 24]]);
-  heart(586, 58, 1.1); ticks('#35dcc8', [[585, 92, 607, 92], [572, 102, 588, 114]]);
-  skull(112, 668, 1.15); ticks('#19b7e8', [[168, 660, 192, 654], [168, 684, 190, 694]]);
-  heart(506, 640, 1); star(556, 694, 34); ticks('#ff1f8f', [[462, 668, 482, 674], [468, 696, 488, 690]]);
-  c.fillStyle = '#2a1420'; c.textAlign = 'center';
-  c.font = '38px ' + DISPLAY_FONT; c.fillText('MUMTEA HIGH', POLA_W / 2, 662, 240);
-  c.font = '800 18px Nunito, sans-serif'; c.fillText(new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }), POLA_W / 2, 692, 240);
-  return cv;
-}
 /* Posts are stored as JPEGs, which cannot be see-through, so a posted picture sits on the colour of the post card behind it. */
 function polaroidData(shot: HTMLCanvasElement): string {
   const cv = document.createElement('canvas'); cv.width = shot.width; cv.height = shot.height;
@@ -336,11 +268,12 @@ function postPhoto(post: TeaPost): HTMLElement {
     await camStickers(photo.getContext('2d') as CanvasRenderingContext2D, pw, ph, f, d);
     if (square !== photo) await camStickers(square.getContext('2d') as CanvasRenderingContext2D, POLA_S, POLA_S, f, camDevice('fangcam'));
     await document.fonts.load('38px "Breath of the House"').catch(() => []);
+    await pinCrestsReady();
     showPrint(d, photo, square);
   }
 
   function showPrint(d: CamDevice, photo: HTMLCanvasElement, square: HTMLCanvasElement): void {
-    const made = (words: string): HTMLCanvasElement => (d.polaroid ? drawPolaroid(photo) : drawDeviceShot(d, photo, shotWords(words)));
+    const takenAt = Date.now(), made = (words: string): HTMLCanvasElement => (d.polaroid ? schoolPolaroid(photo, words, takenAt) : drawDeviceShot(d, photo, shotWords(words)));
     let shot = made(''), url = shot.toDataURL('image/png');
     const full = d.polaroid ? { w: POLA_W, h: POLA_H } : { w: Math.round(d.w * d.s), h: Math.round(d.h * d.s) };
     const img = el('img', { src: url, alt: 'Your ' + d.noun, width: full.w, height: full.h }) as HTMLImageElement;
@@ -354,10 +287,10 @@ function postPhoto(post: TeaPost): HTMLElement {
     const note = el('p', { cls: 'polanote', role: 'status' });
     const caption = el('input', { type: 'text', maxlength: 200, placeholder: 'Add a caption (optional)', 'aria-label': 'Caption for your post' }) as HTMLInputElement;
     const save = el('a', { cls: 'pill ghost', href: url, download: d.polaroid ? 'mumtea-polaroid.png' : 'mumtea-' + d.id + '.png' }, 'Save picture');
-    /* Most devices write the caption into the picture itself, so it redraws as you type. */
+    /* Every device writes the caption into the picture itself, so it redraws as you type. */
     let typingAt = 0;
     const redraw = (): void => { clearTimeout(typingAt); typingAt = 0; shot = made(caption.value.trim()); url = shot.toDataURL('image/png'); img.src = url; save.setAttribute('href', url); };
-    if (!d.polaroid) caption.addEventListener('input', () => { clearTimeout(typingAt); typingAt = window.setTimeout(redraw, 220); });
+    caption.addEventListener('input', () => { clearTimeout(typingAt); typingAt = window.setTimeout(redraw, 220); });
     const again = el('button', { cls: 'pill ghost', type: 'button', onclick() { printSlot.textContent = ''; camera.scrollIntoView({ block: 'nearest' }); } }, 'Take another');
     const send = el('button', { cls: 'pill', type: 'button' }, 'Post my ' + d.noun);
     const pin = el('button', { cls: 'pill', type: 'button' }, 'Save to gallery');

@@ -561,3 +561,143 @@ grant execute on function public.admin_post_polaroid(text, text, text) to anon, 
 
 alter table public.post_reactions drop constraint if exists post_reactions_kind_check;
 alter table public.post_reactions add constraint post_reactions_kind_check check (kind in ('fang', 'tea', 'skull', 'heart', 'fire', 'laugh'));
+
+-- Notifications: written only by triggers. A row with no user_id is for Ms. Fangtastic; a row with no actor_id is from her.
+create table if not exists public.notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles (id) on delete cascade,
+  actor_id uuid references public.profiles (id) on delete cascade,
+  kind text not null check (kind in ('comment', 'reply', 'reaction', 'score')),
+  post_id uuid references public.posts (id) on delete cascade,
+  detail text not null default '' check (char_length(detail) <= 40),
+  read_at timestamptz,
+  created_at timestamptz not null default now()
+);
+create index if not exists notifications_mine on public.notifications (user_id, created_at desc);
+-- Toggling a reaction on and off only tells someone once.
+create unique index if not exists notifications_one_reaction on public.notifications (coalesce(user_id, '00000000-0000-0000-0000-000000000000'::uuid), coalesce(actor_id, '00000000-0000-0000-0000-000000000000'::uuid), post_id, detail) where kind = 'reaction';
+alter table public.notifications enable row level security;
+drop policy if exists "see my notifications" on public.notifications;
+create policy "see my notifications" on public.notifications for select to authenticated using (user_id = (select auth.uid()));
+drop policy if exists "mark my notifications read" on public.notifications;
+create policy "mark my notifications read" on public.notifications for update to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+revoke all on public.notifications from anon, authenticated;
+grant select on public.notifications to authenticated;
+grant update (read_at) on public.notifications to authenticated;
+
+create or replace function private.notify_comment() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare owner_id uuid;
+begin
+  select p.author_id into owner_id from public.posts p where p.id = new.post_id;
+  if not found then return new; end if;
+  if new.author_id is distinct from owner_id then
+    insert into public.notifications (user_id, actor_id, kind, post_id) values (owner_id, new.author_id, 'comment', new.post_id);
+  end if;
+  -- Others already in the conversation hear about it too.
+  insert into public.notifications (user_id, actor_id, kind, post_id)
+    select distinct c.author_id, new.author_id, 'reply', new.post_id from public.comments c
+    where c.post_id = new.post_id and c.id <> new.id and c.author_id is distinct from new.author_id and c.author_id is distinct from owner_id
+    limit 20;
+  return new;
+end $$;
+drop trigger if exists comment_notifies on public.comments;
+create trigger comment_notifies after insert on public.comments for each row execute function private.notify_comment();
+
+create or replace function private.notify_reaction() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare owner_id uuid;
+begin
+  select p.author_id into owner_id from public.posts p where p.id = new.post_id;
+  if not found or new.user_id is not distinct from owner_id then return new; end if;
+  insert into public.notifications (user_id, actor_id, kind, post_id, detail) values (owner_id, new.user_id, 'reaction', new.post_id, new.kind) on conflict do nothing;
+  return new;
+end $$;
+drop trigger if exists reaction_notifies on public.post_reactions;
+create trigger reaction_notifies after insert on public.post_reactions for each row execute function private.notify_reaction();
+
+create or replace function private.notify_score() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare was integer := 0;
+begin
+  if tg_op = 'UPDATE' then
+    if new.score <= old.score then return new; end if;
+    was := old.score;
+  end if;
+  insert into public.notifications (user_id, actor_id, kind, detail)
+    select s.user_id, new.user_id, 'score', new.game from public.game_scores s
+    where s.game = new.game and s.id <> new.id and s.score < new.score and s.score >= was
+    order by s.score desc limit 3;
+  return new;
+end $$;
+drop trigger if exists score_notifies on public.game_scores;
+create trigger score_notifies after insert or update of score on public.game_scores for each row execute function private.notify_score();
+
+-- Old notifications tidy themselves away.
+create or replace function private.tidy_notifications() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  delete from public.notifications n where n.user_id is not distinct from new.user_id and n.created_at < now() - interval '60 days';
+  return null;
+end $$;
+drop trigger if exists notifications_tidy on public.notifications;
+create trigger notifications_tidy after insert on public.notifications for each row execute function private.tidy_notifications();
+revoke all on function private.notify_comment(), private.notify_reaction(), private.notify_score(), private.tidy_notifications() from public, anon, authenticated;
+
+create or replace function public.admin_notifications(token text) returns setof public.notifications
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_admin(token);
+  return query select * from public.notifications n where n.user_id is null order by n.created_at desc limit 60;
+end $$;
+create or replace function public.admin_read_notifications(token text) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  perform private.require_admin(token);
+  update public.notifications n set read_at = now() where n.user_id is null and n.read_at is null;
+end $$;
+revoke all on function public.admin_notifications(text), public.admin_read_notifications(text) from public;
+grant execute on function public.admin_notifications(text), public.admin_read_notifications(text) to anon, authenticated;
+
+do $$ begin
+  alter publication supabase_realtime add table public.notifications;
+exception when duplicate_object then null; end $$;
+
+-- The Polaroid gallery: private to each account, the pictures in a private bucket under the owner's own folder.
+create table if not exists public.gallery_polaroids (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references public.profiles (id) on delete cascade,
+  caption text not null default '' check (char_length(caption) <= 200),
+  taken_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+create index if not exists gallery_mine on public.gallery_polaroids (user_id, taken_at desc);
+alter table public.gallery_polaroids enable row level security;
+drop policy if exists "see my polaroids" on public.gallery_polaroids;
+create policy "see my polaroids" on public.gallery_polaroids for select to authenticated using (user_id = (select auth.uid()));
+drop policy if exists "keep my polaroids" on public.gallery_polaroids;
+create policy "keep my polaroids" on public.gallery_polaroids for insert to authenticated with check (user_id = (select auth.uid()) and exists (select 1 from public.profiles p where p.id = (select auth.uid()) and p.verified));
+drop policy if exists "remove my polaroids" on public.gallery_polaroids;
+create policy "remove my polaroids" on public.gallery_polaroids for delete to authenticated using (user_id = (select auth.uid()));
+revoke all on public.gallery_polaroids from anon, authenticated;
+grant select, insert, delete on public.gallery_polaroids to authenticated;
+
+create or replace function private.gallery_limit() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  if (select count(*) from public.gallery_polaroids g where g.user_id = new.user_id) >= 200 then raise exception 'gallery full'; end if;
+  return new;
+end $$;
+drop trigger if exists gallery_limit on public.gallery_polaroids;
+create trigger gallery_limit before insert on public.gallery_polaroids for each row execute function private.gallery_limit();
+revoke all on function private.gallery_limit() from public, anon, authenticated;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+  values ('polaroids', 'polaroids', false, 1048576, array['image/jpeg'])
+  on conflict (id) do update set public = false, file_size_limit = 1048576, allowed_mime_types = array['image/jpeg'];
+drop policy if exists "see my polaroid files" on storage.objects;
+create policy "see my polaroid files" on storage.objects for select to authenticated using (bucket_id = 'polaroids' and (storage.foldername(name))[1] = (select auth.uid())::text);
+drop policy if exists "add my polaroid files" on storage.objects;
+create policy "add my polaroid files" on storage.objects for insert to authenticated with check (bucket_id = 'polaroids' and (storage.foldername(name))[1] = (select auth.uid())::text);
+drop policy if exists "remove my polaroid files" on storage.objects;
+create policy "remove my polaroid files" on storage.objects for delete to authenticated using (bucket_id = 'polaroids' and (storage.foldername(name))[1] = (select auth.uid())::text);
