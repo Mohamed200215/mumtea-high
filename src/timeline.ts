@@ -143,7 +143,7 @@ function openComposer(editing?: TeaPost): void {
     update(); topicList.hidden = true; topicsBtn.setAttribute('aria-expanded', 'false'); body.focus();
   } }, topic)));
   const form = el('form', { cls: 'stack' },
-    el('div', { cls: 'notepaper' }, title, doodle, body, el('div', { cls: 'notefoot' }, count, cat)),
+    el('div', { cls: 'notepaper' }, title, doodle, body, el('div', { cls: 'notefoot' }, count, cat)), emojiRow(body),
     topicList,
     el('div', { cls: 'row' }, submit, topicsBtn, el('button', { cls: 'pill ghost', type: 'button', onclick: close }, 'Not yet')), note);
   form.addEventListener('submit', async e => {

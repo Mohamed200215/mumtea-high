@@ -730,6 +730,14 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 
 .gpanel[data-game="kick"] .gamepause,.gpanel[data-game="hoops"] .gamepause,.gpanel[data-game="pageant"] .gamepause{left:auto;right:8px;top:8px;margin-left:0}
 
+/* the glam emoji set */
+.glamrow{display:flex;flex-wrap:wrap;gap:4px}
+.glamadd{padding:2px;background:#14101a;border:2px solid var(--violet);line-height:0;cursor:pointer}
+.glamadd:hover,.glamadd:focus-visible{border-color:var(--pink);transform:translateY(-2px) rotate(-4deg)}
+.glamadd img{display:block;width:34px;height:34px}
+.reactbtn img{width:32px;height:32px}
+.typedemoji.glamtyped{width:1.9em;height:1.9em;vertical-align:-.6em}
+
 /* the opening */
 html.introon,html.introon body{overflow:hidden}
 .intro{position:fixed;inset:0;z-index:99999;background:#140a1c url(backgrounds/skulls.webp);transition:opacity 1.3s ease}
