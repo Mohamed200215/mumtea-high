@@ -287,8 +287,24 @@ function bakeSvg(svg: Element | null): void {
   img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(svg));
   svg.replaceWith(img);
 }
+/* ---------- a finished picture of Ms. Fangtastic is kept on the device, so a reload shows her without drawing her again ---------- */
+const dollKey = (host: HTMLElement): string => 'dollPic:' + (host.dataset.doll || '') + ':' + (host.dataset.label || '');
+function keptDoll(host: HTMLElement, o: Doll): HTMLImageElement | null {
+  const kept = store.get<{ look: string; src: string } | null>(dollKey(host), null);
+  if (!kept || kept.look !== JSON.stringify(o.look)) return null;
+  const img = document.createElement('img');
+  img.decoding = 'sync'; img.draggable = false; img.alt = host.dataset.label || ''; img.src = kept.src;
+  return img;
+}
+function keepDoll(svg: SVGSVGElement): void {
+  const host = svg.closest<HTMLElement>('[data-doll]'), o = host && DOLLS[host.dataset.doll as string];
+  bakeSvg(svg);
+  const img = host?.querySelector('img');
+  if (host && o && img) try { store.set(dollKey(host), { look: JSON.stringify(o.look), src: img.src }); } catch { /* a full device just draws her each time */ }
+}
 /* ---------- keep every character inside its space, without changing the space's shape ---------- */
 function fitDolls(): void {
+  document.querySelectorAll<HTMLElement>('[data-doll][data-stale]').forEach(s => { if (!s.closest('[hidden]')) { delete s.dataset.stale; paintDoll(s); } });
   document.querySelectorAll('.teaface svg,.cmtface svg,.lbface svg').forEach(bakeSvg);
   document.querySelectorAll<SVGSVGElement>('.doll svg').forEach(svg => {
     if (!svg.getBoundingClientRect().width) return;
@@ -302,7 +318,7 @@ function fitDolls(): void {
       svg.setAttribute('viewBox', [x, y, w, h].join(' '));
       svg.setAttribute('width', String(w));
       svg.setAttribute('height', String(h));
-      bakeSvg(svg);
+      if (svg.closest('[data-doll="mumtea"]')) keepDoll(svg); else bakeSvg(svg);
     } catch (e) { /* not on screen yet: the next change comes back to it */ }
   });
 }

@@ -15,7 +15,11 @@ const STUDENT_LINES = [
   'Heard the gossip before the tea finished steeping.',
   'Claims to have read the school rules. Nobody believes it.',
 ];
-DOLLS.mumtea.look = FANG_LOOK;
+/* Her last look is kept on the device, so a reload shows her as she is straight away. */
+const keptFang = store.get<Partial<Look> | null>('fangLook', null);
+DOLLS.mumtea.look = keptFang ? normalizeLook({ ...FANG_LOOK, ...keptFang }) : FANG_LOOK;
+/* On a first visit she stays out of sight until the school says how she looks, instead of changing in front of you. */
+if (!keptFang && backendReady) { document.documentElement.classList.add('fangwait'); window.setTimeout(() => document.documentElement.classList.remove('fangwait'), 4000); }
 
 let everyone: Student[] = [], sessionId: string | null = null, dataState: 'loading' | 'ready' | 'failed' = backendReady ? 'loading' : 'failed';
 
@@ -133,11 +137,9 @@ function lineupButton(name: string, art: string, target: string | null): HTMLEle
   const pic = el('span', { cls: 'doll' }); pic.innerHTML = art;
   return target === 'fangtastic' ? el('button', { type: 'button', 'data-go': target }, pic, name) : el('button', { type: 'button', onclick() { openProfile(target); } }, pic, name);
 }
-function renderStudents(): void {
-  const roster = loadRoster(), me = currentStudent();
-  const list = $('#students'), lineup = $('#lineup'), latest = $('#castNew');
-  list.textContent = ''; lineup.textContent = ''; latest.textContent = '';
-
+let studentsStale = true;
+/* The full list on the Students page, drawn when that page is open. */
+function renderRoster(list: HTMLElement, roster: Student[], me: Student | null | undefined): void {
   const fang = el('span', { cls: 'doll' }); fang.innerHTML = doll(DOLLS.mumtea, { label: 'Ms. Fangtastic' });
   list.append(el('article', { cls: 'student' }, fang, el('div', {}, el('h3', { text: DOLLS.mumtea.name }), el('small', { text: 'Headghoul and boss of this school' }), el('p', { text: 'Runs the school, the blog and the group chat. Never seen without a cup.' }))));
   roster.forEach(s => list.append(studentCard(s, !!me && s.id === me.id)));
@@ -145,6 +147,13 @@ function renderStudents(): void {
     : dataState === 'failed' ? (backendReady ? 'Could not reach the school database. Try refreshing.' : OFFLINE_NOTE)
     : roster.length === 0 ? 'Ms. Fangtastic is waiting on her first student.'
     : roster.length + (roster.length === 1 ? ' student has' : ' students have') + ' enrolled so far.';
+}
+function renderStudents(): void {
+  const roster = loadRoster(), me = currentStudent();
+  const list = $('#students'), lineup = $('#lineup'), latest = $('#castNew');
+  list.textContent = ''; lineup.textContent = ''; latest.textContent = '';
+  studentsStale = !!list.closest('[hidden]');
+  if (!studentsStale) renderRoster(list, roster, me);
 
   lineup.append(lineupButton(DOLLS.mumtea.name, doll(DOLLS.mumtea), 'fangtastic'));
   roster.slice(-3).reverse().forEach(s => lineup.append(lineupButton(s.name, drawGhoul(s.look), s.id)));
@@ -158,6 +167,7 @@ function renderStudents(): void {
     latest.append(pic);
   }
 }
+let idStale = true;
 function renderID(): void {
   const boss = isAdmin(), me = boss ? null : currentStudent();
   const name = boss ? DOLLS.mumtea.name : me ? me.name : '';
@@ -171,6 +181,9 @@ function renderID(): void {
   $('#idNo').textContent = name ? 'MH-' + (1000 + hashOf(name)) : 'None yet';
   $('#hello').textContent = 'Hello, ' + (name || 'Ghoul') + '!';
   $('#idForm').hidden = !me;
+  /* The card itself is only drawn when My Ghoul is on screen. */
+  idStale = !!$('#idcard').closest('[hidden]');
+  if (idStale) { renderAccount(); return; }
   const box = $('#idPhoto'); box.textContent = '';
   const photo = me ? store.get<string | null>(photoKey(), null) : null;
   if (photo) box.append(el('img', { cls: 'idphoto', alt: 'Student photo', src: photo }));
@@ -336,6 +349,7 @@ async function startBackend(): Promise<void> {
     dataState = 'failed';
   }
   refreshAll('');
+  warmStudio();
   const linked = /^#student-([0-9a-f-]{36})$/.exec(location.hash);
   if (linked) openProfile(linked[1]);
   if (cameFromVerifyLink && sessionId) {

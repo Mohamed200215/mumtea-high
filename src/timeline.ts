@@ -93,6 +93,8 @@ function flyNote(flying: HTMLElement, from: DOMRect, id: string): void {
 }
 function renderBlog(id?: string): void {
   const main = $('#blogMain');
+  /* The timeline is drawn when Spill the Tea opens, not while it is out of sight. */
+  if (!id && main.closest('[hidden]')) return;
   /* A reload can arrive while someone is typing a comment, so they keep their place. */
   const typing = document.activeElement as HTMLTextAreaElement | null, typingIn = main.contains(typing) ? typing?.dataset?.cmt : undefined, caret = typingIn ? typing?.selectionStart : 0;
   main.textContent = ''; blogCount.textContent = '';

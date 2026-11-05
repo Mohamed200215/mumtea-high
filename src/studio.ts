@@ -1,5 +1,12 @@
 /* ---------- the wardrobe: used by the Profile page and Scream Queen Closet ---------- */
-let studioLook: Look = randomLook(), studioSaved: Look = studioLook, studioPage = 0, studioDirty = false, studioForFang = false, studioStale = true;
+/* A visitor who isn't logged in keeps the same ghoul from one visit to the next. */
+function guestLook(): Look {
+  const kept = store.get<Partial<Look> | null>('guestLook', null);
+  if (kept) return normalizeLook(kept);
+  const look = randomLook(); store.set('guestLook', look); return look;
+}
+function keepGuestLook(): void { if (!signedInId() && !studioForFang) store.set('guestLook', studioLook); }
+let studioLook: Look = guestLook(), studioSaved: Look = studioLook, studioPage = 0, studioDirty = false, studioForFang = false, studioStale = true;
 const studioRoot = el('div', { cls: 'studio' });
 const studioTitle = el('h4', { cls: 'wtitle', 'aria-live': 'polite' });
 const studioCount = el('span', { cls: 'wcount' });
@@ -11,7 +18,7 @@ const studioMsg = el('p', { cls: 'studiomsg', role: 'status' });
 
 function changeLook(key: keyof Look, value: string): void {
   studioLook = { ...studioLook, [key]: value };
-  studioDirty = true;
+  studioDirty = true; keepGuestLook();
   studioMsg.textContent = signedInId() || studioForFang ? 'Not saved yet.' : 'Register to keep this look.';
   /* Picking an item only moves the highlight and redresses the big figure. The previews stay as they are. */
   if (key === WARDROBE[studioPage].key && !studioStale) {
@@ -94,7 +101,7 @@ function keepTile(page: WardrobePage, store: TileStore, id: string, done?: () =>
       art.width = picture.naturalWidth || 224; art.height = picture.naturalHeight || 224;
       art.getContext('2d')?.drawImage(picture, 0, 0, art.width, art.height);
       store.art[id] = art;
-      if (WARDROBE[studioPage] === page) studioTiles.querySelector('[data-w="' + page.key + ':' + id + '"] .wpic')?.replaceChildren(art);
+      if (WARDROBE[studioPage] === page) { const spot = studioTiles.querySelector('[data-w="' + page.key + ':' + id + '"] .wpic'); spot?.classList.remove('wwait'); spot?.replaceChildren(art); }
     }
     done?.();
   };
@@ -103,22 +110,32 @@ function keepTile(page: WardrobePage, store: TileStore, id: string, done?: () =>
   return src;
 }
 let bakingNow = 0;
-function bakeInBackground(): void {
-  clearTimeout(bakingNow);
-  const order = WARDROBE.map((_, i) => (studioPage + i) % WARDROBE.length);
+/* Waits for a quiet moment, so getting ahead never makes the page stutter. */
+const idle = window as any;
+const whenIdle = (go: () => void): number => (idle.requestIdleCallback ? idle.requestIdleCallback((d: any) => (d.timeRemaining() > 12 ? go() : (bakingNow = whenIdle(go)))) : setTimeout(go, 120));
+const stopIdle = (id: number): void => { if (idle.cancelIdleCallback) idle.cancelIdleCallback(id); clearTimeout(id); };
+function bakeInBackground(nearby = true): void {
+  stopIdle(bakingNow);
+  /* The page on show first, then the pages either side, so Back and Next are ready too. */
+  const order = nearby ? [studioPage, (studioPage + 1) % WARDROBE.length, (studioPage + WARDROBE.length - 1) % WARDROBE.length] : [studioPage];
   const step = () => {
+    /* Out of sight, only the first page is got ready. The rest waits until the wardrobe is open again. */
+    if (!studioRoot.getClientRects().length) studioStale = true;
+    if (studioStale && nearby) return;
     for (const index of order) {
       const page = WARDROBE[index];
       if (!page.items) continue;
       const store = storeFor(page), todo = visibleItems(page).find(([id]) => !store.fresh[id]);
       if (!todo) continue;
-      /* One at a time, staying out of the way of whatever the visitor is doing. */
-      keepTile(page, store, todo[0], () => { bakingNow = window.setTimeout(step, index === studioPage ? 0 : 6); });
+      /* One at a time, so the page keeps moving between tiles. */
+      keepTile(page, store, todo[0], () => { bakingNow = index === studioPage && !studioStale ? window.setTimeout(step, 0) : whenIdle(step); });
       return;
     }
   };
   bakingNow = window.setTimeout(step, 0);
 }
+/* Gets the first wardrobe page ready while nobody is looking, so opening Games shows it at once. */
+function warmStudio(): void { whenIdle(() => { if (studioStale) bakeInBackground(false); }); }
 const page0 = (): TileStore | null => { const p = WARDROBE[studioPage]; return p.items ? storeFor(p) : null; };
 function drawStudio(redress = true): void {
   /* Nobody can see it on another page. It draws when it comes into view. */
@@ -135,7 +152,8 @@ function drawStudio(redress = true): void {
     /* Finished already if the background got here first, otherwise it is made now, so a tile is never empty. */
     const art = tiles?.art[id];
     if (art) pic.append(art);
-    else { const img = el('img', { alt: '', draggable: 'false' }) as HTMLImageElement; img.src = tiles?.fresh[id] || keepTile(page, tiles as TileStore, id); pic.append(img); }
+    else if (tiles?.fresh[id]) { const img = el('img', { alt: '', draggable: 'false' }) as HTMLImageElement; img.src = tiles.fresh[id]; pic.append(img); }
+    else pic.classList.add('wwait');
     studioTiles.append(el('button', { cls: 'wtile', type: 'button', 'data-w': page.key + ':' + id, 'aria-pressed': studioLook[page.key as keyof Look] === id, onclick() { changeLook(page.key as keyof Look, id); } }, pic, el('small', { text: label })));
   });
   studioTiles.hidden = !page.items;
@@ -158,7 +176,7 @@ function syncStudio(): void {
   const me = currentStudent();
   if (studioForFang) studioLook = DOLLS.mumtea.look;
   else if (me) studioLook = me.look;
-  else if (!studioDirty) studioLook = randomLook();
+  else if (!studioDirty) studioLook = guestLook();
   studioSaved = studioLook;
   if (signedInId() || studioForFang) studioDirty = false;
   studioMsg.textContent = '';
@@ -169,7 +187,7 @@ async function saveStudio(): Promise<void> {
     studioMsg.textContent = 'Saving...';
     const { error } = await sb.rpc('admin_set_fang_look', { token: adminPass, look: studioLook });
     if (error) { studioMsg.textContent = 'That did not save. Please try again.'; return; }
-    DOLLS.mumtea.look = studioLook;
+    DOLLS.mumtea.look = studioLook; store.set('fangLook', studioLook);
     studioSaved = studioLook; studioDirty = false;
     paintDolls(); renderStudents();
     studioMsg.textContent = 'Ms. Fangtastic is dressed. Everyone sees this look now.';
@@ -194,6 +212,7 @@ function mountStudio(parent: Element): void {
 /* Called whenever the page changes view. */
 function viewOpened(v: string): void {
   if (v === 'student') renderStudentPage();
+  if (v === 'students' && studentsStale) renderStudents();
   if (v === 'academics') renderClasses();
   if (v === 'shop') { refreshBones().then(() => { renderShop(); }, () => {}); renderShop(); }
   if (v === 'games') musicPlay(currentGame); else if (v !== 'academics') musicStop();
@@ -202,7 +221,7 @@ function viewOpened(v: string): void {
     renderAdmin();
     if (isAdmin()) { mountStudio($('#adminStudio')); refreshAdminStudents().then(renderAdmin, () => {}); }
   }
-  if (v === 'profile') { refreshBones().then(drawBank, () => {}); renderProfile(); if (signedInId() || isAdmin()) mountStudio($('#profileStudio')); }
+  if (v === 'profile') { refreshBones().then(drawBank, () => {}); renderProfile(); if (idStale) renderID(); if (signedInId() || isAdmin()) mountStudio($('#profileStudio')); }
   if (v === 'games' && currentGame === 'closet') mountStudio($('#closetHome'));
 }
 function renderProfile(): void {
@@ -230,7 +249,7 @@ function renderProfile(): void {
   const left = el('div', { cls: 'wardrobe' }, el('div', { cls: 'wbar' }, nav(-1), el('div', { cls: 'wribbon' }, studioTitle, studioCount), nav(1)), el('div', { cls: 'wframe' }, studioTiles, studioSwatches));
   const buttons = el('div', { cls: 'stagebtns' },
     el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = studioSaved; studioDirty = false; studioMsg.textContent = 'Back to your last saved look.'; drawStudio(); } }, 'Restart'),
-    el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = randomLook(); studioDirty = true; studioMsg.textContent = signedInId() || studioForFang ? 'Not saved yet.' : 'Register to keep this look.'; drawStudio(); } }, 'Surprise me'),
+    el('button', { cls: 'wnav', type: 'button', onclick() { studioLook = randomLook(); studioDirty = true; keepGuestLook(); studioMsg.textContent = signedInId() || studioForFang ? 'Not saved yet.' : 'Register to keep this look.'; drawStudio(); } }, 'Surprise me'),
     el('button', { cls: 'wnav wsave', type: 'button', onclick() { saveStudio(); } }, 'Save'));
   const right = el('div', { cls: 'wstage' }, el('div', { cls: 'locker' }, el('div', { cls: 'lockerinside' }, studioStage)), studioName, buttons, studioMsg);
   studioRoot.append(left, right);

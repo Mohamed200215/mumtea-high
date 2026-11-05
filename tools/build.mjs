@@ -1,6 +1,8 @@
 // Compiles src/*.ts and writes it and src/arcade.css into mumtea-high.html between the ARCADE markers.
+// index.html, the published copy, gets the same code with the spaces squeezed out so phones read it faster.
 import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { transformSync } from 'esbuild';
 
 rmSync('build', { recursive: true, force: true });
 execFileSync(process.execPath, ['node_modules/typescript/bin/tsc'], { stdio: 'inherit' });
@@ -20,5 +22,8 @@ html = between(html, '/*ARCADE-JS-START*/', '/*ARCADE-JS-END*/', js);
 const lib = readFileSync('node_modules/@supabase/supabase-js/dist/umd/supabase.js', 'utf8').replace(/<\/script/gi, '<\\/script');
 html = between(html, '<!--SUPABASE-LIB-START-->', '<!--SUPABASE-LIB-END-->', '<script id="supabase-lib">' + lib + '</script>');
 writeFileSync('mumtea-high.html', html);
-writeFileSync('index.html', html);
-console.log('Built mumtea-high.html', Math.round(html.length / 1024) + ' KB');
+// Names are kept as they are, because the page's own script calls into this code by name.
+const small = transformSync(js, { minifyWhitespace: true, minifySyntax: true, target: 'es2020' }).code;
+const live = between(html, '/*ARCADE-JS-START*/', '/*ARCADE-JS-END*/', small);
+writeFileSync('index.html', live);
+console.log('Built mumtea-high.html', Math.round(html.length / 1024) + ' KB, published index.html', Math.round(live.length / 1024) + ' KB');

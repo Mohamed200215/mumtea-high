@@ -18,6 +18,8 @@ async function refreshNote(): Promise<void> {
   if (error) throw error;
   siteNote = data?.note || '';
   DOLLS.mumtea.look = data?.fang_look ? normalizeLook({ ...FANG_LOOK, ...data.fang_look }) : FANG_LOOK;
+  store.set('fangLook', data?.fang_look || null);
+  if (document.documentElement.classList.contains('fangwait')) { paintDolls(); requestAnimationFrame(() => document.documentElement.classList.remove('fangwait')); }
 }
 async function refreshAdminStudents(): Promise<void> {
   if (!isAdmin()) { adminStudents = []; adminReports = []; return; }

@@ -197,7 +197,10 @@ function postPhoto(post: TeaPost): HTMLElement {
     setFilter(filterAt);
     if (stream) video.play().catch(() => {});
   }
-  document.fonts.load('800 20px Nunito').catch(() => []).then(() => {
+  /* The shelf of devices is drawn the first time the camera game is opened. */
+  let shelfBuilt = false;
+  new ResizeObserver(() => { if (!shelfBuilt && devPick.getClientRects().length) { shelfBuilt = true; buildShelf(); } }).observe(devPick);
+  const buildShelf = () => document.fonts.load('800 20px Nunito').catch(() => []).then(() => {
     CAM_DEVICES.forEach(d => {
       const pic = el('canvas', { cls: 'devthumb', width: Math.round(d.w / d.h >= 1 ? 120 : 120 * d.w / d.h), height: Math.round(d.w / d.h >= 1 ? 120 * d.h / d.w : 120), 'aria-hidden': 'true' }) as HTMLCanvasElement;
       pic.getContext('2d')?.drawImage(drawDeviceShot(d, null, shotWords('')), 0, 0, pic.width, pic.height);

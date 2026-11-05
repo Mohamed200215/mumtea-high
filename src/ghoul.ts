@@ -248,7 +248,7 @@ function randomLook(): Look {
 function normalizeLook(raw: Partial<Look> | undefined): Look {
   /* Anything missing gets a plain default, never a random one, or a saved character would change on every visit. */
   const out: Look = { ...FANG_LOOK, hairStyle: 'long', monster: 'none', hold: 'none', neck: 'none', gloves: 'none', wrist: 'none' };
-  if (!raw) return randomLook();
+  if (!raw) return out;
   for (const page of WARDROBE) {
     const keep = (key: keyof Look, ok: (v: string) => boolean) => { const v = raw[key]; if (typeof v === 'string' && ok(v)) out[key] = v; };
     if (page.key && page.items) keep(page.key, v => page.items!.some(i => i[0] === v));
