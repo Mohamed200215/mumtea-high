@@ -549,8 +549,6 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .classcard:nth-child(even){transform:rotate(.7deg)}
 .classcard:hover,.classcard:focus-visible{transform:translate(-2px,-4px) rotate(0);box-shadow:9px 10px 0 var(--ca)}
 .classart{position:relative;line-height:0;border-bottom:3px solid #000;overflow:hidden;aspect-ratio:320/220}
-.posterstar{filter:drop-shadow(0 0 7px currentColor)}
-.classcard:hover .posterstar{filter:drop-shadow(0 0 13px currentColor)}
 .classart svg{display:block;width:100%;height:100%}
 .classcard small{align-self:flex-start;margin:-15px 0 2px 12px;position:relative;z-index:1;padding:3px 10px;background:var(--ca);color:#14101a;border:2px solid #000;font:800 12px/1.3 var(--body);text-transform:uppercase;letter-spacing:.04em;transform:rotate(-2deg)}
 .classcard strong{margin:0 14px;font:400 27px/1.1 var(--display);color:var(--ca);letter-spacing:.03em}
@@ -1516,56 +1514,80 @@ const CLASSES = [
             { q: 'What is walking with the ball without dribbling called?', a: 'Travelling', wrong: ['Fouling out', 'Double jumping', 'Offside'], why: 'It is called travelling.' },
         ] },
 ];
-/* Each class gets a movie poster: a doll-faced school star lit from behind, with the subject's word huge behind them. */
-const INKED = 'stroke="#14101a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
-const BLING = (x, y, r, col = '#fff6fb') => '<path d="M' + x + ' ' + (y - r) + 'Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y + 'Q' + x + ' ' + y + ' ' + x + ' ' + (y + r) + 'Q' + x + ' ' + y + ' ' + (x - r) + ' ' + y + 'Q' + x + ' ' + y + ' ' + x + ' ' + (y - r) + 'Z" fill="' + col + '"/>';
-const BAT_MARK = (x, y, s, col) => '<path transform="translate(' + x + ' ' + y + ') scale(' + s + ')" d="M0-5L-4-12L-7-6C-16-13-30-13-40-3C-32-4-28 0-27 6C-22 1-16 2-13 8C-10 3-5 3 0 10C5 3 10 3 13 8C16 2 22 1 27 6C28 0 32-4 40-3C30-13 16-13 7-6L4-12Z" fill="' + col + '"/>';
-const STAR_FACE = { eyeStyle: 'doll', lipSize: 'big', brow: 'high', nose: 'button', mark: 'gems', pet: 'none', hold: 'none' };
+/* Each class gets a still from a film that was never made: only places and objects, lit by moon, slime and lightning. */
+const BAT_MARK = (x, y, s, col = '#050104') => '<path transform="translate(' + x + ' ' + y + ') scale(' + s + ')" d="M0-5L-4-12L-7-6C-16-13-30-13-40-3C-32-4-28 0-27 6C-22 1-16 2-13 8C-10 3-5 3 0 10C5 3 10 3 13 8C16 2 22 1 27 6C28 0 32-4 40-3C30-13 16-13 7-6L4-12Z" fill="' + col + '"/>';
+const STILL_GLOW = (d, id, blur = 'soft') => '<g filter="url(#' + blur + id + ')">' + d + '</g>';
 const CLASS_LOOKS = {
-    biteology: { a: '#ff5c86', b: '#3a0716', word: 'BITE', mid: '#c4123f', x: 150, pose: 'hips',
-        look: { skin: '#f4e4ee', eye: '#ff1f8f', lip: '#b3002d', shadow: '#6a1f86', hairStyle: 'long', hair: '#14101a', streak: '#ff1f8f', monster: 'fangs', headwear: 'none', neck: 'choker', top: 'corset', topC: '#a50e38', topP: 'solid', trim: '#14101a', back: 'cape', gloves: 'stilettos', gloveC: '#b3002d' },
-        behind: '<circle cx="160" cy="112" r="84" fill="#ff5c86"/><circle cx="160" cy="112" r="84" fill="none" stroke="#fff6fb" stroke-opacity=".45" stroke-width="4"/>' + BAT_MARK(46, 46, .9, '#0c0206') + BAT_MARK(272, 34, 1.15, '#0c0206') + BAT_MARK(284, 106, .6, '#0c0206') + BAT_MARK(26, 112, .55, '#0c0206'),
-        front: '<path d="M0 0H320V10C312 26 304 28 300 12C292 44 280 44 276 12C264 30 256 26 250 10H70C64 28 54 40 48 14C40 30 28 34 22 12C14 22 6 22 0 12Z" fill="#7a0620" stroke="#14101a" stroke-width="2.500"/>' + BLING(256, 148, 12) + BLING(58, 152, 8) },
-    clawculus: { a: '#3fe0cf', b: '#07302d', word: 'CLAW', mid: '#0f8f82', x: 168, pose: 'peace',
-        look: { skin: '#e8b48a', eye: '#f4d35e', lip: '#c2185b', shadow: '#0f766e', hairStyle: 'curls', hair: '#5a2c17', streak: '#35dcc8', monster: 'cat', eyewear: 'cat', headwear: 'none', neck: 'chain', top: 'varsity', topC: '#0f766e', topP: 'solid', trim: '#fff6fb', gloves: 'claws', gloveC: '#14101a', back: 'none' },
-        behind: '<g font-family="\'Segoe Print\',\'Comic Sans MS\',cursive" font-size="20" fill="#d9fff8" opacity=".62"><text x="14" y="50">a²+b²=c²</text><text x="10" y="92">π≈3.14</text><text x="16" y="136">y=mx+b</text><text x="236" y="58">√144</text><text x="246" y="104">∑n</text><text x="232" y="146">x÷13</text></g>',
-        front: '<g fill="none" stroke="#fff6fb" stroke-width="6" stroke-linecap="round"><path d="M250 124L298 196"/><path d="M270 116L316 182"/><path d="M230 136L276 208"/></g>' + BLING(50, 170, 11) + BLING(28, 24, 7) },
-    tealeaf: { a: '#ffd76a', b: '#26093a', word: 'FATE', mid: '#7a2bc4', x: 140, pose: 'wave',
-        look: { skin: '#fbe3d0', eye: '#8a2be2', lip: '#d81b78', shadow: '#c9a227', hairStyle: 'gempin', hair: '#6a1f86', streak: '#f4d35e', monster: 'none', headwear: 'none', neck: 'moon', top: 'kimono', topC: '#3a1250', topP: 'stars', trim: '#f4d35e', back: 'none', gloves: 'french', gloveC: '#f4d35e' },
-        behind: '<path d="M276 18A46 46 0 1 0 306 92A38 38 0 0 1 276 18Z" fill="#ffd76a"/>' + BLING(36, 42, 11, '#ffd76a') + BLING(68, 22, 6) + BLING(20, 102, 7) + BLING(232, 34, 6),
-        front: '<g ' + INKED + '><path d="M284 160C308 156 312 186 284 186" fill="none"/><path d="M216 150H288C288 186 272 204 252 204C232 204 216 186 216 150Z" fill="#ff7ab8"/><ellipse cx="252" cy="150" rx="36" ry="9" fill="#a8622a"/><ellipse cx="252" cy="208" rx="42" ry="7" fill="#ff9ccb"/></g><g fill="none" stroke="#fff6fb" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M238 136C232 126 244 120 238 108"/><path d="M258 136C252 124 266 118 258 102"/></g><path d="M240 151Q246 145 250 151Q244 155 240 151ZM258 149Q264 144 268 150Q262 154 258 149Z" fill="#2f8f4e"/>' },
-    creepateria: { a: '#a6f04a', b: '#132b08', word: 'GRUEL', mid: '#4d9a17', x: 172, pose: 'hips',
-        look: { skin: '#b8f0d0', eye: '#ff1f8f', lip: '#6a1f86', shadow: '#2f8f4e', hairStyle: 'buns', hair: '#ff1f8f', streak: '#8df04a', monster: 'stitches', headwear: 'none', neck: 'bone', top: 'tee', topC: '#14101a', topP: 'skulls', trim: '#8df04a', back: 'none', gloves: 'gothnails', gloveC: '#6a1f86' },
-        behind: '<g fill="#8df04a" opacity=".55"><circle cx="30" cy="62" r="9"/><circle cx="56" cy="104" r="5"/><circle cx="286" cy="76" r="11"/><circle cx="262" cy="46" r="5"/></g>',
-        front: '<path d="M0 0H320V16C308 44 300 44 296 18C286 62 270 62 266 18C254 36 246 32 240 14H104C96 42 84 66 78 18C68 40 58 36 52 14C42 34 22 44 16 18C10 26 4 24 0 16Z" fill="#6fc22e" stroke="#14101a" stroke-width="2.500"/><g ' + INKED + '><path d="M14 176H116L104 208H26Z" fill="#9aa0ac"/><path d="M20 176C28 154 44 166 56 156C70 146 88 160 110 176Z" fill="#a6f04a"/></g><ellipse cx="42" cy="162" rx="5" ry="3" fill="#fff6fb"/><circle cx="74" cy="160" r="4" fill="#fff6fb"/>' + BLING(272, 170, 11) },
-    madscience: { a: '#6fe3ff', b: '#0c0b3a', word: 'SPARK', mid: '#1466c8', x: 150, pose: 'peace',
-        look: { skin: '#c7c9d3', eye: '#19b7e8', lip: '#ff1f8f', shadow: '#19b7e8', hairStyle: 'crimped', hair: '#f6f0ff', streak: '#19b7e8', monster: 'bolts', eyewear: 'none', headwear: 'none', neck: 'tags', top: 'coat', topC: '#fff6fb', topP: 'solid', trim: '#19b7e8', back: 'none', gloves: 'short', gloveC: '#14101a' },
-        behind: '<g ' + INKED + ' fill="#fff06a"><path d="M42 8L14 74H38L18 132L78 52H50L72 8Z"/><path d="M286 14L256 66H280L260 124L314 54H290L308 14Z"/></g>',
-        front: '<g ' + INKED + '><path d="M232 118H272V152C296 168 306 188 300 204C296 214 208 214 204 204C198 188 208 168 232 152Z" fill="#fff6fb" fill-opacity=".92"/><path d="M212 182C232 172 272 192 294 180C302 196 298 204 296 206C280 212 224 212 208 206C206 200 208 190 212 182Z" fill="#8df04a"/><rect x="226" y="108" width="52" height="12" rx="4" fill="#ff1f8f"/></g><g fill="#fff6fb"><circle cx="238" cy="166" r="4"/><circle cx="262" cy="152" r="3"/><circle cx="254" cy="134" r="2.500"/></g>' + BLING(46, 166, 12, '#6fe3ff') },
-    casketball: { a: '#ffa04d', b: '#2c1004', word: 'SLAM', mid: '#d9560f', x: 150, pose: 'hips',
-        look: { skin: '#5b3522', eye: '#f4d35e', lip: '#ff4fa8', shadow: '#ff8c1a', hairStyle: 'puffs', hair: '#14101a', streak: '#ff1f8f', monster: 'none', headwear: 'band', neck: 'chain', top: 'jersey', topC: '#ff1f8f', topP: 'solid', trim: '#fff6fb', back: 'none', gloves: 'nails', gloveC: '#ff1f8f' },
-        behind: '<g ' + INKED + '><rect x="234" y="10" width="78" height="56" fill="#fff6fb"/><rect x="258" y="28" width="30" height="24" fill="none" stroke="#ff1f8f"/></g><g fill="none" stroke="#fff6fb" stroke-width="2"><path d="M246 76L254 108H284L292 76M254 76L262 108M270 76V108M286 76L278 108M250 92H288"/></g><ellipse cx="269" cy="74" rx="26" ry="7" fill="none" stroke="#14101a" stroke-width="7"/><ellipse cx="269" cy="74" rx="26" ry="7" fill="none" stroke="#ff1f8f" stroke-width="4"/>',
-        front: '<g ' + INKED + '><circle cx="58" cy="172" r="36" fill="#f2761b"/><path d="M22 172H94M58 136V208M32 146C46 160 46 184 32 198M84 146C70 160 70 184 84 198" fill="none"/></g><path d="M34 164C34 158 42 156 46 160M70 160C74 156 82 158 82 164M56 174L58 178L60 174" fill="none" stroke="#14101a" stroke-width="3" stroke-linecap="round"/>' + BLING(112, 150, 8) + BLING(292, 170, 12) },
+    biteology: { a: '#ff5c86', b: '#3a0716', word: 'BITE', art: id => '<rect width="320" height="220" fill="#14030a"/>'
+            + STILL_GLOW('<circle cx="212" cy="112" r="92" fill="#d3123f" opacity=".75"/>', id, 'wide')
+            + '<circle cx="212" cy="112" r="66" fill="#e8264f"/><circle cx="190" cy="94" r="13" fill="#b80f38" opacity=".7"/><circle cx="234" cy="128" r="19" fill="#b80f38" opacity=".55"/><circle cx="226" cy="84" r="7" fill="#b80f38" opacity=".6"/><circle cx="184" cy="136" r="8" fill="#b80f38" opacity=".5"/>'
+            + BAT_MARK(168, 84, .62) + BAT_MARK(232, 62, .9) + BAT_MARK(262, 112, .5) + BAT_MARK(120, 66, .42) + BAT_MARK(70, 98, .3) + BAT_MARK(296, 66, .34) + BAT_MARK(200, 124, .38)
+            + '<path d="M0 220V168L18 160V128L24 104L30 128V150L46 142V112L54 80L62 112V136L78 146V120L84 100L90 120V152L112 160L134 150V132L142 116L150 132V158L176 172L208 164L240 176L270 160V140L278 122L286 140V166L320 158V220Z" fill="#050104"/>'
+            + '<g fill="#ff5c86"><rect x="52" y="116" width="3" height="7"/><rect x="82" y="128" width="3" height="7"/><rect x="141" y="138" width="3" height="6"/><rect x="277" y="146" width="3" height="6"/></g>'
+            + '<rect y="150" width="320" height="70" fill="#ff5c86" opacity=".3" filter="url(#fog' + id + ')"/>' },
+    clawculus: { a: '#3fe0cf', b: '#07302d', word: 'CLAW', art: id => '<rect width="320" height="220" fill="#03120f"/><rect x="-6" y="62" width="332" height="170" fill="#0c3a31"/>'
+            + '<rect x="-6" y="62" width="332" height="6" fill="#5c3a1b"/>'
+            + '<g font-family="\'Segoe Print\',\'Comic Sans MS\',cursive" fill="#d9fff8" opacity=".5"><text x="14" y="98" font-size="19">a²+b²=c²</text><text x="20" y="136" font-size="16">π≈3.14159</text><text x="12" y="172" font-size="18">y=mx+b</text><text x="212" y="94" font-size="15">√144=12</text><text x="118" y="196" font-size="15">∑ x÷13</text></g>'
+            + '<path d="M120-20L280-20L330 230L60 230Z" fill="#bff7ee" opacity=".12"/>'
+            + STILL_GLOW('<g fill="#3fe0cf"><path d="M180 66L200 62L176 208L168 212Z"/><path d="M216 64L238 66L216 216L206 216Z"/><path d="M254 72L274 76L258 212L248 212Z"/></g>', id, 'wide')
+            + '<g fill="#eafffb"><path d="M183 70L197 66L174 204L170 208Z"/><path d="M219 68L235 70L214 212L208 212Z"/><path d="M257 76L271 80L256 208L250 208Z"/></g>'
+            + '<g fill="#d9fff8"><circle cx="150" cy="106" r="1.500"/><circle cx="162" cy="146" r="1"/><circle cx="288" cy="120" r="1.500"/><circle cx="130" cy="176" r="1"/><circle cx="292" cy="172" r="1"/><circle cx="196" cy="186" r="1"/></g>'
+            + '<rect y="204" width="320" height="16" fill="#2a1a0d"/><rect x="40" y="200" width="24" height="5" rx="2" fill="#f6fff8"/><rect x="72" y="201" width="14" height="4" rx="2" fill="#3fe0cf"/>' },
+    tealeaf: { a: '#ffd76a', b: '#26093a', word: 'FATE', art: id => '<rect width="320" height="220" fill="#0e0320"/><rect width="320" height="220" fill="#7a2bc4" opacity=".55" filter="url(#fog' + id + ')"/>'
+            + '<path d="M262 56A30 30 0 1 0 286 104A25 25 0 0 1 262 56Z" fill="#ffe9a8"/>'
+            + '<g fill="#fff6d8"><circle cx="34" cy="74" r="1.500"/><circle cx="70" cy="62" r="1"/><circle cx="92" cy="96" r="1.500"/><circle cx="20" cy="118" r="1"/><circle cx="232" cy="66" r="1"/><circle cx="300" cy="130" r="1.500"/><circle cx="128" cy="70" r="1"/></g>'
+            + STILL_GLOW('<ellipse cx="160" cy="146" rx="62" ry="30" fill="#ffb84a" opacity=".85"/>', id, 'wide')
+            + '<g fill="none" stroke="#fff3d0" stroke-linecap="round" filter="url(#soft' + id + ')" opacity=".75"><path d="M146 138C132 118 160 106 146 82" stroke-width="6"/><path d="M174 138C188 114 160 100 176 70" stroke-width="7"/></g>'
+            + '<path d="M208 158C238 152 240 190 206 186" fill="none" stroke="#1a0730" stroke-width="9" stroke-linecap="round"/>'
+            + '<path d="M104 146H216C216 186 192 204 160 204C128 204 104 186 104 146Z" fill="#1a0730"/><ellipse cx="160" cy="146" rx="56" ry="11" fill="#ffc861"/><ellipse cx="160" cy="147" rx="46" ry="7" fill="#a8622a"/><path d="M144 147Q152 141 158 147Q150 152 144 147ZM168 145Q176 140 182 146Q174 150 168 145ZM156 151Q160 148 165 151Q160 154 156 151Z" fill="#14060a"/>'
+            + '<path d="M108 158C112 182 130 198 150 202" fill="none" stroke="#ffd76a" stroke-width="2" opacity=".75"/>'
+            + '<path d="M60 212C90 202 230 202 260 212V220H60Z" fill="#05010c"/>'
+            + '<rect x="30" y="170" width="12" height="44" fill="#05010c"/>' + STILL_GLOW('<ellipse cx="36" cy="160" rx="9" ry="14" fill="#ffb84a"/>', id) + '<path d="M36 148C42 158 40 168 36 170C32 168 30 158 36 148Z" fill="#fff3d0"/>' },
+    creepateria: { a: '#a6f04a', b: '#132b08', word: 'GRUEL', art: id => '<rect width="320" height="220" fill="#040b02"/>'
+            + '<g fill="#0c1c07"><rect x="0" y="62" width="44" height="120"/><rect x="276" y="62" width="44" height="120"/></g><g fill="#a6f04a" opacity=".25"><rect x="10" y="74" width="24" height="34"/><rect x="286" y="74" width="24" height="34"/></g>'
+            + STILL_GLOW('<ellipse cx="160" cy="118" rx="96" ry="58" fill="#7ad61d" opacity=".72"/>', id, 'wide')
+            + '<g fill="none" stroke="#c9ff8a" stroke-linecap="round" opacity=".55" filter="url(#soft' + id + ')"><path d="M126 112C112 92 136 80 124 58" stroke-width="7"/><path d="M196 112C210 90 186 78 198 56" stroke-width="7"/></g>'
+            + '<path d="M78 128H242C252 176 226 212 198 214H122C94 212 68 176 78 128Z" fill="#030701"/><ellipse cx="160" cy="128" rx="86" ry="17" fill="#030701"/>'
+            + '<ellipse cx="160" cy="127" rx="74" ry="11" fill="#a6f04a"/><path d="M92 128C92 150 98 166 104 160C110 154 106 138 112 132H208C214 140 212 170 220 170C228 170 230 142 228 128Z" fill="#a6f04a"/>'
+            + '<g fill="#e4ffb8"><circle cx="134" cy="124" r="6"/><circle cx="178" cy="128" r="4"/><circle cx="154" cy="120" r="3"/><circle cx="198" cy="123" r="3"/></g><circle cx="142" cy="96" r="4" fill="none" stroke="#c9ff8a" stroke-width="1.500"/><circle cx="182" cy="82" r="3" fill="none" stroke="#c9ff8a" stroke-width="1.500"/>'
+            + '<path d="M212 40L190 122" stroke="#050b03" stroke-width="7" stroke-linecap="round"/>'
+            + '<path d="M60 220L72 204H248L260 220Z" fill="#010300"/>' },
+    madscience: { a: '#6fe3ff', b: '#0c0b3a', word: 'SPARK', art: id => {
+            const bolt = 'M50 96L82 112L96 92L124 122L146 96L168 120L198 90L222 118L240 96L270 96';
+            return '<rect width="320" height="220" fill="#03031a"/>'
+                + STILL_GLOW('<ellipse cx="160" cy="108" rx="150" ry="52" fill="#1466c8" opacity=".85"/>', id, 'wide')
+                + '<g fill="#02020e"><path d="M42 220V116H58V220Z"/><path d="M28 220L36 196H64L72 220Z"/><ellipse cx="50" cy="100" rx="24" ry="13"/><path d="M262 220V116H278V220Z"/><path d="M248 220L256 196H284L292 220Z"/><ellipse cx="270" cy="100" rx="24" ry="13"/></g>'
+                + '<g fill="#1e6fb2"><rect x="38" y="130" width="24" height="3"/><rect x="38" y="144" width="24" height="3"/><rect x="38" y="158" width="24" height="3"/><rect x="38" y="172" width="24" height="3"/><rect x="258" y="130" width="24" height="3"/><rect x="258" y="144" width="24" height="3"/><rect x="258" y="158" width="24" height="3"/><rect x="258" y="172" width="24" height="3"/></g>'
+                + STILL_GLOW('<path d="' + bolt + '" fill="none" stroke="#6fe3ff" stroke-width="9" stroke-linejoin="round"/>', id)
+                + '<path d="' + bolt + '" fill="none" stroke="#f4feff" stroke-width="2.500" stroke-linejoin="round"/><path d="M124 122L116 148L132 140M198 90L208 70M222 118L232 146" fill="none" stroke="#c7f5ff" stroke-width="1.500"/>'
+                + STILL_GLOW('<ellipse cx="160" cy="184" rx="40" ry="26" fill="#8df04a" opacity=".8"/>', id)
+                + '<path d="M148 138H172V164C192 176 202 196 196 208C194 214 126 214 124 208C118 196 128 176 148 164Z" fill="#050920" stroke="#a7ecff" stroke-width="2"/><path d="M130 196C146 188 174 202 190 194C198 202 194 208 192 210C180 213 140 213 128 210C126 206 127 200 130 196Z" fill="#8df04a"/><rect x="144" y="132" width="32" height="7" rx="2" fill="#a7ecff"/><circle cx="150" cy="184" r="3" fill="#e4ffb8"/><circle cx="168" cy="176" r="2" fill="#e4ffb8"/>'
+                + '<rect y="212" width="320" height="8" fill="#010109"/>';
+        } },
+    casketball: { a: '#ffa04d', b: '#2c1004', word: 'SLAM', art: id => '<rect width="320" height="220" fill="#0a0402"/>'
+            + '<g fill="#1a0a04"><rect y="62" width="320" height="110"/></g>'
+            + '<g fill="#ffa04d" opacity=".32">' + Array.from({ length: 34 }, (_, i) => '<circle cx="' + (6 + (i % 17) * 19 + (i > 16 ? 9 : 0)) + '" cy="' + (i > 16 ? 142 : 124) + '" r="5"/>').join('') + '</g>'
+            + '<path d="M196-20H244L300 188H110Z" fill="#ffe2bf" opacity=".26"/>'
+            + '<rect y="172" width="320" height="48" fill="#6e3610"/><g fill="#552809"><rect y="182" width="320" height="1"/><rect y="194" width="320" height="1"/><rect y="208" width="320" height="1"/></g><ellipse cx="206" cy="188" rx="96" ry="16" fill="#ffc98a" opacity=".55"/>'
+            + '<path d="M292 66H312V190H292Z" fill="#050201"/><path d="M296 70L262 78" stroke="#050201" stroke-width="8"/>'
+            + '<rect x="256" y="58" width="10" height="56" fill="#fff" opacity=".82"/><path d="M216 102H256" stroke="#ff4f2e" stroke-width="5" stroke-linecap="round"/><path d="M220 106L226 134M236 106V136M252 106L246 134M228 120H246" fill="none" stroke="#fff0dc" stroke-width="1.500"/>'
+            + '<path d="M150 84C140 84 118 92 92 112" fill="none" stroke="#ffa04d" stroke-width="16" stroke-linecap="round" opacity=".2"/>'
+            + STILL_GLOW('<circle cx="172" cy="78" r="26" fill="#ff8c1a" opacity=".65"/>', id)
+            + '<circle cx="172" cy="78" r="20" fill="#e8690f"/><path d="M152 78H192M172 58V98M158 64C168 72 168 86 158 94M186 64C176 72 176 86 186 94" fill="none" stroke="#2a1004" stroke-width="2"/>'
+            + '<path d="M38 188L26 124L42 86H74L90 124L78 188Z" fill="#050201"/><path d="M42 86H74L90 124" fill="none" stroke="#ffa04d" stroke-width="1.500" opacity=".85"/><path d="M58 104V150M46 120H70" stroke="#ffa04d" stroke-width="3" opacity=".65"/><ellipse cx="58" cy="192" rx="40" ry="6" fill="#000" opacity=".6"/>' },
 };
 const posterArt = {};
 function classPoster(id) {
     if (posterArt[id])
         return posterArt[id];
-    const p = CLASS_LOOKS[id], W = 320, H = 220, cx = p.x + 10, cy = 112;
-    let rays = '';
-    for (let i = 0; i < 14; i++) {
-        const a = i / 14 * Math.PI * 2, b = a + .17, far = 420;
-        rays += '<path d="M' + cx + ' ' + cy + 'L' + (cx + Math.cos(a) * far).toFixed(0) + ' ' + (cy + Math.sin(a) * far).toFixed(0) + 'L' + (cx + Math.cos(b) * far).toFixed(0) + ' ' + (cy + Math.sin(b) * far).toFixed(0) + 'Z" fill="' + p.mid + '" opacity=".5"/>';
-    }
-    const star = normalizeLook({ ...FANG_LOOK, ...STAR_FACE, ...p.look, pose: p.pose });
-    const scale = .56, boxX = -60, boxY = -44, boxW = 440, boxH = 420;
-    const body = drawGhoul(star, { pose: POSES.find(x => x.id === p.pose), box: boxX + ' ' + boxY + ' ' + boxW + ' ' + boxH }).replace('<svg ', '<svg x="' + (p.x - boxW * scale / 2 + 10) + '" y="36" width="' + boxW * scale + '" height="' + boxH * scale + '" ');
-    /* The word sits across the top like a magazine title, on top of everything. */
-    const title = '<text x="' + W / 2 + '" y="50" text-anchor="middle" textLength="' + (W - 28) + '" lengthAdjust="spacingAndGlyphs" font-family="\'Breath of the House\',Impact,fantasy" font-size="58" fill="' + p.a + '" stroke="#14101a" stroke-width="5" paint-order="stroke">' + p.word + '</text>';
-    posterArt[id] = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><radialGradient id="pv' + id + '" cx="50%" cy="46%" r="75%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".72"/></radialGradient><linearGradient id="pf' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="66%" stop-color="' + p.b + '" stop-opacity="0"/><stop offset="100%" stop-color="' + p.b + '"/></linearGradient></defs>'
-        + '<rect width="' + W + '" height="' + H + '" fill="' + p.b + '"/>' + rays + p.behind
-        + '<g class="posterstar" style="color:' + p.a + '">' + body + '</g><rect width="' + W + '" height="' + H + '" fill="url(#pf' + id + ')"/>' + p.front
-        + '<rect width="' + W + '" height="' + H + '" fill="url(#pv' + id + ')"/>' + title + '</svg>';
+    const p = CLASS_LOOKS[id], W = 320, H = 220;
+    /* The word sits across the top like a film title, on top of everything. */
+    const title = '<text x="' + W / 2 + '" y="50" text-anchor="middle" textLength="' + (W - 28) + '" lengthAdjust="spacingAndGlyphs" font-family="\'Breath of the House\',Impact,fantasy" font-size="58" fill="' + p.a + '" stroke="#050206" stroke-width="5" paint-order="stroke">' + p.word + '</text>';
+    posterArt[id] = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><filter id="soft' + id + '" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5"/></filter><filter id="wide' + id + '" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="17"/></filter>'
+        + '<filter id="fog' + id + '" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".012 .05" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.700 -.65"/><feComposite in="SourceGraphic" operator="in"/></filter>'
+        + '<filter id="grain' + id + '" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 -.16"/></filter>'
+        + '<radialGradient id="pv' + id + '" cx="50%" cy="52%" r="72%"><stop offset="52%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".82"/></radialGradient></defs>'
+        + p.art(id) + '<rect width="' + W + '" height="' + H + '" filter="url(#grain' + id + ')" opacity=".4"/><rect width="' + W + '" height="' + H + '" fill="url(#pv' + id + ')"/>' + title + '</svg>';
     return posterArt[id];
 }
 const classKey = () => 'classes.' + (isAdmin() ? 'fang' : signedInId() || 'guest');
