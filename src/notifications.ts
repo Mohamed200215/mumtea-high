@@ -47,7 +47,7 @@ interface SchoolNote { id: string; actorId: string | null; kind: string; postId:
     try {
       const { data, error } = isAdmin() ? await sb.rpc('admin_notifications', { token: adminPass }) : await sb.from('notifications').select('id, actor_id, kind, post_id, detail, read_at, created_at').order('created_at', { ascending: false }).limit(60);
       if (error) return;
-      notes = (data as any[]).map(r => ({ id: r.id, actorId: r.actor_id, kind: r.kind, postId: r.post_id, detail: r.detail, read: !!r.read_at, at: r.created_at }));
+      notes = ((data || []) as any[]).map(r => ({ id: r.id, actorId: r.actor_id, kind: r.kind, postId: r.post_id, detail: r.detail, read: !!r.read_at, at: r.created_at }));
       badge(); if (!panel.hidden) draw();
     } finally { loading = false; }
   }

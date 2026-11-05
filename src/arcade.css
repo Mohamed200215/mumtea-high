@@ -731,13 +731,18 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .gpanel[data-game="kick"] .gamepause,.gpanel[data-game="hoops"] .gamepause,.gpanel[data-game="pageant"] .gamepause{left:auto;right:8px;top:8px;margin-left:0}
 
 /* the glam emoji set */
-.glamrow{display:flex;flex-wrap:wrap;gap:4px}
+.emojistrip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px;width:100%;max-width:100%}
+.emojistrip>.glamrow,.emojistrip>.reactbar{display:flex;flex-wrap:nowrap;gap:6px;min-width:0;margin:0;padding:2px 2px 9px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--pink) rgba(255,255,255,.1);-webkit-overflow-scrolling:touch}
+.emojistrip>.glamrow>*,.emojistrip>.reactbar>*{flex:none;scroll-snap-align:start}
+.striparrow{width:34px;height:58px;padding:0;background:#14101a;color:var(--paper);border:2px solid var(--pink);font-size:14px;cursor:pointer}
+.striparrow:hover:not(:disabled),.striparrow:focus-visible{background:var(--pink);color:#fff}
+.striparrow:disabled{opacity:.3;cursor:default}
+@media (max-width:480px){.striparrow{width:26px}}
 .glamadd{display:grid;justify-items:center;gap:1px;padding:4px 5px 3px;background:#fff6fb;color:#14101a;border:2px solid #000;box-shadow:0 3px 0 var(--pink);cursor:pointer}
 .glamadd:hover,.glamadd:focus-visible{outline:2px solid var(--pink);outline-offset:1px;transform:translateY(-2px)}
 .glamadd:active{transform:translateY(2px);box-shadow:0 1px 0 var(--pink)}
 .glamadd img{display:block;width:56px;height:56px}
 .glamadd small{font:800 11px/1.2 var(--body)}
-.reactbar{gap:6px}
 .reactbtn.glamreact{display:inline-grid;grid-template-columns:auto auto;justify-items:center;align-items:center;gap:0 4px;min-width:66px;padding:4px 7px 3px;background:#fff6fb;color:#14101a;border:2px solid #000;box-shadow:0 3px 0 var(--violet)}
 .reactbtn.glamreact img{grid-column:1/3;width:52px;height:52px}
 .reactbtn.glamreact small{font:800 11px/1.2 var(--body)}

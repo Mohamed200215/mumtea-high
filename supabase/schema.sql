@@ -701,3 +701,7 @@ drop policy if exists "add my polaroid files" on storage.objects;
 create policy "add my polaroid files" on storage.objects for insert to authenticated with check (bucket_id = 'polaroids' and (storage.foldername(name))[1] = (select auth.uid())::text);
 drop policy if exists "remove my polaroid files" on storage.objects;
 create policy "remove my polaroid files" on storage.objects for delete to authenticated using (bucket_id = 'polaroids' and (storage.foldername(name))[1] = (select auth.uid())::text);
+
+-- The full set of reactions.
+alter table public.post_reactions drop constraint if exists post_reactions_kind_check;
+alter table public.post_reactions add constraint post_reactions_kind_check check (kind in ('fang', 'tea', 'skull', 'heart', 'fire', 'laugh', 'love', 'queen', 'aww', 'giggle', 'shades', 'cap', 'mic', 'bored', 'flat', 'feet', 'dizzy'));
