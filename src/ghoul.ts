@@ -7,11 +7,11 @@ interface Look {
   bottom: string; bottomC: string; bottomP: string;
   legs: string; legsC: string;
   shoes: string; shoesC: string;
-  pet: string; petC: string; car: string;
+  pet: string; petC: string;
   pose: string; nose: string; lipSize: string; eyeStyle: string; brow: string; browC: string; eyewear: string; neck: string; gloves: string; gloveC: string; wrist: string; mark: string; back: string;
 }
-type Layer = 'car' | 'back' | 'neck' | 'mark' | 'eyewear' | 'armsFront' | 'wings' | 'hairBack' | 'legs' | 'legwear' | 'pants' | 'shoes' | 'torso' | 'bottom' | 'top' | 'arms' | 'sleeves' | 'hold' | 'head' | 'face' | 'monster' | 'hairFront' | 'headwear' | 'pet';
-const LAYER_ORDER: Layer[] = ['car', 'back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront', 'pet'];
+type Layer = 'back' | 'neck' | 'mark' | 'eyewear' | 'armsFront' | 'wings' | 'hairBack' | 'legs' | 'legwear' | 'pants' | 'shoes' | 'torso' | 'bottom' | 'top' | 'arms' | 'sleeves' | 'hold' | 'head' | 'face' | 'monster' | 'hairFront' | 'headwear' | 'pet';
+const LAYER_ORDER: Layer[] = ['back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront', 'pet'];
 /* Trousers whose hem reaches the shoes: these fall over the shoes instead of being tucked under them. */
 const LONG_TROUSERS = ['palazzo', 'flares', 'wide', 'sailor', 'bootcut', 'overalls', 'tux', 'straps', 'straight', 'ripped', 'patched', 'chains', 'track', 'paperbag', 'leather', 'laceup', 'bellcuff', 'harem', 'leggings', 'cargo', 'skinny', 'joggers'];
 const HEAD_LAYERS: Layer[] = ['hairBack', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear'];
@@ -128,37 +128,29 @@ const HEAD_ONLY_BOX = '46 -14 228 232';
 const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
 /* Everything the Bone Boutique sells. The names and prices also live in the database's buy_shop_item. */
-interface ShopItem { id: string; slot: 'car' | 'headwear' | 'shoes' | 'neck' | 'wrist'; cat: string; name: string; brand: string; price: number; base: string; mark: string }
+interface ShopItem { id: string; slot: 'neck' | 'wrist'; name: string; brand: string; price: number }
 const SHOP_ITEMS: ShopItem[] = [
-  { id: 'rangerover', slot: 'car', cat: 'cars', name: 'Range Rover Sport', brand: 'Range Rover', price: 1200, base: 'suv:#1c2430', mark: 'RANGE ROVER' },
-  { id: 'gwagon', slot: 'car', cat: 'cars', name: 'G-Wagon', brand: 'Mercedes-Benz', price: 1500, base: 'suv:#14101a', mark: 'MERCEDES' },
-  { id: 'audir8', slot: 'car', cat: 'cars', name: 'R8', brand: 'Audi', price: 1400, base: 'sport:#c0392b', mark: 'AUDI' },
-  { id: 'bmwm4', slot: 'car', cat: 'cars', name: 'M4', brand: 'BMW', price: 900, base: 'sedan:#1f6fb2', mark: 'BMW' },
-  { id: 'porsche911', slot: 'car', cat: 'cars', name: '911', brand: 'Porsche', price: 1300, base: 'sport:#f4d35e', mark: 'PORSCHE' },
-  { id: 'bentley', slot: 'car', cat: 'cars', name: 'Continental GT', brand: 'Bentley', price: 1800, base: 'sedan:#0f4f3a', mark: 'BENTLEY' },
-  { id: 'ferrari', slot: 'car', cat: 'cars', name: '488', brand: 'Ferrari', price: 2200, base: 'sport:#d3122a', mark: 'FERRARI' },
-  { id: 'lamborghini', slot: 'car', cat: 'cars', name: 'Huracan', brand: 'Lamborghini', price: 2500, base: 'sport:#ff1f8f', mark: 'LAMBORGHINI' },
-  { id: 'rollsroyce', slot: 'car', cat: 'cars', name: 'Phantom', brand: 'Rolls-Royce', price: 3000, base: 'limo:#2c2436', mark: 'ROLLS-ROYCE' },
-  { id: 'nikecap', slot: 'headwear', cat: 'hats', name: 'Cap', brand: 'Nike', price: 40, base: 'cap', mark: 'NIKE' },
-  { id: 'nikebeanie', slot: 'headwear', cat: 'hats', name: 'Beanie', brand: 'Nike', price: 35, base: 'beanie', mark: 'NIKE' },
-  { id: 'pumacap', slot: 'headwear', cat: 'hats', name: 'Cap', brand: 'Puma', price: 35, base: 'cap', mark: 'PUMA' },
-  { id: 'pumabucket', slot: 'headwear', cat: 'hats', name: 'Bucket hat', brand: 'Puma', price: 40, base: 'bucket', mark: 'PUMA' },
-  { id: 'pradabucket', slot: 'headwear', cat: 'hats', name: 'Bucket hat', brand: 'Prada', price: 90, base: 'bucket', mark: 'PRADA' },
-  { id: 'pradaberet', slot: 'headwear', cat: 'hats', name: 'Beret', brand: 'Prada', price: 80, base: 'beret', mark: 'PRADA' },
-  { id: 'nikeaf1', slot: 'shoes', cat: 'shoes', name: 'Air Force 1', brand: 'Nike', price: 90, base: 'sneaker', mark: 'NIKE' },
-  { id: 'nikedunk', slot: 'shoes', cat: 'shoes', name: 'Dunk', brand: 'Nike', price: 110, base: 'sneaker', mark: 'NIKE' },
-  { id: 'pumasuede', slot: 'shoes', cat: 'shoes', name: 'Suede', brand: 'Puma', price: 70, base: 'chunky', mark: 'PUMA' },
-  { id: 'pumaspeedcat', slot: 'shoes', cat: 'shoes', name: 'Speedcat', brand: 'Puma', price: 85, base: 'flats', mark: 'PUMA' },
-  { id: 'asicskayano', slot: 'shoes', cat: 'shoes', name: 'Gel-Kayano', brand: 'ASICS', price: 95, base: 'chunky', mark: 'ASICS' },
-  { id: 'asicsnyc', slot: 'shoes', cat: 'shoes', name: 'Gel-NYC', brand: 'ASICS', price: 105, base: 'chunky', mark: 'ASICS' },
-  { id: 'diamondpendant', slot: 'neck', cat: 'jewels', name: 'Diamond pendant', brand: 'Fine jewellery', price: 350, base: '', mark: '' },
-  { id: 'tennisnecklace', slot: 'neck', cat: 'jewels', name: 'Diamond tennis necklace', brand: 'Fine jewellery', price: 480, base: '', mark: '' },
-  { id: 'diamondchain', slot: 'neck', cat: 'jewels', name: 'Iced-out diamond chain', brand: 'Fine jewellery', price: 650, base: '', mark: '' },
-  { id: 'tennisbracelet', slot: 'wrist', cat: 'jewels', name: 'Diamond tennis bracelet', brand: 'Fine jewellery', price: 400, base: '', mark: '' },
-  { id: 'rolexsub', slot: 'wrist', cat: 'jewels', name: 'Submariner', brand: 'Rolex', price: 700, base: '', mark: '' },
-  { id: 'rolexdaydate', slot: 'wrist', cat: 'jewels', name: 'Day-Date', brand: 'Rolex', price: 1000, base: '', mark: '' },
-  { id: 'aproyaloak', slot: 'wrist', cat: 'jewels', name: 'Royal Oak', brand: 'Audemars Piguet', price: 1200, base: '', mark: '' },
-  { id: 'pateknautilus', slot: 'wrist', cat: 'jewels', name: 'Nautilus', brand: 'Patek Philippe', price: 1500, base: '', mark: '' },
+  { id: 'pearlstrand', slot: 'neck', name: 'Pearl necklace', brand: 'Fine jewellery', price: 300 },
+  { id: 'diamondpendant', slot: 'neck', name: 'Diamond pendant', brand: 'Fine jewellery', price: 350 },
+  { id: 'tiffanyheart', slot: 'neck', name: 'Return to Tiffany heart tag', brand: 'Tiffany & Co.', price: 380 },
+  { id: 'rubyheart', slot: 'neck', name: 'Ruby heart pendant', brand: 'Fine jewellery', price: 450 },
+  { id: 'tennisnecklace', slot: 'neck', name: 'Diamond tennis necklace', brand: 'Fine jewellery', price: 480 },
+  { id: 'sapphirependant', slot: 'neck', name: 'Sapphire and pearl pendant', brand: 'Fine jewellery', price: 550 },
+  { id: 'diamondchain', slot: 'neck', name: 'Iced-out diamond chain', brand: 'Fine jewellery', price: 650 },
+  { id: 'alhambra', slot: 'neck', name: 'Vintage Alhambra', brand: 'Van Cleef & Arpels', price: 700 },
+  { id: 'tennisbracelet', slot: 'wrist', name: 'Diamond tennis bracelet', brand: 'Fine jewellery', price: 400 },
+  { id: 'diamondring', slot: 'wrist', name: 'Diamond solitaire ring', brand: 'Fine jewellery', price: 500 },
+  { id: 'cartierlove', slot: 'wrist', name: 'Love bracelet', brand: 'Cartier', price: 600 },
+  { id: 'rolexsub', slot: 'wrist', name: 'Submariner', brand: 'Rolex', price: 700 },
+  { id: 'omegaseamaster', slot: 'wrist', name: 'Seamaster', brand: 'Omega', price: 750 },
+  { id: 'cartiertank', slot: 'wrist', name: 'Tank', brand: 'Cartier', price: 850 },
+  { id: 'rolexdaydate', slot: 'wrist', name: 'Day-Date', brand: 'Rolex', price: 1000 },
+  { id: 'hublotbigbang', slot: 'wrist', name: 'Big Bang', brand: 'Hublot', price: 1100 },
+  { id: 'aproyaloak', slot: 'wrist', name: 'Royal Oak', brand: 'Audemars Piguet', price: 1200 },
+  { id: 'rolexdaytona', slot: 'wrist', name: 'Daytona', brand: 'Rolex', price: 1300 },
+  { id: 'pateknautilus', slot: 'wrist', name: 'Nautilus', brand: 'Patek Philippe', price: 1500 },
+  { id: 'rolexiced', slot: 'wrist', name: 'Iced-out Datejust', brand: 'Rolex', price: 1800 },
+  { id: 'richardmille', slot: 'wrist', name: 'RM 011', brand: 'Richard Mille', price: 2500 },
 ];
 const SHOP_BY_ID: Record<string, ShopItem> = Object.fromEntries(SHOP_ITEMS.map(i => [i.id, i]));
 let shopOwned = new Set<string>();
@@ -189,13 +181,12 @@ const WARDROBE: WardrobePage[] = [
   { title: 'In hand', key: 'hold', items: [['none', 'Nothing'], ['cup', 'Teacup'], ['purse', 'Purse'], ['skull', 'Skull bag'], ['wand', 'Wand'], ['phone', 'iCoffin'], ['mic', 'Microphone'], ['rose', 'Black rose'], ['book', 'Spell book'], ['brolly', 'Bat umbrella'], ['boba', 'Bubble tea'], ['lipstick', 'Lipstick'], ['icecream', 'Ice cream'], ['lollipop', 'Lollipop'], ['mirror', 'Mirror'], ['fan', 'Fan'], ['candle', 'Candle'], ['potion', 'Potion'], ['orb', 'Crystal ball'], ['teddy', 'Teddy'], ['pumpkin', 'Pumpkin'], ['balloon', 'Balloon'], ['bouquet', 'Bouquet'], ['camera', 'Camera'], ['lantern', 'Lantern'], ['donut', 'Donut'], ['cupcake', 'Cupcake'], ['cat', 'Kitten'], ['brush', 'Paintbrush'], ['scroll', 'Scroll']], colours: [], box: '-40 240 230 260', layers: ['hold'] },
 ];
 
-/* Shop pieces join the wardrobe, and cars get a page of their own. */
-WARDROBE.splice(2, 0, { title: 'Cars', key: 'car', items: [['none', 'No car']], colours: [], box: '36 490 412 250', layers: ['car'], crop: true });
+/* Shop pieces join the wardrobe. */
 SHOP_ITEMS.forEach(item => {
-  const title = item.slot === 'car' ? 'Cars' : item.slot === 'headwear' ? 'Headwear' : item.slot === 'shoes' ? 'Shoes' : item.slot === 'neck' ? 'Necklaces' : 'Hand accessories';
-  WARDROBE.find(p => p.title === title)?.items?.push([item.id, item.brand + ' ' + item.name]);
+  const title = item.slot === 'neck' ? 'Necklaces' : 'Hand accessories';
+  WARDROBE.find(p => p.title === title)?.items?.push([item.id, (item.brand === 'Fine jewellery' ? '' : item.brand + ' ') + item.name]);
 });
-const FANG_LOOK: Look = { pet: 'none', car: 'none', petC: '#6a1f86', skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
+const FANG_LOOK: Look = { pet: 'none', petC: '#6a1f86', skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
 
 /* ---------- pets: each is drawn around 0,0 and stands at the ghoul's feet ---------- */
 function drawPet(id: string, c: string): string {
@@ -239,7 +230,7 @@ function randomLook(): Look {
 /* Checks everything saved against the wardrobe, because other people's looks are drawn into this page. */
 function normalizeLook(raw: Partial<Look> | undefined): Look {
   /* Anything missing gets a plain default, never a random one, or a saved character would change on every visit. */
-  const out: Look = { ...FANG_LOOK, hairStyle: 'long', monster: 'none', hold: 'none', neck: 'none', gloves: 'none', wrist: 'none', car: 'none' };
+  const out: Look = { ...FANG_LOOK, hairStyle: 'long', monster: 'none', hold: 'none', neck: 'none', gloves: 'none', wrist: 'none' };
   if (!raw) return randomLook();
   for (const page of WARDROBE) {
     const keep = (key: keyof Look, ok: (v: string) => boolean) => { const v = raw[key]; if (typeof v === 'string' && ok(v)) out[key] = v; };
@@ -284,10 +275,6 @@ function drawHand(shape: string, skin: string, fill: string, tips: string, tipSt
 
 /* plain: small previews skip the costly shading and hair streaks. detail: the big wardrobe figure shades each layer on its own. */
 function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[]; box?: string; plain?: boolean; detail?: boolean; pose?: Pose; shaded?: boolean; stream?: boolean; merBelt?: string } = {}): string {
-  /* A shop piece is drawn on the matching wardrobe shape, then gets its name on top. */
-  const brand = { top: o.top, bottom: o.bottom, shoes: o.shoes, headwear: o.headwear };
-  const baseOf = (id: string): string => (SHOP_BY_ID[id] && SHOP_BY_ID[id].base) || id;
-  o = { ...o, top: baseOf(o.top), bottom: baseOf(o.bottom), shoes: baseOf(o.shoes), headwear: baseOf(o.headwear) };
   const uid = 'g' + (++ghoulCounter);
   const pose = opt.pose || (opt.head ? POSES[0] : poseOf(o.pose));
   let defs = '';
@@ -517,6 +504,14 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       stack: () => [wband(.72, 11, o.trim, 3.5) + wband(.8, 11, '#f4d35e', 3.5) + wband(.88, 11, '#fff6fb', 3.5), ''],
       charm: () => [wband(.84, 11, '#c0c0d8', 3) + blob(.92, -6, 3, o.trim) + blob(.94, 1, 3, '#f4d35e') + blob(.92, 7, 3, '#ff1f8f'), ''],
       pearls: () => [beadband(.84, 11, '#fff6fb', 6.5), ''],
+      rolexdaytona: () => [wband(.84, 11, '#d7dbe4', 7) + blob(.84, 0, 9, '#14141c') + blob(.84, 0, 3, '#f6f7fb'), ''],
+      rolexiced: () => [beadband(.84, 11, '#eaf7ff', 6, 6) + blob(.84, 0, 10, '#eaf7ff') + blob(.84, 0, 5.500, '#9fd8ff'), ''],
+      omegaseamaster: () => [wband(.84, 11, '#d7dbe4', 7) + blob(.84, 0, 9, '#1f4fa8') + blob(.84, 0, 3, '#f6f7fb'), ''],
+      cartiertank: () => [wband(.84, 11, '#2a1420', 6) + blob(.84, 0, 8.500, '#e0b83c') + blob(.84, 0, 5.500, '#f8f4e6'), ''],
+      hublotbigbang: () => [wband(.84, 11, '#14141c', 7) + blob(.84, 0, 9.500, '#55555f') + blob(.84, 0, 6, '#101016'), ''],
+      richardmille: () => [wband(.84, 11, '#ff4fa8', 7) + blob(.84, 0, 9.500, '#ff1f8f') + blob(.84, 0, 6, '#101016'), ''],
+      cartierlove: () => [wband(.84, 11, '#e0b83c', 7) + blob(.84, -6, 1.800, '#fff3b8') + blob(.84, 0, 1.800, '#fff3b8') + blob(.84, 6, 1.800, '#fff3b8'), ''],
+      diamondring: () => ['', ringAt(19, -1.7, 3.2, '#e8ebf2') + '<path d="M-1.700 12.500l5 5.500-5 5.500-5-5.500z" fill="#dff4ff" stroke="' + INK + '" stroke-width="1"/>'],
       rolexsub: () => [wband(.84, 11, '#d7dbe4', 7) + blob(.84, 0, 9, '#0f7a4f') + blob(.84, 0, 3, '#f6f7fb'), ''],
       rolexdaydate: () => [wband(.84, 11, '#e0b83c', 7) + blob(.84, 0, 9, '#f6e7a8') + blob(.84, 0, 3, '#a8770c'), ''],
       aproyaloak: () => [wband(.84, 11, '#c7ccd8', 8) + blob(.84, 0, 9.500, '#1f3a8a') + blob(.84, 0, 3, '#dfe6ff'), ''],
@@ -718,6 +713,11 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   /* ---------- necklaces, on-your-back things and face details ---------- */
   parts.neck = ({
     mercoral: [[146, 226], [149, 234], [153, 241], [157, 246], [163, 246], [167, 241], [171, 234], [174, 226]].map(([x, y], i) => '<ellipse cx="' + x + '" cy="' + y + '" rx="4.200" ry="3.400" fill="' + (i % 3 === 1 ? '#7fe8ff' : '#ff7a66') + '" stroke="' + INK + '" stroke-width="1"/>').join('') + '<path d="M153 250h14l-3 10h-8z" fill="#7fe8ff" stroke="' + INK + '" stroke-width="1.200"/>',
+    pearlstrand: [[146, 226], [148, 233], [151.500, 239], [155.500, 244], [160, 246], [164.500, 244], [168.500, 239], [172, 233], [174, 226]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="3.400" fill="#fbf2c9" stroke="' + INK + '" stroke-width="1.100"/>').join(''),
+    sapphirependant: [[146, 226], [149, 234], [153.500, 240], [166.500, 240], [171, 234], [174, 226]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="3.200" fill="#fbf2c9" stroke="' + INK + '" stroke-width="1.100"/>').join('') + '<ellipse cx="160" cy="252" rx="8" ry="10" fill="#e0b83c" stroke="' + INK + '" stroke-width="1.800"/><ellipse cx="160" cy="252" rx="5" ry="7" fill="#2f55c4"/>',
+    rubyheart: strokeLine('M146 226Q160 256 174 226', 2, '#e0e4ee') + '<path d="M160 264C148 254 148 244 155 243C158 243 160 246 160 248C160 246 162 243 165 243C172 244 172 254 160 264Z" fill="#d3122a" stroke="' + INK + '" stroke-width="1.800"/>',
+    tiffanyheart: strokeLine('M146 226Q160 256 174 226', 2.2, '#e8ebf2') + '<path d="M160 264C148 254 148 244 155 243C158 243 160 246 160 248C160 246 162 243 165 243C172 244 172 254 160 264Z" fill="#dfe3ec" stroke="' + INK + '" stroke-width="1.800"/>',
+    alhambra: strokeLine('M146 226Q160 262 174 226', 2, '#e0b83c') + [[150, 239], [160, 250], [170, 239]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="5" fill="#f6f4ee" stroke="#e0b83c" stroke-width="2.400"/>').join(''),
     diamondchain: strokeLine('M144 226Q160 264 176 226', 9, INK) + strokeLine('M144 226Q160 264 176 226', 6, '#eaf7ff') + strokeLine('M144 226Q160 264 176 226', 2, '#9fd8ff', 'stroke-dasharray="1 4"') + '<path d="M160 244l8 9-8 12-8-12Z" fill="#eaf7ff" stroke="' + INK + '" stroke-width="1.8"/><path d="M152 253H168M160 244V265" stroke="#9fd8ff" stroke-width="1"/>',
     diamondpendant: strokeLine('M146 226Q160 258 174 226', 2.2, '#e0e6f0') + '<path d="M160 244l9 10-9 13-9-13Z" fill="#dff4ff" stroke="' + INK + '" stroke-width="1.8"/><path d="M151 254H169M155 254L160 244L165 254L160 267Z" fill="none" stroke="#7fcfff" stroke-width="1"/>',
     tennisnecklace: [[146, 226], [148.500, 233], [152, 239], [156, 243.500], [160, 245], [164, 243.500], [168, 239], [171.500, 233], [174, 226]].map(([x, y]) => '<path d="M' + x + ' ' + (y - 4) + 'l4 4-4 4-4-4Z" fill="#eaf7ff" stroke="' + INK + '" stroke-width="1.100"/>').join(''),
@@ -1245,14 +1245,6 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     spider: strokeLine('M186 54l-14-10M186 60h-18M186 66l-14 8M206 54l14-10M206 60h18M206 66l14 8', 2.400, '#14101a') + `<ellipse cx="196" cy="62" rx="14" ry="11" fill="#14101a" stroke="${INK}" stroke-width="1.400"/><circle cx="196" cy="50" r="6" fill="#14101a"/><circle cx="193" cy="49" r="1.200" fill="#c0392b"/><circle cx="199" cy="49" r="1.200" fill="#c0392b"/>`,
 } as Record<string, string>)[o.headwear] || '';
 
-  /* Cars park beside the character on its own pages. In the games the character poses alone. */
-  if (!opt.pose && !opt.head && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) { parts.car = '<g transform="translate(42 500)">' + carArt(SHOP_BY_ID[o.car]) + '</g>'; needsRoom = true; }
-  const nameOn = (id: string, x: number, y: number, size: number, fill: string, serif = false): string => (SHOP_BY_ID[id] ? '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="' + size + '" fill="' + fill + '" font-family="' + (serif ? "Georgia,'Times New Roman',serif" : 'Arial,Helvetica,sans-serif') + '" font-weight="700"' + (serif ? ' font-style="italic"' : '') + '>' + SHOP_BY_ID[id].mark + '</text>' : '');
-  if (parts.top) parts.top += nameOn(brand.top, 160, 318, 24, contrast(o.topC), true);
-  if (parts.bottom) parts.bottom += nameOn(brand.bottom, 160, 470, 24, contrast(o.bottomC), true);
-  if (parts.pants) parts.pants += nameOn(brand.bottom, 160, 420, 20, contrast(o.bottomC), true);
-  if (parts.shoes) parts.shoes += nameOn(brand.shoes, 141, 696, 7, contrast(o.shoesC)) + nameOn(brand.shoes, 179, 696, 7, contrast(o.shoesC));
-  if (parts.headwear) parts.headwear += nameOn(brand.headwear, 160, o.headwear === 'cap' ? 70 : o.headwear === 'beret' ? 38 : o.headwear === 'beanie' ? 62 : 52, 15, contrast(o.trim));
   parts.pet = drawPet(o.pet, o.petC);
   if (parts.pet) needsRoom = true;
   /* A mermaid has no hips or legs here: the game draws her tail, and this band hides where it joins. */
@@ -1269,7 +1261,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   const placed = (l: Layer): string => {
     let out = parts[l] || '';
     if (!out) return '';
-    if (l === 'pet' || l === 'car') return out;
+    if (l === 'pet') return out;
     if (THIN.includes(l)) out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
     if (shading && opt.detail && SHADED.includes(l)) out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
     if (l === 'hairBack' && !scarfOn) out = '<g transform="translate(160 110) scale(1.16 1.04) translate(-160 -110)">' + out + '</g>';
@@ -1293,7 +1285,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     if (!shading || opt.detail) return drawn;
     return (i === BODY_START ? '<g filter="url(#' + uid + 'cel)">' : '') + drawn + (i === BODY_END ? '</g>' : '');
   }).join('');
-  const box = parts.car && (!opt.box || opt.box === WIDE_BOX) && !opt.only ? '-45 -10 500 735' : opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
+  const box = opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
   const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
   return `<svg viewBox="${box}" style="overflow:${opt.head ? 'hidden' : 'visible'}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
 }

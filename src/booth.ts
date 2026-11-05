@@ -19,6 +19,10 @@ const CAM_FILTERS: CamFilter[] = [
   { name: 'Skull Crew', group: PICTURES, ops: [['brightness', 1.03], ['saturate', 1.1]], stickers: [['crestHijab', .185, .2, .3, -8], ['crestBow', .825, .175, .28, 8], ['crestFlame', .175, .825, .28, 7], ['crestKitty', .825, .83, .28, -7]] },
   { name: 'Gulp', group: PICTURES, ops: [['contrast', 1.05], ['saturate', 1.1]], stickers: [['gulpDop', .18, .17, .3, -8], ['gulpNi', .82, .17, .3, 8], ['gulpLol', .18, .83, .3, 8], ['gulpTn', .82, .83, .3, -8]] },
   { name: 'Money', group: PICTURES, ops: [['saturate', 1.15], ['contrast', 1.05]], tint: ['#f4d35e', 'soft-light', .22], stickers: [['moneyCoin', .17, .17, .28, -8], ['moneyBow', .83, .16, .31, 7], ['moneyGold', .17, .8, .26, 6], ['moneyFan', .83, .78, .25, -7]] },
+  { name: 'Makeup', group: PICTURES, ops: [['brightness', 1.04], ['saturate', 1.12]], tint: ['#ff7ac0', 'soft-light', .24], stickers: [['makeupBrush', .2, .17, .34, -6], ['makeupPalette', .82, .18, .27, 6], ['makeupLipstick', .14, .72, .095, -9], ['makeupTint', .86, .72, .095, 9]] },
+  { name: 'Prawn Cocktail', group: PICTURES, ops: [['saturate', 1.12]], tint: ['#ff1f8f', 'soft-light', .16], stickers: [['prawnCocktail', .16, .2, .215, -8], ['prawnCocktail', .84, .2, .215, 8], ['prawnCocktail', .16, .8, .215, 7], ['prawnCocktail', .84, .8, .215, -7]] },
+  { name: 'Comics', group: PICTURES, ops: [['contrast', 1.15], ['saturate', 1.25]], stickers: [['comicDc', .18, .19, .29, -7], ['comicMarvel', .82, .19, .29, 6], ['comicNight', .18, .81, .29, 6], ['comicX', .82, .81, .29, -6]] },
+  { name: 'Kuroko', group: PICTURES, ops: [['contrast', 1.08], ['saturate', 1.2]], tint: ['#19b7e8', 'soft-light', .18], stickers: [['kurokoDisc', .17, .19, .27, -8], ['kurokoLogo', .79, .14, .36, 5], ['kurokoDuo', .19, .8, .31, 5], ['kurokoSeirin', .85, .77, .19, -6]] },
 ];
 const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
 const POST_CARD = '#181019';

@@ -1,7 +1,6 @@
 /* ---------- the Bank of Bones card and the Bone Boutique: bones earned in games are spent on things that show on your ghoul ---------- */
-const SHOP_TABS: Array<[string, string, string]> = [['cars', 'Cars', 'Parked right beside your ghoul. They do not drive, they just look expensive.'], ['hats', 'Hats', 'Nike, Puma and Prada.'], ['shoes', 'Shoes', 'Nike, Puma and ASICS.'], ['jewels', 'Jewellery', 'Real diamonds, Rolex, Audemars Piguet and Patek Philippe.']];
-const SHOP_PLAIN: Record<string, string> = { car: 'none', headwear: 'none', neck: 'none', wrist: 'none', shoes: 'sneaker' };
-let shopTab = 'cars', shopNote = '', shopOwnerSeen: string | null | undefined, shopPrices: Record<string, { price: number; at: string }> = {};
+const SHOP_PLAIN: Record<string, string> = { neck: 'none', wrist: 'none' };
+let shopNote = '', shopOwnerSeen: string | null | undefined, shopPrices: Record<string, { price: number; at: string }> = {};
 const boneLogKey = (): string => 'boneLog.' + (signedInId() || 'guest');
 /* The statement remembers earnings on this device, and purchases come from the account. */
 function logBones(n: number): void {
@@ -122,14 +121,12 @@ function renderShop(): void {
   const box = $('#shopBox'); box.textContent = '';
   const me = currentStudent(), fang = isAdmin();
   const purse = el('div', { cls: 'shoppurse' }, el('span', { text: 'On your card' }), boneMark(), el('strong', { 'data-bones': '', text: fang ? 'Unlimited' : me ? String(bones) : '0' }), el('button', { cls: 'linkish', type: 'button', 'data-go': 'profile' }, 'See my card'));
-  const tabs = el('div', { cls: 'chips', role: 'group', 'aria-label': 'Shop departments' }, ...SHOP_TABS.map(([id, name]) => el('button', { cls: 'chip', type: 'button', 'data-tab': id, 'aria-pressed': shopTab === id, onclick() { shopTab = id; shopNote = ''; renderShop(); } }, name)));
-  const tab = SHOP_TABS.find(t => t[0] === shopTab) as [string, string, string];
-  box.append(purse, tabs, el('p', { cls: 'shopblurb', text: tab[2] }));
+  box.append(purse);
   if (fang) box.append(el('p', { cls: 'shopnote', text: 'You run the school. Everything here is on the house.' }));
   else if (!me) box.append(el('div', { cls: 'row shopguest' }, el('span', { text: 'Window shopping is free. Log in to buy.' }), el('button', { cls: 'pill', type: 'button', 'data-go': 'registration' }, 'Register or log in')));
   if (shopNote) box.append(el('p', { cls: 'shopnote', role: 'status', text: shopNote }));
   const look = shopLook(), grid = el('div', { cls: 'shopgrid' });
-  SHOP_ITEMS.filter(i => i.cat === shopTab).forEach(item => {
+  SHOP_ITEMS.forEach(item => {
     const owned = fang || shopOwned.has(item.id), on = look[item.slot] === item.id;
     const pic = el('div', { cls: 'shoppic', 'aria-hidden': 'true' });
     pic.innerHTML = shopArt(item);

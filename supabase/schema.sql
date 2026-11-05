@@ -836,3 +836,57 @@ begin
 end $$;
 revoke all on function public.buy_shop_item(text) from public, anon;
 grant execute on function public.buy_shop_item(text) to authenticated;
+
+-- The shop: what each student owns. Only buy_shop_item can add to it, and it sets the prices itself.
+create table if not exists public.shop_owned (
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  item text not null check (char_length(item) <= 40),
+  price integer not null default 0,
+  bought_at timestamptz not null default now(),
+  primary key (user_id, item)
+);
+alter table public.shop_owned enable row level security;
+drop policy if exists "see what I own" on public.shop_owned;
+create policy "see what I own" on public.shop_owned for select to authenticated using (user_id = (select auth.uid()));
+revoke all on public.shop_owned from anon, authenticated;
+grant select on public.shop_owned to authenticated;
+
+create or replace function public.buy_shop_item(which text) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare me uuid := auth.uid(); cost integer; have integer;
+begin
+  if me is null then raise exception 'log in first'; end if;
+  if not exists (select 1 from public.profiles where id = me and verified) then raise exception 'verify your email first'; end if;
+  cost := case which
+    when 'pearlstrand' then 300
+    when 'diamondpendant' then 350
+    when 'tiffanyheart' then 380
+    when 'rubyheart' then 450
+    when 'tennisnecklace' then 480
+    when 'sapphirependant' then 550
+    when 'diamondchain' then 650
+    when 'alhambra' then 700
+    when 'tennisbracelet' then 400
+    when 'diamondring' then 500
+    when 'cartierlove' then 600
+    when 'rolexsub' then 700
+    when 'omegaseamaster' then 750
+    when 'cartiertank' then 850
+    when 'rolexdaydate' then 1000
+    when 'hublotbigbang' then 1100
+    when 'aproyaloak' then 1200
+    when 'rolexdaytona' then 1300
+    when 'pateknautilus' then 1500
+    when 'rolexiced' then 1800
+    when 'richardmille' then 2500
+    else null end;
+  if cost is null then raise exception 'unknown item'; end if;
+  if exists (select 1 from public.shop_owned o where o.user_id = me and o.item = which) then raise exception 'already owned'; end if;
+  select p.bones into have from public.player_progress p where p.user_id = me for update;
+  if have is null or have < cost then raise exception 'not enough bones'; end if;
+  update public.player_progress p set bones = p.bones - cost, updated_at = now() where p.user_id = me;
+  insert into public.shop_owned (user_id, item, price) values (me, which, cost);
+  return have - cost;
+end $$;
+revoke all on function public.buy_shop_item(text) from public, anon;
+grant execute on function public.buy_shop_item(text) to authenticated;
