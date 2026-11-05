@@ -17,8 +17,6 @@ function gameLine(c: CanvasRenderingContext2D, text: string, x: number, y: numbe
   c.strokeStyle = 'rgba(16,6,24,.85)'; c.lineWidth = 4; c.strokeText(text, x, y);
   c.fillStyle = col; c.fillText(text, x, y);
 }
-const iconOf = (art: string): string => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">' + art + '</svg>');
-GAME_ART.kick = iconOf('<path d="M12 104V30H108V104" fill="none" stroke="#14081a" stroke-width="11" stroke-linejoin="round"/><path d="M12 104V30H108V104" fill="none" stroke="#fff6fb" stroke-width="5"/><path d="M28 30V104M46 30V104M64 30V104M82 30V104M96 30V104M12 50H108M12 70H108M12 90H108" stroke="#ff1f8f" stroke-width="2"/><circle cx="62" cy="76" r="27" fill="#fff6fb" stroke="#14081a" stroke-width="4"/><path d="M62 62L75 72L70 87H54L49 72Z" fill="#14081a"/><path d="M62 49V62M88 72L75 72M78 98L70 87M46 98L54 87M36 72L49 72" stroke="#14081a" stroke-width="4"/>');
 const KICK_KITS: Array<[string, string, string]> = [['Hot pink', '#ff1f8f', '#14101a'], ['Graveyard black', '#14101a', '#ff1f8f'], ['Royal purple', '#6a1f86', '#f4d35e'], ['Electric blue', '#19b7e8', '#fff6fb'], ['Teal', '#0f766e', '#f4d35e'], ['Blood red', '#c0392b', '#fff6fb'], ['Bone white', '#fff6fb', '#6a1f86']];
 const KICK_BOOTS: Array<[string, string]> = [['Pink', '#ff1f8f'], ['Gold', '#f4d35e'], ['Black', '#14101a'], ['Slime', '#8df04a'], ['White', '#fff6fb']];
 const KICK_BALLS: Array<[string, string]> = [['classic', 'Classic'], ['skull', 'Skull ball'], ['pumpkin', 'Pumpkin'], ['moon', 'Moon ball']];

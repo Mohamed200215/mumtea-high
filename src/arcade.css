@@ -701,7 +701,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 /* the sports games and the pageant */
 .gpanel[data-game="kick"],.gpanel[data-game="hoops"],.gpanel[data-game="pageant"]{max-width:960px}
 .gpanel[data-game="kick"] canvas,.gpanel[data-game="hoops"] canvas,.gpanel[data-game="pageant"] canvas{aspect-ratio:16/9;touch-action:none}
-.gcard[data-game="kick"] .gart,.gcard[data-game="hoops"] .gart,.gcard[data-game="pageant"] .gart{background:#fff6fb}
+.gcard[data-game="kick"] .gart,.gcard[data-game="hoops"] .gart,.gcard[data-game="pageant"] .gart{background:#fff}
 .gcard[data-game="kick"] .gart img,.gcard[data-game="hoops"] .gart img,.gcard[data-game="pageant"] .gart img{width:78%;max-width:none;filter:none}
 .pgsong{margin:0 0 8px;font-size:14px;font-weight:700;min-height:22px}
 .pgsong a{color:var(--teal)}
