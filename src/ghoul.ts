@@ -12,6 +12,8 @@ interface Look {
 }
 type Layer = 'back' | 'neck' | 'mark' | 'eyewear' | 'armsFront' | 'wings' | 'hairBack' | 'legs' | 'legwear' | 'pants' | 'shoes' | 'torso' | 'bottom' | 'top' | 'arms' | 'sleeves' | 'hold' | 'head' | 'face' | 'monster' | 'hairFront' | 'headwear' | 'pet';
 const LAYER_ORDER: Layer[] = ['back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront', 'pet'];
+/* Trousers whose hem reaches the shoes: these fall over the shoes instead of being tucked under them. */
+const LONG_TROUSERS = ['palazzo', 'flares', 'wide', 'sailor', 'bootcut', 'overalls', 'tux', 'straps', 'straight', 'ripped', 'patched', 'chains', 'track', 'paperbag', 'leather', 'laceup', 'bellcuff', 'harem', 'leggings', 'cargo', 'skinny', 'joggers'];
 const HEAD_LAYERS: Layer[] = ['hairBack', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear'];
 const INK = '#1c0f22';
 
@@ -1222,7 +1224,8 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   const showing = opt.only || (opt.head ? HEAD_LAYERS : null);
   /* Everywhere else the whole body shares one shading pass, which is far lighter to paint. */
   const BODY_START = LAYER_ORDER.indexOf('legs'), BODY_END = LAYER_ORDER.indexOf('sleeves');
-  const inner = LAYER_ORDER.map((l, i) => {
+  const order = LONG_TROUSERS.includes(o.bottom) ? LAYER_ORDER.map(l => (l === 'pants' ? 'shoes' : l === 'shoes' ? 'pants' : l)) : LAYER_ORDER;
+  const inner = order.map((l, i) => {
     const drawn = !showing || showing.includes(l) ? placed(l) : '';
     if (!shading || opt.detail) return drawn;
     return (i === BODY_START ? '<g filter="url(#' + uid + 'cel)">' : '') + drawn + (i === BODY_END ? '</g>' : '');
