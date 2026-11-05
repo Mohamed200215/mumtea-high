@@ -122,7 +122,7 @@ function musicTick(): void {
 }
 /* ---------- the website's theme song: it plays wherever no game or class has its own music ---------- */
 const THEME_PEAK = 26, THEME_LEVEL = .4;
-const themeSong = new Audio('mixkit-spooky-night-1120.mp3');
+const themeSong = new Audio('sounds/mixkit-spooky-night-1120.mp3');
 themeSong.loop = true; themeSong.preload = 'auto'; themeSong.volume = THEME_LEVEL;
 let themeOpen = false, themeInIntro = false, themeFade = 0;
 function themeApply(): void {
@@ -174,7 +174,7 @@ addEventListener('pointerdown', () => { if (musicNow && musicCtx && musicCtx.sta
 document.addEventListener('visibilitychange', () => { if (document.hidden) { clearInterval(musicTimer); if (musicOut && musicCtx) musicOut.gain.setTargetAtTime(0, musicCtx.currentTime, .05); } else musicApply(); themeApply(); });
 
 /* ---------- the sting when a game ends: the song steps aside for it, then comes back ---------- */
-const gameOverSting = new Audio('spooky-game-over.mp3');
+const gameOverSting = new Audio('sounds/spooky-game-over.mp3');
 gameOverSting.preload = 'auto'; gameOverSting.volume = .8;
 let gameOverAfter: (() => void) | null = null;
 function gameOverDone(): void { const after = gameOverAfter; gameOverAfter = null; after?.(); }
