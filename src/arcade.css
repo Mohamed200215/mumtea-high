@@ -696,6 +696,40 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .plgallery .polanote:empty{display:none}
 @media (prefers-reduced-motion:reduce){.plprint{transition:none}}
 
+/* the sports games and the pageant */
+.gpanel[data-game="kick"],.gpanel[data-game="hoops"],.gpanel[data-game="pageant"]{max-width:960px}
+.gpanel[data-game="kick"] canvas,.gpanel[data-game="hoops"] canvas,.gpanel[data-game="pageant"] canvas{aspect-ratio:16/9;touch-action:none}
+.gcard[data-game="kick"] .gart,.gcard[data-game="hoops"] .gart,.gcard[data-game="pageant"] .gart{background:#fff6fb}
+.gcard[data-game="kick"] .gart img,.gcard[data-game="hoops"] .gart img,.gcard[data-game="pageant"] .gart img{width:78%;max-width:none;filter:none}
+.pgsong{margin:0 0 8px;font-size:14px;font-weight:700;min-height:22px}
+.pgsong a{color:var(--teal)}
+.pgrules{margin:0 0 12px;padding:10px 14px;background:#181019;border:2px solid var(--pink)}
+.pgrules summary{font:18px var(--label);color:var(--paper);cursor:pointer}
+.pgrules p{margin:8px 0}.pgrules ul{margin:0;padding-left:20px}.pgrules li{margin:0 0 6px}
+.pgroom{padding:14px;background:#181019;border:3px solid #000}
+.pgroom h4{margin:0;font:26px var(--label);color:var(--pink)}
+.pgroom>p{margin:2px 0 10px;font-weight:700}
+.pgdress{display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr);gap:14px;align-items:start}
+.pgdoll{position:sticky;top:8px;background:#2c1140;border:3px solid #000}
+.pgdoll svg{display:block;width:100%;height:auto}
+.pgpieces{margin:10px 0 12px;display:grid;gap:10px}
+.pgpieces .wrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pgpieces .wrow>span{flex:0 0 100%;font-weight:800;font-size:13px;color:var(--paper)}
+.pgwant{padding:8px;border:2px solid var(--pink)}
+.wchip.pgworn{border-style:dashed}
+.pgsheet{margin-top:12px;padding:14px;background:#181019;border:3px solid #000}
+.pgsheet h4{margin:0 0 8px;font:24px var(--label);color:var(--pink)}
+.pgtable{overflow-x:auto}
+.pgtable table{width:100%;border-collapse:collapse;font-size:14px}
+.pgtable th,.pgtable td{padding:5px 8px;border:1px solid #4a3a58;text-align:center;white-space:nowrap}
+.pgtable th:first-child,.pgtable td:first-child{text-align:left}
+.pgme td{background:#3a1250;font-weight:800}
+.pgwhy{margin:10px 0 4px;font-weight:800}
+.pgsheet ul{margin:0 0 12px;padding-left:20px}
+@media (max-width:640px){.pgdress{grid-template-columns:minmax(0,1fr)}.pgdoll{position:static;max-width:200px;margin:0 auto}}
+
+.gpanel[data-game="kick"] .gamepause,.gpanel[data-game="hoops"] .gamepause,.gpanel[data-game="pageant"] .gamepause{left:auto;right:8px;top:8px;margin-left:0}
+
 /* the opening */
 html.introon,html.introon body{overflow:hidden}
 .intro{position:fixed;inset:0;z-index:99999;background:#140a1c url(backgrounds/skulls.webp);transition:opacity 1.3s ease}

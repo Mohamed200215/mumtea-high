@@ -95,8 +95,6 @@
     /* the jolt when the web lands */
     const hit = calm ? 0 : Math.max(0, t - LAND), jolt = hit > 0 && hit < .5 ? Math.sin(hit * 46) * (1 - hit * 2) * unit * .012 : 0;
     const cx = W / 2 + jolt, cy = H / 2 + jolt * .6, size = Math.min(unit * .62, 500), big = size * .86;
-    c.fillStyle = '#2c1140'; c.beginPath(); c.arc(W / 2, H / 2, size * .72 * (calm ? 1 : .86 + ease(t) * .14), 0, 7); c.fill();
-    c.strokeStyle = '#6a1f86'; c.lineWidth = Math.max(2, unit * .006); c.stroke();
 
     type Sprite = () => void;
     const back: Sprite[] = [], front: Sprite[] = [];

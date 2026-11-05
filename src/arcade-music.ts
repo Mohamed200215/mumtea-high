@@ -35,6 +35,24 @@ const MUSIC_TRACKS: Record<string, MusicTrack> = {
     { wave: 'triangle', gain: .28, decay: .4, echo: true, notes: '. . C6 . A5 . . G5 . . A5 . F5 . . . . . D6 . A#5 . . F5 . . G5 . E5 . C5 .' },
     { wave: 'square', gain: .15, decay: .04, drums: true, notes: 'k . h . s . h h k . h k s . h . k . h . s . h h k . h k s . s h' },
   ] },
+  /* a stadium stomp for the football */
+  kick: { bpm: 128, steps: 2, voices: [
+    { wave: 'sawtooth', gain: .2, decay: .2, notes: 'A1 . A1 . C2 . A1 . G1 . G1 . E1 . G1 . F1 . F1 . A1 . F1 . E1 . E1 . G#1 . B1 .' },
+    { wave: 'square', gain: .12, decay: .24, notes: 'A4 . C5 E5 . C5 A4 . G4 . B4 D5 . B4 G4 . F4 . A4 C5 . A4 F4 . E4 . G#4 B4 . G#4 E4 .' },
+    { wave: 'square', gain: .3, decay: .05, drums: true, notes: 'k . . . s . k . k . . . s . h h k . . . s . k . k . k . s s s s' },
+  ] },
+  /* a heavy arena beat for the basketball */
+  hoops: { bpm: 96, steps: 2, voices: [
+    { wave: 'sawtooth', gain: .24, decay: .3, notes: 'D2 . . D2 . . F2 . D2 . . D2 . C2 . . A#1 . . A#1 . . D2 . A1 . . A1 . C2 . .' },
+    { wave: 'triangle', gain: .28, decay: .3, echo: true, notes: 'D5 . . F5 . . A5 . . . G5 . F5 . . . D5 . . F5 . . A#5 . A5 . . G5 . E5 . .' },
+    { wave: 'square', gain: .32, decay: .05, drums: true, notes: 'k . h . s . h k . k h . s . h h k . h . s . h k . k h k s h s s' },
+  ] },
+  /* a trap beat for when the song previews cannot load */
+  pageant: { bpm: 74, steps: 4, voices: [
+    { wave: 'sine', gain: .7, decay: .6, notes: 'C2 . . . . . . . . . C2 . . . . . D#2 . . . . . . . G1 . . . . . . .' },
+    { wave: 'triangle', gain: .22, decay: .25, echo: true, notes: 'G5 . D#5 . C5 . . . G5 . D#5 . C5 . D5 . D#5 . C5 . G4 . . . A#4 . C5 . D5 . . .' },
+    { wave: 'square', gain: .25, decay: .05, drums: true, notes: 'k . h h h . h h s . h h h h h k k . h h h . h h s . h h h h s s' },
+  ] },
   /* a polite, slightly spooky harpsichord for lessons */
   class: { bpm: 84, steps: 2, voices: [
     { wave: 'sawtooth', gain: .1, decay: .34, notes: 'A3 C4 E4 A4 E4 C4 A3 C4 F3 A3 C4 F4 C4 A3 F3 A3 C3 E3 G3 C4 G3 E3 C3 E3 E3 G#3 B3 E4 B3 G#3 E3 G#3' },
@@ -142,8 +160,11 @@ const PAUSE_ART: Record<string, string> = {
   riptide: '<path d="M32 58C20 58 10 50 6 38C3 28 6 18 13 13C17 7 25 4 32 8C39 4 47 7 51 13C58 18 61 28 58 38C54 50 44 58 32 58Z" fill="#35dcc8" stroke="#0a3f4a" stroke-width="3" stroke-linejoin="round"/><path d="M32 56V10M32 56L18 13M32 56L46 13M32 56L8 28M32 56L56 28" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2"/><ellipse cx="22" cy="17" rx="7" ry="3" fill="#fff" fill-opacity=".7" transform="rotate(-25 22 17)"/>',
   spill: '<path d="M47 26C60 22 62 42 44 43" fill="none" stroke="#1c0a1c" stroke-width="8" stroke-linecap="round"/><path d="M47 26C60 22 62 42 44 43" fill="none" stroke="#ff9ccb" stroke-width="4" stroke-linecap="round"/><ellipse cx="29" cy="55" rx="24" ry="5" fill="#ff9ccb" stroke="#1c0a1c" stroke-width="2.500"/><path d="M6 15H52C52 38 44 54 29 54C14 54 6 38 6 15Z" fill="#ff7ab8" stroke="#1c0a1c" stroke-width="3" stroke-linejoin="round"/><ellipse cx="29" cy="15" rx="23" ry="6" fill="#b5651d" stroke="#1c0a1c" stroke-width="2.500"/><path d="M12 28C14 38 18 44 24 47" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>',
   casket: '<path d="M32 3L40 21L60 20L47 35L55 54L34 49L17 60L18 39L4 25L24 21Z" fill="#f7dc6f" stroke="#14081a" stroke-width="3" stroke-linejoin="round"/><circle cx="31" cy="32" r="15" fill="#ff1f8f" stroke="#14081a" stroke-width="2.500"/>',
+  kick: '<circle cx="32" cy="32" r="28" fill="#fff6fb" stroke="#14081a" stroke-width="3"/><path d="M32 4L24 12L32 18L40 12ZM4 28L12 22L16 32L8 38ZM60 28L52 22L48 32L56 38ZM18 56L22 46L32 50L28 60ZM46 56L42 46L32 50L36 60Z" fill="#14081a"/>',
+  hoops: '<circle cx="32" cy="32" r="28" fill="#f2761b" stroke="#14081a" stroke-width="3"/><path d="M4 32H60M32 4V60M12 12C22 22 22 42 12 52M52 12C42 22 42 42 52 52" fill="none" stroke="#14081a" stroke-width="2"/>',
+  pageant: '<path d="M8 52L4 16L20 30L32 6L44 30L60 16L56 52Z" fill="#f4d35e" stroke="#14081a" stroke-width="3" stroke-linejoin="round"/>',
 };
-const PAUSE_MARK: Record<string, [number, number, string]> = { riptide: [32, 34, '#0a3f4a'], spill: [29, 36, '#fff6fb'], casket: [31, 32, '#fff6fb'] };
+const PAUSE_MARK: Record<string, [number, number, string]> = { riptide: [32, 34, '#0a3f4a'], spill: [29, 36, '#fff6fb'], casket: [31, 32, '#fff6fb'], kick: [32, 33, '#ff1f8f'], hoops: [32, 32, '#fff6fb'], pageant: [32, 36, '#ff1f8f'] };
 function pauseIcon(game: string, paused: boolean): string {
   const [x, y, col] = PAUSE_MARK[game];
   const mark = paused ? '<path d="M' + (x - 6) + ' ' + (y - 9) + 'L' + (x + 9) + ' ' + y + 'L' + (x - 6) + ' ' + (y + 9) + 'Z" fill="' + col + '"/>'
