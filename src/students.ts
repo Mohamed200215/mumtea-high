@@ -268,7 +268,7 @@ function renderAccount(): void {
     else if (signedInId()) { await signOut(); refreshAll('Logged out. See you in the hallway.'); }
     else { accountMode = 'login'; accountNote.textContent = ''; renderAccount(); go('registration'); }
   } }, 'Log in'));
-  $('#idcard').before(accountBox);
+  $('#regSide').append(accountBox);
 })();
 
 /* ---------- choosing a new password after following the emailed link ---------- */

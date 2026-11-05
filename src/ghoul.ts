@@ -7,11 +7,11 @@ interface Look {
   bottom: string; bottomC: string; bottomP: string;
   legs: string; legsC: string;
   shoes: string; shoesC: string;
-  pet: string; petC: string;
+  pet: string; petC: string; car: string;
   pose: string; nose: string; lipSize: string; eyeStyle: string; brow: string; browC: string; eyewear: string; neck: string; gloves: string; gloveC: string; wrist: string; mark: string; back: string;
 }
-type Layer = 'back' | 'neck' | 'mark' | 'eyewear' | 'armsFront' | 'wings' | 'hairBack' | 'legs' | 'legwear' | 'pants' | 'shoes' | 'torso' | 'bottom' | 'top' | 'arms' | 'sleeves' | 'hold' | 'head' | 'face' | 'monster' | 'hairFront' | 'headwear' | 'pet';
-const LAYER_ORDER: Layer[] = ['back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront', 'pet'];
+type Layer = 'car' | 'back' | 'neck' | 'mark' | 'eyewear' | 'armsFront' | 'wings' | 'hairBack' | 'legs' | 'legwear' | 'pants' | 'shoes' | 'torso' | 'bottom' | 'top' | 'arms' | 'sleeves' | 'hold' | 'head' | 'face' | 'monster' | 'hairFront' | 'headwear' | 'pet';
+const LAYER_ORDER: Layer[] = ['car', 'back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront', 'pet'];
 /* Trousers whose hem reaches the shoes: these fall over the shoes instead of being tucked under them. */
 const LONG_TROUSERS = ['palazzo', 'flares', 'wide', 'sailor', 'bootcut', 'overalls', 'tux', 'straps', 'straight', 'ripped', 'patched', 'chains', 'track', 'paperbag', 'leather', 'laceup', 'bellcuff', 'harem', 'leggings', 'cargo', 'skinny', 'joggers'];
 const HEAD_LAYERS: Layer[] = ['hairBack', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear'];
@@ -127,6 +127,50 @@ const LIP_SIZES: Record<string, number> = { tiny: .5, small: .65, medium: .82, f
 const HEAD_ONLY_BOX = '46 -14 228 232';
 const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
+/* Everything the Bone Boutique sells. The names and prices also live in the database's buy_shop_item. */
+interface ShopItem { id: string; slot: 'car' | 'headwear' | 'shoes' | 'top' | 'bottom' | 'neck' | 'wrist'; cat: string; name: string; brand: string; price: number; base: string; mark: string }
+const SHOP_ITEMS: ShopItem[] = [
+  { id: 'rangerover', slot: 'car', cat: 'cars', name: 'Range Rover Sport', brand: 'Range Rover', price: 1200, base: 'suv:#1c2430', mark: 'RANGE ROVER' },
+  { id: 'gwagon', slot: 'car', cat: 'cars', name: 'G-Wagon', brand: 'Mercedes-Benz', price: 1500, base: 'suv:#14101a', mark: 'MERCEDES' },
+  { id: 'audir8', slot: 'car', cat: 'cars', name: 'R8', brand: 'Audi', price: 1400, base: 'sport:#c0392b', mark: 'AUDI' },
+  { id: 'bmwm4', slot: 'car', cat: 'cars', name: 'M4', brand: 'BMW', price: 900, base: 'sedan:#1f6fb2', mark: 'BMW' },
+  { id: 'porsche911', slot: 'car', cat: 'cars', name: '911', brand: 'Porsche', price: 1300, base: 'sport:#f4d35e', mark: 'PORSCHE' },
+  { id: 'bentley', slot: 'car', cat: 'cars', name: 'Continental GT', brand: 'Bentley', price: 1800, base: 'sedan:#0f4f3a', mark: 'BENTLEY' },
+  { id: 'ferrari', slot: 'car', cat: 'cars', name: '488', brand: 'Ferrari', price: 2200, base: 'sport:#d3122a', mark: 'FERRARI' },
+  { id: 'lamborghini', slot: 'car', cat: 'cars', name: 'Huracan', brand: 'Lamborghini', price: 2500, base: 'sport:#ff1f8f', mark: 'LAMBORGHINI' },
+  { id: 'rollsroyce', slot: 'car', cat: 'cars', name: 'Phantom', brand: 'Rolls-Royce', price: 3000, base: 'limo:#2c2436', mark: 'ROLLS-ROYCE' },
+  { id: 'nikecap', slot: 'headwear', cat: 'hats', name: 'Cap', brand: 'Nike', price: 40, base: 'cap', mark: 'NIKE' },
+  { id: 'nikebeanie', slot: 'headwear', cat: 'hats', name: 'Beanie', brand: 'Nike', price: 35, base: 'beanie', mark: 'NIKE' },
+  { id: 'pumacap', slot: 'headwear', cat: 'hats', name: 'Cap', brand: 'Puma', price: 35, base: 'cap', mark: 'PUMA' },
+  { id: 'pumabucket', slot: 'headwear', cat: 'hats', name: 'Bucket hat', brand: 'Puma', price: 40, base: 'bucket', mark: 'PUMA' },
+  { id: 'pradabucket', slot: 'headwear', cat: 'hats', name: 'Bucket hat', brand: 'Prada', price: 90, base: 'bucket', mark: 'PRADA' },
+  { id: 'pradaberet', slot: 'headwear', cat: 'hats', name: 'Beret', brand: 'Prada', price: 80, base: 'beret', mark: 'PRADA' },
+  { id: 'nikeaf1', slot: 'shoes', cat: 'shoes', name: 'Air Force 1', brand: 'Nike', price: 90, base: 'sneaker', mark: 'NIKE' },
+  { id: 'nikedunk', slot: 'shoes', cat: 'shoes', name: 'Dunk', brand: 'Nike', price: 110, base: 'sneaker', mark: 'NIKE' },
+  { id: 'pumasuede', slot: 'shoes', cat: 'shoes', name: 'Suede', brand: 'Puma', price: 70, base: 'chunky', mark: 'PUMA' },
+  { id: 'pumaspeedcat', slot: 'shoes', cat: 'shoes', name: 'Speedcat', brand: 'Puma', price: 85, base: 'flats', mark: 'PUMA' },
+  { id: 'asicskayano', slot: 'shoes', cat: 'shoes', name: 'Gel-Kayano', brand: 'ASICS', price: 95, base: 'chunky', mark: 'ASICS' },
+  { id: 'asicsnyc', slot: 'shoes', cat: 'shoes', name: 'Gel-NYC', brand: 'ASICS', price: 105, base: 'chunky', mark: 'ASICS' },
+  { id: 'diorbar', slot: 'top', cat: 'dior', name: 'Bar jacket', brand: 'Dior', price: 320, base: 'blazer', mark: 'Dior' },
+  { id: 'diorcorset', slot: 'top', cat: 'dior', name: 'Corset', brand: 'Dior', price: 260, base: 'corset', mark: 'Dior' },
+  { id: 'diorhoodie', slot: 'top', cat: 'dior', name: 'Hoodie', brand: 'Dior', price: 180, base: 'hoodie', mark: 'Dior' },
+  { id: 'diorblouse', slot: 'top', cat: 'dior', name: 'Ruffle blouse', brand: 'Dior', price: 210, base: 'ruffle', mark: 'Dior' },
+  { id: 'diortulle', slot: 'bottom', cat: 'dior', name: 'Tulle skirt', brand: 'Dior', price: 300, base: 'tulle', mark: 'Dior' },
+  { id: 'diorpleats', slot: 'bottom', cat: 'dior', name: 'Pleated maxi', brand: 'Dior', price: 270, base: 'pleatmaxi', mark: 'Dior' },
+  { id: 'diorjeans', slot: 'bottom', cat: 'dior', name: 'Jeans', brand: 'Dior', price: 170, base: 'straight', mark: 'Dior' },
+  { id: 'diamondpendant', slot: 'neck', cat: 'jewels', name: 'Diamond pendant', brand: 'Fine jewellery', price: 350, base: '', mark: '' },
+  { id: 'tennisnecklace', slot: 'neck', cat: 'jewels', name: 'Diamond tennis necklace', brand: 'Fine jewellery', price: 480, base: '', mark: '' },
+  { id: 'diamondchain', slot: 'neck', cat: 'jewels', name: 'Iced-out diamond chain', brand: 'Fine jewellery', price: 650, base: '', mark: '' },
+  { id: 'tennisbracelet', slot: 'wrist', cat: 'jewels', name: 'Diamond tennis bracelet', brand: 'Fine jewellery', price: 400, base: '', mark: '' },
+  { id: 'rolexsub', slot: 'wrist', cat: 'jewels', name: 'Submariner', brand: 'Rolex', price: 700, base: '', mark: '' },
+  { id: 'rolexdaydate', slot: 'wrist', cat: 'jewels', name: 'Day-Date', brand: 'Rolex', price: 1000, base: '', mark: '' },
+  { id: 'aproyaloak', slot: 'wrist', cat: 'jewels', name: 'Royal Oak', brand: 'Audemars Piguet', price: 1200, base: '', mark: '' },
+  { id: 'pateknautilus', slot: 'wrist', cat: 'jewels', name: 'Nautilus', brand: 'Patek Philippe', price: 1500, base: '', mark: '' },
+];
+const SHOP_BY_ID: Record<string, ShopItem> = Object.fromEntries(SHOP_ITEMS.map(i => [i.id, i]));
+let shopOwned = new Set<string>();
+/* The wardrobe only offers shop pieces you own. */
+const visibleItems = (page: WardrobePage): Array<[string, string]> => (page.items || []).filter(([id]) => !SHOP_BY_ID[id] || isAdmin() || shopOwned.has(id));
 const WARDROBE: WardrobePage[] = [
   { title: 'Poses', key: 'pose', items: POSES.map(p => [p.id, p.name] as [string, string]), colours: [], box: WIDE_BOX, layers: [] },
   { title: 'Pets', key: 'pet', items: [['none', 'No pet'], ['bat', 'Bat'], ['cat', 'Black cat'], ['ghost', 'Ghost'], ['spider', 'Spider'], ['piranha', 'Piranha'], ['snake', 'Snake'], ['dragon', 'Baby dragon'], ['owl', 'Owl'], ['pup', 'Wolf pup'], ['bunny', 'Were-bunny'], ['jelly', 'Jellyfish'], ['frog', 'Frog prince']], colours: [['petC', 'Pet colour', ['#14101a', '#6a1f86', '#ff1f8f', '#f08fb4', '#19b7e8', '#35dcc8', '#8df04a', '#f4d35e', '#ff8c1a', '#c0392b', '#7d5136', '#9aa0ac', '#f6f0ff']]], box: '245 590 120 120', layers: ['pet'], crop: true },
@@ -152,7 +196,13 @@ const WARDROBE: WardrobePage[] = [
   { title: 'In hand', key: 'hold', items: [['none', 'Nothing'], ['cup', 'Teacup'], ['purse', 'Purse'], ['skull', 'Skull bag'], ['wand', 'Wand'], ['phone', 'iCoffin'], ['mic', 'Microphone'], ['rose', 'Black rose'], ['book', 'Spell book'], ['brolly', 'Bat umbrella'], ['boba', 'Bubble tea'], ['lipstick', 'Lipstick'], ['icecream', 'Ice cream'], ['lollipop', 'Lollipop'], ['mirror', 'Mirror'], ['fan', 'Fan'], ['candle', 'Candle'], ['potion', 'Potion'], ['orb', 'Crystal ball'], ['teddy', 'Teddy'], ['pumpkin', 'Pumpkin'], ['balloon', 'Balloon'], ['bouquet', 'Bouquet'], ['camera', 'Camera'], ['lantern', 'Lantern'], ['donut', 'Donut'], ['cupcake', 'Cupcake'], ['cat', 'Kitten'], ['brush', 'Paintbrush'], ['scroll', 'Scroll']], colours: [], box: '-40 240 230 260', layers: ['hold'] },
 ];
 
-const FANG_LOOK: Look = { pet: 'none', petC: '#6a1f86', skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
+/* Shop pieces join the wardrobe, and cars get a page of their own. */
+WARDROBE.splice(2, 0, { title: 'Cars', key: 'car', items: [['none', 'No car']], colours: [], box: '40 520 400 215', layers: ['car'], crop: true });
+SHOP_ITEMS.forEach(item => {
+  const title = item.slot === 'car' ? 'Cars' : item.slot === 'headwear' ? 'Headwear' : item.slot === 'shoes' ? 'Shoes' : item.slot === 'top' ? 'Tops' : item.slot === 'bottom' ? (item.base === 'straight' ? 'Trousers and shorts' : 'Skirts') : item.slot === 'neck' ? 'Necklaces' : 'Hand accessories';
+  WARDROBE.find(p => p.title === title)?.items?.push([item.id, item.brand + ' ' + item.name]);
+});
+const FANG_LOOK: Look = { pet: 'none', car: 'none', petC: '#6a1f86', skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
 
 /* ---------- pets: each is drawn around 0,0 and stands at the ghoul's feet ---------- */
 function drawPet(id: string, c: string): string {
@@ -183,7 +233,7 @@ function drawPet(id: string, c: string): string {
 function randomLook(): Look {
   const look = { ...FANG_LOOK, hairStyle: 'long' };
   for (const page of WARDROBE) {
-    if (page.key && page.items) { const all = WARDROBE.filter(p => p.key === page.key).flatMap(p => p.items || []); look[page.key] = all[Math.floor(Math.random() * all.length)][0]; }
+    if (page.key && page.items) { const all = WARDROBE.filter(p => p.key === page.key).flatMap(p => p.items || []).filter(i => !SHOP_BY_ID[i[0]]); look[page.key] = all[Math.floor(Math.random() * all.length)][0]; }
     for (const [key, , values] of page.colours) look[key] = values[Math.floor(Math.random() * values.length)];
     if (page.pattern) look[page.pattern] = Math.random() < .6 ? 'solid' : PATTERNS[1 + Math.floor(Math.random() * (PATTERNS.length - 1))][0];
   }
@@ -196,7 +246,7 @@ function randomLook(): Look {
 /* Checks everything saved against the wardrobe, because other people's looks are drawn into this page. */
 function normalizeLook(raw: Partial<Look> | undefined): Look {
   /* Anything missing gets a plain default, never a random one, or a saved character would change on every visit. */
-  const out: Look = { ...FANG_LOOK, hairStyle: 'long', monster: 'none', hold: 'none', neck: 'none', gloves: 'none', wrist: 'none' };
+  const out: Look = { ...FANG_LOOK, hairStyle: 'long', monster: 'none', hold: 'none', neck: 'none', gloves: 'none', wrist: 'none', car: 'none' };
   if (!raw) return randomLook();
   for (const page of WARDROBE) {
     const keep = (key: keyof Look, ok: (v: string) => boolean) => { const v = raw[key]; if (typeof v === 'string' && ok(v)) out[key] = v; };
@@ -241,6 +291,10 @@ function drawHand(shape: string, skin: string, fill: string, tips: string, tipSt
 
 /* plain: small previews skip the costly shading and hair streaks. detail: the big wardrobe figure shades each layer on its own. */
 function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[]; box?: string; plain?: boolean; detail?: boolean; pose?: Pose; shaded?: boolean; stream?: boolean; merBelt?: string } = {}): string {
+  /* A shop piece is drawn on the matching wardrobe shape, then gets its name on top. */
+  const brand = { top: o.top, bottom: o.bottom, shoes: o.shoes, headwear: o.headwear };
+  const baseOf = (id: string): string => (SHOP_BY_ID[id] && SHOP_BY_ID[id].base) || id;
+  o = { ...o, top: baseOf(o.top), bottom: baseOf(o.bottom), shoes: baseOf(o.shoes), headwear: baseOf(o.headwear) };
   const uid = 'g' + (++ghoulCounter);
   const pose = opt.pose || (opt.head ? POSES[0] : poseOf(o.pose));
   let defs = '';
@@ -470,6 +524,11 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
       stack: () => [wband(.72, 11, o.trim, 3.5) + wband(.8, 11, '#f4d35e', 3.5) + wband(.88, 11, '#fff6fb', 3.5), ''],
       charm: () => [wband(.84, 11, '#c0c0d8', 3) + blob(.92, -6, 3, o.trim) + blob(.94, 1, 3, '#f4d35e') + blob(.92, 7, 3, '#ff1f8f'), ''],
       pearls: () => [beadband(.84, 11, '#fff6fb', 6.5), ''],
+      rolexsub: () => [wband(.84, 11, '#d7dbe4', 7) + blob(.84, 0, 9, '#0f7a4f') + blob(.84, 0, 3, '#f6f7fb'), ''],
+      rolexdaydate: () => [wband(.84, 11, '#e0b83c', 7) + blob(.84, 0, 9, '#f6e7a8') + blob(.84, 0, 3, '#a8770c'), ''],
+      aproyaloak: () => [wband(.84, 11, '#c7ccd8', 8) + blob(.84, 0, 9.500, '#1f3a8a') + blob(.84, 0, 3, '#dfe6ff'), ''],
+      pateknautilus: () => [wband(.84, 11, '#e8a98a', 7) + blob(.84, 0, 9, '#23405e') + blob(.84, 0, 3, '#ffe9de'), ''],
+      tennisbracelet: () => [beadband(.84, 11, '#e9f7ff', 5, 6), ''],
       watch: () => [wband(.84, 11, '#14101a', 6) + blob(.84, 0, 8, '#fff6fb') + strokeLine('M' + f(along(.84)[0]) + ' ' + f(along(.84)[1]) + 'l3 -3', 1.5, INK), ''],
       smart: () => { const [x, y] = along(.84); return [wband(.84, 11, o.trim, 6) + '<rect x="' + f(x - 7) + '" y="' + f(y - 7) + '" width="14" height="14" rx="3" fill="#14101a" stroke="' + INK + '" stroke-width="1.500"/><circle cx="' + f(x) + '" cy="' + f(y) + '" r="3" fill="#35dcc8"/>', '']; },
       spikes: () => [wband(.82, 12, '#14101a', 10) + [-8, 0, 8].map(o2 => blob(.82, o2, 2.6, '#c0c0d8')).join(''), ''],
@@ -666,6 +725,9 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   /* ---------- necklaces, on-your-back things and face details ---------- */
   parts.neck = ({
     mercoral: [[146, 226], [149, 234], [153, 241], [157, 246], [163, 246], [167, 241], [171, 234], [174, 226]].map(([x, y], i) => '<ellipse cx="' + x + '" cy="' + y + '" rx="4.200" ry="3.400" fill="' + (i % 3 === 1 ? '#7fe8ff' : '#ff7a66') + '" stroke="' + INK + '" stroke-width="1"/>').join('') + '<path d="M153 250h14l-3 10h-8z" fill="#7fe8ff" stroke="' + INK + '" stroke-width="1.200"/>',
+    diamondchain: strokeLine('M144 226Q160 264 176 226', 9, INK) + strokeLine('M144 226Q160 264 176 226', 6, '#eaf7ff') + strokeLine('M144 226Q160 264 176 226', 2, '#9fd8ff', 'stroke-dasharray="1 4"') + '<path d="M160 244l8 9-8 12-8-12Z" fill="#eaf7ff" stroke="' + INK + '" stroke-width="1.8"/><path d="M152 253H168M160 244V265" stroke="#9fd8ff" stroke-width="1"/>',
+    diamondpendant: strokeLine('M146 226Q160 258 174 226', 2.2, '#e0e6f0') + '<path d="M160 244l9 10-9 13-9-13Z" fill="#dff4ff" stroke="' + INK + '" stroke-width="1.8"/><path d="M151 254H169M155 254L160 244L165 254L160 267Z" fill="none" stroke="#7fcfff" stroke-width="1"/>',
+    tennisnecklace: [[146, 226], [148.500, 233], [152, 239], [156, 243.500], [160, 245], [164, 243.500], [168, 239], [171.500, 233], [174, 226]].map(([x, y]) => '<path d="M' + x + ' ' + (y - 4) + 'l4 4-4 4-4-4Z" fill="#eaf7ff" stroke="' + INK + '" stroke-width="1.100"/>').join(''),
     choker: strokeLine('M147 222Q160 230 173 222', 6, o.trim),
     skull: strokeLine('M146 226Q160 262 174 226', 2.4, INK) + '<circle cx="160" cy="254" r="8" fill="#fff6fb" stroke="' + INK + '" stroke-width="1.8"/><circle cx="157" cy="253" r="1.8" fill="' + INK + '"/><circle cx="163" cy="253" r="1.8" fill="' + INK + '"/>',
     pearls: [[146, 228], [150, 238], [155, 245], [160, 248], [165, 245], [170, 238], [174, 228]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="3.6" fill="#fff6fb" stroke="' + INK + '" stroke-width="1"/>').join(''),
@@ -1190,6 +1252,14 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     spider: strokeLine('M186 54l-14-10M186 60h-18M186 66l-14 8M206 54l14-10M206 60h18M206 66l14 8', 2.400, '#14101a') + `<ellipse cx="196" cy="62" rx="14" ry="11" fill="#14101a" stroke="${INK}" stroke-width="1.400"/><circle cx="196" cy="50" r="6" fill="#14101a"/><circle cx="193" cy="49" r="1.200" fill="#c0392b"/><circle cx="199" cy="49" r="1.200" fill="#c0392b"/>`,
 } as Record<string, string>)[o.headwear] || '';
 
+  /* Cars park beside the character on its own pages. In the games the character poses alone. */
+  if (!opt.pose && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) { parts.car = drawCar(SHOP_BY_ID[o.car]); needsRoom = true; }
+  const nameOn = (id: string, x: number, y: number, size: number, fill: string, serif = false): string => (SHOP_BY_ID[id] ? '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="' + size + '" fill="' + fill + '" font-family="' + (serif ? "Georgia,'Times New Roman',serif" : 'Arial,Helvetica,sans-serif') + '" font-weight="700"' + (serif ? ' font-style="italic"' : '') + '>' + SHOP_BY_ID[id].mark + '</text>' : '');
+  if (parts.top) parts.top += nameOn(brand.top, 160, 318, 24, contrast(o.topC), true);
+  if (parts.bottom) parts.bottom += nameOn(brand.bottom, 160, 470, 24, contrast(o.bottomC), true);
+  if (parts.pants) parts.pants += nameOn(brand.bottom, 160, 420, 20, contrast(o.bottomC), true);
+  if (parts.shoes) parts.shoes += nameOn(brand.shoes, 141, 696, 7, contrast(o.shoesC)) + nameOn(brand.shoes, 179, 696, 7, contrast(o.shoesC));
+  if (parts.headwear) parts.headwear += nameOn(brand.headwear, 160, o.headwear === 'cap' ? 70 : o.headwear === 'beret' ? 38 : o.headwear === 'beanie' ? 62 : 52, 15, contrast(o.trim));
   parts.pet = drawPet(o.pet, o.petC);
   if (parts.pet) needsRoom = true;
   /* A mermaid has no hips or legs here: the game draws her tail, and this band hides where it joins. */
@@ -1206,7 +1276,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
   const placed = (l: Layer): string => {
     let out = parts[l] || '';
     if (!out) return '';
-    if (l === 'pet') return out;
+    if (l === 'pet' || l === 'car') return out;
     if (THIN.includes(l)) out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
     if (shading && opt.detail && SHADED.includes(l)) out = '<g filter="url(#' + uid + 'cel)">' + out + '</g>';
     if (l === 'hairBack' && !scarfOn) out = '<g transform="translate(160 110) scale(1.16 1.04) translate(-160 -110)">' + out + '</g>';
@@ -1230,7 +1300,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
     if (!shading || opt.detail) return drawn;
     return (i === BODY_START ? '<g filter="url(#' + uid + 'cel)">' : '') + drawn + (i === BODY_END ? '</g>' : '');
   }).join('');
-  const box = opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
+  const box = parts.car && (!opt.box || opt.box === WIDE_BOX) && !opt.only ? '-45 -10 500 735' : opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
   const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
   return `<svg viewBox="${box}" style="overflow:${opt.head ? 'hidden' : 'visible'}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
 }
@@ -1253,4 +1323,18 @@ function schoolCrowd(count: number): Look[] {
   const out = [...real];
   while (out.length < count) out.push(randomLook());
   return out.sort(() => Math.random() - .5);
+}
+
+/* ---------- the garage: drawn here, with the maker's name on the door ---------- */
+function drawCar(item: ShopItem): string {
+  const [kind, colour] = item.base.split(':'), dark = shade(colour, -.35), light = shade(colour, .3);
+  const BODIES: Record<string, [string, string]> = {
+    suv: ['M6 84L8 52Q10 44 24 42L46 14Q50 8 60 8H150Q162 8 168 18L182 42Q208 44 214 56L216 84Z', 'M52 40L66 18H106V40ZM114 18H152Q158 18 162 26L170 40H114Z'],
+    sedan: ['M4 84Q4 62 24 56L62 30Q70 24 84 24H132Q146 24 156 32L180 54Q212 58 216 72V84Z', 'M46 54L72 34Q76 30 86 30H104V54ZM112 30H130Q140 30 148 36L164 54H112Z'],
+    sport: ['M2 88Q0 72 22 68L72 50Q92 40 112 40H128Q148 42 172 58L210 70Q222 76 218 88Z', 'M66 66L94 47Q98 45 108 45H116V66ZM122 45H128Q144 47 160 66H122Z'],
+    limo: ['M6 84V58Q8 52 22 50L52 22Q56 18 66 18H150Q160 18 166 26L184 50Q210 50 214 58V84Z', 'M40 50L62 26H104V50ZM112 26H150Q156 26 160 32L172 50H112Z'],
+  };
+  const [body, glass] = BODIES[kind] || BODIES.sedan;
+  const wheel = (x: number): string => '<circle cx="' + x + '" cy="84" r="18" fill="#0c0a10" stroke="' + INK + '" stroke-width="3"/><circle cx="' + x + '" cy="84" r="10" fill="#c9ccd6"/><circle cx="' + x + '" cy="84" r="3.500" fill="#2c2436"/><path d="M' + x + ' 74V94M' + (x - 10) + ' 84H' + (x + 10) + 'M' + (x - 7) + ' 77L' + (x + 7) + ' 91M' + (x + 7) + ' 77L' + (x - 7) + ' 91" stroke="#2c2436" stroke-width="1.500"/>';
+  return '<g transform="translate(50 540) scale(1.7)"><ellipse cx="110" cy="102" rx="108" ry="6" fill="#000" opacity=".35"/><path d="' + body + '" fill="' + colour + '" stroke="' + INK + '" stroke-width="3.200" stroke-linejoin="round"/><path d="' + glass + '" fill="#bfe6f5" stroke="' + INK + '" stroke-width="2.400" stroke-linejoin="round"/><path d="M12 64H208" stroke="' + light + '" stroke-width="3" opacity=".7"/><path d="M6 80H216" stroke="' + dark + '" stroke-width="5"/><rect x="200" y="62" width="14" height="8" rx="3" fill="#fff6c2" stroke="' + INK + '" stroke-width="1.500"/><rect x="6" y="62" width="10" height="8" rx="3" fill="#ff3b4e" stroke="' + INK + '" stroke-width="1.500"/>' + (kind === 'sport' ? '<path d="M4 58H28L24 68" fill="none" stroke="' + INK + '" stroke-width="5" stroke-linejoin="round"/>' : '') + (kind === 'suv' ? '<path d="M52 6H160" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>' : '') + (kind === 'limo' ? '<rect x="206" y="46" width="8" height="12" rx="2" fill="#e8e8ee" stroke="' + INK + '" stroke-width="1.500"/>' : '') + wheel(46) + wheel(174) + '<text x="110" y="78" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="10" fill="' + contrast(colour) + '">' + item.mark + '</text></g>';
 }

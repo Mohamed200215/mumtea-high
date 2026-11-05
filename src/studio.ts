@@ -110,7 +110,7 @@ function bakeInBackground(): void {
     for (const index of order) {
       const page = WARDROBE[index];
       if (!page.items) continue;
-      const store = storeFor(page), todo = page.items.find(([id]) => !store.fresh[id]);
+      const store = storeFor(page), todo = visibleItems(page).find(([id]) => !store.fresh[id]);
       if (!todo) continue;
       /* One at a time, staying out of the way of whatever the visitor is doing. */
       keepTile(page, store, todo[0], () => { bakingNow = window.setTimeout(step, index === studioPage ? 0 : 6); });
@@ -130,7 +130,7 @@ function drawStudio(redress = true): void {
   studioTitle.textContent = page.title;
   studioCount.textContent = (studioPage + 1) + ' of ' + WARDROBE.length;
   studioTiles.textContent = ''; studioSwatches.textContent = '';
-  (page.items || []).forEach(([id, label]) => {
+  visibleItems(page).forEach(([id, label]) => {
     const pic = el('span', { cls: 'wpic' });
     /* Finished already if the background got here first, otherwise it is made now, so a tile is never empty. */
     const art = tiles?.art[id];
@@ -195,18 +195,21 @@ function mountStudio(parent: Element): void {
 function viewOpened(v: string): void {
   if (v === 'student') renderStudentPage();
   if (v === 'academics') renderClasses();
+  if (v === 'shop') { refreshBones().then(() => { renderShop(); }, () => {}); renderShop(); }
   if (v === 'games') musicPlay(currentGame); else if (v !== 'academics') musicStop();
   queueFit();
   if (v === 'admin') {
     renderAdmin();
     if (isAdmin()) { mountStudio($('#adminStudio')); refreshAdminStudents().then(renderAdmin, () => {}); }
   }
-  if (v === 'profile') { renderProfile(); if (signedInId() || isAdmin()) mountStudio($('#profileStudio')); }
+  if (v === 'profile') { refreshBones().then(drawBank, () => {}); renderProfile(); if (signedInId() || isAdmin()) mountStudio($('#profileStudio')); }
   if (v === 'games' && currentGame === 'closet') mountStudio($('#closetHome'));
 }
 function renderProfile(): void {
   const box = $('#profileBox'); box.textContent = '';
   const me = currentStudent();
+  $('#profileCards').hidden = false;
+  drawBank();
   $('#profileStudio').hidden = !me && !isAdmin();
   if (isAdmin()) {
     $('#profileLede').textContent = 'You are Ms. Fangtastic. Change her look here and everyone sees it. Press Save to keep it.';

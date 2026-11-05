@@ -244,9 +244,25 @@ const blogCount = el('p', { cls: 'teacountline', role: 'status' });
 })();
 
 /* ---------- bones follow the account ---------- */
+let bonesDirty = false;
 function saveBonesSoon(): void {
   clearTimeout(bonesTimer);
-  bonesTimer = window.setTimeout(() => { if (signedInId() && signedInId() === bonesOwner) sb.rpc('save_bones', { total: bones }).then(() => {}, () => {}); }, 800);
+  bonesDirty = true;
+  bonesTimer = window.setTimeout(() => { flushBones().catch(() => {}); }, 800);
+}
+async function flushBones(): Promise<void> {
+  clearTimeout(bonesTimer);
+  if (!bonesDirty || !signedInId() || signedInId() !== bonesOwner) return;
+  const { error } = await sb.rpc('save_bones', { total: bones });
+  if (!error) bonesDirty = false;
+}
+/* The account is the bank: a purchase on another device must show here too. */
+async function refreshBones(): Promise<void> {
+  const me = signedInId();
+  if (!backendReady || !me || bonesDirty || me !== bonesOwner) return;
+  const { data, error } = await sb.from('player_progress').select('bones').eq('user_id', me).maybeSingle();
+  if (error || !data) return;
+  bones = data.bones; store.set('bones', bones); drawBones();
 }
 async function syncProgress(): Promise<void> {
   const me = signedInId();

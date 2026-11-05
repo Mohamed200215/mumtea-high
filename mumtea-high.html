@@ -993,6 +993,51 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .belltext time{display:block;font-size:12px;color:var(--muted)}
 .bellrow img{flex:none;padding:2px;background:#fff6fb;border-radius:6px}
 
+/* the Bank of Bones card */
+.profilecards{margin:0 0 20px}
+#bankCol{display:grid;gap:12px;justify-items:start;min-width:0}
+.bonecard{position:relative;display:grid;gap:12px;width:100%;max-width:460px;aspect-ratio:1.586;padding:clamp(12px,3.4vw,20px);box-sizing:border-box;border:3px solid #000;border-radius:18px;background:#0c0710 url(backgrounds/skulls.webp) center/320px;color:#fff6fb;box-shadow:6px 7px 0 var(--pink);overflow:hidden;font-family:var(--body)}
+.bonecard::before{content:'';position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,31,143,.42),rgba(12,7,16,.2) 42%,rgba(255,255,255,.14) 50%,rgba(12,7,16,.22) 58%,rgba(53,220,200,.26));pointer-events:none}
+.bonecard>*{position:relative;min-width:0}
+.bctop,.bcmid,.bcfoot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.bctop b{display:block;font:clamp(17px,4vw,24px)/1 var(--display);letter-spacing:.05em;color:#fff}
+.bonecard small{display:block;font:800 clamp(8px,1.900vw,10px)/1.3 var(--body);letter-spacing:.08em;text-transform:uppercase;color:#f3c9e0}
+.bccrest{width:clamp(30px,8vw,46px);height:auto;filter:drop-shadow(0 0 6px rgba(255,31,143,.8))}
+.bcmid{justify-content:flex-start}
+.bcchip{flex:none;width:clamp(34px,8vw,46px);aspect-ratio:1.3;border-radius:6px;border:1.500px solid #6e5210;background:linear-gradient(135deg,#fff0a8,#d4a017 50%,#fff3b8);box-shadow:inset 0 0 0 4px rgba(110,82,16,.25)}
+.bcwave{color:#fff6fb;line-height:0}
+.bcbal{margin-left:auto;text-align:right}
+.bcbalance{display:block;font:clamp(24px,6.5vw,38px)/1 var(--display);color:#fff06a;text-shadow:0 2px 0 #000}
+.bcbalance small{display:inline;font-size:clamp(9px,2vw,11px);color:#fff6fb;text-shadow:none}
+.bcnumber{margin:0;font:700 clamp(14px,3.600vw,20px)/1 "Courier New",monospace;letter-spacing:.09em;white-space:nowrap;text-shadow:0 1px 0 #000}
+.bcfoot b{display:block;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font:800 clamp(10px,2.500vw,13px)/1.2 var(--body)}
+.bcfoot>div:first-child{flex:1;min-width:0}
+.bcstatement{width:100%;max-width:460px;box-sizing:border-box;padding:10px 14px;background:#181019;border:3px solid #000}
+.bcstatement h4{margin:0 0 6px;font:18px var(--label);color:var(--paper)}
+.bcstatement p{margin:0;font-weight:700}
+.bcrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:baseline;padding:4px 0;border-top:1px solid #3a2a48;font-size:14px}
+.bcrow time{font-size:12px;color:var(--muted)}
+.bcin{color:var(--teal)}.bcout{color:#ff8cc8}
+/* the Bone Boutique */
+.bonemark{display:inline-block;line-height:0;vertical-align:-1px;margin:0 3px}
+.shoppurse{display:flex;flex-wrap:wrap;align-items:center;gap:6px;width:fit-content;max-width:100%;margin:0 0 12px;padding:8px 14px;background:#0c0710;border:3px solid #000;box-shadow:4px 4px 0 var(--pink);font-weight:800}
+.shoppurse strong{font:26px var(--display);color:#fff06a}
+.shoppurse .linkish{margin-left:10px}
+#shopBox>.chips{margin:0 0 8px}
+.shopblurb,.shopnote{width:fit-content;max-width:100%;box-sizing:border-box;margin:0 0 12px;padding:4px 12px;background:#0c0710ee;font-weight:700}
+.shopnote{background:var(--pink);color:#fff}
+.shopguest{margin:0 0 12px;padding:8px 12px;width:fit-content;background:#0c0710ee;align-items:center;font-weight:700}
+.shopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:14px}
+.shopcard{display:grid;grid-template-rows:auto auto auto auto 1fr;justify-items:start;gap:3px;padding:0 0 12px;background:#181019;border:3px solid #000;box-shadow:4px 4px 0 var(--violet)}
+.shopcard.shopowned{box-shadow:4px 4px 0 var(--teal)}
+.shoppic{width:100%;aspect-ratio:4/3;margin-bottom:6px;background:#fff6fb;border-bottom:3px solid #000;overflow:hidden;line-height:0}
+.shoppic svg{display:block;width:100%;height:100%;overflow:hidden!important}
+.shopcard small{margin:0 10px;font:800 12px var(--body);text-transform:uppercase;letter-spacing:.06em;color:var(--teal)}
+.shopcard strong{margin:0 10px;font-size:16px;line-height:1.2}
+.shopprice{display:flex;align-items:center;margin:2px 10px 6px;font-weight:800;color:#fff06a}
+.shopcard .pill{align-self:end;margin:0 10px}
+.shopcard .pill:disabled{opacity:.65;cursor:not-allowed}
+
 /* the opening */
 html.introon,html.introon body{overflow:hidden}
 .intro{position:fixed;inset:0;z-index:99999;background:#140a1c url(backgrounds/skulls.webp);transition:opacity 1.3s ease}
@@ -1059,6 +1104,7 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
     <button type="button" data-go="profile">My Ghoul</button>
     <button type="button" data-go="admin" id="navAdmin" hidden>The Office</button>
     <button type="button" data-go="academics">Academics</button>
+    <button type="button" data-go="shop">Shop</button>
   </nav>
 </div></header>
 <main>
@@ -1134,7 +1180,6 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
       <button class="tile" type="button" data-go="registration"><strong>Register as a spooky student!</strong><span>Sign up with your email, a username and a password, then dress your ghoul.</span></button>
       <button class="tile" type="button" data-go="games"><strong>Play a frightfully fun game!</strong><span id="gameTileText">Eight games, from a beauty pageant to a flooded-basement swim.</span></button>
     </div>
-    <p class="bonestally"><span class="bones"><span id="bones">0</span> bones</span></p>
     <form class="code" id="codeForm">
       <label for="codeIn">Got a code?</label>
       <input id="codeIn" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="100" placeholder="Try MUMTEA">
@@ -1172,40 +1217,7 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
     </div>
     <section class="moregames" aria-labelledby="moreGamesTitle">
       <h3 id="moreGamesTitle">More Monster High games</h3>
-      <p>Pick a game and it opens on Numuki, another website, in a new tab. These games do not earn bones.</p>
-      <h4>Dress up and create</h4>
-      <div class="moregrid">
-        <a class="moregame" href="https://www.numuki.com/game/create-a-monster-design-lab/" target="_blank" rel="noopener noreferrer">Create a Monster</a>
-        <a class="moregame" href="https://www.numuki.com/game/fang-tastic-fashion-show/" target="_blank" rel="noopener noreferrer">Fang-Tastic Fashion Show</a>
-        <a class="moregame" href="https://www.numuki.com/game/mh-first-day-of-school-dress-up-game/" target="_blank" rel="noopener noreferrer">First Day of School</a>
-        <a class="moregame" href="https://www.numuki.com/game/how-do-you-boo-frankie-stein-dress-up/" target="_blank" rel="noopener noreferrer">How Do You Boo: Frankie Stein</a>
-        <a class="moregame" href="https://www.numuki.com/game/how-do-you-boo-clawdeen-wolf-dress-up/" target="_blank" rel="noopener noreferrer">How Do You Boo: Clawdeen Wolf</a>
-        <a class="moregame" href="https://www.numuki.com/game/party-ghouls-rochelle-goyle-dress-up/" target="_blank" rel="noopener noreferrer">Party Ghouls: Rochelle Goyle</a>
-        <a class="moregame" href="https://www.numuki.com/game/isi-dawndancer-dress-up/" target="_blank" rel="noopener noreferrer">Isi Dawndancer Dress Up</a>
-        <a class="moregame" href="https://www.numuki.com/game/catty-noir-dress-up/" target="_blank" rel="noopener noreferrer">Catty Noir Dress Up</a>
-        <a class="moregame" href="https://www.numuki.com/game/new-scaremester-catty-noir/" target="_blank" rel="noopener noreferrer">New Scaremester: Catty Noir</a>
-      </div>
-      <h4>Adventure and action</h4>
-      <div class="moregrid">
-        <a class="moregame" href="https://www.numuki.com/game/creeptastic-catacomb-adventures/" target="_blank" rel="noopener noreferrer">Creeptastic Catacomb Adventures</a>
-        <a class="moregame" href="https://www.numuki.com/game/secret-creepers-adventures/" target="_blank" rel="noopener noreferrer">Secret Creepers Adventures</a>
-        <a class="moregame" href="https://www.numuki.com/game/mh-scary-sun/" target="_blank" rel="noopener noreferrer">Scary Sun</a>
-        <a class="moregame" href="https://www.numuki.com/game/skulltastic-survival/" target="_blank" rel="noopener noreferrer">Skulltastic Survival</a>
-        <a class="moregame" href="https://www.numuki.com/game/great-scarrier-swim/" target="_blank" rel="noopener noreferrer">Great Scarrier Swim</a>
-        <a class="moregame" href="https://www.numuki.com/game/mh-froggie-dash/" target="_blank" rel="noopener noreferrer">Froggie Dash</a>
-        <a class="moregame" href="https://www.numuki.com/game/creepateria-food-fright/" target="_blank" rel="noopener noreferrer">Creepateria Food Fright</a>
-      </div>
-      <h4>Dance</h4>
-      <div class="moregrid">
-        <a class="moregame" href="https://www.numuki.com/game/dawn-of-the-dance/" target="_blank" rel="noopener noreferrer">Dawn of the Dance</a>
-        <a class="moregame" href="https://www.numuki.com/game/mh-fear-a-mid/" target="_blank" rel="noopener noreferrer">Fear-A-Mid</a>
-      </div>
-      <h4>Puzzles</h4>
-      <div class="moregrid">
-        <a class="moregame" href="https://www.numuki.com/game/ghoul-word-search/" target="_blank" rel="noopener noreferrer">Ghoul Search</a>
-        <a class="moregame" href="https://www.numuki.com/game/who-s-that-ghoul/" target="_blank" rel="noopener noreferrer">Who's That Ghoul?</a>
-        <a class="moregame" href="https://www.numuki.com/game/mh-monster-freakout/" target="_blank" rel="noopener noreferrer">Monster Freakout</a>
-      </div>
+      <p>Even more Monster High games live on Numuki, another website. They open in a new tab and do not earn bones.</p>
       <p class="moreall"><a class="pill" href="https://www.numuki.com/games/monster-high/" target="_blank" rel="noopener noreferrer">See all the Monster High games on Numuki</a></p>
     </section>
   </div></section>
@@ -1246,9 +1258,18 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
 
   <section class="view band" data-view="registration" hidden><div class="wrap">
     <h2 class="sec-h">Registration</h2>
-    <p class="lede">Register to get your own ghoul. Take the nine-question quiz to find your blend.</p>
+    <p class="lede">Register to get your own ghoul. Take the nine-question quiz to find your blend. Your student ID and bank card live on My Ghoul.</p>
     <div class="two">
       <div class="panel" id="quiz"></div>
+      <div id="regSide"></div>
+    </div>
+  </div></section>
+
+  <section class="view band" data-view="profile" hidden><div class="wrap">
+    <h2 class="sec-h">My Ghoul</h2>
+    <p class="lede" id="profileLede"></p>
+    <div id="profileBox"></div>
+    <div class="two profilecards" id="profileCards" hidden>
       <div>
         <div class="idcard" id="idcard">
           <h3>Mumtea High Student ID</h3>
@@ -1264,14 +1285,15 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
           <label for="idFile">Your photo (it stays on this device)<input id="idFile" type="file" accept="image/*"></label>
         </form>
       </div>
+      <div id="bankCol"></div>
     </div>
+    <div id="profileStudio"></div>
   </div></section>
 
-  <section class="view band" data-view="profile" hidden><div class="wrap">
-    <h2 class="sec-h">My Ghoul</h2>
-    <p class="lede" id="profileLede"></p>
-    <div id="profileBox"></div>
-    <div id="profileStudio"></div>
+  <section class="view band" data-view="shop" hidden><div class="wrap">
+    <h2 class="sec-h">The Bone Boutique</h2>
+    <p class="lede">Earn bones in the games, then spend them here. Everything you buy shows on your ghoul.</p>
+    <div id="shopBox"></div>
   </div></section>
 
   <section class="view band" data-view="admin" hidden><div class="wrap">
@@ -1347,7 +1369,7 @@ function paintDolls(){$$('[data-doll]').forEach(s=>{const o=DOLLS[s.dataset.doll
 
 
 /* ---------- navigation ---------- */
-const VIEWS=['home','games','tea','registration','profile','fangtastic','students','student','academics','admin'];
+const VIEWS=['home','games','shop','tea','registration','profile','fangtastic','students','student','academics','admin'];
 function go(v,postId){
   if(!VIEWS.includes(v))v='home';
   $$('.view').forEach(s=>s.hidden=s.dataset.view!==v);
@@ -1362,8 +1384,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b
 
 /* ---------- bones ---------- */
 let bones=store.get('bones',0);
-function drawBones(){$('#bones').textContent=bones}
-function award(n){bones+=n;store.set('bones',bones);drawBones();saveBonesSoon()}
+function drawBones(){$$('[data-bones]').forEach(e=>{e.textContent=bones})}
+function award(n){bones+=n;store.set('bones',bones);drawBones();saveBonesSoon();logBones(n)}
 
 let ctx;
 
@@ -4728,10 +4750,31 @@ const blogCount = el('p', { cls: 'teacountline', role: 'status' });
         reportDialog.close(); });
 })();
 /* ---------- bones follow the account ---------- */
+let bonesDirty = false;
 function saveBonesSoon() {
     clearTimeout(bonesTimer);
-    bonesTimer = window.setTimeout(() => { if (signedInId() && signedInId() === bonesOwner)
-        sb.rpc('save_bones', { total: bones }).then(() => { }, () => { }); }, 800);
+    bonesDirty = true;
+    bonesTimer = window.setTimeout(() => { flushBones().catch(() => { }); }, 800);
+}
+async function flushBones() {
+    clearTimeout(bonesTimer);
+    if (!bonesDirty || !signedInId() || signedInId() !== bonesOwner)
+        return;
+    const { error } = await sb.rpc('save_bones', { total: bones });
+    if (!error)
+        bonesDirty = false;
+}
+/* The account is the bank: a purchase on another device must show here too. */
+async function refreshBones() {
+    const me = signedInId();
+    if (!backendReady || !me || bonesDirty || me !== bonesOwner)
+        return;
+    const { data, error } = await sb.from('player_progress').select('bones').eq('user_id', me).maybeSingle();
+    if (error || !data)
+        return;
+    bones = data.bones;
+    store.set('bones', bones);
+    drawBones();
 }
 async function syncProgress() {
     const me = signedInId();
@@ -5715,7 +5758,7 @@ const KICK_BALLS = [['classic', 'Classic'], ['skull', 'Skull ball'], ['pumpkin',
     setUp();
     stat();
 })();
-const LAYER_ORDER = ['back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront', 'pet'];
+const LAYER_ORDER = ['car', 'back', 'wings', 'hairBack', 'legs', 'legwear', 'pants', 'shoes', 'torso', 'bottom', 'top', 'neck', 'arms', 'sleeves', 'hold', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear', 'armsFront', 'pet'];
 /* Trousers whose hem reaches the shoes: these fall over the shoes instead of being tucked under them. */
 const LONG_TROUSERS = ['palazzo', 'flares', 'wide', 'sailor', 'bootcut', 'overalls', 'tux', 'straps', 'straight', 'ripped', 'patched', 'chains', 'track', 'paperbag', 'leather', 'laceup', 'bellcuff', 'harem', 'leggings', 'cargo', 'skinny', 'joggers'];
 const HEAD_LAYERS = ['hairBack', 'head', 'face', 'mark', 'monster', 'hairFront', 'eyewear', 'headwear'];
@@ -5817,6 +5860,48 @@ const LIP_SIZES = { tiny: .5, small: .65, medium: .82, full: 1, big: 1.18 };
 const HEAD_ONLY_BOX = '46 -14 228 232';
 const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
+const SHOP_ITEMS = [
+    { id: 'rangerover', slot: 'car', cat: 'cars', name: 'Range Rover Sport', brand: 'Range Rover', price: 1200, base: 'suv:#1c2430', mark: 'RANGE ROVER' },
+    { id: 'gwagon', slot: 'car', cat: 'cars', name: 'G-Wagon', brand: 'Mercedes-Benz', price: 1500, base: 'suv:#14101a', mark: 'MERCEDES' },
+    { id: 'audir8', slot: 'car', cat: 'cars', name: 'R8', brand: 'Audi', price: 1400, base: 'sport:#c0392b', mark: 'AUDI' },
+    { id: 'bmwm4', slot: 'car', cat: 'cars', name: 'M4', brand: 'BMW', price: 900, base: 'sedan:#1f6fb2', mark: 'BMW' },
+    { id: 'porsche911', slot: 'car', cat: 'cars', name: '911', brand: 'Porsche', price: 1300, base: 'sport:#f4d35e', mark: 'PORSCHE' },
+    { id: 'bentley', slot: 'car', cat: 'cars', name: 'Continental GT', brand: 'Bentley', price: 1800, base: 'sedan:#0f4f3a', mark: 'BENTLEY' },
+    { id: 'ferrari', slot: 'car', cat: 'cars', name: '488', brand: 'Ferrari', price: 2200, base: 'sport:#d3122a', mark: 'FERRARI' },
+    { id: 'lamborghini', slot: 'car', cat: 'cars', name: 'Huracan', brand: 'Lamborghini', price: 2500, base: 'sport:#ff1f8f', mark: 'LAMBORGHINI' },
+    { id: 'rollsroyce', slot: 'car', cat: 'cars', name: 'Phantom', brand: 'Rolls-Royce', price: 3000, base: 'limo:#2c2436', mark: 'ROLLS-ROYCE' },
+    { id: 'nikecap', slot: 'headwear', cat: 'hats', name: 'Cap', brand: 'Nike', price: 40, base: 'cap', mark: 'NIKE' },
+    { id: 'nikebeanie', slot: 'headwear', cat: 'hats', name: 'Beanie', brand: 'Nike', price: 35, base: 'beanie', mark: 'NIKE' },
+    { id: 'pumacap', slot: 'headwear', cat: 'hats', name: 'Cap', brand: 'Puma', price: 35, base: 'cap', mark: 'PUMA' },
+    { id: 'pumabucket', slot: 'headwear', cat: 'hats', name: 'Bucket hat', brand: 'Puma', price: 40, base: 'bucket', mark: 'PUMA' },
+    { id: 'pradabucket', slot: 'headwear', cat: 'hats', name: 'Bucket hat', brand: 'Prada', price: 90, base: 'bucket', mark: 'PRADA' },
+    { id: 'pradaberet', slot: 'headwear', cat: 'hats', name: 'Beret', brand: 'Prada', price: 80, base: 'beret', mark: 'PRADA' },
+    { id: 'nikeaf1', slot: 'shoes', cat: 'shoes', name: 'Air Force 1', brand: 'Nike', price: 90, base: 'sneaker', mark: 'NIKE' },
+    { id: 'nikedunk', slot: 'shoes', cat: 'shoes', name: 'Dunk', brand: 'Nike', price: 110, base: 'sneaker', mark: 'NIKE' },
+    { id: 'pumasuede', slot: 'shoes', cat: 'shoes', name: 'Suede', brand: 'Puma', price: 70, base: 'chunky', mark: 'PUMA' },
+    { id: 'pumaspeedcat', slot: 'shoes', cat: 'shoes', name: 'Speedcat', brand: 'Puma', price: 85, base: 'flats', mark: 'PUMA' },
+    { id: 'asicskayano', slot: 'shoes', cat: 'shoes', name: 'Gel-Kayano', brand: 'ASICS', price: 95, base: 'chunky', mark: 'ASICS' },
+    { id: 'asicsnyc', slot: 'shoes', cat: 'shoes', name: 'Gel-NYC', brand: 'ASICS', price: 105, base: 'chunky', mark: 'ASICS' },
+    { id: 'diorbar', slot: 'top', cat: 'dior', name: 'Bar jacket', brand: 'Dior', price: 320, base: 'blazer', mark: 'Dior' },
+    { id: 'diorcorset', slot: 'top', cat: 'dior', name: 'Corset', brand: 'Dior', price: 260, base: 'corset', mark: 'Dior' },
+    { id: 'diorhoodie', slot: 'top', cat: 'dior', name: 'Hoodie', brand: 'Dior', price: 180, base: 'hoodie', mark: 'Dior' },
+    { id: 'diorblouse', slot: 'top', cat: 'dior', name: 'Ruffle blouse', brand: 'Dior', price: 210, base: 'ruffle', mark: 'Dior' },
+    { id: 'diortulle', slot: 'bottom', cat: 'dior', name: 'Tulle skirt', brand: 'Dior', price: 300, base: 'tulle', mark: 'Dior' },
+    { id: 'diorpleats', slot: 'bottom', cat: 'dior', name: 'Pleated maxi', brand: 'Dior', price: 270, base: 'pleatmaxi', mark: 'Dior' },
+    { id: 'diorjeans', slot: 'bottom', cat: 'dior', name: 'Jeans', brand: 'Dior', price: 170, base: 'straight', mark: 'Dior' },
+    { id: 'diamondpendant', slot: 'neck', cat: 'jewels', name: 'Diamond pendant', brand: 'Fine jewellery', price: 350, base: '', mark: '' },
+    { id: 'tennisnecklace', slot: 'neck', cat: 'jewels', name: 'Diamond tennis necklace', brand: 'Fine jewellery', price: 480, base: '', mark: '' },
+    { id: 'diamondchain', slot: 'neck', cat: 'jewels', name: 'Iced-out diamond chain', brand: 'Fine jewellery', price: 650, base: '', mark: '' },
+    { id: 'tennisbracelet', slot: 'wrist', cat: 'jewels', name: 'Diamond tennis bracelet', brand: 'Fine jewellery', price: 400, base: '', mark: '' },
+    { id: 'rolexsub', slot: 'wrist', cat: 'jewels', name: 'Submariner', brand: 'Rolex', price: 700, base: '', mark: '' },
+    { id: 'rolexdaydate', slot: 'wrist', cat: 'jewels', name: 'Day-Date', brand: 'Rolex', price: 1000, base: '', mark: '' },
+    { id: 'aproyaloak', slot: 'wrist', cat: 'jewels', name: 'Royal Oak', brand: 'Audemars Piguet', price: 1200, base: '', mark: '' },
+    { id: 'pateknautilus', slot: 'wrist', cat: 'jewels', name: 'Nautilus', brand: 'Patek Philippe', price: 1500, base: '', mark: '' },
+];
+const SHOP_BY_ID = Object.fromEntries(SHOP_ITEMS.map(i => [i.id, i]));
+let shopOwned = new Set();
+/* The wardrobe only offers shop pieces you own. */
+const visibleItems = (page) => (page.items || []).filter(([id]) => !SHOP_BY_ID[id] || isAdmin() || shopOwned.has(id));
 const WARDROBE = [
     { title: 'Poses', key: 'pose', items: POSES.map(p => [p.id, p.name]), colours: [], box: WIDE_BOX, layers: [] },
     { title: 'Pets', key: 'pet', items: [['none', 'No pet'], ['bat', 'Bat'], ['cat', 'Black cat'], ['ghost', 'Ghost'], ['spider', 'Spider'], ['piranha', 'Piranha'], ['snake', 'Snake'], ['dragon', 'Baby dragon'], ['owl', 'Owl'], ['pup', 'Wolf pup'], ['bunny', 'Were-bunny'], ['jelly', 'Jellyfish'], ['frog', 'Frog prince']], colours: [['petC', 'Pet colour', ['#14101a', '#6a1f86', '#ff1f8f', '#f08fb4', '#19b7e8', '#35dcc8', '#8df04a', '#f4d35e', '#ff8c1a', '#c0392b', '#7d5136', '#9aa0ac', '#f6f0ff']]], box: '245 590 120 120', layers: ['pet'], crop: true },
@@ -5841,7 +5926,13 @@ const WARDROBE = [
     { title: 'On your back', key: 'back', items: [['none', 'Nothing'], ['cape', 'Long cape'], ['short', 'Short cape'], ['bag', 'Backpack'], ['tail', 'Devil tail'], ['bigbow', 'Giant bow'], ['angel', 'Angel wings'], ['butterfly', 'Butterfly wings'], ['fairy', 'Fairy wings'], ['dragon', 'Dragon wings'], ['demon', 'Demon wings'], ['peacock', 'Peacock fan'], ['cat', 'Cat tail'], ['fox', 'Fox tail'], ['cloak', 'Hooded cloak'], ['guitar', 'Guitar'], ['coffin', 'Coffin bag'], ['teddy', 'Teddy bag'], ['batbag', 'Bat bag'], ['skullbag', 'Skull bag'], ['broom', 'Broomstick'], ['jetpack', 'Jetpack'], ['sash', 'Sash'], ['moon', 'Moon halo'], ['shawl', 'Lace shawl'], ['balloons', 'Balloons'], ['parasol', 'Parasol'], ['longscarf', 'Flying scarf'], ['ribbons', 'Ribbons'], ['shell', 'Shell']], colours: [], box: '-80 -40 480 730', layers: ['back'] },
     { title: 'In hand', key: 'hold', items: [['none', 'Nothing'], ['cup', 'Teacup'], ['purse', 'Purse'], ['skull', 'Skull bag'], ['wand', 'Wand'], ['phone', 'iCoffin'], ['mic', 'Microphone'], ['rose', 'Black rose'], ['book', 'Spell book'], ['brolly', 'Bat umbrella'], ['boba', 'Bubble tea'], ['lipstick', 'Lipstick'], ['icecream', 'Ice cream'], ['lollipop', 'Lollipop'], ['mirror', 'Mirror'], ['fan', 'Fan'], ['candle', 'Candle'], ['potion', 'Potion'], ['orb', 'Crystal ball'], ['teddy', 'Teddy'], ['pumpkin', 'Pumpkin'], ['balloon', 'Balloon'], ['bouquet', 'Bouquet'], ['camera', 'Camera'], ['lantern', 'Lantern'], ['donut', 'Donut'], ['cupcake', 'Cupcake'], ['cat', 'Kitten'], ['brush', 'Paintbrush'], ['scroll', 'Scroll']], colours: [], box: '-40 240 230 260', layers: ['hold'] },
 ];
-const FANG_LOOK = { pet: 'none', petC: '#6a1f86', skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
+/* Shop pieces join the wardrobe, and cars get a page of their own. */
+WARDROBE.splice(2, 0, { title: 'Cars', key: 'car', items: [['none', 'No car']], colours: [], box: '40 520 400 215', layers: ['car'], crop: true });
+SHOP_ITEMS.forEach(item => {
+    const title = item.slot === 'car' ? 'Cars' : item.slot === 'headwear' ? 'Headwear' : item.slot === 'shoes' ? 'Shoes' : item.slot === 'top' ? 'Tops' : item.slot === 'bottom' ? (item.base === 'straight' ? 'Trousers and shorts' : 'Skirts') : item.slot === 'neck' ? 'Necklaces' : 'Hand accessories';
+    WARDROBE.find(p => p.title === title)?.items?.push([item.id, item.brand + ' ' + item.name]);
+});
+const FANG_LOOK = { pet: 'none', car: 'none', petC: '#6a1f86', skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
 /* ---------- pets: each is drawn around 0,0 and stands at the ghoul's feet ---------- */
 function drawPet(id, c) {
     const d = shade(c, -.28), l = shade(c, .34), eyeline = INK;
@@ -5871,7 +5962,7 @@ function randomLook() {
     const look = { ...FANG_LOOK, hairStyle: 'long' };
     for (const page of WARDROBE) {
         if (page.key && page.items) {
-            const all = WARDROBE.filter(p => p.key === page.key).flatMap(p => p.items || []);
+            const all = WARDROBE.filter(p => p.key === page.key).flatMap(p => p.items || []).filter(i => !SHOP_BY_ID[i[0]]);
             look[page.key] = all[Math.floor(Math.random() * all.length)][0];
         }
         for (const [key, , values] of page.colours)
@@ -5888,7 +5979,7 @@ function randomLook() {
 /* Checks everything saved against the wardrobe, because other people's looks are drawn into this page. */
 function normalizeLook(raw) {
     /* Anything missing gets a plain default, never a random one, or a saved character would change on every visit. */
-    const out = { ...FANG_LOOK, hairStyle: 'long', monster: 'none', hold: 'none', neck: 'none', gloves: 'none', wrist: 'none' };
+    const out = { ...FANG_LOOK, hairStyle: 'long', monster: 'none', hold: 'none', neck: 'none', gloves: 'none', wrist: 'none', car: 'none' };
     if (!raw)
         return randomLook();
     for (const page of WARDROBE) {
@@ -5936,6 +6027,10 @@ function drawHand(shape, skin, fill, tips, tipStyle = '') {
 }
 /* plain: small previews skip the costly shading and hair streaks. detail: the big wardrobe figure shades each layer on its own. */
 function drawGhoul(o, opt = {}) {
+    /* A shop piece is drawn on the matching wardrobe shape, then gets its name on top. */
+    const brand = { top: o.top, bottom: o.bottom, shoes: o.shoes, headwear: o.headwear };
+    const baseOf = (id) => (SHOP_BY_ID[id] && SHOP_BY_ID[id].base) || id;
+    o = { ...o, top: baseOf(o.top), bottom: baseOf(o.bottom), shoes: baseOf(o.shoes), headwear: baseOf(o.headwear) };
     const uid = 'g' + (++ghoulCounter);
     const pose = opt.pose || (opt.head ? POSES[0] : poseOf(o.pose));
     let defs = '';
@@ -6168,6 +6263,11 @@ function drawGhoul(o, opt = {}) {
             stack: () => [wband(.72, 11, o.trim, 3.5) + wband(.8, 11, '#f4d35e', 3.5) + wband(.88, 11, '#fff6fb', 3.5), ''],
             charm: () => [wband(.84, 11, '#c0c0d8', 3) + blob(.92, -6, 3, o.trim) + blob(.94, 1, 3, '#f4d35e') + blob(.92, 7, 3, '#ff1f8f'), ''],
             pearls: () => [beadband(.84, 11, '#fff6fb', 6.5), ''],
+            rolexsub: () => [wband(.84, 11, '#d7dbe4', 7) + blob(.84, 0, 9, '#0f7a4f') + blob(.84, 0, 3, '#f6f7fb'), ''],
+            rolexdaydate: () => [wband(.84, 11, '#e0b83c', 7) + blob(.84, 0, 9, '#f6e7a8') + blob(.84, 0, 3, '#a8770c'), ''],
+            aproyaloak: () => [wband(.84, 11, '#c7ccd8', 8) + blob(.84, 0, 9.500, '#1f3a8a') + blob(.84, 0, 3, '#dfe6ff'), ''],
+            pateknautilus: () => [wband(.84, 11, '#e8a98a', 7) + blob(.84, 0, 9, '#23405e') + blob(.84, 0, 3, '#ffe9de'), ''],
+            tennisbracelet: () => [beadband(.84, 11, '#e9f7ff', 5, 6), ''],
             watch: () => [wband(.84, 11, '#14101a', 6) + blob(.84, 0, 8, '#fff6fb') + strokeLine('M' + f(along(.84)[0]) + ' ' + f(along(.84)[1]) + 'l3 -3', 1.5, INK), ''],
             smart: () => { const [x, y] = along(.84); return [wband(.84, 11, o.trim, 6) + '<rect x="' + f(x - 7) + '" y="' + f(y - 7) + '" width="14" height="14" rx="3" fill="#14101a" stroke="' + INK + '" stroke-width="1.500"/><circle cx="' + f(x) + '" cy="' + f(y) + '" r="3" fill="#35dcc8"/>', '']; },
             spikes: () => [wband(.82, 12, '#14101a', 10) + [-8, 0, 8].map(o2 => blob(.82, o2, 2.6, '#c0c0d8')).join(''), ''],
@@ -6389,6 +6489,9 @@ function drawGhoul(o, opt = {}) {
     /* ---------- necklaces, on-your-back things and face details ---------- */
     parts.neck = {
         mercoral: [[146, 226], [149, 234], [153, 241], [157, 246], [163, 246], [167, 241], [171, 234], [174, 226]].map(([x, y], i) => '<ellipse cx="' + x + '" cy="' + y + '" rx="4.200" ry="3.400" fill="' + (i % 3 === 1 ? '#7fe8ff' : '#ff7a66') + '" stroke="' + INK + '" stroke-width="1"/>').join('') + '<path d="M153 250h14l-3 10h-8z" fill="#7fe8ff" stroke="' + INK + '" stroke-width="1.200"/>',
+        diamondchain: strokeLine('M144 226Q160 264 176 226', 9, INK) + strokeLine('M144 226Q160 264 176 226', 6, '#eaf7ff') + strokeLine('M144 226Q160 264 176 226', 2, '#9fd8ff', 'stroke-dasharray="1 4"') + '<path d="M160 244l8 9-8 12-8-12Z" fill="#eaf7ff" stroke="' + INK + '" stroke-width="1.8"/><path d="M152 253H168M160 244V265" stroke="#9fd8ff" stroke-width="1"/>',
+        diamondpendant: strokeLine('M146 226Q160 258 174 226', 2.2, '#e0e6f0') + '<path d="M160 244l9 10-9 13-9-13Z" fill="#dff4ff" stroke="' + INK + '" stroke-width="1.8"/><path d="M151 254H169M155 254L160 244L165 254L160 267Z" fill="none" stroke="#7fcfff" stroke-width="1"/>',
+        tennisnecklace: [[146, 226], [148.500, 233], [152, 239], [156, 243.500], [160, 245], [164, 243.500], [168, 239], [171.500, 233], [174, 226]].map(([x, y]) => '<path d="M' + x + ' ' + (y - 4) + 'l4 4-4 4-4-4Z" fill="#eaf7ff" stroke="' + INK + '" stroke-width="1.100"/>').join(''),
         choker: strokeLine('M147 222Q160 230 173 222', 6, o.trim),
         skull: strokeLine('M146 226Q160 262 174 226', 2.4, INK) + '<circle cx="160" cy="254" r="8" fill="#fff6fb" stroke="' + INK + '" stroke-width="1.8"/><circle cx="157" cy="253" r="1.8" fill="' + INK + '"/><circle cx="163" cy="253" r="1.8" fill="' + INK + '"/>',
         pearls: [[146, 228], [150, 238], [155, 245], [160, 248], [165, 245], [170, 238], [174, 228]].map(([x, y]) => '<circle cx="' + x + '" cy="' + y + '" r="3.6" fill="#fff6fb" stroke="' + INK + '" stroke-width="1"/>').join(''),
@@ -6913,6 +7016,22 @@ function drawGhoul(o, opt = {}) {
         tikka: strokeLine('M160 42V78', 2.400, '#f4d35e') + strokeLine('M100 90Q130 52 160 44Q190 52 220 90', 1.800, '#f4d35e', 'stroke-dasharray="2 3"') + `<path d="M160 78l9 10-9 12-9-12z" fill="${o.trim}" stroke="#f4d35e" stroke-width="2.200"/><circle cx="160" cy="104" r="2.400" fill="#f4d35e"/>`,
         spider: strokeLine('M186 54l-14-10M186 60h-18M186 66l-14 8M206 54l14-10M206 60h18M206 66l14 8', 2.400, '#14101a') + `<ellipse cx="196" cy="62" rx="14" ry="11" fill="#14101a" stroke="${INK}" stroke-width="1.400"/><circle cx="196" cy="50" r="6" fill="#14101a"/><circle cx="193" cy="49" r="1.200" fill="#c0392b"/><circle cx="199" cy="49" r="1.200" fill="#c0392b"/>`,
     }[o.headwear] || '';
+    /* Cars park beside the character on its own pages. In the games the character poses alone. */
+    if (!opt.pose && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) {
+        parts.car = drawCar(SHOP_BY_ID[o.car]);
+        needsRoom = true;
+    }
+    const nameOn = (id, x, y, size, fill, serif = false) => (SHOP_BY_ID[id] ? '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="' + size + '" fill="' + fill + '" font-family="' + (serif ? "Georgia,'Times New Roman',serif" : 'Arial,Helvetica,sans-serif') + '" font-weight="700"' + (serif ? ' font-style="italic"' : '') + '>' + SHOP_BY_ID[id].mark + '</text>' : '');
+    if (parts.top)
+        parts.top += nameOn(brand.top, 160, 318, 24, contrast(o.topC), true);
+    if (parts.bottom)
+        parts.bottom += nameOn(brand.bottom, 160, 470, 24, contrast(o.bottomC), true);
+    if (parts.pants)
+        parts.pants += nameOn(brand.bottom, 160, 420, 20, contrast(o.bottomC), true);
+    if (parts.shoes)
+        parts.shoes += nameOn(brand.shoes, 141, 696, 7, contrast(o.shoesC)) + nameOn(brand.shoes, 179, 696, 7, contrast(o.shoesC));
+    if (parts.headwear)
+        parts.headwear += nameOn(brand.headwear, 160, o.headwear === 'cap' ? 70 : o.headwear === 'beret' ? 38 : o.headwear === 'beanie' ? 62 : 52, 15, contrast(o.trim));
     parts.pet = drawPet(o.pet, o.petC);
     if (parts.pet)
         needsRoom = true;
@@ -6932,7 +7051,7 @@ function drawGhoul(o, opt = {}) {
         let out = parts[l] || '';
         if (!out)
             return '';
-        if (l === 'pet')
+        if (l === 'pet' || l === 'car')
             return out;
         if (THIN.includes(l))
             out = '<g transform="translate(160 0) scale(' + SLIM + ' 1) translate(-160 0)">' + out + '</g>';
@@ -6966,7 +7085,7 @@ function drawGhoul(o, opt = {}) {
             return drawn;
         return (i === BODY_START ? '<g filter="url(#' + uid + 'cel)">' : '') + drawn + (i === BODY_END ? '</g>' : '');
     }).join('');
-    const box = opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
+    const box = parts.car && (!opt.box || opt.box === WIDE_BOX) && !opt.only ? '-45 -10 500 735' : opt.box || (opt.head ? HEAD_ONLY_BOX : needsRoom ? WIDE_BOX : '0 0 320 720');
     const label = (opt.label || '').replace(/[&<>"]/g, ch => '&#' + ch.charCodeAt(0) + ';');
     return `<svg viewBox="${box}" style="overflow:${opt.head ? 'hidden' : 'visible'}" ${label ? `role="img" aria-label="${label}"` : 'aria-hidden="true"'}><defs>${defs}</defs>${inner}</svg>`;
 }
@@ -6989,6 +7108,19 @@ function schoolCrowd(count) {
     while (out.length < count)
         out.push(randomLook());
     return out.sort(() => Math.random() - .5);
+}
+/* ---------- the garage: drawn here, with the maker's name on the door ---------- */
+function drawCar(item) {
+    const [kind, colour] = item.base.split(':'), dark = shade(colour, -.35), light = shade(colour, .3);
+    const BODIES = {
+        suv: ['M6 84L8 52Q10 44 24 42L46 14Q50 8 60 8H150Q162 8 168 18L182 42Q208 44 214 56L216 84Z', 'M52 40L66 18H106V40ZM114 18H152Q158 18 162 26L170 40H114Z'],
+        sedan: ['M4 84Q4 62 24 56L62 30Q70 24 84 24H132Q146 24 156 32L180 54Q212 58 216 72V84Z', 'M46 54L72 34Q76 30 86 30H104V54ZM112 30H130Q140 30 148 36L164 54H112Z'],
+        sport: ['M2 88Q0 72 22 68L72 50Q92 40 112 40H128Q148 42 172 58L210 70Q222 76 218 88Z', 'M66 66L94 47Q98 45 108 45H116V66ZM122 45H128Q144 47 160 66H122Z'],
+        limo: ['M6 84V58Q8 52 22 50L52 22Q56 18 66 18H150Q160 18 166 26L184 50Q210 50 214 58V84Z', 'M40 50L62 26H104V50ZM112 26H150Q156 26 160 32L172 50H112Z'],
+    };
+    const [body, glass] = BODIES[kind] || BODIES.sedan;
+    const wheel = (x) => '<circle cx="' + x + '" cy="84" r="18" fill="#0c0a10" stroke="' + INK + '" stroke-width="3"/><circle cx="' + x + '" cy="84" r="10" fill="#c9ccd6"/><circle cx="' + x + '" cy="84" r="3.500" fill="#2c2436"/><path d="M' + x + ' 74V94M' + (x - 10) + ' 84H' + (x + 10) + 'M' + (x - 7) + ' 77L' + (x + 7) + ' 91M' + (x + 7) + ' 77L' + (x - 7) + ' 91" stroke="#2c2436" stroke-width="1.500"/>';
+    return '<g transform="translate(50 540) scale(1.7)"><ellipse cx="110" cy="102" rx="108" ry="6" fill="#000" opacity=".35"/><path d="' + body + '" fill="' + colour + '" stroke="' + INK + '" stroke-width="3.200" stroke-linejoin="round"/><path d="' + glass + '" fill="#bfe6f5" stroke="' + INK + '" stroke-width="2.400" stroke-linejoin="round"/><path d="M12 64H208" stroke="' + light + '" stroke-width="3" opacity=".7"/><path d="M6 80H216" stroke="' + dark + '" stroke-width="5"/><rect x="200" y="62" width="14" height="8" rx="3" fill="#fff6c2" stroke="' + INK + '" stroke-width="1.500"/><rect x="6" y="62" width="10" height="8" rx="3" fill="#ff3b4e" stroke="' + INK + '" stroke-width="1.500"/>' + (kind === 'sport' ? '<path d="M4 58H28L24 68" fill="none" stroke="' + INK + '" stroke-width="5" stroke-linejoin="round"/>' : '') + (kind === 'suv' ? '<path d="M52 6H160" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>' : '') + (kind === 'limo' ? '<rect x="206" y="46" width="8" height="12" rx="2" fill="#e8e8ee" stroke="' + INK + '" stroke-width="1.500"/>' : '') + wheel(46) + wheel(174) + '<text x="110" y="78" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="10" fill="' + contrast(colour) + '">' + item.mark + '</text></g>';
 }
 /* ---------- Slam Dunk Séance: three-pointers, dunks and one shot from half court in a packed arena ---------- */
 const HOOP_KITS = [['Hot pink', '#ff1f8f', '#fff6fb'], ['Midnight', '#14101a', '#ff1f8f'], ['Purple', '#6a1f86', '#f4d35e'], ['Electric blue', '#19b7e8', '#14101a'], ['Slime', '#6fc22e', '#14101a'], ['Blood red', '#c0392b', '#f4d35e']];
@@ -10921,6 +11053,148 @@ function startScores() {
     }).subscribe();
 }
 $('#player').after(scoreBoard);
+/* ---------- the Bank of Bones card and the Bone Boutique: bones earned in games are spent on things that show on your ghoul ---------- */
+const SHOP_TABS = [['cars', 'Cars', 'Parked right beside your ghoul. They do not drive, they just look expensive.'], ['hats', 'Hats', 'Nike, Puma and Prada.'], ['shoes', 'Shoes', 'Nike, Puma and ASICS.'], ['dior', 'Dior', 'Tops and bottoms from the house of Dior.'], ['jewels', 'Jewellery', 'Real diamonds, Rolex, Audemars Piguet and Patek Philippe.']];
+const SHOP_PLAIN = { car: 'none', headwear: 'none', neck: 'none', wrist: 'none', shoes: 'sneaker', top: 'tee', bottom: 'straight' };
+const SHOP_BOXES = { car: '40 520 400 215', headwear: '30 -50 260 270', shoes: '60 560 200 170', top: '40 215 240 225', bottom: '40 340 240 380', neck: '95 195 130 100', wrist: '10 300 130 170' };
+let shopTab = 'cars', shopNote = '', shopOwnerSeen, shopPrices = {};
+const boneLogKey = () => 'boneLog.' + (signedInId() || 'guest');
+/* The statement remembers earnings on this device, and purchases come from the account. */
+function logBones(n) {
+    const why = !$('.view[data-view="games"]').hidden ? titleOf(currentGame) : !$('.view[data-view="academics"]').hidden ? 'Class passed' : 'School reward';
+    const log = store.get(boneLogKey(), []);
+    log.unshift({ n, why, at: new Date().toISOString() });
+    store.set(boneLogKey(), log.slice(0, 30));
+    if (!$('.view[data-view="profile"]').hidden)
+        drawBank();
+}
+async function loadOwned() {
+    shopOwned = new Set();
+    shopPrices = {};
+    if (!backendReady || !signedInId())
+        return;
+    const { data, error } = await sb.from('shop_owned').select('item, price, bought_at');
+    if (error)
+        return;
+    data.forEach(r => { shopOwned.add(r.item); shopPrices[r.item] = { price: r.price, at: r.bought_at }; });
+}
+const shopLook = () => (isAdmin() ? DOLLS.mumtea.look : currentStudent()?.look || DOLLS.mumtea.look);
+const boneMark = () => { const m = el('span', { cls: 'bonemark', 'aria-hidden': 'true' }); m.innerHTML = '<svg viewBox="0 0 24 14" width="20" height="12"><path d="M5 1a3 3 0 0 1 3 3h8a3 3 0 1 1 3 3 3 3 0 1 1-3 3H8a3 3 0 1 1-3-3 3 3 0 1 1 0-6Z" fill="currentColor"/></svg>'; return m; };
+function drawBank() {
+    const box = $('#bankCol');
+    box.textContent = '';
+    const me = currentStudent(), fang = isAdmin();
+    if (!me && !fang)
+        return;
+    const name = fang ? DOLLS.mumtea.name : me.name, seed = (fang ? 'fangtastic' : me.id).replace(/-/g, '');
+    let digits = '';
+    for (let i = 0; digits.length < 12; i++)
+        digits += String((seed.charCodeAt(i % seed.length) * (i + 7)) % 10);
+    const number = '6666 ' + digits.slice(0, 4) + ' ' + digits.slice(4, 8) + ' ' + digits.slice(8, 12);
+    const joined = me ? new Date(me.joined) : new Date();
+    const card = el('div', { cls: 'bonecard', role: 'group', 'aria-label': 'Bank of Bones card for ' + name + ', ' + (fang ? 'unlimited' : bones) + ' bones' });
+    const chip = el('i', { cls: 'bcchip', 'aria-hidden': 'true' });
+    const wave = el('span', { cls: 'bcwave', 'aria-hidden': 'true' });
+    wave.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"><path d="M7 8a8 8 0 0 1 0 8M11 5a13 13 0 0 1 0 14M15 2.500a18 18 0 0 1 0 19"/></svg>';
+    const crest = el('img', { cls: 'bccrest', src: 'emblems/h.webp', alt: '', width: 46, height: 56 });
+    const balance = el('strong', { cls: 'bcbalance' }, el('span', { 'data-bones': '', text: fang ? 'Unlimited' : String(bones) }), el('small', { text: ' bones' }));
+    card.append(el('div', { cls: 'bctop' }, el('div', {}, el('b', { text: 'BANK OF BONES' }), el('small', { text: 'Mumtea High Black Card' })), crest), el('div', { cls: 'bcmid' }, chip, wave, el('div', { cls: 'bcbal' }, el('small', { text: 'Balance' }), balance)), el('p', { cls: 'bcnumber', text: number }), el('div', { cls: 'bcfoot' }, el('div', {}, el('small', { text: 'Card holder' }), el('b', { text: name.toUpperCase() })), el('div', {}, el('small', { text: 'Member since' }), el('b', { text: String(joined.getMonth() + 1).padStart(2, '0') + '/' + String(joined.getFullYear()).slice(2) })), el('div', {}, el('small', { text: 'Expires' }), el('b', { text: 'Never' }))));
+    const earned = store.get(boneLogKey(), []).map(r => ({ text: r.why, n: r.n, at: r.at }));
+    const spent = Object.keys(shopPrices).map(id => ({ text: SHOP_BY_ID[id] ? (SHOP_BY_ID[id].brand === 'Fine jewellery' ? '' : SHOP_BY_ID[id].brand + ' ') + SHOP_BY_ID[id].name : id, n: -shopPrices[id].price, at: shopPrices[id].at }));
+    const rows = [...earned, ...spent].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 8);
+    const statement = el('div', { cls: 'bcstatement' }, el('h4', { text: 'Recent activity' }));
+    if (!rows.length)
+        statement.append(el('p', { text: fang ? 'The headghoul does not pay for things.' : 'Nothing yet. Finish games and pass classes to earn bones.' }));
+    rows.forEach(r => statement.append(el('div', { cls: 'bcrow' }, el('span', { text: r.text }), el('time', { datetime: r.at, text: timeAgo(r.at) }), el('b', { cls: r.n < 0 ? 'bcout' : 'bcin', text: (r.n < 0 ? '−' : '+') + Math.abs(r.n) }))));
+    box.append(card, statement, el('button', { cls: 'pill', type: 'button', 'data-go': 'shop' }, 'Spend it at the Bone Boutique'));
+}
+async function wearItem(id, on) {
+    const item = SHOP_BY_ID[id], next = { ...shopLook(), [item.slot]: on ? id : SHOP_PLAIN[item.slot] };
+    shopNote = 'Getting dressed...';
+    renderShop();
+    if (isAdmin()) {
+        const { error } = await sb.rpc('admin_set_fang_look', { token: adminPass, look: next });
+        if (error) {
+            shopNote = 'That did not save. Please try again.';
+            renderShop();
+            return;
+        }
+        DOLLS.mumtea.look = next;
+        paintDolls();
+    }
+    else if (!(await updateMe({ look: next }))) {
+        shopNote = 'That did not save. Please try again.';
+        renderShop();
+        return;
+    }
+    shopNote = on ? 'Your ghoul has it on. See it on My Ghoul.' : 'Taken off.';
+    syncStudio();
+    renderStudents();
+    renderID();
+    renderProfile();
+    renderShop();
+}
+async function buyItem(id) {
+    const item = SHOP_BY_ID[id];
+    shopNote = 'Paying...';
+    renderShop();
+    await flushBones();
+    const { data, error } = await sb.rpc('buy_shop_item', { which: id });
+    if (error) {
+        shopNote = /not enough/.test(error.message || '') ? 'Not enough bones on your card.' : /verify/.test(error.message || '') ? 'Verify your email first, then you can shop.' : /already/.test(error.message || '') ? 'You already own that.' : 'That did not go through, so nothing was charged. Please try again.';
+        await refreshBones();
+        await loadOwned();
+        renderShop();
+        return;
+    }
+    bones = data;
+    store.set('bones', bones);
+    drawBones();
+    shopOwned.add(id);
+    shopPrices[id] = { price: item.price, at: new Date().toISOString() };
+    shopNote = (item.brand === 'Fine jewellery' ? '' : item.brand + ' ') + item.name + ' is yours. Press Wear to put it on.';
+    tone(880, .1);
+    drawStudio();
+    renderShop();
+}
+function renderShop() {
+    const box = $('#shopBox');
+    box.textContent = '';
+    const me = currentStudent(), fang = isAdmin();
+    const purse = el('div', { cls: 'shoppurse' }, el('span', { text: 'On your card' }), boneMark(), el('strong', { 'data-bones': '', text: fang ? 'Unlimited' : me ? String(bones) : '0' }), el('button', { cls: 'linkish', type: 'button', 'data-go': 'profile' }, 'See my card'));
+    const tabs = el('div', { cls: 'chips', role: 'group', 'aria-label': 'Shop departments' }, ...SHOP_TABS.map(([id, name]) => el('button', { cls: 'chip', type: 'button', 'data-tab': id, 'aria-pressed': shopTab === id, onclick() { shopTab = id; shopNote = ''; renderShop(); } }, name)));
+    const tab = SHOP_TABS.find(t => t[0] === shopTab);
+    box.append(purse, tabs, el('p', { cls: 'shopblurb', text: tab[2] }));
+    if (fang)
+        box.append(el('p', { cls: 'shopnote', text: 'You run the school. Everything here is on the house.' }));
+    else if (!me)
+        box.append(el('div', { cls: 'row shopguest' }, el('span', { text: 'Window shopping is free. Log in to buy.' }), el('button', { cls: 'pill', type: 'button', 'data-go': 'registration' }, 'Register or log in')));
+    if (shopNote)
+        box.append(el('p', { cls: 'shopnote', role: 'status', text: shopNote }));
+    const look = shopLook(), grid = el('div', { cls: 'shopgrid' });
+    SHOP_ITEMS.filter(i => i.cat === shopTab).forEach(item => {
+        const owned = fang || shopOwned.has(item.id), on = look[item.slot] === item.id;
+        const pic = el('div', { cls: 'shoppic', 'aria-hidden': 'true' });
+        pic.innerHTML = drawGhoul({ ...look, [item.slot]: item.id }, item.slot === 'car' ? { only: ['car'], box: SHOP_BOXES.car, plain: true } : { box: SHOP_BOXES[item.slot], plain: true });
+        const left = item.price - bones;
+        const action = !me && !fang ? el('button', { cls: 'pill ghost', type: 'button', 'data-go': 'registration' }, 'Log in to buy')
+            : owned ? el('button', { cls: on ? 'pill ghost' : 'pill', type: 'button', 'data-buy': item.id, onclick() { wearItem(item.id, !on); } }, on ? 'Take off' : 'Wear')
+                : left > 0 ? el('button', { cls: 'pill ghost', type: 'button', 'data-buy': item.id, disabled: '' }, left + ' more bones')
+                    : el('button', { cls: 'pill', type: 'button', 'data-buy': item.id, onclick() { buyItem(item.id); } }, 'Buy');
+        grid.append(el('article', { cls: 'shopcard' + (owned ? ' shopowned' : '') }, pic, el('small', { text: item.brand }), el('strong', { text: item.name }), el('p', { cls: 'shopprice' }, fang ? 'On the house' : owned ? 'Yours' : '', ...(fang || owned ? [] : [boneMark(), String(item.price)])), action));
+    });
+    box.append(grid);
+}
+/* The account can change at any moment, so this keeps an eye on it. */
+window.setInterval(() => {
+    const who = signedInId();
+    if (who === shopOwnerSeen)
+        return;
+    shopOwnerSeen = who;
+    loadOwned().then(() => { drawStudio(); if (!$('.view[data-view="shop"]').hidden)
+        renderShop(); if (!$('.view[data-view="profile"]').hidden)
+        drawBank(); });
+}, 2000);
 /* ---------- Spill Proof: sit in your teacup at a midnight tea party and catch sugar skulls ---------- */
 (function () {
     const W = 640, H = 540, TOP = 180, ZOOM = 2, INK_LINE = '#1c0a1c';
@@ -12231,7 +12505,7 @@ function renderAccount() {
                 go('registration');
             }
         } }, 'Log in'));
-    $('#idcard').before(accountBox);
+    $('#regSide').append(accountBox);
 })();
 /* ---------- choosing a new password after following the emailed link ---------- */
 const passwordDialog = el('dialog', { cls: 'composer', 'aria-labelledby': 'newPassTitle' });
@@ -12460,7 +12734,7 @@ function bakeInBackground() {
             const page = WARDROBE[index];
             if (!page.items)
                 continue;
-            const store = storeFor(page), todo = page.items.find(([id]) => !store.fresh[id]);
+            const store = storeFor(page), todo = visibleItems(page).find(([id]) => !store.fresh[id]);
             if (!todo)
                 continue;
             /* One at a time, staying out of the way of whatever the visitor is doing. */
@@ -12485,7 +12759,7 @@ function drawStudio(redress = true) {
     studioCount.textContent = (studioPage + 1) + ' of ' + WARDROBE.length;
     studioTiles.textContent = '';
     studioSwatches.textContent = '';
-    (page.items || []).forEach(([id, label]) => {
+    visibleItems(page).forEach(([id, label]) => {
         const pic = el('span', { cls: 'wpic' });
         /* Finished already if the background got here first, otherwise it is made now, so a tile is never empty. */
         const art = tiles?.art[id];
@@ -12578,6 +12852,10 @@ function viewOpened(v) {
         renderStudentPage();
     if (v === 'academics')
         renderClasses();
+    if (v === 'shop') {
+        refreshBones().then(() => { renderShop(); }, () => { });
+        renderShop();
+    }
     if (v === 'games')
         musicPlay(currentGame);
     else if (v !== 'academics')
@@ -12591,6 +12869,7 @@ function viewOpened(v) {
         }
     }
     if (v === 'profile') {
+        refreshBones().then(drawBank, () => { });
         renderProfile();
         if (signedInId() || isAdmin())
             mountStudio($('#profileStudio'));
@@ -12602,6 +12881,8 @@ function renderProfile() {
     const box = $('#profileBox');
     box.textContent = '';
     const me = currentStudent();
+    $('#profileCards').hidden = false;
+    drawBank();
     $('#profileStudio').hidden = !me && !isAdmin();
     if (isAdmin()) {
         $('#profileLede').textContent = 'You are Ms. Fangtastic. Change her look here and everyone sees it. Press Save to keep it.';
