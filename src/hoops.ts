@@ -359,7 +359,7 @@ const HOOP_BALLS: Array<[string, string, string]> = [['classic', 'Classic', '#f2
     if (mode === 'air' && holding) { holding = false; spinTo = Math.round(spin / (Math.PI * 2)) * Math.PI * 2; }
   }
   p.go.addEventListener('click', () => {
-    gameOverStop();
+    gameOverStop(); countRound('hoops');
     dress(); paused = false; score = 0; round = 1; shot = 0; bits = []; glass = 1; headline = ''; cam = 1; camX = 320; camY = 180;
     locker.hidden = true; p.go.textContent = 'Restart'; p.go.blur(); musicHold(false); tone(880, .5); ball.held = true; go('intro'); stat(); kick();
   });

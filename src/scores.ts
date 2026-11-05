@@ -88,6 +88,11 @@ function takeScore(row: ScoreRow): void {
   if (who && scoresLoaded && (!top || row.score > top.score)) showHighScore(who, row.game, row.score, isMine(row.user_id));
   renderScores();
 }
+/* Called when a round starts, so the server can tell a played round from a typed-in score. */
+function countRound(game: string): void {
+  if (!backendReady || isAdmin() || !signedInId()) return;
+  sb.rpc('start_round', { which: game }).then(() => {}, () => {});
+}
 /* Called when a round ends. */
 async function submitScore(game: string, score: number): Promise<void> {
   const asFang = isAdmin();

@@ -890,3 +890,125 @@ begin
 end $$;
 revoke all on function public.buy_shop_item(text) from public, anon;
 grant execute on function public.buy_shop_item(text) to authenticated;
+
+-- Spam limits and fair bones and scores.
+
+-- Fifty posts and fifty comments a day each. Ms. Fangtastic has no limit.
+create or replace function private.daily_limit() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  if new.author_id is null then return new; end if;
+  if tg_table_name = 'posts' then
+    if (select count(*) from public.posts p where p.author_id = new.author_id and p.created_at > now() - interval '1 day') >= 50 then
+      raise exception 'only 50 posts a day';
+    end if;
+  elsif (select count(*) from public.comments c where c.author_id = new.author_id and c.created_at > now() - interval '1 day') >= 50 then
+    raise exception 'only 50 comments a day';
+  end if;
+  return new;
+end $$;
+drop trigger if exists posts_daily_limit on public.posts;
+create trigger posts_daily_limit before insert on public.posts for each row execute function private.daily_limit();
+drop trigger if exists comments_daily_limit on public.comments;
+create trigger comments_daily_limit before insert on public.comments for each row execute function private.daily_limit();
+
+-- Bones are added by the server, a little at a time, instead of the browser saying what the total is.
+-- At most 300 at once and 1000 a day, so a made-up number can't fill a card.
+create table if not exists private.bone_days (
+  user_id uuid not null references auth.users on delete cascade,
+  day date not null,
+  earned integer not null default 0,
+  primary key (user_id, day)
+);
+create or replace function public.earn_bones(amount integer) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare me uuid := auth.uid(); today integer; allowed integer; total integer;
+begin
+  if me is null then raise exception 'log in first'; end if;
+  if not exists (select 1 from public.profiles where id = me and verified) then raise exception 'verify your email first'; end if;
+  if amount is null or amount < 1 then raise exception 'bad amount'; end if;
+  insert into private.bone_days (user_id, day) values (me, current_date) on conflict do nothing;
+  select d.earned into today from private.bone_days d where d.user_id = me and d.day = current_date for update;
+  allowed := greatest(0, least(amount, 300, 1000 - today));
+  update private.bone_days d set earned = d.earned + allowed where d.user_id = me and d.day = current_date;
+  insert into public.player_progress as g (user_id, bones) values (me, allowed)
+    on conflict (user_id) do update set bones = g.bones + excluded.bones, updated_at = now()
+    returning g.bones into total;
+  delete from private.bone_days d where d.user_id = me and d.day < current_date - 7;
+  return total;
+end $$;
+revoke all on function public.earn_bones(integer) from public, anon;
+grant execute on function public.earn_bones(integer) to authenticated;
+drop function if exists public.save_bones(integer);
+
+-- Codes from the home page count once per account, wherever someone types them.
+create table if not exists private.codes_used (
+  user_id uuid not null references auth.users on delete cascade,
+  code text not null,
+  primary key (user_id, code)
+);
+create or replace function public.redeem_code(code text) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare me uuid := auth.uid(); clean text := upper(regexp_replace(coalesce(code, ''), '[^A-Za-z0-9]', '', 'g')); worth integer; total integer;
+begin
+  if me is null then raise exception 'log in first'; end if;
+  if not exists (select 1 from public.profiles where id = me and verified) then raise exception 'verify your email first'; end if;
+  worth := case clean when 'MUMTEA' then 25 when 'FANGTASTIC' then 50 when 'MSFANTASTIC' then 50 when 'EARLGHOUL' then 25 when 'BOOBREW' then 100 else null end;
+  if worth is null then raise exception 'unknown code'; end if;
+  insert into private.codes_used (user_id, code) values (me, clean) on conflict do nothing;
+  if not found then raise exception 'already used'; end if;
+  insert into public.player_progress as g (user_id, bones) values (me, worth)
+    on conflict (user_id) do update set bones = g.bones + excluded.bones, updated_at = now()
+    returning g.bones into total;
+  return total;
+end $$;
+revoke all on function public.redeem_code(text) from public, anon;
+grant execute on function public.redeem_code(text) to authenticated;
+
+-- A score only counts if its round was started, and only up to what that game allows.
+-- The endless games are checked against how long the round lasted.
+create table if not exists private.round_starts (
+  user_id uuid not null references auth.users on delete cascade,
+  game text not null,
+  at timestamptz not null default now(),
+  primary key (user_id, game)
+);
+create or replace function public.start_round(which text) returns void
+language plpgsql security definer set search_path = '' as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'log in first'; end if;
+  if which is null or which not in ('spill', 'riptide', 'casket', 'kick', 'hoops', 'pageant') then raise exception 'unknown game'; end if;
+  insert into private.round_starts (user_id, game) values (me, which)
+    on conflict (user_id, game) do update set at = now();
+end $$;
+revoke all on function public.start_round(text) from public, anon;
+grant execute on function public.start_round(text) to authenticated;
+
+create or replace function public.submit_score(which text, points integer) returns integer
+language plpgsql security definer set search_path = '' as $$
+declare me uuid := auth.uid(); best integer; started timestamptz; secs numeric; most numeric;
+begin
+  if me is null then raise exception 'log in first'; end if;
+  if not exists (select 1 from public.profiles where id = me and verified) then raise exception 'verify your email first'; end if;
+  if which is null or which not in ('spill', 'riptide', 'casket', 'kick', 'hoops', 'pageant') then raise exception 'unknown game'; end if;
+  if points is null or points < 1 then raise exception 'bad score'; end if;
+  delete from private.round_starts r where r.user_id = me and r.game = which returning r.at into started;
+  if started is null or started < now() - interval '3 hours' then raise exception 'start a round first'; end if;
+  secs := extract(epoch from now() - started);
+  most := case which
+    when 'kick' then 300
+    when 'hoops' then 150
+    when 'pageant' then 150
+    when 'spill' then 10 + secs * 6
+    when 'riptide' then 30 + secs * 25
+    when 'casket' then 6 + secs * 2
+  end;
+  if points > most then raise exception 'score too high for that round'; end if;
+  insert into public.game_scores as s (user_id, game, score) values (me, which, points)
+    on conflict (user_id, game) do update set score = excluded.score, at = now() where s.score < excluded.score;
+  select s.score into best from public.game_scores s where s.user_id = me and s.game = which;
+  return best;
+end $$;
+revoke all on function public.submit_score(text, integer) from public, anon;
+grant execute on function public.submit_score(text, integer) to authenticated;

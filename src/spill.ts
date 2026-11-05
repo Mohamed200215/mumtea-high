@@ -413,7 +413,7 @@
   }
   function quit(): void { paused = false; musicHold(false); mode = 'idle'; items = []; bits = []; pops = []; keys = {}; go.textContent = 'Start'; stat(); }
   go.addEventListener('click', () => {
-    gameOverStop();
+    gameOverStop(); countRound('spill');
     dress(() => {
       paused = false; musicHold(false); items = []; bits = []; pops = []; score = 0; lives = 3; x = W / 2; aimX = x; tilt = 0; cheer = 0; ouch = 0; flash = 0; shake = 0;
       mode = 'pour'; modeT = 0; go.textContent = 'Restart'; go.blur(); stat(); tone(330, .3); kick();

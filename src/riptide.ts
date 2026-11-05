@@ -647,7 +647,7 @@ function merCorner(): string {
     mode = 'idle'; paused = false; musicHold(false); rise = false; things = []; sparks = []; floats = []; locker.hidden = false; p.go.textContent = 'Dive in'; stat();
   }
   p.go.addEventListener('click', () => {
-    gameOverStop();
+    gameOverStop(); countRound('riptide');
     dress(() => {
       paused = false; musicHold(false); mode = 'intro'; modeT = 0; swimX = -170; y = 180; vy = 0; things = []; sparks = []; floats = []; score = 0; lives = 3; safe = 0; gap = 300; shown = 0; shake = 0; flash = 0; slow = 0; petY = 230;
       locker.hidden = true; p.go.textContent = 'Restart'; p.go.blur(); stat(); tone(220, .4); kick();

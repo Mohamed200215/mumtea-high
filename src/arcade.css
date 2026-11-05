@@ -854,8 +854,19 @@ html.introon,html.introon body{overflow:hidden}
 .introenter{padding:12px 28px;border:3px solid #000;border-radius:999px;background:var(--pink);color:#fff;font:26px var(--display);box-shadow:0 5px 0 #000}
 .introenter:hover,.introenter:focus-visible{background:#fff;color:var(--pink);outline:3px solid var(--pink);outline-offset:3px}
 .introgate p{margin:0;font-weight:800;color:var(--white)}
-.themetoggle{position:fixed;left:12px;bottom:12px;z-index:90;padding:5px 12px;border:2px solid var(--pink);border-radius:999px;background:#140a1c;color:var(--white);font:800 12px var(--body)}
+.themetoggle{position:fixed;left:12px;bottom:12px;z-index:90;display:flex;align-items:center;gap:6px;padding:5px 12px 5px 9px;border:2px solid var(--pink);border-radius:999px;background:#140a1c;color:var(--white);font:800 12px var(--body)}
+.themetoggle svg{width:16px;height:16px;flex:none}
+.themetoggle .themeoff{display:none}
 .themetoggle[aria-pressed="false"]{border-color:#6b5a78;color:var(--muted)}
+.themetoggle[aria-pressed="false"] .themeoff{display:inline}
+/* Every game has its own music button, so the page one steps aside there. */
+body:has([data-view="games"]:not([hidden])) .themetoggle{display:none}
+@media (max-width:700px){
+  .themetoggle{left:10px;bottom:10px;width:40px;height:40px;padding:0;justify-content:center}
+  .themetoggle svg{width:20px;height:20px}
+  .themetoggle span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  body{padding-bottom:56px}
+}
 
 /* the school's pink pixel cursor, everywhere except where you type */
 html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAaCAYAAACHD21cAAAAy0lEQVR42rWTPQ7CMAyFX6zeoL0TV+gRmNKzNBdg6NIr9ASsrCwwFyWqhMRsJipK8+NEwpPzpC9+thPY1jAKggCgBCYAqE/HbJgAAJd7Nkxr9nxlwbQ5ZcC0U4QweVUBTMErEzBFG4nAlBxfACbR0jxwlYRujzWtuwMsDDejVknQ9dNOs63hSuK0GbVKDsd1w8aeaI+uG+Tfw7aG+Xzl74l9NJ4X5nnh4B5dP3n7SFr9hZpRK9dPol6DLYTsEv4RsarFFYtBJbHre3pvILGaKrazdGIAAAAASUVORK5CYII=) 0 0,auto!important}

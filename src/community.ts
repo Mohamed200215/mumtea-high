@@ -150,7 +150,7 @@ function commentsBlock(post: TeaPost): HTMLElement {
     send.setAttribute('disabled', '');
     const { error } = isAdmin() ? await sb.rpc('admin_comment', { token: adminPass, target: post.id, body: text }) : await sb.from('comments').insert({ post_id: post.id, body: text });
     send.removeAttribute('disabled');
-    if (error) { note.textContent = 'That did not post. Your words are still here, so try again.'; return; }
+    if (error) { note.textContent = /a day/.test(error.message || '') ? 'That is 50 comments today. Come back tomorrow.' : 'That did not post. Your words are still here, so try again.'; return; }
     delete commentDrafts[post.id];
     await refreshCommunity().catch(() => {});
     redrawPosts();
@@ -241,17 +241,21 @@ const blogCount = el('p', { cls: 'teacountline', role: 'status' });
 })();
 
 /* ---------- bones follow the account ---------- */
-let bonesDirty = false;
-function saveBonesSoon(): void {
+/* The browser only says how many bones were just earned. The server adds them on, up to a daily limit. */
+let bonesDirty = false, bonesPending = 0;
+function saveBonesSoon(earned: number): void {
   clearTimeout(bonesTimer);
-  bonesDirty = true;
+  bonesPending += earned; bonesDirty = bonesPending > 0;
   bonesTimer = window.setTimeout(() => { flushBones().catch(() => {}); }, 800);
 }
 async function flushBones(): Promise<void> {
   clearTimeout(bonesTimer);
   if (!bonesDirty || !signedInId() || signedInId() !== bonesOwner) return;
-  const { error } = await sb.rpc('save_bones', { total: bones });
-  if (!error) bonesDirty = false;
+  const amount = bonesPending;
+  const { data, error } = await sb.rpc('earn_bones', { amount });
+  if (error) return;
+  bonesPending -= amount; bonesDirty = bonesPending > 0;
+  if (!bonesDirty) { bones = data as number; store.set('bones', bones); drawBones(); }
 }
 /* The account is the bank: a purchase on another device must show here too. */
 async function refreshBones(): Promise<void> {
@@ -265,11 +269,12 @@ async function syncProgress(): Promise<void> {
   const me = signedInId();
   if (!backendReady || me === bonesOwner) return;
   bonesOwner = me;
+  bonesPending = 0; bonesDirty = false;
   if (!me) { bones = 0; store.set('bones', 0); drawBones(); return; }
   const { data, error } = await sb.from('player_progress').select('bones').eq('user_id', me).maybeSingle();
   if (error) return;
   /* A first login keeps what this device earned as a guest. */
-  if (data) { bones = data.bones; store.set('bones', bones); drawBones(); } else saveBonesSoon();
+  if (data) { bones = data.bones; store.set('bones', bones); drawBones(); } else saveBonesSoon(bones);
 }
 
 /* ---------- finished characters become one picture, so scrolling doesn't repaint hundreds of shapes ---------- */

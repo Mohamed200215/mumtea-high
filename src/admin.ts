@@ -65,6 +65,11 @@ function renderBoss(): void {
   if (!isAdmin() && !$('[data-view="admin"]').hidden) go('home');
 }
 
+/* Removing a student also removes their private Polaroids, which the database can't do itself. */
+async function removeStudent(target: string): Promise<{ error: { message: string } | null }> {
+  const { data, error } = await sb.functions.invoke('remove-student', { body: { token: adminPass, target } });
+  return { error: data?.ok ? null : { message: data?.error || error?.message || 'failed' } };
+}
 function renderAdmin(): void {
   const box = $('#adminBox'); box.textContent = '';
   $('#adminStudioBox').hidden = !isAdmin();
@@ -75,7 +80,7 @@ function renderAdmin(): void {
   const status = el('p', { cls: 'accountnote', role: 'status' });
   const run = async (name: string, args: Record<string, unknown>, done: string): Promise<void> => {
     status.textContent = 'Working...';
-    const { error } = await sb.rpc(name, { token: adminPass, ...args });
+    const { error } = name === 'admin_delete_user' ? await removeStudent(args.target as string) : await sb.rpc(name, { token: adminPass, ...args });
     if (error) {
       if (/admin access/i.test(error.message || '')) { adminEnded(); refreshAll(''); return; }
       status.textContent = 'That did not work. Please try again.';

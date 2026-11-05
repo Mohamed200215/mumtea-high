@@ -366,7 +366,7 @@ function pageantCpu(round: number, worn: string[], tries: number): PageantOutfit
     room.hidden = true; sheet.hidden = true; holder().hidden = false; rules.open = true; p.go.textContent = 'Enter the pageant'; stat(); kick();
   }
   p.go.addEventListener('click', () => {
-    gameOverStop();
+    gameOverStop(); countRound('pageant');
     askCrowd(); p.go.blur();
     const me = (!isAdmin() && currentStudent()?.look) || DOLLS.mumtea.look, name = (!isAdmin() && currentStudent()?.name) || 'You';
     const blank = (who: string, cpu: boolean, tries: number, look: Look): Contestant => ({ name: who, cpu, tries, look, outfit: {} as PageantOutfit, worn: [], rows: [], total: 0, last: 0, art: {}, shown: 0 });

@@ -16,6 +16,7 @@ https://mohamed200215.github.io/mumtea-high/
 | `emoji/` | Emoji pictures. |
 | `figures/` | Animated pictures on the home page. |
 | `sounds/` | Theme song and game sounds. |
+| `preview.jpg` | The picture that shows when the link is shared in a message. |
 
 **Used to make the website:**
 
@@ -23,7 +24,7 @@ https://mohamed200215.github.io/mumtea-high/
 |---|---|
 | `src/` | The code: games, shop, camera, filters and styles. |
 | `tools/` | The build script. Run `npm run build` after changing anything in `src/`. |
-| `supabase/` | The database setup. |
+| `supabase/` | The database setup, plus two small server functions: `login` and `remove-student`. |
 | `package.json`, `package-lock.json`, `tsconfig.json` | Project settings. |
 | `node_modules/`, `build/` | Created automatically. Safe to ignore. |
 

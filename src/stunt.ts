@@ -421,7 +421,7 @@ const STUNT_ROWS: Array<[keyof StuntOutfit, string, Array<[string, string]>]> = 
   }
   function quit(): void { mode = 'idle'; paused = false; charging = false; bits = []; keys = {}; locker.hidden = false; p.go.textContent = 'Start the show'; musicHold(false); stat(); }
   p.go.addEventListener('click', () => {
-    gameOverStop();
+    gameOverStop(); countRound('casket');
     dress(() => {
       paused = false; score = 0; lives = 3; round = 1; bits = []; note = ''; zoom = 1; shake = 0; flash = 0;
       locker.hidden = true; p.go.textContent = 'Restart'; p.go.blur(); musicHold(false); tone(220, .3);

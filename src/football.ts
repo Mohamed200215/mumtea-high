@@ -390,7 +390,7 @@ const KICK_BALLS: Array<[string, string]> = [['classic', 'Classic'], ['skull', '
   function finish(): void { go('done'); paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 10)); if (score > 0) submitScore('kick', score); gameOverSound(); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
   function quit(): void { go('idle'); paused = false; charging = false; bits = []; keys = {}; locker.hidden = false; p.go.textContent = 'Kick off'; musicHold(false); stat(); }
   p.go.addEventListener('click', () => {
-    gameOverStop();
+    gameOverStop(); countRound('kick');
     dress(); paused = false; score = 0; goals = 0; shotNo = 0; bits = []; setUp();
     locker.hidden = true; p.go.textContent = 'Restart'; p.go.blur(); musicHold(false); tone(880, .4); go('intro'); stat(); kick();
   });

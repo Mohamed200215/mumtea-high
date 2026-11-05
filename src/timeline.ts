@@ -194,7 +194,7 @@ function openComposer(editing?: TeaPost): void {
     const result = postingAsBoss ? await sb.rpc('admin_post', { token: adminPass, title: title.value.trim(), body: text }) : await sb.from('posts').insert({ title: title.value.trim(), body: text }).select().single();
     const { data, error } = result;
     submit.removeAttribute('disabled');
-    if (error) { note.textContent = 'That did not post. Your words are still here, so try again.'; return; }
+    if (error) { note.textContent = /a day/.test(error.message || '') ? 'That is 50 posts today. Your words are saved here, so post them tomorrow.' : 'That did not post. Your words are still here, so try again.'; return; }
     store.set('draft', null);
     award(2);
     await refreshPosts();

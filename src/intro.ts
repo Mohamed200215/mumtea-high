@@ -170,7 +170,10 @@
 /* A small switch for the theme song, on every page. */
 function themeToggle(): HTMLElement {
   const btn = el('button', { cls: 'themetoggle', type: 'button', onclick() { store.set('musicOn', !store.get<boolean>('musicOn', true)); document.dispatchEvent(new Event('soundchange')); } });
-  const draw = (): void => { const on = store.get<boolean>('musicOn', true); btn.textContent = on ? 'Music on' : 'Music off'; btn.setAttribute('aria-pressed', String(on)); };
+  /* On a phone only the note shows, so it covers less of the page. */
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 17.500V5l10-2v12" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.500" cy="17.500" r="2.800" fill="currentColor"/><circle cx="16.500" cy="15.500" r="2.800" fill="currentColor"/><path class="themeoff" d="M3 3l18 18" stroke="currentColor" stroke-width="2.400" stroke-linecap="round"/></svg>';
+  const word = el('span'); btn.append(word);
+  const draw = (): void => { const on = store.get<boolean>('musicOn', true); word.textContent = on ? 'Music on' : 'Music off'; btn.setAttribute('aria-pressed', String(on)); };
   draw(); document.addEventListener('soundchange', draw);
   return btn;
 }
