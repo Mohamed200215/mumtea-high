@@ -1246,7 +1246,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
 } as Record<string, string>)[o.headwear] || '';
 
   /* Cars park beside the character on its own pages. In the games the character poses alone. */
-  if (!opt.pose && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) { parts.car = '<g transform="translate(42 500)">' + carArt(SHOP_BY_ID[o.car]) + '</g>'; needsRoom = true; }
+  if (!opt.pose && !opt.head && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) { parts.car = '<g transform="translate(42 500)">' + carArt(SHOP_BY_ID[o.car]) + '</g>'; needsRoom = true; }
   const nameOn = (id: string, x: number, y: number, size: number, fill: string, serif = false): string => (SHOP_BY_ID[id] ? '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="' + size + '" fill="' + fill + '" font-family="' + (serif ? "Georgia,'Times New Roman',serif" : 'Arial,Helvetica,sans-serif') + '" font-weight="700"' + (serif ? ' font-style="italic"' : '') + '>' + SHOP_BY_ID[id].mark + '</text>' : '');
   if (parts.top) parts.top += nameOn(brand.top, 160, 318, 24, contrast(o.topC), true);
   if (parts.bottom) parts.bottom += nameOn(brand.bottom, 160, 470, 24, contrast(o.bottomC), true);

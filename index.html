@@ -7013,7 +7013,7 @@ function drawGhoul(o, opt = {}) {
         spider: strokeLine('M186 54l-14-10M186 60h-18M186 66l-14 8M206 54l14-10M206 60h18M206 66l14 8', 2.400, '#14101a') + `<ellipse cx="196" cy="62" rx="14" ry="11" fill="#14101a" stroke="${INK}" stroke-width="1.400"/><circle cx="196" cy="50" r="6" fill="#14101a"/><circle cx="193" cy="49" r="1.200" fill="#c0392b"/><circle cx="199" cy="49" r="1.200" fill="#c0392b"/>`,
     }[o.headwear] || '';
     /* Cars park beside the character on its own pages. In the games the character poses alone. */
-    if (!opt.pose && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) {
+    if (!opt.pose && !opt.head && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) {
         parts.car = '<g transform="translate(42 500)">' + carArt(SHOP_BY_ID[o.car]) + '</g>';
         needsRoom = true;
     }
