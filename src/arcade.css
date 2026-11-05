@@ -734,21 +734,15 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .emojistrip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px;width:100%;max-width:100%}
 .emojistrip>.glamrow,.emojistrip>.reactbar{display:flex;flex-wrap:nowrap;gap:6px;min-width:0;margin:0;padding:2px 2px 9px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:var(--pink) rgba(255,255,255,.1);-webkit-overflow-scrolling:touch}
 .emojistrip>.glamrow>*,.emojistrip>.reactbar>*{flex:none;scroll-snap-align:start}
-.striparrow{width:34px;height:58px;padding:0;background:#14101a;color:var(--paper);border:2px solid var(--pink);font-size:14px;cursor:pointer}
+.striparrow{width:30px;height:46px;padding:0;background:#14101a;color:var(--paper);border:2px solid var(--pink);font-size:14px;cursor:pointer}
 .striparrow:hover:not(:disabled),.striparrow:focus-visible{background:var(--pink);color:#fff}
 .striparrow:disabled{opacity:.3;cursor:default}
 @media (max-width:480px){.striparrow{width:26px}}
-.glamadd{display:grid;justify-items:center;gap:1px;padding:4px 5px 3px;background:#fff6fb;color:#14101a;border:2px solid #000;box-shadow:0 3px 0 var(--pink);cursor:pointer}
-.glamadd:hover,.glamadd:focus-visible{outline:2px solid var(--pink);outline-offset:1px;transform:translateY(-2px)}
-.glamadd:active{transform:translateY(2px);box-shadow:0 1px 0 var(--pink)}
-.glamadd img{display:block;width:56px;height:56px}
-.glamadd small{font:800 11px/1.2 var(--body)}
-.reactbtn.glamreact{display:inline-grid;grid-template-columns:auto auto;justify-items:center;align-items:center;gap:0 4px;min-width:66px;padding:4px 7px 3px;background:#fff6fb;color:#14101a;border:2px solid #000;box-shadow:0 3px 0 var(--violet)}
-.reactbtn.glamreact img{grid-column:1/3;width:52px;height:52px}
-.reactbtn.glamreact small{font:800 11px/1.2 var(--body)}
-.reactbtn.glamreact:hover{outline:2px solid var(--pink);outline-offset:1px;border-color:#000}
-.reactbtn.glamreact[aria-pressed="true"]{background:#ffc2e0;border-color:#000;box-shadow:0 3px 0 var(--pink)}
-.typedemoji.glamtyped{width:2.6em;height:2.6em;vertical-align:-.95em;margin:.1em .1em;padding:.08em;background:#fff6fb;border-radius:.4em;box-sizing:border-box}
+.glamadd{display:grid;place-items:center;padding:4px;background:#14101a;border:2px solid var(--violet);cursor:pointer}
+.glamadd:hover,.glamadd:focus-visible{border-color:var(--pink);transform:translateY(-2px)}
+.glamadd img{display:block;width:36px;height:36px}
+.reactbtn.glamreact{flex:none;gap:4px;min-height:44px;padding:3px 8px}
+.reactbtn.glamreact img{width:36px;height:36px}
 
 /* the notification bell */
 .bellbtn{position:relative;display:inline-grid;place-items:center;width:38px;height:38px;padding:0;background:#14101a;color:var(--paper);border:2px solid var(--pink);border-radius:50%;cursor:pointer}
@@ -827,6 +821,24 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .shopprice{display:flex;align-items:center;margin:2px 10px 6px;font-weight:800;color:#fff06a}
 .shopcard .pill{align-self:end;margin:0 10px}
 .shopcard .pill:disabled{opacity:.65;cursor:not-allowed}
+
+/* a post is the page it was written on */
+.teanote{--rule:28px;--lines:rgba(106,31,134,.24);position:relative;margin:14px 0 10px;padding:14px 14px 10px 40px;min-height:calc(var(--rule)*3);background:linear-gradient(90deg,transparent 28px,var(--pink) 28px,var(--pink) 30px,transparent 30px),repeating-linear-gradient(to bottom,transparent 0 27px,var(--lines) 27px 28px),#fdf0e6;background-position:0 0,0 14px,0 0;color:#2a1430;box-shadow:4px 4px 0 #000;transform:rotate(-.25deg)}
+.teapost:nth-child(even) .teanote{transform:rotate(.3deg)}
+.teanote::before{content:"";position:absolute;top:-11px;left:50%;width:96px;height:21px;margin-left:-48px;background:repeating-linear-gradient(45deg,rgba(255,31,143,.9) 0 8px,rgba(240,143,180,.9) 8px 16px);transform:rotate(1.5deg);pointer-events:none}
+.teacard .teanote h3{margin:0;color:#2a1430;font:400 24px/var(--rule) var(--display);letter-spacing:.02em}
+.teacard .teanote p{margin:0;color:#2a1430;font:17px/var(--rule) "Segoe Print","Bradley Hand","Comic Sans MS",cursive}
+.teanote .linkish{color:#a50a68}
+.teanote .postpola{margin:6px 0 calc(var(--rule) / 2)}
+.teanote .typedemoji{vertical-align:-.3em}
+.notestick{animation:notestick .6s cubic-bezier(.3,1.5,.5,1)}
+.notestick::before{animation:notetape .45s cubic-bezier(.3,1.7,.5,1) .05s backwards}
+@keyframes notestick{0%{transform:scale(1.07) rotate(-2deg)}35%{transform:scale(.97) rotate(1deg)}70%{transform:scale(1.01) rotate(-.6deg)}100%{transform:scale(1) rotate(-.25deg)}}
+@keyframes notetape{from{transform:rotate(-9deg) scale(1.9);opacity:0}to{transform:rotate(1.5deg) scale(1);opacity:1}}
+.noteflytitle{height:64px;padding:24px 78px 2px 58px;box-sizing:border-box;font:400 27px/34px var(--display);letter-spacing:.02em;overflow:hidden;white-space:nowrap}
+.noteflybody{height:288px;padding:6px 14px 0 58px;box-sizing:border-box;font:18px/32px "Segoe Print","Bradley Hand","Comic Sans MS",cursive;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere}
+@media (max-width:520px){.noteflybody{height:224px}.teanote{padding-left:34px;background-image:linear-gradient(90deg,transparent 24px,var(--pink) 24px,var(--pink) 26px,transparent 26px),repeating-linear-gradient(to bottom,transparent 0 27px,var(--lines) 27px 28px)}}
+@media (prefers-reduced-motion:reduce){.notestick,.notestick::before{animation:none}}
 
 /* the opening */
 html.introon,html.introon body{overflow:hidden}

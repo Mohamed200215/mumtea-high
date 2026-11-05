@@ -2,30 +2,28 @@
 interface TeaComment { id: string; postId: string; authorId: string | null; body: string; at: string }
 interface TeaReaction { postId: string; userId: string | null; kind: string }
 const REACTIONS: Array<[string, string, string, string]> = [
-  ['fang', GLAM_ART.clock, 'Clock it girl', 'Clock it'],
-  ['tea', GLAM_ART.goggles, 'Scuba', 'Scuba'],
-  ['skull', GLAM_ART.skull, 'Dead', 'Dead'],
-  ['heart', GLAM_ART.bows, 'Too cute', 'Cute'],
-  ['fire', GLAM_ART.wink, 'Wink', 'Wink'],
-  ['laugh', GLAM_ART.laugh, 'Dead funny', 'LOL'],
-  ['love', GLAM_ART.love, 'In love', 'Love'],
-  ['queen', GLAM_ART.queen, 'Queen', 'Queen'],
-  ['aww', GLAM_ART.aww, 'Aww', 'Aww'],
-  ['giggle', GLAM_ART.giggle, 'Giggle', 'Giggle'],
-  ['shades', GLAM_ART.shades, 'Too cool', 'Cool'],
-  ['cap', GLAM_ART.cap, 'Bet', 'Bet'],
-  ['mic', GLAM_ART.mic, 'Mic drop', 'Mic drop'],
-  ['bored', GLAM_ART.bored, 'Bored', 'Bored'],
-  ['flat', GLAM_ART.flat, 'Over it', 'Over it'],
-  ['feet', GLAM_ART.feet, 'Hiding', 'Hiding'],
-  ['dizzy', GLAM_ART.dead, 'Done', 'Done'],
+  ['fang', 'emoji/1f9db.webp', 'Fangtastic', 'Fangtastic'],
+  ['tea', 'emoji/1f375.webp', 'Spilled', 'Spilled'],
+  ['skull', 'emoji/1f480.webp', 'Dead', 'Dead'],
+  ['heart', 'emoji/2764.webp', 'Love', 'Love'],
+  ['fire', 'emoji/1f525.webp', 'Hot', 'Hot'],
+  ['laugh', 'emoji/1f602.webp', 'Dead funny', 'Dead funny'],
+  ['love', 'emoji/1f60d.webp', 'In love', 'In love'],
+  ['queen', 'emoji/1f451.webp', 'Queen', 'Queen'],
+  ['aww', 'emoji/1f97a.webp', 'Aww', 'Aww'],
+  ['giggle', 'emoji/1f606.webp', 'Giggle', 'Giggle'],
+  ['shades', 'emoji/1f60e.webp', 'Cool', 'Cool'],
+  ['cap', 'emoji/1f9e2.webp', 'Bet', 'Bet'],
+  ['mic', 'emoji/1f3a4.webp', 'Mic drop', 'Mic drop'],
+  ['bored', 'emoji/1f971.webp', 'Bored', 'Bored'],
+  ['flat', 'emoji/1f611.webp', 'Over it', 'Over it'],
+  ['feet', 'emoji/1f9b6.webp', 'Feet', 'Feet'],
+  ['dizzy', 'emoji/1f635.webp', 'Done', 'Done'],
 ];
 // Set once the Polaroid database change is in, which is also what allows the laughing reaction.
 let laughReady = false;
 // Emojis people type become the same 3D pictures on every device. Each one is fetched from emoji/ only when it is used; if there is no picture the device's own emoji stays.
 const TYPED_EMOJI = /\p{RI}\p{RI}|[0-9#*]\uFE0F?\u20E3|\p{Extended_Pictographic}(?:\uFE0F|\p{EMod})?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\p{EMod})?)*/gu;
-/* These typed emojis always show as the glam set. The rest of the emoji keyboard keeps its 3D pictures. */
-const GLAM_TYPED: Array<[code: string, art: string, label: string, short: string]> = [['1f485', 'clock', 'Clock it girl', 'Clock it'], ['1f44d', 'goggles', 'Scuba', 'Scuba'], ['1f480', 'skull', 'Dead', 'Dead'], ['1f97a', 'bows', 'Too cute', 'Cute'], ['1f609', 'wink', 'Wink', 'Wink'], ['1f602', 'laugh', 'Dead funny', 'LOL'], ['1f60d', 'love', 'In love', 'Love'], ['1f618', 'queen', 'Queen', 'Queen'], ['1f979', 'aww', 'Aww', 'Aww'], ['1f606', 'giggle', 'Giggle', 'Giggle'], ['1f60e', 'shades', 'Too cool', 'Cool'], ['1f9e2', 'cap', 'Bet', 'Bet'], ['1f3a4', 'mic', 'Mic drop', 'Mic drop'], ['1f971', 'bored', 'Bored', 'Bored'], ['1f611', 'flat', 'Over it', 'Over it'], ['1f9b6', 'feet', 'Hiding', 'Hiding'], ['1f635', 'dead', 'Done', 'Done']];
 /* A strip you can swipe, or move along with the arrows, so a long set of emojis never fills the page. */
 function emojiStrip(row: HTMLElement, remember?: { at: number }): HTMLElement {
   const move = (dir: number): void => row.scrollBy({ left: dir * Math.max(120, row.clientWidth * .8), behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' });
@@ -37,11 +35,11 @@ function emojiStrip(row: HTMLElement, remember?: { at: number }): HTMLElement {
   return el('div', { cls: 'emojistrip' }, back, row, more);
 }
 function emojiRow(area: HTMLTextAreaElement): HTMLElement {
-  return emojiStrip(el('div', { cls: 'glamrow', role: 'group', 'aria-label': 'Add an emoji' }, ...GLAM_TYPED.map(([code, art, label, short]) => el('button', { cls: 'glamadd', type: 'button', title: label, 'aria-label': 'Add emoji: ' + label, onclick() {
-    const ch = String.fromCodePoint(parseInt(code, 16)), at = area.selectionStart ?? area.value.length, end = area.selectionEnd ?? at;
+  return emojiStrip(el('div', { cls: 'glamrow', role: 'group', 'aria-label': 'Add an emoji' }, ...REACTIONS.map(([, icon, label]) => el('button', { cls: 'glamadd', type: 'button', title: label, 'aria-label': 'Add emoji: ' + label, onclick() {
+    const ch = String.fromCodePoint(parseInt(icon.slice(6, -5), 16)), at = area.selectionStart ?? area.value.length, end = area.selectionEnd ?? at;
     if (area.maxLength > 0 && area.value.length - (end - at) + ch.length > area.maxLength) return;
     area.setRangeText(ch, at, end, 'end'); area.dispatchEvent(new Event('input', { bubbles: true })); area.focus();
-  } }, el('img', { src: GLAM_ART[art], alt: '', width: 56, height: 56, loading: 'lazy' }), el('small', { text: short })))));
+  } }, el('img', { src: icon, alt: '', width: 36, height: 36, loading: 'lazy' })))));
 }
 function emojiText(text: string): Array<Node | string> {
   const out: Array<Node | string> = [];
@@ -50,8 +48,7 @@ function emojiText(text: string): Array<Node | string> {
     if (/^[\u00A9\u00AE\u2122]/.test(m[0])) continue;
     const code = Array.from(m[0]).map(ch => ch.codePointAt(0)!.toString(16)).filter(hex => hex !== 'fe0f').join('-');
     if (m.index! > from) out.push(text.slice(from, m.index));
-    const glam = GLAM_TYPED.find(g => g[0] === code);
-    const img = el('img', { cls: 'typedemoji' + (glam ? ' glamtyped' : ''), src: glam ? GLAM_ART[glam[1]] : 'emoji/' + code + '.webp', alt: m[0], draggable: false, loading: 'lazy' });
+    const img = el('img', { cls: 'typedemoji', src: 'emoji/' + code + '.webp', alt: m[0], draggable: false, loading: 'lazy' });
     img.addEventListener('error', () => img.replaceWith(m[0]));
     out.push(img);
     from = m.index! + m[0].length;
@@ -95,7 +92,7 @@ const reactionScroll: Record<string, { at: number }> = {};
 function reactionBar(post: TeaPost): HTMLElement {
   const bar = el('div', { cls: 'reactbar', role: 'group', 'aria-label': 'React to this post' });
   const used = (kind: string): number => allReactions.filter(r => r.postId === post.id && r.kind === kind).length;
-  [...REACTIONS].sort((a, b) => Number(used(b[0]) > 0) - Number(used(a[0]) > 0)).forEach(([kind, icon, label, short]) => {
+  [...REACTIONS].sort((a, b) => Number(used(b[0]) > 0) - Number(used(a[0]) > 0)).forEach(([kind, icon, label]) => {
     if (kind === 'laugh' && !laughReady) return;
     const here = allReactions.filter(r => r.postId === post.id && r.kind === kind);
     const mine = here.some(r => actorIs(r.userId));
@@ -107,7 +104,7 @@ function reactionBar(post: TeaPost): HTMLElement {
       if (error) return;
       await refreshCommunity().catch(() => {});
       redrawPosts();
-    } }, el('img', { src: icon, alt: '', width: 52, height: 52, draggable: false }), el('small', { text: short }), el('span', { text: here.length ? String(here.length) : '' })));
+    } }, el('img', { src: icon, alt: '', width: 36, height: 36, draggable: false }), el('span', { text: here.length ? String(here.length) : '' })));
   });
   return emojiStrip(bar, reactionScroll[post.id] || (reactionScroll[post.id] = { at: 0 }));
 }

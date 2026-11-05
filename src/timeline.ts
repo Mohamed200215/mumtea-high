@@ -30,12 +30,14 @@ function postCard(post: TeaPost, highlight: boolean, compact = false): HTMLEleme
   const who = el('div', { cls: 'teawho' }, el('strong', {}, personButton(post.authorId, authorName(post))));
   if (post.authorId === null) who.append(el('span', { cls: 'teabadge', text: 'Headghoul' }));
   who.append(el('time', { datetime: post.at, title: new Date(post.at).toLocaleString(), text: timeAgo(post.at) + (post.editedAt ? ', edited' : '') }));
-  const card = el('div', { cls: 'teacard' }, who);
-  if (post.title) card.append(el('h3', {}, ...emojiText(post.title)));
-  if (photoIds.has(post.id)) card.append(postPhoto(post));
+  /* The post itself is the page it was written on, taped to the timeline. */
+  const paper = el('div', { cls: 'teanote' });
+  const card = el('div', { cls: 'teacard' }, who, paper);
+  if (post.title) paper.append(el('h3', {}, ...emojiText(post.title)));
+  if (photoIds.has(post.id)) paper.append(postPhoto(post));
   const long = post.body.length > SHORT_POST, showAll = openPosts.has(post.id);
-  (long && !showAll ? post.body.slice(0, SHORT_POST).trimEnd() + '...' : post.body).split(/\n+/).forEach(line => card.append(el('p', {}, ...emojiText(line))));
-  if (long) card.append(el('button', { cls: 'linkish readmore', type: 'button', 'aria-expanded': showAll, onclick() {
+  (long && !showAll ? post.body.slice(0, SHORT_POST).trimEnd() + '...' : post.body).split(/\n+/).forEach(line => paper.append(el('p', {}, ...emojiText(line))));
+  if (long) paper.append(el('button', { cls: 'linkish readmore', type: 'button', 'aria-expanded': showAll, onclick() {
     if (showAll) openPosts.delete(post.id); else openPosts.add(post.id);
     redrawPosts();
   } }, showAll ? 'Read less' : 'Read more'));
@@ -60,6 +62,34 @@ function postCard(post: TeaPost, highlight: boolean, compact = false): HTMLEleme
     card.append(el('button', { cls: 'linkish', type: 'button', onclick() { openComments.add(post.id); go('tea', post.id); } }, count ? count + (count === 1 ? ' comment' : ' comments') : 'Comment'));
   } else card.append(commentsBlock(post));
   return el('article', { cls: 'teapost' + (highlight ? ' teanew' : ''), id: 'post-' + post.id }, face, card);
+}
+function flyNote(flying: HTMLElement, from: DOMRect, id: string): void {
+  const paperOf = (): HTMLElement | null => document.querySelector<HTMLElement>('#post-' + CSS.escape(id) + ' .teanote');
+  const stick = (): void => {
+    const paper = paperOf();
+    if (paper) { paper.style.visibility = ''; paper.classList.remove('notestick'); void paper.offsetWidth; paper.classList.add('notestick'); }
+  };
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches || !paperOf()) { stick(); return; }
+  Object.assign(flying.style, { position: 'fixed', left: from.left + 'px', top: from.top + 'px', width: from.width + 'px', height: from.height + 'px', margin: '0', zIndex: '2000', transformOrigin: '0 0', pointerEvents: 'none', overflow: 'hidden' });
+  flying.setAttribute('aria-hidden', 'true');
+  document.body.append(flying);
+  const start = performance.now(), LONG = 1450, ease = (k: number): number => (k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
+  tone(520, .08);
+  const frame = (now: number): void => {
+    const paper = paperOf();
+    if (!paper) { flying.remove(); return; }
+    paper.style.visibility = 'hidden';
+    const k = Math.min(1, (now - start) / LONG), to = paper.getBoundingClientRect(), sx = to.width / from.width, sy = to.height / from.height;
+    /* First the page tears up and away, then it swoops in on a curve, spinning as it goes. */
+    const lift = Math.min(1, k / .22), fly = ease(Math.max(0, (k - .16) / .84)), bump = Math.sin(lift * Math.PI);
+    const x = (to.left - from.left) * fly, y = (to.top - from.top) * fly - Math.sin(fly * Math.PI) * 90 - bump * 26;
+    const spin = (fly < 1 ? Math.sin(fly * Math.PI * 2) * 11 : 0) - bump * 5, grow = 1 + bump * .06;
+    flying.style.transform = 'translate(' + x + 'px,' + y + 'px) rotate(' + spin + 'deg) scale(' + (1 + (sx - 1) * fly) * grow + ',' + (1 + (sy - 1) * fly) * grow + ')';
+    flying.style.boxShadow = (8 + Math.sin(fly * Math.PI) * 26) + 'px ' + (8 + Math.sin(fly * Math.PI) * 30) + 'px 0 rgba(0,0,0,.5)';
+    if (k < 1) { requestAnimationFrame(frame); return; }
+    flying.remove(); stick(); tone(190, .12); tone(130, .1);
+  };
+  requestAnimationFrame(frame);
 }
 function renderBlog(id?: string): void {
   const main = $('#blogMain');
@@ -168,7 +198,13 @@ function openComposer(editing?: TeaPost): void {
     store.set('draft', null);
     award(2);
     await refreshPosts();
+    /* The page you wrote on tears off and flies to its place on the timeline. */
+    const page = form.querySelector('.notepaper') as HTMLElement, from = page.getBoundingClientRect(), flying = page.cloneNode(true) as HTMLElement;
+    flying.querySelector('input')?.replaceWith(el('div', { cls: 'noteflytitle', text: title.value.trim() }));
+    flying.querySelector('textarea')?.replaceWith(el('div', { cls: 'noteflybody', text: text }));
+    flying.querySelector('.teacount')?.remove();
     close(); fillSlide(); renderBoss(); go('tea', postingAsBoss ? data : data.id);
+    flyNote(flying, from, postingAsBoss ? data : data.id);
   });
   composer.append(heading, form);
   composer.showModal();
