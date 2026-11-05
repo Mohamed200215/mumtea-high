@@ -9,6 +9,13 @@ const NEW_GAMES: MenuRow[] = [
   ['booth', 'Say Fangs', 'Camera', 'Take a picture on a pink DS, PSP, iPod, Y2K phone, retro TV and more.', '📸'],
 ];
 MENU.push(...NEW_GAMES);
+/* The home page counts the games itself, so it can't fall behind the arcade again. */
+(function () {
+  const words = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+  const count = words[MENU.length] || String(MENU.length);
+  $('#gameSlideTitle').textContent = count + (MENU.length === 1 ? ' game' : ' games') + '. Zero homework.';
+  $('#gameTileText').textContent = count + ' games, from a beauty pageant to a flooded-basement swim.';
+})();
 
 /* ---------- shared game parts ---------- */
 interface Panel { root: HTMLElement; go: HTMLElement; stat: HTMLElement; bestOf(score: number): number }

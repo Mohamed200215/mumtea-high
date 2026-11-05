@@ -132,7 +132,7 @@ function postPhoto(post: TeaPost): HTMLElement {
   const devBody = el('canvas', { cls: 'devbody', 'aria-hidden': 'true' }) as HTMLCanvasElement;
   const devStage = el('div', { cls: 'devstage' }, devBody), devSide = el('div', { cls: 'devside' }), devWrap = el('div', { cls: 'devwrap', hidden: '' }, devStage, devSide);
   const devPick = el('div', { cls: 'devpick', role: 'group', 'aria-label': 'Pick a device to shoot on' }), devHint = el('p', { cls: 'devhint' });
-  const p = makePanel('booth', 'Say Fangs', 'Pick a device, turn on your camera, choose a filter or some stickers, then press the pink button. Your picture stays on this device unless you choose to post it.', [devPick, devHint, chips, camera, devWrap, printSlot], 'Turn on camera');
+  const p = makePanel('booth', 'Say Fangs', 'Pick a device, turn on your camera, choose a filter, then press the pink button. Nothing is kept or shared unless you choose to: post it to everyone, save it to your device, or hang it in your private gallery.', [devPick, devHint, chips, camera, devWrap, printSlot], 'Turn on camera');
   gameTools(p.root);
   const gallery = makeGallery();
   p.root.append(gallery.root);

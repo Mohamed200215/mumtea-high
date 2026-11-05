@@ -1102,8 +1102,8 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
           <div class="row"><button class="pill" type="button" id="slideRead">Read the post</button></div>
         </article>
         <article class="slide s3" data-slide="2" hidden>
-          <h2>Four games. Zero homework.</h2>
-          <p>Dress up a ghoul, catch sugar skulls, swim the flooded basement. Every game plays right here at Mumtea High.</p>
+          <h2 id="gameSlideTitle">Eight games. Zero homework.</h2>
+          <p>Swim the flooded basement, take penalties, slam dunks, win the pageant. Every game plays right here at Mumtea High.</p>
           <div class="row"><button class="pill" type="button" data-go="games">Open the arcade</button></div>
         </article>
         <div class="dots" id="dots"></div>
@@ -1132,7 +1132,7 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
     <div class="tiles">
       <button class="tile" type="button" data-go="tea"><strong>Read freakishly fresh tea!</strong><span>The timeline of what everyone is thinking.</span></button>
       <button class="tile" type="button" data-go="registration"><strong>Register as a spooky student!</strong><span>Sign up with your email, a username and a password, then dress your ghoul.</span></button>
-      <button class="tile" type="button" data-go="games"><strong>Play a frightfully fun game!</strong><span>Four games, from dress up to a flooded-basement swim.</span></button>
+      <button class="tile" type="button" data-go="games"><strong>Play a frightfully fun game!</strong><span id="gameTileText">Eight games, from a beauty pageant to a flooded-basement swim.</span></button>
     </div>
     <p class="bonestally"><span class="bones"><span id="bones">0</span> bones</span></p>
     <form class="code" id="codeForm">
@@ -1155,7 +1155,7 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
 
   <section class="view band" data-view="games" hidden><div class="wrap">
     <h2 class="sec-h">The Arcade</h2>
-    <p class="lede">Pick a game. Every round earns bones.</p>
+    <p class="lede">Pick a game. Finish a scored game to earn bones.</p>
     <div class="shelf" id="shelf"></div>
     <div id="player">
       <div class="panel gpanel" data-game="closet">
@@ -2299,6 +2299,13 @@ const NEW_GAMES = [
     ['booth', 'Say Fangs', 'Camera', 'Take a picture on a pink DS, PSP, iPod, Y2K phone, retro TV and more.', '📸'],
 ];
 MENU.push(...NEW_GAMES);
+/* The home page counts the games itself, so it can't fall behind the arcade again. */
+(function () {
+    const words = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+    const count = words[MENU.length] || String(MENU.length);
+    $('#gameSlideTitle').textContent = count + (MENU.length === 1 ? ' game' : ' games') + '. Zero homework.';
+    $('#gameTileText').textContent = count + ' games, from a beauty pageant to a flooded-basement swim.';
+})();
 function makePanel(id, title, help, body, goText = 'Start') {
     const go = el('button', { cls: 'pill', type: 'button' }, goText);
     const stat = el('span', { role: 'status' });
@@ -4035,7 +4042,7 @@ function postPhoto(post) {
     const devBody = el('canvas', { cls: 'devbody', 'aria-hidden': 'true' });
     const devStage = el('div', { cls: 'devstage' }, devBody), devSide = el('div', { cls: 'devside' }), devWrap = el('div', { cls: 'devwrap', hidden: '' }, devStage, devSide);
     const devPick = el('div', { cls: 'devpick', role: 'group', 'aria-label': 'Pick a device to shoot on' }), devHint = el('p', { cls: 'devhint' });
-    const p = makePanel('booth', 'Say Fangs', 'Pick a device, turn on your camera, choose a filter or some stickers, then press the pink button. Your picture stays on this device unless you choose to post it.', [devPick, devHint, chips, camera, devWrap, printSlot], 'Turn on camera');
+    const p = makePanel('booth', 'Say Fangs', 'Pick a device, turn on your camera, choose a filter, then press the pink button. Nothing is kept or shared unless you choose to: post it to everyone, save it to your device, or hang it in your private gallery.', [devPick, devHint, chips, camera, devWrap, printSlot], 'Turn on camera');
     gameTools(p.root);
     const gallery = makeGallery();
     p.root.append(gallery.root);
@@ -12149,7 +12156,7 @@ function renderAccount() {
         const submit = el('button', { cls: 'pill', type: 'submit' }, registering ? 'Register' : 'Log in');
         const form = el('form', { cls: 'stack' });
         if (registering)
-            form.append(el('label', { for: 'signEmail' }, 'Email (kept private, only used to reset your password)', email));
+            form.append(el('label', { for: 'signEmail' }, 'Email (kept private, only used to verify your account and reset your password)', email));
         form.append(el('label', { for: 'signName' }, 'Username', name), el('label', { for: 'signPass' }, 'Password' + (registering ? ' (at least ' + PASSWORD_MIN + ' characters)' : ''), pass));
         if (registering)
             form.append(el('label', { for: 'signAgain' }, 'Password again', again));

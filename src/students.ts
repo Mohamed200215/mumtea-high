@@ -226,7 +226,7 @@ function renderAccount(): void {
     const again = el('input', { id: 'signAgain', type: 'password', autocomplete: 'new-password', required: '' }) as HTMLInputElement;
     const submit = el('button', { cls: 'pill', type: 'submit' }, registering ? 'Register' : 'Log in');
     const form = el('form', { cls: 'stack' });
-    if (registering) form.append(el('label', { for: 'signEmail' }, 'Email (kept private, only used to reset your password)', email));
+    if (registering) form.append(el('label', { for: 'signEmail' }, 'Email (kept private, only used to verify your account and reset your password)', email));
     form.append(el('label', { for: 'signName' }, 'Username', name), el('label', { for: 'signPass' }, 'Password' + (registering ? ' (at least ' + PASSWORD_MIN + ' characters)' : ''), pass));
     if (registering) form.append(el('label', { for: 'signAgain' }, 'Password again', again));
     form.append(el('div', { cls: 'row' }, submit));
