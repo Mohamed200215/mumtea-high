@@ -732,11 +732,18 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 
 /* the glam emoji set */
 .glamrow{display:flex;flex-wrap:wrap;gap:4px}
-.glamadd{padding:2px;background:#14101a;border:2px solid var(--violet);line-height:0;cursor:pointer}
-.glamadd:hover,.glamadd:focus-visible{border-color:var(--pink);transform:translateY(-2px) rotate(-4deg)}
-.glamadd img{display:block;width:34px;height:34px}
-.reactbtn img{width:32px;height:32px}
-.typedemoji.glamtyped{width:1.9em;height:1.9em;vertical-align:-.6em}
+.glamadd{display:grid;justify-items:center;gap:1px;padding:4px 5px 3px;background:#fff6fb;color:#14101a;border:2px solid #000;box-shadow:0 3px 0 var(--pink);cursor:pointer}
+.glamadd:hover,.glamadd:focus-visible{outline:2px solid var(--pink);outline-offset:1px;transform:translateY(-2px)}
+.glamadd:active{transform:translateY(2px);box-shadow:0 1px 0 var(--pink)}
+.glamadd img{display:block;width:56px;height:56px}
+.glamadd small{font:800 11px/1.2 var(--body)}
+.reactbar{gap:6px}
+.reactbtn.glamreact{display:inline-grid;grid-template-columns:auto auto;justify-items:center;align-items:center;gap:0 4px;min-width:66px;padding:4px 7px 3px;background:#fff6fb;color:#14101a;border:2px solid #000;box-shadow:0 3px 0 var(--violet)}
+.reactbtn.glamreact img{grid-column:1/3;width:52px;height:52px}
+.reactbtn.glamreact small{font:800 11px/1.2 var(--body)}
+.reactbtn.glamreact:hover{outline:2px solid var(--pink);outline-offset:1px;border-color:#000}
+.reactbtn.glamreact[aria-pressed="true"]{background:#ffc2e0;border-color:#000;box-shadow:0 3px 0 var(--pink)}
+.typedemoji.glamtyped{width:2.6em;height:2.6em;vertical-align:-.95em;margin:.1em .1em;padding:.08em;background:#fff6fb;border-radius:.4em;box-sizing:border-box}
 
 /* the opening */
 html.introon,html.introon body{overflow:hidden}
