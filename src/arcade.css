@@ -696,5 +696,14 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .plgallery .polanote:empty{display:none}
 @media (prefers-reduced-motion:reduce){.plprint{transition:none}}
 
+/* the opening */
+html.introon,html.introon body{overflow:hidden}
+.intro{position:fixed;inset:0;z-index:99999;background:#140a1c url(backgrounds/skulls.webp);transition:opacity 1.3s ease}
+.intro canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.intro.fade{opacity:0;pointer-events:none}
+.introskip{position:absolute;right:16px;bottom:16px;padding:6px 14px;border:2px solid var(--pink);border-radius:999px;background:#140a1c;color:var(--white);font:800 13px var(--body)}
+.introskip:hover,.introskip:focus-visible{background:var(--pink);color:#fff}
+.intro.fade .introskip{display:none}
+
 /* the school's pink pixel cursor, everywhere except where you type */
 html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAaCAYAAACHD21cAAAAy0lEQVR42rWTPQ7CMAyFX6zeoL0TV+gRmNKzNBdg6NIr9ASsrCwwFyWqhMRsJipK8+NEwpPzpC9+thPY1jAKggCgBCYAqE/HbJgAAJd7Nkxr9nxlwbQ5ZcC0U4QweVUBTMErEzBFG4nAlBxfACbR0jxwlYRujzWtuwMsDDejVknQ9dNOs63hSuK0GbVKDsd1w8aeaI+uG+Tfw7aG+Xzl74l9NJ4X5nnh4B5dP3n7SFr9hZpRK9dPol6DLYTsEv4RsarFFYtBJbHre3pvILGaKrazdGIAAAAASUVORK5CYII=) 0 0,auto!important}
