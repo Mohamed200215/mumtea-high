@@ -668,3 +668,33 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .coffinquote b[data-kind="inspiring"]{background:#0d7a6e}
 .coffinquote p{margin:0;font:700 clamp(16px,1.5vw,18px)/1.42 "Segoe Print","Bradley Hand","Comic Sans MS",cursive;color:#fff6fb}
 .coffinquote i{font:800 10px var(--body);font-style:normal;color:#a487b4}
+
+/* My Polaroids: prints pegged to a sagging string */
+.plgallery{margin-top:22px;padding:16px;border:3px solid #000;background:#181019 url(backgrounds/skulls.webp);color:var(--paper)}
+.plgallery h4{margin:0 0 4px;font:30px var(--label);color:var(--pink)}
+.plhelp{display:inline-block;margin:0 0 12px;padding:4px 8px;background:#181019;font-weight:700}
+.plempty{margin:0;padding:34px 14px;background:#181019;border:2px dashed var(--pink);text-align:center;font-weight:800}
+.plroot{position:relative;overflow:hidden;background:rgba(24,16,25,.72);user-select:none;-webkit-user-select:none;touch-action:pan-y;cursor:grab;outline:none}
+.plroot[hidden],.plbar[hidden]{display:none}
+.plroot[data-drag="1"]{cursor:grabbing}
+.plroot:focus-visible{box-shadow:inset 0 0 0 3px #35dcc8}
+.plstring{position:absolute;inset:0;pointer-events:none}
+.plcard{position:absolute;left:0;top:0;width:var(--pl-cw);transform-origin:50% 0;will-change:transform;visibility:hidden}
+.plprint{display:block;width:100%;height:auto;margin-top:12px;box-shadow:0 18px 26px -14px #000;pointer-events:none;transition:transform .5s cubic-bezier(.2,.7,.2,1),filter .5s ease}
+.plcard[data-on="0"] .plprint{transform:scale(.9);filter:saturate(.7) brightness(.72)}
+.plpeg{position:absolute;left:50%;top:0;width:13px;height:30px;margin-left:-6.5px;border:2.5px solid #000;border-radius:3px;background:#ff1f8f}
+.plpeg::after{content:'';position:absolute;left:1.5px;right:1.5px;top:10px;height:2.5px;background:#000}
+.plbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#181019;border-top:3px solid var(--pink)}
+.plcap{flex:1 1 170px;min-width:0}
+.pltitle{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:17px}
+.plcount{font-weight:800;font-size:13px;color:#35dcc8}
+.placts{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.plarrow{width:42px;height:42px;border:3px solid #000;background:#fff6fb;color:#000;font-size:15px;cursor:pointer}
+.plarrow:hover:not(:disabled){background:var(--pink);color:#fff}
+.plarrow:disabled{opacity:.4;cursor:not-allowed}
+.plgallery .polanote{margin:8px 0 0;background:#181019;display:inline-block;padding:0 6px}
+.plgallery .polanote:empty{display:none}
+@media (prefers-reduced-motion:reduce){.plprint{transition:none}}
+
+/* the school's pink pixel cursor, everywhere except where you type */
+html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAaCAYAAACHD21cAAAAy0lEQVR42rWTPQ7CMAyFX6zeoL0TV+gRmNKzNBdg6NIr9ASsrCwwFyWqhMRsJipK8+NEwpPzpC9+thPY1jAKggCgBCYAqE/HbJgAAJd7Nkxr9nxlwbQ5ZcC0U4QweVUBTMErEzBFG4nAlBxfACbR0jxwlYRujzWtuwMsDDejVknQ9dNOs63hSuK0GbVKDsd1w8aeaI+uG+Tfw7aG+Xzl74l9NJ4X5nnh4B5dP3n7SFr9hZpRK9dPol6DLYTsEv4RsarFFYtBJbHre3pvILGaKrazdGIAAAAASUVORK5CYII=) 0 0,auto!important}

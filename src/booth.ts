@@ -202,6 +202,8 @@ function postPhoto(post: TeaPost): HTMLElement {
   const devPick = el('div', { cls: 'devpick', role: 'group', 'aria-label': 'Pick a device to shoot on' }), devHint = el('p', { cls: 'devhint' });
   const p = makePanel('booth', 'Say Fangs', 'Pick a device, turn on your camera, choose a filter or some stickers, then press the pink button. Your picture stays on this device unless you choose to post it.', [devPick, devHint, chips, camera, devWrap, printSlot], 'Turn on camera');
   gameTools(p.root);
+  const gallery = makeGallery();
+  p.root.append(gallery.root);
 
   let device = camDevice(store.get<string>('camDevice', 'fangcam')), stream: MediaStream | null = null, asking = 0, filterAt = 0, zoom = 1, mirror = true, useTimer = false, countdown = 0;
   const live = (): boolean => !!stream;
@@ -319,18 +321,25 @@ function postPhoto(post: TeaPost): HTMLElement {
     const side = 3 / Math.max(4 / vw, 3 / vh) / zoom;
     const cropW = d.polaroid ? side : (vw / vh > wide ? vh * wide : vw) / zoom, cropH = d.polaroid ? side : (vw / vh > wide ? vh : vw / wide) / zoom;
     const pw = d.polaroid ? POLA_S : Math.round(d.sw * d.s * 1.2), ph = d.polaroid ? POLA_S : Math.round(d.sh * d.s * 1.2);
-    const photo = el('canvas', { width: pw, height: ph }) as HTMLCanvasElement, c = photo.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
-    if (mirror) { c.translate(pw, 0); c.scale(-1, 1); }
-    c.drawImage(video, (vw - cropW) / 2, (vh - cropH) / 2, cropW, cropH, 0, 0, pw, ph);
-    c.setTransform(1, 0, 0, 1, 0, 0);
     const f = CAM_FILTERS[filterAt];
-    camShade(c, pw, ph, f);
-    await camStickers(c, pw, ph, f, d);
+    const paint = (w: number, h: number, sw: number, sh: number): HTMLCanvasElement => {
+      const cv = el('canvas', { width: w, height: h }) as HTMLCanvasElement, c = cv.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
+      if (mirror) { c.translate(w, 0); c.scale(-1, 1); }
+      c.drawImage(video, (vw - sw) / 2, (vh - sh) / 2, sw, sh, 0, 0, w, h);
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      camShade(c, w, h, f);
+      return cv;
+    };
+    const photo = paint(pw, ph, cropW, cropH);
+    /* The gallery always gets a square of the same moment, so a wide or tall device still makes a whole Polaroid. */
+    const square = d.polaroid ? photo : paint(POLA_S, POLA_S, side, side);
+    await camStickers(photo.getContext('2d') as CanvasRenderingContext2D, pw, ph, f, d);
+    if (square !== photo) await camStickers(square.getContext('2d') as CanvasRenderingContext2D, POLA_S, POLA_S, f, camDevice('fangcam'));
     await document.fonts.load('38px "Breath of the House"').catch(() => []);
-    showPrint(d, photo);
+    showPrint(d, photo, square);
   }
 
-  function showPrint(d: CamDevice, photo: HTMLCanvasElement): void {
+  function showPrint(d: CamDevice, photo: HTMLCanvasElement, square: HTMLCanvasElement): void {
     const made = (words: string): HTMLCanvasElement => (d.polaroid ? drawPolaroid(photo) : drawDeviceShot(d, photo, shotWords(words)));
     let shot = made(''), url = shot.toDataURL('image/png');
     const full = d.polaroid ? { w: POLA_W, h: POLA_H } : { w: Math.round(d.w * d.s), h: Math.round(d.h * d.s) };
@@ -351,7 +360,16 @@ function postPhoto(post: TeaPost): HTMLElement {
     if (!d.polaroid) caption.addEventListener('input', () => { clearTimeout(typingAt); typingAt = window.setTimeout(redraw, 220); });
     const again = el('button', { cls: 'pill ghost', type: 'button', onclick() { printSlot.textContent = ''; camera.scrollIntoView({ block: 'nearest' }); } }, 'Take another');
     const send = el('button', { cls: 'pill', type: 'button' }, 'Post my ' + d.noun);
-    const actions = el('div', { cls: 'polaacts' }, caption, el('div', { cls: 'row' }, send, save, again), note);
+    const pin = el('button', { cls: 'pill', type: 'button' }, 'Save to gallery');
+    pin.addEventListener('click', async () => {
+      pin.setAttribute('disabled', ''); note.textContent = 'Printing your Polaroid...';
+      try {
+        await gallery.add(square, caption.value.trim());
+        note.textContent = 'It is in your gallery as a Polaroid. ';
+        note.append(el('button', { cls: 'linkish', type: 'button', onclick() { gallery.root.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 'See it'));
+      } catch { pin.removeAttribute('disabled'); note.textContent = 'That did not save to your gallery. This browser may be full or in a private window.'; }
+    });
+    const actions = el('div', { cls: 'polaacts' }, caption, el('div', { cls: 'row' }, send, pin, save, again), note);
     send.addEventListener('click', async () => {
       if (!canAct()) { note.textContent = 'Log in first to post it. Your ' + d.noun + ' stays here while you do.'; go('registration'); return; }
       if (typingAt) redraw();

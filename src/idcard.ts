@@ -263,15 +263,8 @@ async function saveCardPicture(said: HTMLElement): Promise<void> {
   try {
     const cv = await cardPicture(), blob = await new Promise<Blob | null>(done => cv.toBlob(done, 'image/png'));
     if (!blob) throw new Error('no picture');
-    const file = new File([blob], 'mumtea-high-id.png', { type: 'image/png' });
-    /* Phones open their own save and share sheet. Everything else downloads the file. */
-    if (matchMedia('(pointer:coarse)').matches && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: 'My Mumtea High ID' }); said.textContent = 'Your ID card is ready.'; return; } catch (err) { if ((err as DOMException).name === 'AbortError') { said.textContent = ''; return; } }
-    }
-    const url = URL.createObjectURL(blob), link = el('a', { href: url, download: 'mumtea-high-id.png' }) as HTMLAnchorElement;
-    document.body.append(link); link.click(); link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
-    said.textContent = 'Saved. Look for mumtea-high-id.png in your downloads or photos.';
+    const how = await keepFile(blob, 'mumtea-high-id.png', 'My Mumtea High ID');
+    said.textContent = how === 'cancelled' ? '' : how === 'shared' ? 'Your ID card is ready.' : 'Saved. Look for mumtea-high-id.png in your downloads or photos.';
   } catch { said.textContent = 'That picture would not save. Please try again.'; }
 }
 
