@@ -1,9 +1,12 @@
-// Compiles src/arcade.ts and writes it and src/arcade.css into mumtea-high.html between the ARCADE markers.
+// Compiles src/*.ts and writes it and src/arcade.css into mumtea-high.html between the ARCADE markers.
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 
+rmSync('build', { recursive: true, force: true });
 execFileSync(process.execPath, ['node_modules/typescript/bin/tsc'], { stdio: 'inherit' });
-const js = readFileSync('build/arcade.js', 'utf8');
+// The files run as one script in name order, and booth-gallery.ts must come before booth.ts.
+const names = readdirSync('build').filter(name => name.endsWith('.js')).sort();
+const js = '"use strict";\n' + names.map(name => readFileSync('build/' + name, 'utf8').replace(/^"use strict";\r?\n/, '')).join('');
 if (js.includes('</script')) throw new Error('compiled script must not contain a closing script tag');
 const css = readFileSync('src/arcade.css', 'utf8');
 const between = (text, a, b, body) => {

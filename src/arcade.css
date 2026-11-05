@@ -527,7 +527,7 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 @keyframes idholo{to{background-position:0 0,300% 0}}
 .idcard .idring,.idcard .iddeco,.idcard .idemblemslot{position:absolute;inset:0;pointer-events:none;z-index:2}
 .idring[hidden]{display:none}
-.idring{box-sizing:border-box;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.idring{box-sizing:border-box;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
 .idcard .idemblemslot{z-index:3}
 .emblem{position:relative;display:block;line-height:0}
 .emblem canvas{display:block;width:100%;height:auto;aspect-ratio:1;background:transparent;border:0;touch-action:auto;max-width:none}

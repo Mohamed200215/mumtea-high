@@ -106,6 +106,13 @@ async function signOut(): Promise<void> {
   store.set('blend', null);
 }
 async function deleteMe(): Promise<boolean> {
+  /* Files have to go first: once the account is gone, nobody is allowed to remove them. */
+  const folder = signedInId() as string, files = await sb.storage.from(PIN_BUCKET).list(folder, { limit: 1000 });
+  if (files.error) return false;
+  if (files.data.length) {
+    const gone = await sb.storage.from(PIN_BUCKET).remove(files.data.map((f: { name: string }) => folder + '/' + f.name));
+    if (gone.error) return false;
+  }
   const { error } = await sb.rpc('delete_me');
   if (error) return false;
   store.set(photoKey(), null);
