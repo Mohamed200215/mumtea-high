@@ -18,6 +18,7 @@ const CAM_FILTERS: CamFilter[] = [
   { name: 'Queen of the World', group: PICTURES, ops: [['brightness', 1.05], ['saturate', 1.1]], tint: ['#ff7ac0', 'soft-light', .3], stickers: [['crown', .19, .15, .34, -14], ['star', .74, .13, .48, 6], ['star', .26, .88, .44, -8], ['world', .83, .8, .34, 0]] },
   { name: 'Skull Crew', group: PICTURES, ops: [['brightness', 1.03], ['saturate', 1.1]], stickers: [['crestHijab', .185, .2, .3, -8], ['crestBow', .825, .175, .28, 8], ['crestFlame', .175, .825, .28, 7], ['crestKitty', .825, .83, .28, -7]] },
   { name: 'Gulp', group: PICTURES, ops: [['contrast', 1.05], ['saturate', 1.1]], stickers: [['gulpDop', .18, .17, .3, -8], ['gulpNi', .82, .17, .3, 8], ['gulpLol', .18, .83, .3, 8], ['gulpTn', .82, .83, .3, -8]] },
+  { name: 'Money', group: PICTURES, ops: [['saturate', 1.15], ['contrast', 1.05]], tint: ['#f4d35e', 'soft-light', .22], stickers: [['moneyCoin', .17, .17, .28, -8], ['moneyBow', .83, .16, .31, 7], ['moneyGold', .17, .8, .26, 6], ['moneyFan', .83, .78, .25, -7]] },
 ];
 const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
 const POST_CARD = '#181019';
