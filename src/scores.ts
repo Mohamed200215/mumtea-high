@@ -1,7 +1,7 @@
 /* ---------- the leaderboard: best score per person, per game ---------- */
 /* A row with no user_id is Ms. Fangtastic's: she plays on the admin code, not an account. */
 interface ScoreRow { user_id: string | null; game: string; score: number }
-const SCORED_GAMES = ['riptide', 'spill', 'casket'];
+const SCORED_GAMES = ['riptide', 'spill', 'casket', 'kick', 'hoops', 'pageant'];
 const BOARD_SIZE = 10;
 let allScores: ScoreRow[] = [], scoresLoaded = false, scoreTab = 'riptide', scoreNote = '';
 const announced = new Set<string>();

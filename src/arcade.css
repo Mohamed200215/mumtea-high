@@ -324,7 +324,9 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .classcard:nth-child(odd){transform:rotate(-.7deg)}
 .classcard:nth-child(even){transform:rotate(.7deg)}
 .classcard:hover,.classcard:focus-visible{transform:translate(-2px,-4px) rotate(0);box-shadow:9px 10px 0 var(--ca)}
-.classart{position:relative;line-height:0;border-bottom:3px solid #000;overflow:hidden;aspect-ratio:320/150}
+.classart{position:relative;line-height:0;border-bottom:3px solid #000;overflow:hidden;aspect-ratio:320/220}
+.posterstar{filter:drop-shadow(0 0 7px currentColor)}
+.classcard:hover .posterstar{filter:drop-shadow(0 0 13px currentColor)}
 .classart svg{display:block;width:100%;height:100%}
 .classcard small{align-self:flex-start;margin:-15px 0 2px 12px;position:relative;z-index:1;padding:3px 10px;background:var(--ca);color:#14101a;border:2px solid #000;font:800 12px/1.3 var(--body);text-transform:uppercase;letter-spacing:.04em;transform:rotate(-2deg)}
 .classcard strong{margin:0 14px;font:400 27px/1.1 var(--display);color:var(--ca);letter-spacing:.03em}

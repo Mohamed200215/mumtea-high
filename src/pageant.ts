@@ -108,7 +108,7 @@ function pageantCpu(round: number, worn: string[], tries: number): PageantOutfit
   const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const tools = gameTools(p.root, togglePause);
   const inShow = () => !['idle', 'done'].includes(mode), running = () => inShow() && !!roster.length;
-  const stat = () => { const me = roster[0]; p.stat.textContent = (me && mode !== 'idle' ? 'Round ' + (round + 1) + ' of 3  Your total: ' + me.total + '  ' : '') + 'Best: ' + store.get<number>('pageantBest', 0); tools.show(running() && !room.hidden === false, paused); };
+  const stat = () => { const me = roster[0]; p.stat.textContent = (me && mode !== 'idle' ? 'Round ' + (round + 1) + ' of 3  Your total: ' + me.total + '  ' : '') + 'Best: ' + displayBest('pageant'); tools.show(running() && !room.hidden === false, paused); };
   const go = (m: Mode): void => { mode = m; modeT = 0; };
   const holder = (): HTMLElement => cv.parentElement as HTMLElement;
 
@@ -272,7 +272,7 @@ function pageantCpu(round: number, worn: string[], tries: number): PageantOutfit
     go('crown');
     const win = ranked()[0], me = roster[0];
     if (win === me) award(me.total >= 120 ? 40 : 25); else award(5);
-    finalBest = p.bestOf(me.total); cheer = 6000;
+    finalBest = p.bestOf(me.total); submitScore('pageant', me.total); cheer = 6000;
     for (let i = 0; i < (calm ? 60 : 220); i++) bits.push({ x: Math.random() * W, y: -Math.random() * 240, vx: (Math.random() - .5) * 1.4, vy: 1 + Math.random() * 2, life: 5200, col: pick(['#ff1f8f', '#f4d35e', '#fff6fb', '#35dcc8']), size: 3 + Math.random() * 3 });
     [523, 659, 784, 1047, 1319].forEach((f, i) => setTimeout(() => tone(f, .2), i * 120));
     p.go.textContent = 'Enter again'; stat(); kick();

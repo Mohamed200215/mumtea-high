@@ -30,7 +30,7 @@ const HOOP_BALLS: Array<[string, string, string]> = [['classic', 'Classic', '#f2
   const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const tools = gameTools(p.root, togglePause);
   const running = () => mode !== 'idle' && mode !== 'done';
-  const stat = () => { p.stat.textContent = (running() ? 'Score: ' + score + '  Round: ' + round + ' of 3  ' : '') + 'Best: ' + store.get<number>('hoopsBest', 0); tools.show(running(), paused); };
+  const stat = () => { p.stat.textContent = (running() ? 'Score: ' + score + '  Round: ' + round + ' of 3  ' : '') + 'Best: ' + displayBest('hoops'); tools.show(running(), paused); };
   const go = (m: Mode): void => { mode = m; modeT = 0; cv.dataset.mode = m; };
 
   /* ---------- the player and the crowd ---------- */
@@ -348,7 +348,7 @@ const HOOP_BALLS: Array<[string, string, string]> = [['classic', 'Classic', '#f2
   }
   function kick(): void { if (looping || paused || !cv.getClientRects().length) return; looping = true; last = performance.now(); requestAnimationFrame(frame); }
   function togglePause(): void { if (!running()) return; paused = !paused; holding = false; musicHold(paused); if (paused) { paint(); pauseCover(); } else kick(); stat(); }
-  function finish(): void { go('done'); cam = 1; camX = 320; camY = 180; paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 5)); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
+  function finish(): void { go('done'); cam = 1; camX = 320; camY = 180; paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 5)); if (score > 0) submitScore('hoops', score); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
   function quit(): void { go('idle'); paused = false; holding = false; bits = []; cam = 1; locker.hidden = false; p.go.textContent = 'Tip off'; musicHold(false); stat(); }
   function press(): void {
     if (paused) return;

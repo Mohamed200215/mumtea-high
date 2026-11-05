@@ -276,11 +276,13 @@ end $$;
 create table if not exists public.game_scores (
   id bigint generated always as identity primary key,
   user_id uuid references public.profiles (id) on delete cascade,
-  game text not null check (game in ('spill', 'riptide', 'casket')),
+  game text not null check (game in ('spill', 'riptide', 'casket', 'kick', 'hoops', 'pageant')),
   score integer not null check (score between 1 and 1000000),
   at timestamptz not null default now(),
   unique (user_id, game)
 );
+alter table public.game_scores drop constraint if exists game_scores_game_check;
+alter table public.game_scores add constraint game_scores_game_check check (game in ('spill', 'riptide', 'casket', 'kick', 'hoops', 'pageant'));
 create unique index if not exists game_scores_one_fang on public.game_scores (game) where user_id is null;
 create index if not exists game_scores_top on public.game_scores (game, score desc);
 alter table public.game_scores enable row level security;
@@ -295,7 +297,7 @@ declare me uuid := auth.uid(); best integer;
 begin
   if me is null then raise exception 'log in first'; end if;
   if not exists (select 1 from public.profiles where id = me and verified) then raise exception 'verify your email first'; end if;
-  if which is null or which not in ('spill', 'riptide', 'casket') then raise exception 'unknown game'; end if;
+  if which is null or which not in ('spill', 'riptide', 'casket', 'kick', 'hoops', 'pageant') then raise exception 'unknown game'; end if;
   if points is null or points < 1 or points > 1000000 then raise exception 'bad score'; end if;
   insert into public.game_scores as s (user_id, game, score) values (me, which, points)
     on conflict (user_id, game) do update set score = excluded.score, at = now() where s.score < excluded.score;
@@ -310,7 +312,7 @@ language plpgsql security definer set search_path = '' as $$
 declare best integer;
 begin
   perform private.require_admin(token);
-  if which is null or which not in ('spill', 'riptide', 'casket') then raise exception 'unknown game'; end if;
+  if which is null or which not in ('spill', 'riptide', 'casket', 'kick', 'hoops', 'pageant') then raise exception 'unknown game'; end if;
   if points is null or points < 1 or points > 1000000 then raise exception 'bad score'; end if;
   insert into public.game_scores as s (user_id, game, score) values (null, which, points)
     on conflict (game) where user_id is null do update set score = excluded.score, at = now() where s.score < excluded.score;

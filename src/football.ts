@@ -49,7 +49,7 @@ const KICK_BALLS: Array<[string, string]> = [['classic', 'Classic'], ['skull', '
   const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const tools = gameTools(p.root, togglePause);
   const running = () => mode !== 'idle' && mode !== 'done';
-  const stat = () => { p.stat.textContent = (running() ? 'Score: ' + score + '  Goals: ' + goals + '  Shot: ' + Math.min(SHOTS, shotNo + 1) + ' of ' + SHOTS + '  ' : '') + 'Best: ' + store.get<number>('kickBest', 0); tools.show(running(), paused); };
+  const stat = () => { p.stat.textContent = (running() ? 'Score: ' + score + '  Goals: ' + goals + '  Shot: ' + Math.min(SHOTS, shotNo + 1) + ' of ' + SHOTS + '  ' : '') + 'Best: ' + displayBest('kick'); tools.show(running(), paused); };
   const go = (m: Mode): void => { mode = m; modeT = 0; };
   const isPen = () => shotNo < PENS;
 
@@ -389,7 +389,7 @@ const KICK_BALLS: Array<[string, string]> = [['classic', 'Classic'], ['skull', '
   }
   function kick(): void { if (looping || paused || !cv.getClientRects().length) return; looping = true; last = performance.now(); requestAnimationFrame(frame); }
   function togglePause(): void { if (!running()) return; paused = !paused; charging = false; musicHold(paused); if (paused) { paint(); pauseCover(); } else kick(); stat(); }
-  function finish(): void { go('done'); paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 10)); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
+  function finish(): void { go('done'); paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 10)); if (score > 0) submitScore('kick', score); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
   function quit(): void { go('idle'); paused = false; charging = false; bits = []; keys = {}; locker.hidden = false; p.go.textContent = 'Kick off'; musicHold(false); stat(); }
   p.go.addEventListener('click', () => {
     dress(); paused = false; score = 0; goals = 0; shotNo = 0; bits = []; setUp();

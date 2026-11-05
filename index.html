@@ -548,7 +548,9 @@ nav.tabs button{font-size:clamp(19px,1.9vw,25px);padding:11px 20px 10px;letter-s
 .classcard:nth-child(odd){transform:rotate(-.7deg)}
 .classcard:nth-child(even){transform:rotate(.7deg)}
 .classcard:hover,.classcard:focus-visible{transform:translate(-2px,-4px) rotate(0);box-shadow:9px 10px 0 var(--ca)}
-.classart{position:relative;line-height:0;border-bottom:3px solid #000;overflow:hidden;aspect-ratio:320/150}
+.classart{position:relative;line-height:0;border-bottom:3px solid #000;overflow:hidden;aspect-ratio:320/220}
+.posterstar{filter:drop-shadow(0 0 7px currentColor)}
+.classcard:hover .posterstar{filter:drop-shadow(0 0 13px currentColor)}
 .classart svg{display:block;width:100%;height:100%}
 .classcard small{align-self:flex-start;margin:-15px 0 2px 12px;position:relative;z-index:1;padding:3px 10px;background:var(--ca);color:#14101a;border:2px solid #000;font:800 12px/1.3 var(--body);text-transform:uppercase;letter-spacing:.04em;transform:rotate(-2deg)}
 .classcard strong{margin:0 14px;font:400 27px/1.1 var(--display);color:var(--ca);letter-spacing:.03em}
@@ -1514,19 +1516,58 @@ const CLASSES = [
             { q: 'What is walking with the ball without dribbling called?', a: 'Travelling', wrong: ['Fouling out', 'Double jumping', 'Offside'], why: 'It is called travelling.' },
         ] },
 ];
-/* Each class gets its own picture and colours, printed with the same dotted look as the school's other art. */
+/* Each class gets a movie poster: a doll-faced school star lit from behind, with the subject's word huge behind them. */
 const INKED = 'stroke="#14101a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
-function classScene(id, top, low, body) {
-    return '<svg viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="cg' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + top + '"/><stop offset="1" stop-color="' + low + '"/></linearGradient><pattern id="cd' + id + '" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><circle cx="4.500" cy="4.500" r="1.900" fill="#fff" opacity=".2"/></pattern></defs><rect width="320" height="150" fill="url(#cg' + id + ')"/><rect width="320" height="150" fill="url(#cd' + id + ')"/>' + body + '</svg>';
-}
+const BLING = (x, y, r, col = '#fff6fb') => '<path d="M' + x + ' ' + (y - r) + 'Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y + 'Q' + x + ' ' + y + ' ' + x + ' ' + (y + r) + 'Q' + x + ' ' + y + ' ' + (x - r) + ' ' + y + 'Q' + x + ' ' + y + ' ' + x + ' ' + (y - r) + 'Z" fill="' + col + '"/>';
+const BAT_MARK = (x, y, s, col) => '<path transform="translate(' + x + ' ' + y + ') scale(' + s + ')" d="M0-5L-4-12L-7-6C-16-13-30-13-40-3C-32-4-28 0-27 6C-22 1-16 2-13 8C-10 3-5 3 0 10C5 3 10 3 13 8C16 2 22 1 27 6C28 0 32-4 40-3C30-13 16-13 7-6L4-12Z" fill="' + col + '"/>';
+const STAR_FACE = { eyeStyle: 'doll', lipSize: 'big', brow: 'high', nose: 'button', mark: 'gems', pet: 'none', hold: 'none' };
 const CLASS_LOOKS = {
-    biteology: { a: '#ff5c86', b: '#3a0716', art: classScene('bite', '#5c0822', '#e0245e', '<g class="cabob"><path d="M78 48Q160 8 242 48Q238 128 160 138Q82 128 78 48Z" fill="#2b0512" ' + INKED + '/><path d="M78 48Q160 8 242 48Q236 66 228 60Q160 34 92 60Q84 66 78 48Z" fill="#ff8fab" ' + INKED + '/><path d="M112 54L118 92L128 50ZM208 54L202 92L192 50Z" fill="#fff6fb" ' + INKED + '/>' + [136, 151, 166].map(x => '<rect x="' + x + '" y="44" width="15" height="20" rx="3" fill="#fff6fb" ' + INKED + '/>').join('') + [108, 128, 148, 168, 188].map(x => '<rect x="' + x + '" y="108" width="20" height="17" rx="4" fill="#fff6fb" ' + INKED + '/>').join('') + '<path d="M128 104Q160 80 192 104Q160 118 128 104Z" fill="#e0245e" ' + INKED + '/><path d="M118 92C114 98 113 104 118 106C123 104 122 98 118 92Z" fill="#ff1f3d" ' + INKED + '/></g><path d="M18 22C30 14 42 18 46 30C52 18 66 16 78 24C68 26 62 34 62 44C56 36 50 36 46 44C42 36 36 36 30 44C30 34 26 26 18 22Z" fill="#14101a"/><path d="M244 112C256 104 268 108 272 120C278 108 292 106 304 114C294 116 288 124 288 134C282 126 276 126 272 134C268 126 262 126 256 134C256 124 252 116 244 112Z" fill="#14101a"/>') },
-    clawculus: { a: '#3fe0cf', b: '#07302d', art: classScene('claw', '#0a4a46', '#1fbcab', '<g class="cabob"><rect x="54" y="16" width="212" height="112" rx="5" fill="#8a5a2b" ' + INKED + '/><rect x="64" y="26" width="192" height="92" fill="#123c33" ' + INKED + '/><text x="160" y="66" text-anchor="middle" font-size="34" fill="#f6fff8" font-family="Comic Sans MS, Segoe Print, cursive">x + 2 = 5</text><text x="160" y="100" text-anchor="middle" font-size="22" fill="#ffd0e8" font-family="Comic Sans MS, Segoe Print, cursive">so x = 3!</text><path d="M196 30L168 112M212 30L184 114M228 32L200 116" stroke="#dff" stroke-width="3.500" stroke-linecap="round" opacity=".55"/><rect x="50" y="128" width="220" height="9" rx="3" fill="#6d4420" ' + INKED + '/><rect x="74" y="122" width="34" height="7" rx="3" fill="#fff6fb" stroke="#14101a" stroke-width="2"/></g><g ' + INKED + '><path d="M276 112L294 104L310 112L292 121Z" fill="#fff"/><path d="M276 112V130L292 139V121Z" fill="#dfe6ea"/><path d="M310 112V130L292 139V121Z" fill="#b9c6cc"/></g><g ' + INKED + '><path d="M12 124L26 118L38 124L24 131Z" fill="#fff"/><path d="M12 124V138L24 145V131Z" fill="#dfe6ea"/><path d="M38 124V138L24 145V131Z" fill="#b9c6cc"/></g>') },
-    tealeaf: { a: '#ffd76a', b: '#26093a', art: classScene('leaf', '#2c0b49', '#8a2be2', '<g fill="none" stroke="#fff6fb" stroke-width="4" stroke-linecap="round" opacity=".85"><path class="casteam" d="M136 44C126 32 146 24 136 8"/><path class="casteam two" d="M160 44C150 30 170 22 160 4"/><path class="casteam" d="M184 44C174 32 194 24 184 8"/></g><g class="cabob"><ellipse cx="160" cy="130" rx="86" ry="13" fill="#f7dc6f" ' + INKED + '/><path d="M96 58C98 104 122 126 160 126C198 126 222 104 224 58Z" fill="#fff6fb" ' + INKED + '/><path d="M222 72C248 66 254 96 212 104" fill="none" stroke="#14101a" stroke-width="10" stroke-linecap="round"/><path d="M222 72C248 66 254 96 212 104" fill="none" stroke="#fff6fb" stroke-width="5" stroke-linecap="round"/><ellipse cx="160" cy="58" rx="64" ry="15" fill="#f4c23e" ' + INKED + '/><ellipse cx="160" cy="59" rx="55" ry="10" fill="#7a3f12"/><path d="M122 58Q136 50 140 60Q130 66 122 58ZM150 62Q162 52 170 60Q160 68 150 62ZM178 56Q190 52 196 60Q186 66 178 56Z" fill="#14310f"/><path d="M104 82Q160 100 216 82" fill="none" stroke="#ff1f8f" stroke-width="3"/></g><path d="M52 32A20 20 0 1 0 66 62A16 16 0 1 1 52 32Z" fill="#f7dc6f" ' + INKED + '/>' + [[270, 30, 11], [292, 66, 7], [28, 100, 8], [250, 62, 5]].map(([x, y, r]) => '<path transform="translate(' + x + ' ' + y + ')" d="M0 ' + -r + 'L' + r * .28 + ' ' + -r * .28 + 'L' + r + ' 0L' + r * .28 + ' ' + r * .28 + 'L0 ' + r + 'L' + -r * .28 + ' ' + r * .28 + 'L' + -r + ' 0L' + -r * .28 + ' ' + -r * .28 + 'Z" fill="#fff3b0"/>').join('')) },
-    creepateria: { a: '#a6f04a', b: '#132b08', art: classScene('lunch', '#17380c', '#6fc22e', '<g class="cabob"><path d="M88 62H232C236 104 222 132 200 138H120C98 132 84 104 88 62Z" fill="#231a2c" ' + INKED + '/><path d="M84 52Q160 34 236 52Q240 66 228 66Q226 86 216 82Q210 70 204 68Q198 92 188 86Q184 72 176 70Q166 70 160 72Q154 102 142 92Q140 74 126 72Q116 72 112 80Q104 86 100 66Q80 68 84 52Z" fill="#a6f04a" ' + INKED + '/><circle cx="182" cy="50" r="14" fill="#fff" ' + INKED + '/><circle cx="178" cy="50" r="7" fill="#ff1f8f" stroke="#14101a" stroke-width="2"/><circle cx="176" cy="50" r="3" fill="#14101a"/><path d="M78 72H64M242 72H256" stroke="#14101a" stroke-width="9" stroke-linecap="round"/></g><path d="M122 58L92 10" stroke="#14101a" stroke-width="11" stroke-linecap="round"/><path d="M122 58L92 10" stroke="#c0c6d8" stroke-width="5" stroke-linecap="round"/><g fill="#d6ff9c" stroke="#14101a" stroke-width="2.500"><circle class="cabubble" cx="146" cy="36" r="7"/><circle class="cabubble two" cx="214" cy="30" r="5"/><circle class="cabubble three" cx="232" cy="42" r="8"/></g><path d="M0 150L0 136Q40 124 70 142Q60 148 50 150ZM320 150V132Q282 124 256 144Q266 148 276 150Z" fill="#14101a"/>') },
-    madscience: { a: '#6fe3ff', b: '#0c0b3a', art: classScene('lab', '#14124f', '#19b7e8', '<path d="M40 14L22 56H38L24 92L66 44H48L62 14Z" fill="#fff06a" ' + INKED + '/><path d="M272 34L258 66H272L260 96L296 56H280L292 34Z" fill="#fff06a" ' + INKED + '/><g class="cabob"><path d="M142 14H178V52C206 66 222 86 220 106C218 128 194 140 160 140C126 140 102 128 100 106C98 86 114 66 142 52Z" fill="#eafcff" fill-opacity=".85" ' + INKED + '/><path d="M104 96Q132 84 160 96T216 96C220 124 196 136 160 136C124 136 100 124 104 96Z" fill="#ff4fa8" stroke="#14101a" stroke-width="2.500"/><rect x="136" y="8" width="48" height="11" rx="4" fill="#fff" ' + INKED + '/><path d="M122 80C126 72 132 66 140 62" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"/></g><g fill="#ffd0e8" stroke="#14101a" stroke-width="2"><circle class="cabubble" cx="146" cy="112" r="7"/><circle class="cabubble two" cx="176" cy="118" r="5"/><circle class="cabubble three" cx="160" cy="100" r="4"/></g>') },
-    casketball: { a: '#ffa04d', b: '#2c1004', art: classScene('ball', '#3b1606', '#f2761b', '<g ' + INKED + '><path d="M206 8H262L284 40L268 112H200L184 40Z" fill="#ff1f8f"/><path d="M212 18H256L272 42L258 102H210L196 42Z" fill="#b80e63"/><path d="M212 74H256V96H212Z" fill="none" stroke="#fff6fb" stroke-width="3"/><path d="M204 96H264" fill="none" stroke="#ff8c1a" stroke-width="7"/><path d="M210 100L220 134H248L258 100M222 100L228 134M246 100L240 134M214 116H254" fill="none" stroke="#fff6fb" stroke-width="2.200"/></g><path d="M36 136Q72 40 150 40" fill="none" stroke="#fff3b0" stroke-width="4" stroke-dasharray="3 11" stroke-linecap="round"/><g class="cabob"><circle cx="134" cy="66" r="34" fill="#ff8c1a" ' + INKED + '/><path d="M100 66H168M134 32V100M110 42Q126 66 110 90M158 42Q142 66 158 90" fill="none" stroke="#14101a" stroke-width="3"/><path d="M114 48Q120 40 128 38" fill="none" stroke="#ffd9a8" stroke-width="4" stroke-linecap="round"/></g>') },
+    biteology: { a: '#ff5c86', b: '#3a0716', word: 'BITE', mid: '#c4123f', x: 150, pose: 'hips',
+        look: { skin: '#f4e4ee', eye: '#ff1f8f', lip: '#b3002d', shadow: '#6a1f86', hairStyle: 'long', hair: '#14101a', streak: '#ff1f8f', monster: 'fangs', headwear: 'none', neck: 'choker', top: 'corset', topC: '#a50e38', topP: 'solid', trim: '#14101a', back: 'cape', gloves: 'stilettos', gloveC: '#b3002d' },
+        behind: '<circle cx="160" cy="112" r="84" fill="#ff5c86"/><circle cx="160" cy="112" r="84" fill="none" stroke="#fff6fb" stroke-opacity=".45" stroke-width="4"/>' + BAT_MARK(46, 46, .9, '#0c0206') + BAT_MARK(272, 34, 1.15, '#0c0206') + BAT_MARK(284, 106, .6, '#0c0206') + BAT_MARK(26, 112, .55, '#0c0206'),
+        front: '<path d="M0 0H320V10C312 26 304 28 300 12C292 44 280 44 276 12C264 30 256 26 250 10H70C64 28 54 40 48 14C40 30 28 34 22 12C14 22 6 22 0 12Z" fill="#7a0620" stroke="#14101a" stroke-width="2.500"/>' + BLING(256, 148, 12) + BLING(58, 152, 8) },
+    clawculus: { a: '#3fe0cf', b: '#07302d', word: 'CLAW', mid: '#0f8f82', x: 168, pose: 'peace',
+        look: { skin: '#e8b48a', eye: '#f4d35e', lip: '#c2185b', shadow: '#0f766e', hairStyle: 'curls', hair: '#5a2c17', streak: '#35dcc8', monster: 'cat', eyewear: 'cat', headwear: 'none', neck: 'chain', top: 'varsity', topC: '#0f766e', topP: 'solid', trim: '#fff6fb', gloves: 'claws', gloveC: '#14101a', back: 'none' },
+        behind: '<g font-family="\'Segoe Print\',\'Comic Sans MS\',cursive" font-size="20" fill="#d9fff8" opacity=".62"><text x="14" y="50">a²+b²=c²</text><text x="10" y="92">π≈3.14</text><text x="16" y="136">y=mx+b</text><text x="236" y="58">√144</text><text x="246" y="104">∑n</text><text x="232" y="146">x÷13</text></g>',
+        front: '<g fill="none" stroke="#fff6fb" stroke-width="6" stroke-linecap="round"><path d="M250 124L298 196"/><path d="M270 116L316 182"/><path d="M230 136L276 208"/></g>' + BLING(50, 170, 11) + BLING(28, 24, 7) },
+    tealeaf: { a: '#ffd76a', b: '#26093a', word: 'FATE', mid: '#7a2bc4', x: 140, pose: 'wave',
+        look: { skin: '#fbe3d0', eye: '#8a2be2', lip: '#d81b78', shadow: '#c9a227', hairStyle: 'gempin', hair: '#6a1f86', streak: '#f4d35e', monster: 'none', headwear: 'none', neck: 'moon', top: 'kimono', topC: '#3a1250', topP: 'stars', trim: '#f4d35e', back: 'none', gloves: 'french', gloveC: '#f4d35e' },
+        behind: '<path d="M276 18A46 46 0 1 0 306 92A38 38 0 0 1 276 18Z" fill="#ffd76a"/>' + BLING(36, 42, 11, '#ffd76a') + BLING(68, 22, 6) + BLING(20, 102, 7) + BLING(232, 34, 6),
+        front: '<g ' + INKED + '><path d="M284 160C308 156 312 186 284 186" fill="none"/><path d="M216 150H288C288 186 272 204 252 204C232 204 216 186 216 150Z" fill="#ff7ab8"/><ellipse cx="252" cy="150" rx="36" ry="9" fill="#a8622a"/><ellipse cx="252" cy="208" rx="42" ry="7" fill="#ff9ccb"/></g><g fill="none" stroke="#fff6fb" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M238 136C232 126 244 120 238 108"/><path d="M258 136C252 124 266 118 258 102"/></g><path d="M240 151Q246 145 250 151Q244 155 240 151ZM258 149Q264 144 268 150Q262 154 258 149Z" fill="#2f8f4e"/>' },
+    creepateria: { a: '#a6f04a', b: '#132b08', word: 'GRUEL', mid: '#4d9a17', x: 172, pose: 'hips',
+        look: { skin: '#b8f0d0', eye: '#ff1f8f', lip: '#6a1f86', shadow: '#2f8f4e', hairStyle: 'buns', hair: '#ff1f8f', streak: '#8df04a', monster: 'stitches', headwear: 'none', neck: 'bone', top: 'tee', topC: '#14101a', topP: 'skulls', trim: '#8df04a', back: 'none', gloves: 'gothnails', gloveC: '#6a1f86' },
+        behind: '<g fill="#8df04a" opacity=".55"><circle cx="30" cy="62" r="9"/><circle cx="56" cy="104" r="5"/><circle cx="286" cy="76" r="11"/><circle cx="262" cy="46" r="5"/></g>',
+        front: '<path d="M0 0H320V16C308 44 300 44 296 18C286 62 270 62 266 18C254 36 246 32 240 14H104C96 42 84 66 78 18C68 40 58 36 52 14C42 34 22 44 16 18C10 26 4 24 0 16Z" fill="#6fc22e" stroke="#14101a" stroke-width="2.500"/><g ' + INKED + '><path d="M14 176H116L104 208H26Z" fill="#9aa0ac"/><path d="M20 176C28 154 44 166 56 156C70 146 88 160 110 176Z" fill="#a6f04a"/></g><ellipse cx="42" cy="162" rx="5" ry="3" fill="#fff6fb"/><circle cx="74" cy="160" r="4" fill="#fff6fb"/>' + BLING(272, 170, 11) },
+    madscience: { a: '#6fe3ff', b: '#0c0b3a', word: 'SPARK', mid: '#1466c8', x: 150, pose: 'peace',
+        look: { skin: '#c7c9d3', eye: '#19b7e8', lip: '#ff1f8f', shadow: '#19b7e8', hairStyle: 'crimped', hair: '#f6f0ff', streak: '#19b7e8', monster: 'bolts', eyewear: 'none', headwear: 'none', neck: 'tags', top: 'coat', topC: '#fff6fb', topP: 'solid', trim: '#19b7e8', back: 'none', gloves: 'short', gloveC: '#14101a' },
+        behind: '<g ' + INKED + ' fill="#fff06a"><path d="M42 8L14 74H38L18 132L78 52H50L72 8Z"/><path d="M286 14L256 66H280L260 124L314 54H290L308 14Z"/></g>',
+        front: '<g ' + INKED + '><path d="M232 118H272V152C296 168 306 188 300 204C296 214 208 214 204 204C198 188 208 168 232 152Z" fill="#fff6fb" fill-opacity=".92"/><path d="M212 182C232 172 272 192 294 180C302 196 298 204 296 206C280 212 224 212 208 206C206 200 208 190 212 182Z" fill="#8df04a"/><rect x="226" y="108" width="52" height="12" rx="4" fill="#ff1f8f"/></g><g fill="#fff6fb"><circle cx="238" cy="166" r="4"/><circle cx="262" cy="152" r="3"/><circle cx="254" cy="134" r="2.500"/></g>' + BLING(46, 166, 12, '#6fe3ff') },
+    casketball: { a: '#ffa04d', b: '#2c1004', word: 'SLAM', mid: '#d9560f', x: 150, pose: 'hips',
+        look: { skin: '#5b3522', eye: '#f4d35e', lip: '#ff4fa8', shadow: '#ff8c1a', hairStyle: 'puffs', hair: '#14101a', streak: '#ff1f8f', monster: 'none', headwear: 'band', neck: 'chain', top: 'jersey', topC: '#ff1f8f', topP: 'solid', trim: '#fff6fb', back: 'none', gloves: 'nails', gloveC: '#ff1f8f' },
+        behind: '<g ' + INKED + '><rect x="234" y="10" width="78" height="56" fill="#fff6fb"/><rect x="258" y="28" width="30" height="24" fill="none" stroke="#ff1f8f"/></g><g fill="none" stroke="#fff6fb" stroke-width="2"><path d="M246 76L254 108H284L292 76M254 76L262 108M270 76V108M286 76L278 108M250 92H288"/></g><ellipse cx="269" cy="74" rx="26" ry="7" fill="none" stroke="#14101a" stroke-width="7"/><ellipse cx="269" cy="74" rx="26" ry="7" fill="none" stroke="#ff1f8f" stroke-width="4"/>',
+        front: '<g ' + INKED + '><circle cx="58" cy="172" r="36" fill="#f2761b"/><path d="M22 172H94M58 136V208M32 146C46 160 46 184 32 198M84 146C70 160 70 184 84 198" fill="none"/></g><path d="M34 164C34 158 42 156 46 160M70 160C74 156 82 158 82 164M56 174L58 178L60 174" fill="none" stroke="#14101a" stroke-width="3" stroke-linecap="round"/>' + BLING(112, 150, 8) + BLING(292, 170, 12) },
 };
+const posterArt = {};
+function classPoster(id) {
+    if (posterArt[id])
+        return posterArt[id];
+    const p = CLASS_LOOKS[id], W = 320, H = 220, cx = p.x + 10, cy = 112;
+    let rays = '';
+    for (let i = 0; i < 14; i++) {
+        const a = i / 14 * Math.PI * 2, b = a + .17, far = 420;
+        rays += '<path d="M' + cx + ' ' + cy + 'L' + (cx + Math.cos(a) * far).toFixed(0) + ' ' + (cy + Math.sin(a) * far).toFixed(0) + 'L' + (cx + Math.cos(b) * far).toFixed(0) + ' ' + (cy + Math.sin(b) * far).toFixed(0) + 'Z" fill="' + p.mid + '" opacity=".5"/>';
+    }
+    const star = normalizeLook({ ...FANG_LOOK, ...STAR_FACE, ...p.look, pose: p.pose });
+    const scale = .56, boxX = -60, boxY = -44, boxW = 440, boxH = 420;
+    const body = drawGhoul(star, { pose: POSES.find(x => x.id === p.pose), box: boxX + ' ' + boxY + ' ' + boxW + ' ' + boxH }).replace('<svg ', '<svg x="' + (p.x - boxW * scale / 2 + 10) + '" y="36" width="' + boxW * scale + '" height="' + boxH * scale + '" ');
+    /* The word sits across the top like a magazine title, on top of everything. */
+    const title = '<text x="' + W / 2 + '" y="50" text-anchor="middle" textLength="' + (W - 28) + '" lengthAdjust="spacingAndGlyphs" font-family="\'Breath of the House\',Impact,fantasy" font-size="58" fill="' + p.a + '" stroke="#14101a" stroke-width="5" paint-order="stroke">' + p.word + '</text>';
+    posterArt[id] = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><radialGradient id="pv' + id + '" cx="50%" cy="46%" r="75%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".72"/></radialGradient><linearGradient id="pf' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="66%" stop-color="' + p.b + '" stop-opacity="0"/><stop offset="100%" stop-color="' + p.b + '"/></linearGradient></defs>'
+        + '<rect width="' + W + '" height="' + H + '" fill="' + p.b + '"/>' + rays + p.behind
+        + '<g class="posterstar" style="color:' + p.a + '">' + body + '</g><rect width="' + W + '" height="' + H + '" fill="url(#pf' + id + ')"/>' + p.front
+        + '<rect width="' + W + '" height="' + H + '" fill="url(#pv' + id + ')"/>' + title + '</svg>';
+    return posterArt[id];
+}
 const classKey = () => 'classes.' + (isAdmin() ? 'fang' : signedInId() || 'guest');
 const classesDone = () => store.get(classKey(), {});
 function classRoomFocus() {
@@ -1541,7 +1582,7 @@ function renderClasses() {
     room.append(el('p', { cls: 'classtally', text: finished + ' of ' + CLASSES.length + ' classes finished' }));
     room.append(el('div', { cls: 'classgrid' }, ...CLASSES.map(c => {
         const look = CLASS_LOOKS[c.id], art = el('div', { cls: 'classart' });
-        art.innerHTML = look.art;
+        art.innerHTML = classPoster(c.id);
         if (c.id in done)
             art.append(el('b', { cls: 'classstamp', text: 'Passed ' + done[c.id] + '/' + c.quiz.length }));
         const card = el('button', { cls: 'classcard' + (c.id in done ? ' classdone' : ''), type: 'button', onclick() { openLesson(c, 0); } }, art, el('small', { text: c.period === 'Lunch' ? 'Lunch' : c.period + ' period' }), el('strong', { text: c.name }), el('span', { text: c.blurb }), el('em', { text: c.id in done ? 'Take it again' : 'Start the lesson' }));
@@ -1584,7 +1625,7 @@ function classroomScene(c, step, pose, line, asking, ...board) {
     const look = CLASS_LOOKS[c.id], teacher = el('div', { cls: 'teacher' });
     classTeacher(teacher, pose, line);
     const poster = el('div', { cls: 'roomposter', 'aria-hidden': 'true' });
-    poster.innerHTML = look.art;
+    poster.innerHTML = classPoster(c.id);
     const kids = el('div', { cls: 'roomkids' + (asking ? ' asking' : ''), 'aria-hidden': 'true' });
     kids.innerHTML = classKids();
     musicPlay('class');
@@ -4731,7 +4772,7 @@ const KICK_BALLS = [['classic', 'Classic'], ['skull', 'Skull ball'], ['pumpkin',
     const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
     const tools = gameTools(p.root, togglePause);
     const running = () => mode !== 'idle' && mode !== 'done';
-    const stat = () => { p.stat.textContent = (running() ? 'Score: ' + score + '  Goals: ' + goals + '  Shot: ' + Math.min(SHOTS, shotNo + 1) + ' of ' + SHOTS + '  ' : '') + 'Best: ' + store.get('kickBest', 0); tools.show(running(), paused); };
+    const stat = () => { p.stat.textContent = (running() ? 'Score: ' + score + '  Goals: ' + goals + '  Shot: ' + Math.min(SHOTS, shotNo + 1) + ' of ' + SHOTS + '  ' : '') + 'Best: ' + displayBest('kick'); tools.show(running(), paused); };
     const go = (m) => { mode = m; modeT = 0; };
     const isPen = () => shotNo < PENS;
     /* ---------- the players ---------- */
@@ -5487,7 +5528,8 @@ const KICK_BALLS = [['classic', 'Classic'], ['skull', 'Skull ball'], ['pumpkin',
     }
     else
         kick(); stat(); }
-    function finish() { go('done'); paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 10)); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
+    function finish() { go('done'); paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 10)); if (score > 0)
+        submitScore('kick', score); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
     function quit() { go('idle'); paused = false; charging = false; bits = []; keys = {}; locker.hidden = false; p.go.textContent = 'Kick off'; musicHold(false); stat(); }
     p.go.addEventListener('click', () => {
         dress();
@@ -6870,7 +6912,7 @@ const HOOP_BALLS = [['classic', 'Classic', '#f2761b'], ['pink', 'Hot pink', '#ff
     const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
     const tools = gameTools(p.root, togglePause);
     const running = () => mode !== 'idle' && mode !== 'done';
-    const stat = () => { p.stat.textContent = (running() ? 'Score: ' + score + '  Round: ' + round + ' of 3  ' : '') + 'Best: ' + store.get('hoopsBest', 0); tools.show(running(), paused); };
+    const stat = () => { p.stat.textContent = (running() ? 'Score: ' + score + '  Round: ' + round + ' of 3  ' : '') + 'Best: ' + displayBest('hoops'); tools.show(running(), paused); };
     const go = (m) => { mode = m; modeT = 0; cv.dataset.mode = m; };
     /* ---------- the player and the crowd ---------- */
     const art = {}, BOX = { x: -130, y: -60, w: 580, h: 790 }, heads = [];
@@ -7617,7 +7659,8 @@ const HOOP_BALLS = [['classic', 'Classic', '#f2761b'], ['pink', 'Hot pink', '#ff
     }
     else
         kick(); stat(); }
-    function finish() { go('done'); cam = 1; camX = 320; camY = 180; paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 5)); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
+    function finish() { go('done'); cam = 1; camX = 320; camY = 180; paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 5)); if (score > 0)
+        submitScore('hoops', score); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
     function quit() { go('idle'); paused = false; holding = false; bits = []; cam = 1; locker.hidden = false; p.go.textContent = 'Tip off'; musicHold(false); stat(); }
     function press() {
         if (paused)
@@ -8518,7 +8561,7 @@ function pageantCpu(round, worn, tries) {
     const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
     const tools = gameTools(p.root, togglePause);
     const inShow = () => !['idle', 'done'].includes(mode), running = () => inShow() && !!roster.length;
-    const stat = () => { const me = roster[0]; p.stat.textContent = (me && mode !== 'idle' ? 'Round ' + (round + 1) + ' of 3  Your total: ' + me.total + '  ' : '') + 'Best: ' + store.get('pageantBest', 0); tools.show(running() && !room.hidden === false, paused); };
+    const stat = () => { const me = roster[0]; p.stat.textContent = (me && mode !== 'idle' ? 'Round ' + (round + 1) + ' of 3  Your total: ' + me.total + '  ' : '') + 'Best: ' + displayBest('pageant'); tools.show(running() && !room.hidden === false, paused); };
     const go = (m) => { mode = m; modeT = 0; };
     const holder = () => cv.parentElement;
     const song = new Audio();
@@ -8810,6 +8853,7 @@ function pageantCpu(round, worn, tries) {
         else
             award(5);
         finalBest = p.bestOf(me.total);
+        submitScore('pageant', me.total);
         cheer = 6000;
         for (let i = 0; i < (calm ? 60 : 220); i++)
             bits.push({ x: Math.random() * W, y: -Math.random() * 240, vx: (Math.random() - .5) * 1.4, vy: 1 + Math.random() * 2, life: 5200, col: pick(['#ff1f8f', '#f4d35e', '#fff6fb', '#35dcc8']), size: 3 + Math.random() * 3 });
@@ -10465,7 +10509,7 @@ function merCorner() {
     drawLocker();
     stat();
 })();
-const SCORED_GAMES = ['riptide', 'spill', 'casket'];
+const SCORED_GAMES = ['riptide', 'spill', 'casket', 'kick', 'hoops', 'pageant'];
 const BOARD_SIZE = 10;
 let allScores = [], scoresLoaded = false, scoreTab = 'riptide', scoreNote = '';
 const announced = new Set();
