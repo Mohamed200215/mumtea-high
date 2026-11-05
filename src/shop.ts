@@ -1,7 +1,6 @@
 /* ---------- the Bank of Bones card and the Bone Boutique: bones earned in games are spent on things that show on your ghoul ---------- */
-const SHOP_TABS: Array<[string, string, string]> = [['cars', 'Cars', 'Parked right beside your ghoul. They do not drive, they just look expensive.'], ['hats', 'Hats', 'Nike, Puma and Prada.'], ['shoes', 'Shoes', 'Nike, Puma and ASICS.'], ['dior', 'Dior', 'Tops and bottoms from the house of Dior.'], ['jewels', 'Jewellery', 'Real diamonds, Rolex, Audemars Piguet and Patek Philippe.']];
-const SHOP_PLAIN: Record<string, string> = { car: 'none', headwear: 'none', neck: 'none', wrist: 'none', shoes: 'sneaker', top: 'tee', bottom: 'straight' };
-const SHOP_BOXES: Record<string, string> = { car: '40 520 400 215', headwear: '30 -50 260 270', shoes: '60 560 200 170', top: '40 215 240 225', bottom: '40 340 240 380', neck: '95 195 130 100', wrist: '10 300 130 170' };
+const SHOP_TABS: Array<[string, string, string]> = [['cars', 'Cars', 'Parked right beside your ghoul. They do not drive, they just look expensive.'], ['hats', 'Hats', 'Nike, Puma and Prada.'], ['shoes', 'Shoes', 'Nike, Puma and ASICS.'], ['jewels', 'Jewellery', 'Real diamonds, Rolex, Audemars Piguet and Patek Philippe.']];
+const SHOP_PLAIN: Record<string, string> = { car: 'none', headwear: 'none', neck: 'none', wrist: 'none', shoes: 'sneaker' };
 let shopTab = 'cars', shopNote = '', shopOwnerSeen: string | null | undefined, shopPrices: Record<string, { price: number; at: string }> = {};
 const boneLogKey = (): string => 'boneLog.' + (signedInId() || 'guest');
 /* The statement remembers earnings on this device, and purchases come from the account. */
@@ -133,7 +132,7 @@ function renderShop(): void {
   SHOP_ITEMS.filter(i => i.cat === shopTab).forEach(item => {
     const owned = fang || shopOwned.has(item.id), on = look[item.slot] === item.id;
     const pic = el('div', { cls: 'shoppic', 'aria-hidden': 'true' });
-    pic.innerHTML = drawGhoul({ ...look, [item.slot]: item.id }, item.slot === 'car' ? { only: ['car'], box: SHOP_BOXES.car, plain: true } : { box: SHOP_BOXES[item.slot], plain: true });
+    pic.innerHTML = shopArt(item);
     const left = item.price - bones;
     const action = !me && !fang ? el('button', { cls: 'pill ghost', type: 'button', 'data-go': 'registration' }, 'Log in to buy')
       : owned ? el('button', { cls: on ? 'pill ghost' : 'pill', type: 'button', 'data-buy': item.id, onclick() { wearItem(item.id, !on); } }, on ? 'Take off' : 'Wear')

@@ -128,7 +128,7 @@ const HEAD_ONLY_BOX = '46 -14 228 232';
 const HEAD_BOX = '62 8 196 206';
 const WIDE_BOX = '-50 -10 420 730';
 /* Everything the Bone Boutique sells. The names and prices also live in the database's buy_shop_item. */
-interface ShopItem { id: string; slot: 'car' | 'headwear' | 'shoes' | 'top' | 'bottom' | 'neck' | 'wrist'; cat: string; name: string; brand: string; price: number; base: string; mark: string }
+interface ShopItem { id: string; slot: 'car' | 'headwear' | 'shoes' | 'neck' | 'wrist'; cat: string; name: string; brand: string; price: number; base: string; mark: string }
 const SHOP_ITEMS: ShopItem[] = [
   { id: 'rangerover', slot: 'car', cat: 'cars', name: 'Range Rover Sport', brand: 'Range Rover', price: 1200, base: 'suv:#1c2430', mark: 'RANGE ROVER' },
   { id: 'gwagon', slot: 'car', cat: 'cars', name: 'G-Wagon', brand: 'Mercedes-Benz', price: 1500, base: 'suv:#14101a', mark: 'MERCEDES' },
@@ -151,13 +151,6 @@ const SHOP_ITEMS: ShopItem[] = [
   { id: 'pumaspeedcat', slot: 'shoes', cat: 'shoes', name: 'Speedcat', brand: 'Puma', price: 85, base: 'flats', mark: 'PUMA' },
   { id: 'asicskayano', slot: 'shoes', cat: 'shoes', name: 'Gel-Kayano', brand: 'ASICS', price: 95, base: 'chunky', mark: 'ASICS' },
   { id: 'asicsnyc', slot: 'shoes', cat: 'shoes', name: 'Gel-NYC', brand: 'ASICS', price: 105, base: 'chunky', mark: 'ASICS' },
-  { id: 'diorbar', slot: 'top', cat: 'dior', name: 'Bar jacket', brand: 'Dior', price: 320, base: 'blazer', mark: 'Dior' },
-  { id: 'diorcorset', slot: 'top', cat: 'dior', name: 'Corset', brand: 'Dior', price: 260, base: 'corset', mark: 'Dior' },
-  { id: 'diorhoodie', slot: 'top', cat: 'dior', name: 'Hoodie', brand: 'Dior', price: 180, base: 'hoodie', mark: 'Dior' },
-  { id: 'diorblouse', slot: 'top', cat: 'dior', name: 'Ruffle blouse', brand: 'Dior', price: 210, base: 'ruffle', mark: 'Dior' },
-  { id: 'diortulle', slot: 'bottom', cat: 'dior', name: 'Tulle skirt', brand: 'Dior', price: 300, base: 'tulle', mark: 'Dior' },
-  { id: 'diorpleats', slot: 'bottom', cat: 'dior', name: 'Pleated maxi', brand: 'Dior', price: 270, base: 'pleatmaxi', mark: 'Dior' },
-  { id: 'diorjeans', slot: 'bottom', cat: 'dior', name: 'Jeans', brand: 'Dior', price: 170, base: 'straight', mark: 'Dior' },
   { id: 'diamondpendant', slot: 'neck', cat: 'jewels', name: 'Diamond pendant', brand: 'Fine jewellery', price: 350, base: '', mark: '' },
   { id: 'tennisnecklace', slot: 'neck', cat: 'jewels', name: 'Diamond tennis necklace', brand: 'Fine jewellery', price: 480, base: '', mark: '' },
   { id: 'diamondchain', slot: 'neck', cat: 'jewels', name: 'Iced-out diamond chain', brand: 'Fine jewellery', price: 650, base: '', mark: '' },
@@ -197,9 +190,9 @@ const WARDROBE: WardrobePage[] = [
 ];
 
 /* Shop pieces join the wardrobe, and cars get a page of their own. */
-WARDROBE.splice(2, 0, { title: 'Cars', key: 'car', items: [['none', 'No car']], colours: [], box: '40 520 400 215', layers: ['car'], crop: true });
+WARDROBE.splice(2, 0, { title: 'Cars', key: 'car', items: [['none', 'No car']], colours: [], box: '36 490 412 250', layers: ['car'], crop: true });
 SHOP_ITEMS.forEach(item => {
-  const title = item.slot === 'car' ? 'Cars' : item.slot === 'headwear' ? 'Headwear' : item.slot === 'shoes' ? 'Shoes' : item.slot === 'top' ? 'Tops' : item.slot === 'bottom' ? (item.base === 'straight' ? 'Trousers and shorts' : 'Skirts') : item.slot === 'neck' ? 'Necklaces' : 'Hand accessories';
+  const title = item.slot === 'car' ? 'Cars' : item.slot === 'headwear' ? 'Headwear' : item.slot === 'shoes' ? 'Shoes' : item.slot === 'neck' ? 'Necklaces' : 'Hand accessories';
   WARDROBE.find(p => p.title === title)?.items?.push([item.id, item.brand + ' ' + item.name]);
 });
 const FANG_LOOK: Look = { pet: 'none', car: 'none', petC: '#6a1f86', skin: '#d9c8f2', eye: '#35dcc8', lip: '#b80e63', shadow: '#ff1f8f', hairStyle: 'hijab', hair: '#f08fb4', streak: '#ff1f8f', monster: 'bat', headwear: 'none', hold: 'cup', top: 'corset', topC: '#14101a', topP: 'solid', trim: '#ff1f8f', bottom: 'tutu', bottomC: '#ff1f8f', bottomP: 'solid', legs: 'argyle', legsC: '#19b7e8', shoes: 'platform', shoesC: '#14101a', pose: 'classic', eyewear: 'none', neck: 'choker', gloves: 'nails', gloveC: '#ff1f8f', wrist: 'none', mark: 'none', back: 'none', eyeStyle: 'classic', brow: 'arch', browC: '', lipSize: 'full', nose: 'button' };
@@ -1253,7 +1246,7 @@ function drawGhoul(o: Look, opt: { head?: boolean; label?: string; only?: Layer[
 } as Record<string, string>)[o.headwear] || '';
 
   /* Cars park beside the character on its own pages. In the games the character poses alone. */
-  if (!opt.pose && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) { parts.car = drawCar(SHOP_BY_ID[o.car]); needsRoom = true; }
+  if (!opt.pose && o.car && o.car !== 'none' && SHOP_BY_ID[o.car]) { parts.car = '<g transform="translate(42 500)">' + carArt(SHOP_BY_ID[o.car]) + '</g>'; needsRoom = true; }
   const nameOn = (id: string, x: number, y: number, size: number, fill: string, serif = false): string => (SHOP_BY_ID[id] ? '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="' + size + '" fill="' + fill + '" font-family="' + (serif ? "Georgia,'Times New Roman',serif" : 'Arial,Helvetica,sans-serif') + '" font-weight="700"' + (serif ? ' font-style="italic"' : '') + '>' + SHOP_BY_ID[id].mark + '</text>' : '');
   if (parts.top) parts.top += nameOn(brand.top, 160, 318, 24, contrast(o.topC), true);
   if (parts.bottom) parts.bottom += nameOn(brand.bottom, 160, 470, 24, contrast(o.bottomC), true);
@@ -1323,18 +1316,4 @@ function schoolCrowd(count: number): Look[] {
   const out = [...real];
   while (out.length < count) out.push(randomLook());
   return out.sort(() => Math.random() - .5);
-}
-
-/* ---------- the garage: drawn here, with the maker's name on the door ---------- */
-function drawCar(item: ShopItem): string {
-  const [kind, colour] = item.base.split(':'), dark = shade(colour, -.35), light = shade(colour, .3);
-  const BODIES: Record<string, [string, string]> = {
-    suv: ['M6 84L8 52Q10 44 24 42L46 14Q50 8 60 8H150Q162 8 168 18L182 42Q208 44 214 56L216 84Z', 'M52 40L66 18H106V40ZM114 18H152Q158 18 162 26L170 40H114Z'],
-    sedan: ['M4 84Q4 62 24 56L62 30Q70 24 84 24H132Q146 24 156 32L180 54Q212 58 216 72V84Z', 'M46 54L72 34Q76 30 86 30H104V54ZM112 30H130Q140 30 148 36L164 54H112Z'],
-    sport: ['M2 88Q0 72 22 68L72 50Q92 40 112 40H128Q148 42 172 58L210 70Q222 76 218 88Z', 'M66 66L94 47Q98 45 108 45H116V66ZM122 45H128Q144 47 160 66H122Z'],
-    limo: ['M6 84V58Q8 52 22 50L52 22Q56 18 66 18H150Q160 18 166 26L184 50Q210 50 214 58V84Z', 'M40 50L62 26H104V50ZM112 26H150Q156 26 160 32L172 50H112Z'],
-  };
-  const [body, glass] = BODIES[kind] || BODIES.sedan;
-  const wheel = (x: number): string => '<circle cx="' + x + '" cy="84" r="18" fill="#0c0a10" stroke="' + INK + '" stroke-width="3"/><circle cx="' + x + '" cy="84" r="10" fill="#c9ccd6"/><circle cx="' + x + '" cy="84" r="3.500" fill="#2c2436"/><path d="M' + x + ' 74V94M' + (x - 10) + ' 84H' + (x + 10) + 'M' + (x - 7) + ' 77L' + (x + 7) + ' 91M' + (x + 7) + ' 77L' + (x - 7) + ' 91" stroke="#2c2436" stroke-width="1.500"/>';
-  return '<g transform="translate(50 540) scale(1.7)"><ellipse cx="110" cy="102" rx="108" ry="6" fill="#000" opacity=".35"/><path d="' + body + '" fill="' + colour + '" stroke="' + INK + '" stroke-width="3.200" stroke-linejoin="round"/><path d="' + glass + '" fill="#bfe6f5" stroke="' + INK + '" stroke-width="2.400" stroke-linejoin="round"/><path d="M12 64H208" stroke="' + light + '" stroke-width="3" opacity=".7"/><path d="M6 80H216" stroke="' + dark + '" stroke-width="5"/><rect x="200" y="62" width="14" height="8" rx="3" fill="#fff6c2" stroke="' + INK + '" stroke-width="1.500"/><rect x="6" y="62" width="10" height="8" rx="3" fill="#ff3b4e" stroke="' + INK + '" stroke-width="1.500"/>' + (kind === 'sport' ? '<path d="M4 58H28L24 68" fill="none" stroke="' + INK + '" stroke-width="5" stroke-linejoin="round"/>' : '') + (kind === 'suv' ? '<path d="M52 6H160" stroke="' + INK + '" stroke-width="4" stroke-linecap="round"/>' : '') + (kind === 'limo' ? '<rect x="206" y="46" width="8" height="12" rx="2" fill="#e8e8ee" stroke="' + INK + '" stroke-width="1.500"/>' : '') + wheel(46) + wheel(174) + '<text x="110" y="78" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="10" fill="' + contrast(colour) + '">' + item.mark + '</text></g>';
 }
