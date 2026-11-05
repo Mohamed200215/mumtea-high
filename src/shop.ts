@@ -22,6 +22,45 @@ async function loadOwned(): Promise<void> {
 const shopLook = (): Look => (isAdmin() ? DOLLS.mumtea.look : currentStudent()?.look || DOLLS.mumtea.look);
 const boneMark = (): HTMLElement => { const m = el('span', { cls: 'bonemark', 'aria-hidden': 'true' }); m.innerHTML = '<svg viewBox="0 0 24 14" width="20" height="12"><path d="M5 1a3 3 0 0 1 3 3h8a3 3 0 1 1 3 3 3 3 0 1 1-3 3H8a3 3 0 1 1-3-3 3 3 0 1 1 0-6Z" fill="currentColor"/></svg>'; return m; };
 
+/* ---------- how the card looks: saved with the account, the same way as the student ID ---------- */
+interface BankStyle { colour: string; pattern: string; shine: string; metal: string; emblem: string; title: string }
+const BANK_COLOURS: Array<[string, string]> = [['Midnight', '#0c0710'], ['Hot pink', '#d10f73'], ['Royal purple', '#3a1250'], ['Deep teal', '#0a4f4a'], ['Blood red', '#5c0a1e'], ['Navy', '#12204d'], ['Rose gold', '#b76e79'], ['Gold', '#b8860b'], ['Silver', '#8d93a3'], ['Bone white', '#f4efe6']];
+const BANK_PATTERNS: Array<[string, string]> = [['skulls', 'Skulls'], ['none', 'Plain'], ['leopard', 'Leopard'], ['zebra-pink', 'Pink zebra'], ['zebra-purple', 'Purple zebra'], ['plaid', 'Plaid']];
+const BANK_SHINES: Array<[string, string]> = [['fang', 'Pink and teal'], ['gold', 'Gold'], ['holo', 'Holographic'], ['ice', 'Icy'], ['none', 'No shine']];
+const BANK_TITLES = ['Black Card', 'Platinum Card', 'Diamond Card', 'Scream Queen Card', 'Headghoul Card', 'Boneyard Elite'];
+function normalizeBank(raw: Partial<BankStyle> | null | undefined): BankStyle {
+  const r = raw || {}, oneOf = (v: unknown, ok: string[], d: string): string => (typeof v === 'string' && ok.includes(v) ? v : d);
+  return { colour: oneOf(r.colour, BANK_COLOURS.map(c => c[1]), '#0c0710'), pattern: oneOf(r.pattern, BANK_PATTERNS.map(p => p[0]), 'skulls'), shine: oneOf(r.shine, BANK_SHINES.map(p => p[0]), 'fang'), metal: oneOf(r.metal, ID_METALS.map(m => m[0]), 'gold'), emblem: oneOf(r.emblem, ID_EMBLEMS.map(e => e[0]), 'h'), title: oneOf(r.title, BANK_TITLES, 'Black Card') };
+}
+const bankKey = (): string => 'bankcard.' + (isAdmin() ? 'fang' : signedInId() || 'guest');
+const bankStyle = (): BankStyle => { const me = isAdmin() ? null : currentStudent(); return normalizeBank(me?.bank || store.get<Partial<BankStyle> | null>(bankKey(), null)); };
+let bankMakerOpen = false, bankNote = '', bankSaveTimer = 0;
+function changeBank(key: keyof BankStyle, value: string): void {
+  const style = { ...bankStyle(), [key]: value }, me = isAdmin() ? null : currentStudent();
+  store.set(bankKey(), style);
+  if (me) me.bank = style;
+  bankNote = me ? 'Saving...' : 'Saved on this device.';
+  drawBank();
+  if (!me) return;
+  clearTimeout(bankSaveTimer);
+  bankSaveTimer = window.setTimeout(async () => {
+    const fresh = currentStudent();
+    const done = fresh ? await updateMe({ look: fresh.look }).catch(() => false) : false;
+    const say = $('#bankCol .banksaid');
+    bankNote = done ? 'Saved to your account.' : 'Saved on this device. It did not reach your account, so try again later.';
+    if (say) say.textContent = bankNote;
+  }, 700);
+}
+function bankMaker(style: BankStyle): HTMLElement {
+  const row = (label: string, ...kids: HTMLElement[]) => el('div', { cls: 'wrow' }, el('span', { text: label }), ...kids);
+  const chip = (key: keyof BankStyle, id: string, name: string) => el('button', { cls: 'wchip', type: 'button', 'data-bank': key + ':' + id, 'aria-pressed': style[key] === id, onclick() { changeBank(key, id); } }, name);
+  const swatches = BANK_COLOURS.map(([name, col]) => { const b = el('button', { cls: 'wswatch', type: 'button', 'data-bank': 'colour:' + col, title: name, 'aria-label': 'Card colour ' + name, 'aria-pressed': style.colour === col, onclick() { changeBank('colour', col); } }); b.style.background = col; return b; });
+  const tiles = el('div', { cls: 'idtiles' }, ...ID_EMBLEMS.map(([id, name]) => el('button', { cls: 'idtile', type: 'button', 'data-bank': 'emblem:' + id, title: name, 'aria-label': 'Emblem ' + name, 'aria-pressed': style.emblem === id, onclick() { changeBank('emblem', id); } }, emblemEl(id, style.metal, 'emblem', false))));
+  return el('div', { cls: 'idmaker wframe bankmaker' }, el('h4', { text: 'Customize your card' }), el('div', { cls: 'merrows' },
+    row('Card colour', ...swatches), row('Pattern', ...BANK_PATTERNS.map(([id, name]) => chip('pattern', id, name))), row('Shine', ...BANK_SHINES.map(([id, name]) => chip('shine', id, name))),
+    row('Chip and emblem metal', ...ID_METALS.map(m => chip('metal', m[0], m[1]))), row('Card title', ...BANK_TITLES.map(t => chip('title', t, t))), row('Emblem', tiles)),
+    el('button', { cls: 'pill', type: 'button', onclick() { bankMakerOpen = false; drawBank(); $('#bankCol .bonecard').scrollIntoView({ block: 'nearest' }); } }, 'Done'));
+}
 function drawBank(): void {
   const box = $('#bankCol'); box.textContent = '';
   const me = currentStudent(), fang = isAdmin();
@@ -31,12 +70,16 @@ function drawBank(): void {
   for (let i = 0; digits.length < 12; i++) digits += String((seed.charCodeAt(i % seed.length) * (i + 7)) % 10);
   const number = '6666 ' + digits.slice(0, 4) + ' ' + digits.slice(4, 8) + ' ' + digits.slice(8, 12);
   const joined = me ? new Date(me.joined) : new Date();
-  const card = el('div', { cls: 'bonecard', role: 'group', 'aria-label': 'Bank of Bones card for ' + name + ', ' + (fang ? 'unlimited' : bones) + ' bones' });
+  const style = bankStyle(), n = parseInt(style.colour.slice(1), 16), light = (n >> 16) * .3 + ((n >> 8) & 255) * .59 + (n & 255) * .11 > 150;
+  const card = el('div', { cls: 'bonecard' + (light ? ' bclight' : ''), 'data-shine': style.shine, 'data-pattern': style.pattern, role: 'group', 'aria-label': 'Bank of Bones card for ' + name + ', ' + (fang ? 'unlimited' : bones) + ' bones' });
+  card.style.backgroundColor = style.colour;
+  card.style.backgroundImage = style.pattern === 'none' ? 'none' : 'url(backgrounds/' + style.pattern + '.webp)';
   const chip = el('i', { cls: 'bcchip', 'aria-hidden': 'true' });
+  chip.style.background = 'linear-gradient(135deg,' + (ID_METALS.find(m => m[0] === style.metal) || ID_METALS[0])[2].join(',') + ')';
   const wave = el('span', { cls: 'bcwave', 'aria-hidden': 'true' }); wave.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round"><path d="M7 8a8 8 0 0 1 0 8M11 5a13 13 0 0 1 0 14M15 2.500a18 18 0 0 1 0 19"/></svg>';
-  const crest = el('img', { cls: 'bccrest', src: 'emblems/h.webp', alt: '', width: 46, height: 56 });
+  const crest = emblemEl(style.emblem, style.metal, 'emblem bccrest', false);
   const balance = el('strong', { cls: 'bcbalance' }, el('span', { 'data-bones': '', text: fang ? 'Unlimited' : String(bones) }), el('small', { text: ' bones' }));
-  card.append(el('div', { cls: 'bctop' }, el('div', {}, el('b', { text: 'BANK OF BONES' }), el('small', { text: 'Mumtea High Black Card' })), crest),
+  card.append(el('div', { cls: 'bctop' }, el('div', {}, el('b', { text: 'BANK OF BONES' }), el('small', { text: 'Mumtea High ' + style.title })), crest),
     el('div', { cls: 'bcmid' }, chip, wave, el('div', { cls: 'bcbal' }, el('small', { text: 'Balance' }), balance)),
     el('p', { cls: 'bcnumber', text: number }),
     el('div', { cls: 'bcfoot' }, el('div', {}, el('small', { text: 'Card holder' }), el('b', { text: name.toUpperCase() })), el('div', {}, el('small', { text: 'Member since' }), el('b', { text: String(joined.getMonth() + 1).padStart(2, '0') + '/' + String(joined.getFullYear()).slice(2) })), el('div', {}, el('small', { text: 'Expires' }), el('b', { text: 'Never' }))));
@@ -46,7 +89,10 @@ function drawBank(): void {
   const statement = el('div', { cls: 'bcstatement' }, el('h4', { text: 'Recent activity' }));
   if (!rows.length) statement.append(el('p', { text: fang ? 'The headghoul does not pay for things.' : 'Nothing yet. Finish games and pass classes to earn bones.' }));
   rows.forEach(r => statement.append(el('div', { cls: 'bcrow' }, el('span', { text: r.text }), el('time', { datetime: r.at, text: timeAgo(r.at) }), el('b', { cls: r.n < 0 ? 'bcout' : 'bcin', text: (r.n < 0 ? '−' : '+') + Math.abs(r.n) }))));
-  box.append(card, statement, el('button', { cls: 'pill', type: 'button', 'data-go': 'shop' }, 'Spend it at the Bone Boutique'));
+  const customize = el('button', { cls: 'pill ghost idopen', type: 'button', 'aria-expanded': bankMakerOpen, onclick() { bankMakerOpen = !bankMakerOpen; bankNote = ''; drawBank(); } }, bankMakerOpen ? 'Hide card options' : 'Customize card');
+  box.append(card, el('div', { cls: 'row bankbtns' }, el('button', { cls: 'pill', type: 'button', 'data-go': 'shop' }, 'Spend it at the Bone Boutique'), customize), el('p', { cls: 'banksaid', role: 'status', text: bankNote }));
+  if (bankMakerOpen) box.append(bankMaker(style));
+  box.append(statement);
 }
 async function wearItem(id: string, on: boolean): Promise<void> {
   const item = SHOP_BY_ID[id], next: Look = { ...shopLook(), [item.slot]: on ? id : SHOP_PLAIN[item.slot] };
