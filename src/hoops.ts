@@ -347,7 +347,7 @@ const HOOP_BALLS: Array<[string, string, string]> = [['classic', 'Classic', '#f2
   }
   function kick(): void { if (looping || paused || !cv.getClientRects().length) return; looping = true; last = performance.now(); requestAnimationFrame(frame); }
   function togglePause(): void { if (!running()) return; paused = !paused; holding = false; musicHold(paused); if (paused) { paint(); pauseCover(); } else kick(); stat(); }
-  function finish(): void { go('done'); cam = 1; camX = 320; camY = 180; paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 5)); if (score > 0) submitScore('hoops', score); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
+  function finish(): void { go('done'); cam = 1; camX = 320; camY = 180; paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 5)); if (score > 0) submitScore('hoops', score); gameOverSound(); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
   function quit(): void { go('idle'); paused = false; holding = false; bits = []; cam = 1; locker.hidden = false; p.go.textContent = 'Tip off'; musicHold(false); stat(); }
   function press(): void {
     if (paused) return;
@@ -359,6 +359,7 @@ const HOOP_BALLS: Array<[string, string, string]> = [['classic', 'Classic', '#f2
     if (mode === 'air' && holding) { holding = false; spinTo = Math.round(spin / (Math.PI * 2)) * Math.PI * 2; }
   }
   p.go.addEventListener('click', () => {
+    gameOverStop();
     dress(); paused = false; score = 0; round = 1; shot = 0; bits = []; glass = 1; headline = ''; cam = 1; camX = 320; camY = 180;
     locker.hidden = true; p.go.textContent = 'Restart'; p.go.blur(); musicHold(false); tone(880, .5); ball.held = true; go('intro'); stat(); kick();
   });

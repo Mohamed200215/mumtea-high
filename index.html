@@ -2174,6 +2174,30 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) {
 }
 else
     musicApply(); themeApply(); });
+/* ---------- the sting when a game ends: the song steps aside for it, then comes back ---------- */
+const gameOverSting = new Audio('spooky-game-over.mp3');
+gameOverSting.preload = 'auto';
+gameOverSting.volume = .8;
+let gameOverAfter = null;
+function gameOverDone() { const after = gameOverAfter; gameOverAfter = null; after?.(); }
+function gameOverSound(after = () => musicHold(false)) {
+    gameOverAfter = null;
+    if (soundMuted()) {
+        after();
+        return;
+    }
+    gameOverAfter = after;
+    musicHold(true);
+    gameOverSting.currentTime = 0;
+    gameOverSting.play().catch(gameOverDone);
+}
+function gameOverStop() { gameOverSting.pause(); gameOverAfter = null; }
+gameOverSting.addEventListener('ended', gameOverDone);
+document.addEventListener('soundchange', () => { if (soundMuted() && !gameOverSting.paused) {
+    gameOverSting.pause();
+    gameOverDone();
+} });
+stops.push(gameOverStop);
 /* ---------- the buttons every game gets ---------- */
 function soundButtons() {
     const music = el('button', { cls: 'chip gametool', type: 'button', 'data-tool': 'music', onclick() { store.set('musicOn', !store.get('musicOn', true)); document.dispatchEvent(new Event('soundchange')); } });
@@ -5643,9 +5667,10 @@ const KICK_BALLS = [['classic', 'Classic'], ['skull', 'Skull ball'], ['pumpkin',
     else
         kick(); stat(); }
     function finish() { go('done'); paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 10)); if (score > 0)
-        submitScore('kick', score); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
+        submitScore('kick', score); gameOverSound(); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
     function quit() { go('idle'); paused = false; charging = false; bits = []; keys = {}; locker.hidden = false; p.go.textContent = 'Kick off'; musicHold(false); stat(); }
     p.go.addEventListener('click', () => {
+        gameOverStop();
         dress();
         paused = false;
         score = 0;
@@ -7776,7 +7801,7 @@ const HOOP_BALLS = [['classic', 'Classic', '#f2761b'], ['pink', 'Hot pink', '#ff
     else
         kick(); stat(); }
     function finish() { go('done'); cam = 1; camX = 320; camY = 180; paused = false; finalBest = p.bestOf(score); award(Math.ceil(score / 5)); if (score > 0)
-        submitScore('hoops', score); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
+        submitScore('hoops', score); gameOverSound(); locker.hidden = false; p.go.textContent = 'Play again'; stat(); }
     function quit() { go('idle'); paused = false; holding = false; bits = []; cam = 1; locker.hidden = false; p.go.textContent = 'Tip off'; musicHold(false); stat(); }
     function press() {
         if (paused)
@@ -7804,6 +7829,7 @@ const HOOP_BALLS = [['classic', 'Classic', '#f2761b'], ['pink', 'Hot pink', '#ff
         }
     }
     p.go.addEventListener('click', () => {
+        gameOverStop();
         dress();
         paused = false;
         score = 0;
@@ -9073,7 +9099,12 @@ function pageantCpu(round, worn, tries) {
             holdEnd();
         }
     }
-    function holdEnd() { rules.open = true; stat(); }
+    function holdEnd() { rules.open = true; stat(); wantSong = false; song.pause(); gameOverSound(() => { if (roster.length) {
+        wantSong = true;
+        applySong();
+    }
+    else
+        musicHold(false); }); }
     function paint() {
         if (!stage)
             buildStage();
@@ -9290,6 +9321,7 @@ function pageantCpu(round, worn, tries) {
         kick();
     }
     p.go.addEventListener('click', () => {
+        gameOverStop();
         askCrowd();
         p.go.blur();
         const me = (!isAdmin() && currentStudent()?.look) || DOLLS.mumtea.look, name = (!isAdmin() && currentStudent()?.name) || 'You';
@@ -10592,6 +10624,7 @@ function merCorner() {
         stat();
         submitScore('riptide', s);
         p.go.textContent = 'Dive again';
+        gameOverSound();
     }
     function quit() {
         mode = 'idle';
@@ -10606,6 +10639,7 @@ function merCorner() {
         stat();
     }
     p.go.addEventListener('click', () => {
+        gameOverStop();
         dress(() => {
             paused = false;
             musicHold(false);
@@ -11698,10 +11732,11 @@ $('#player').after(scoreBoard);
         submitScore('spill', score);
         stat();
         go.textContent = 'Play again';
-        tone(220, .4);
+        gameOverSound();
     }
     function quit() { paused = false; musicHold(false); mode = 'idle'; items = []; bits = []; pops = []; keys = {}; go.textContent = 'Start'; stat(); }
     go.addEventListener('click', () => {
+        gameOverStop();
         dress(() => {
             paused = false;
             musicHold(false);
@@ -13307,12 +13342,14 @@ const STUNT_ROWS = [
         finalBest = p.bestOf(score);
         award(Math.ceil(score / 2));
         submitScore('casket', score);
+        gameOverSound();
         locker.hidden = false;
         p.go.textContent = 'Go again';
         stat();
     }
     function quit() { mode = 'idle'; paused = false; charging = false; bits = []; keys = {}; locker.hidden = false; p.go.textContent = 'Start the show'; musicHold(false); stat(); }
     p.go.addEventListener('click', () => {
+        gameOverStop();
         dress(() => {
             paused = false;
             score = 0;

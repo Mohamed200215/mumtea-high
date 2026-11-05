@@ -173,6 +173,23 @@ function musicHold(on: boolean): void { musicHeld = on; musicApply(); }
 addEventListener('pointerdown', () => { if (musicNow && musicCtx && musicCtx.state !== 'running') { musicCtx.resume().then(musicApply, () => {}); } });
 document.addEventListener('visibilitychange', () => { if (document.hidden) { clearInterval(musicTimer); if (musicOut && musicCtx) musicOut.gain.setTargetAtTime(0, musicCtx.currentTime, .05); } else musicApply(); themeApply(); });
 
+/* ---------- the sting when a game ends: the song steps aside for it, then comes back ---------- */
+const gameOverSting = new Audio('spooky-game-over.mp3');
+gameOverSting.preload = 'auto'; gameOverSting.volume = .8;
+let gameOverAfter: (() => void) | null = null;
+function gameOverDone(): void { const after = gameOverAfter; gameOverAfter = null; after?.(); }
+function gameOverSound(after: () => void = () => musicHold(false)): void {
+  gameOverAfter = null;
+  if (soundMuted()) { after(); return; }
+  gameOverAfter = after;
+  musicHold(true); gameOverSting.currentTime = 0;
+  gameOverSting.play().catch(gameOverDone);
+}
+function gameOverStop(): void { gameOverSting.pause(); gameOverAfter = null; }
+gameOverSting.addEventListener('ended', gameOverDone);
+document.addEventListener('soundchange', () => { if (soundMuted() && !gameOverSting.paused) { gameOverSting.pause(); gameOverDone(); } });
+stops.push(gameOverStop);
+
 /* ---------- the buttons every game gets ---------- */
 function soundButtons(): HTMLElement[] {
   const music = el('button', { cls: 'chip gametool', type: 'button', 'data-tool': 'music', onclick() { store.set('musicOn', !store.get<boolean>('musicOn', true)); document.dispatchEvent(new Event('soundchange')); } });

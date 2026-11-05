@@ -641,12 +641,13 @@ function merCorner(): string {
   function finish(): void {
     mode = 'outro'; modeT = 0; rise = false;
     const s = Math.floor(score); finalBest = p.bestOf(s); award(Math.ceil(s / 20)); stat(); submitScore('riptide', s);
-    p.go.textContent = 'Dive again';
+    p.go.textContent = 'Dive again'; gameOverSound();
   }
   function quit(): void {
     mode = 'idle'; paused = false; musicHold(false); rise = false; things = []; sparks = []; floats = []; locker.hidden = false; p.go.textContent = 'Dive in'; stat();
   }
   p.go.addEventListener('click', () => {
+    gameOverStop();
     dress(() => {
       paused = false; musicHold(false); mode = 'intro'; modeT = 0; swimX = -170; y = 180; vy = 0; things = []; sparks = []; floats = []; score = 0; lives = 3; safe = 0; gap = 300; shown = 0; shake = 0; flash = 0; slow = 0; petY = 230;
       locker.hidden = true; p.go.textContent = 'Restart'; p.go.blur(); stat(); tone(220, .4); kick();
