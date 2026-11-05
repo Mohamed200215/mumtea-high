@@ -5,6 +5,8 @@ interface CamDevice {
   w: number; h: number; s: number;
   sx: number; sy: number; sw: number; sh: number; sr: number;
   develop?: boolean; polaroid?: boolean;
+  /* Where stickers can go without sitting under the device's own words: top and bottom as parts of the screen, then how much to shrink them. */
+  clear?: [top: number, bottom: number, size: number];
   body(c: CanvasRenderingContext2D): void;
   after?(c: CanvasRenderingContext2D, words: ShotWords): void;
 }
@@ -191,7 +193,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'psp', name: 'Pink PSP', noun: 'PSP screenshot', hint: 'Your picture fills the big wide screen, like a saved screenshot.',
-    w: 1170, h: 540, s: .95, sx: 258, sy: 58, sw: 643, sh: 368, sr: 2,
+    w: 1170, h: 540, s: .95, sx: 258, sy: 58, sw: 643, sh: 368, sr: 2, clear: [.08, 1, .92],
     body(c) {
       c.save(); c.shadowColor = 'rgba(150,70,110,.45)'; c.shadowBlur = 14; c.shadowOffsetY = 5;
       c.beginPath(); c.moveTo(180, 26); c.lineTo(990, 26); c.quadraticCurveTo(1124, 34, 1142, 262); c.quadraticCurveTo(1148, 458, 1010, 494); c.lineTo(160, 494); c.quadraticCurveTo(22, 458, 28, 262); c.quadraticCurveTo(46, 34, 180, 26); c.closePath();
@@ -230,7 +232,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'ipod', name: 'Pink iPod', noun: 'iPod photo', hint: 'Your picture shows up in the Photos screen, ready to carry in your pocket.',
-    w: 736, h: 410, s: 1.45, sx: 57, sy: 81, sw: 330, sh: 248, sr: 3,
+    w: 736, h: 410, s: 1.45, sx: 57, sy: 81, sw: 330, sh: 248, sr: 3, clear: [.09, .93, .9],
     body(c) {
       c.save(); c.shadowColor = 'rgba(120,70,110,.35)'; c.shadowBlur = 10; c.shadowOffsetY = 4;
       devPath(c, 16, 40, 704, 330, 44); c.fillStyle = '#f2b6d2'; c.fill(); c.restore();
@@ -313,7 +315,7 @@ const CAM_DEVICES: CamDevice[] = [
   },
   {
     id: 'tv', name: 'Retro TV', noun: 'TV moment', hint: 'You go on air, with scan lines, a channel number and your name across the bottom.',
-    w: 1015, h: 655, s: 1, sx: 85, sy: 60, sw: 660, sh: 548, sr: 80,
+    w: 1015, h: 655, s: 1, sx: 85, sy: 60, sw: 660, sh: 548, sr: 80, clear: [.12, .81, .8],
     body(c) {
       devPath(c, 6, 6, 1003, 643, 16); c.fillStyle = devFill(c, 0, 6, 0, 649, [0, '#f49ac3'], [1, '#e77aad']); c.fill(); c.strokeStyle = '#a1477c'; c.lineWidth = 3; c.stroke();
       devPath(c, 46, 34, 736, 600, 34); c.fillStyle = devFill(c, 46, 34, 46, 634, [0, '#d44a94'], [.5, '#ea6dab'], [1, '#cc4190']); c.fill(); c.strokeStyle = '#a42e72'; c.lineWidth = 3; c.stroke();

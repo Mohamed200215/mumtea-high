@@ -16,6 +16,7 @@ const CAM_FILTERS: CamFilter[] = [
   { name: 'Midnight Plum', group: COLOUR, ops: [['contrast', 1.15], ['brightness', .85]], tint: ['#6a1f86', 'soft-light', .8], vignette: .5 },
   { name: 'Tea Stain', group: COLOUR, ops: [['sepia', .35], ['saturate', 1.2]], tint: ['#c9812f', 'soft-light', .5] },
   { name: 'Queen of the World', group: PICTURES, ops: [['brightness', 1.05], ['saturate', 1.1]], tint: ['#ff7ac0', 'soft-light', .3], stickers: [['crown', .19, .15, .34, -14], ['star', .74, .13, .48, 6], ['star', .26, .88, .44, -8], ['world', .83, .8, .34, 0]] },
+  { name: 'Skull Crew', group: PICTURES, ops: [['brightness', 1.03], ['saturate', 1.1]], stickers: [['crestHijab', .185, .2, .3, -8], ['crestBow', .825, .175, .28, 8], ['crestFlame', .175, .825, .28, 7], ['crestKitty', .825, .83, .28, -7]] },
 ];
 const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
 const POST_CARD = '#181019';
@@ -52,12 +53,13 @@ function camShade(c: CanvasRenderingContext2D, w: number, h: number, f: CamFilte
   }
 }
 
-async function camStickers(c: CanvasRenderingContext2D, pw: number, ph: number, f: CamFilter): Promise<void> {
+const stickerDown = (d: CamDevice, y: number): number => (d.clear ? d.clear[0] + y * (d.clear[1] - d.clear[0]) : y);
+async function camStickers(c: CanvasRenderingContext2D, pw: number, ph: number, f: CamFilter, d: CamDevice): Promise<void> {
   const art = (f.stickers || []).map(st => { const img = new Image(); img.src = STICKER_ART[st[0]]; return img; });
   await Promise.all(art.map(img => img.decode().catch(() => {})));
   (f.stickers || []).forEach((st, i) => {
-    const w = st[3] * Math.min(pw, ph), h = w * (art[i].naturalHeight / art[i].naturalWidth || 1);
-    c.save(); c.translate(st[1] * pw, st[2] * ph); c.rotate(st[4] * Math.PI / 180); c.drawImage(art[i], -w / 2, -h / 2, w, h); c.restore();
+    const w = st[3] * Math.min(pw, ph) * (d.clear ? d.clear[2] : 1), h = w * (art[i].naturalHeight / art[i].naturalWidth || 1);
+    c.save(); c.translate(st[1] * pw, stickerDown(d, st[2]) * ph); c.rotate(st[4] * Math.PI / 180); c.drawImage(art[i], -w / 2, -h / 2, w, h); c.restore();
   });
 }
 
@@ -217,7 +219,7 @@ function postPhoto(post: TeaPost): HTMLElement {
     tint.style.background = f.tint ? f.tint[0] : 'none'; tint.style.opacity = f.tint ? String(f.tint[2]) : '0'; tint.style.mixBlendMode = f.tint ? f.tint[1] : 'normal';
     vig.style.background = f.vignette ? 'radial-gradient(circle,transparent 45%,rgba(0,0,0,' + f.vignette + ') 100%)' : 'none';
     stickerLayer.textContent = '';
-    (f.stickers || []).forEach((st, n) => stickerLayer.append(el('img', { cls: 'camsticker', src: STICKER_ART[st[0]], alt: '', style: 'left:' + st[1] * 100 + '%;top:' + st[2] * 100 + '%;width:' + st[3] * 100 * Math.min(1, device.polaroid ? 1 : device.sh / device.sw) + '%;--tilt:' + st[4] + 'deg;animation-delay:' + n * 70 + 'ms' })));
+    (f.stickers || []).forEach((st, n) => stickerLayer.append(el('img', { cls: 'camsticker', src: STICKER_ART[st[0]], alt: '', style: 'left:' + st[1] * 100 + '%;top:' + stickerDown(device, st[2]) * 100 + '%;width:' + st[3] * 100 * Math.min(1, device.polaroid ? 1 : device.sh / device.sw) * (device.clear ? device.clear[2] : 1) + '%;--tilt:' + st[4] + 'deg;animation-delay:' + n * 70 + 'ms' })));
     filterName.textContent = f.name;
     dial.setAttribute('aria-label', 'Filter: ' + f.name + '. Press for the next one.');
     dial.style.setProperty('--turn', filterAt * 360 / CAM_FILTERS.length + 'deg');
@@ -323,7 +325,7 @@ function postPhoto(post: TeaPost): HTMLElement {
     c.setTransform(1, 0, 0, 1, 0, 0);
     const f = CAM_FILTERS[filterAt];
     camShade(c, pw, ph, f);
-    await camStickers(c, pw, ph, f);
+    await camStickers(c, pw, ph, f, d);
     await document.fonts.load('38px "Breath of the House"').catch(() => []);
     showPrint(d, photo);
   }
