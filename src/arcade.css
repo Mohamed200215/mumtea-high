@@ -746,6 +746,14 @@ html.introon,html.introon body{overflow:hidden}
 .introskip{position:absolute;right:16px;bottom:16px;padding:6px 14px;border:2px solid var(--pink);border-radius:999px;background:#140a1c;color:var(--white);font:800 13px var(--body)}
 .introskip:hover,.introskip:focus-visible{background:var(--pink);color:#fff}
 .intro.fade .introskip{display:none}
+.intro:not(.running) .introskip{display:none}
+.introgate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;text-align:center}
+.introgate img{width:min(62vmin,420px);height:auto;filter:drop-shadow(0 0 22px rgba(255,31,143,.55))}
+.introenter{padding:12px 28px;border:3px solid #000;border-radius:999px;background:var(--pink);color:#fff;font:26px var(--display);box-shadow:0 5px 0 #000}
+.introenter:hover,.introenter:focus-visible{background:#fff;color:var(--pink);outline:3px solid var(--pink);outline-offset:3px}
+.introgate p{margin:0;font-weight:800;color:var(--white)}
+.themetoggle{position:fixed;left:12px;bottom:12px;z-index:90;padding:5px 12px;border:2px solid var(--pink);border-radius:999px;background:#140a1c;color:var(--white);font:800 12px var(--body)}
+.themetoggle[aria-pressed="false"]{border-color:#6b5a78;color:var(--muted)}
 
 /* the school's pink pixel cursor, everywhere except where you type */
 html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAaCAYAAACHD21cAAAAy0lEQVR42rWTPQ7CMAyFX6zeoL0TV+gRmNKzNBdg6NIr9ASsrCwwFyWqhMRsJipK8+NEwpPzpC9+thPY1jAKggCgBCYAqE/HbJgAAJd7Nkxr9nxlwbQ5ZcC0U4QweVUBTMErEzBFG4nAlBxfACbR0jxwlYRujzWtuwMsDDejVknQ9dNOs63hSuK0GbVKDsd1w8aeaI+uG+Tfw7aG+Xzl74l9NJ4X5nnh4B5dP3n7SFr9hZpRK9dPol6DLYTsEv4RsarFFYtBJbHre3pvILGaKrazdGIAAAAASUVORK5CYII=) 0 0,auto!important}

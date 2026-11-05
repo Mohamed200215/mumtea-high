@@ -970,6 +970,14 @@ html.introon,html.introon body{overflow:hidden}
 .introskip{position:absolute;right:16px;bottom:16px;padding:6px 14px;border:2px solid var(--pink);border-radius:999px;background:#140a1c;color:var(--white);font:800 13px var(--body)}
 .introskip:hover,.introskip:focus-visible{background:var(--pink);color:#fff}
 .intro.fade .introskip{display:none}
+.intro:not(.running) .introskip{display:none}
+.introgate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:16px;text-align:center}
+.introgate img{width:min(62vmin,420px);height:auto;filter:drop-shadow(0 0 22px rgba(255,31,143,.55))}
+.introenter{padding:12px 28px;border:3px solid #000;border-radius:999px;background:var(--pink);color:#fff;font:26px var(--display);box-shadow:0 5px 0 #000}
+.introenter:hover,.introenter:focus-visible{background:#fff;color:var(--pink);outline:3px solid var(--pink);outline-offset:3px}
+.introgate p{margin:0;font-weight:800;color:var(--white)}
+.themetoggle{position:fixed;left:12px;bottom:12px;z-index:90;padding:5px 12px;border:2px solid var(--pink);border-radius:999px;background:#140a1c;color:var(--white);font:800 12px var(--body)}
+.themetoggle[aria-pressed="false"]{border-color:#6b5a78;color:var(--muted)}
 
 /* the school's pink pixel cursor, everywhere except where you type */
 html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAaCAYAAACHD21cAAAAy0lEQVR42rWTPQ7CMAyFX6zeoL0TV+gRmNKzNBdg6NIr9ASsrCwwFyWqhMRsJipK8+NEwpPzpC9+thPY1jAKggCgBCYAqE/HbJgAAJd7Nkxr9nxlwbQ5ZcC0U4QweVUBTMErEzBFG4nAlBxfACbR0jxwlYRujzWtuwMsDDejVknQ9dNOs63hSuK0GbVKDsd1w8aeaI+uG+Tfw7aG+Xzl74l9NJ4X5nnh4B5dP3n7SFr9hZpRK9dPol6DLYTsEv4RsarFFYtBJbHre3pvILGaKrazdGIAAAAASUVORK5CYII=) 0 0,auto!important}
@@ -1263,7 +1271,7 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
 </div></footer>
 </template>
 
-<div id="intro" class="intro"><canvas aria-hidden="true"></canvas><button class="introskip" type="button">Skip intro</button></div>
+<div id="intro" class="intro"><canvas aria-hidden="true"></canvas><div class="introgate" hidden><img alt="Mumtea High"><button class="introenter" type="button">Enter Mumtea High</button><p>Sound on</p></div><button class="introskip" type="button">Skip intro</button></div>
 <script>
 /* Once per visit: the opening plays when the link is first opened, not on every reload. */
 (function(){
@@ -1271,7 +1279,7 @@ html,html *:not(input,textarea,[contenteditable="true"]){cursor:url(data:image/p
   try{seen=!!sessionStorage.getItem('mumteaIntro');sessionStorage.setItem('mumteaIntro','1')}catch(e){}
   if(seen){box.remove();return}
   root.classList.add('introon');
-  setTimeout(function(){box.remove();root.classList.remove('introon')},15000);
+  window.introSafety=setTimeout(function(){box.remove();root.classList.remove('introon')},15000);
 })();
 </script>
 <div id="root"></div>
@@ -2071,7 +2079,60 @@ function musicTick() {
         musicNext += stepLong;
     }
 }
+/* ---------- the website's theme song: it plays wherever no game or class has its own music ---------- */
+const THEME_PEAK = 26, THEME_LEVEL = .4;
+const themeSong = new Audio('mixkit-spooky-night-1120.mp3');
+themeSong.loop = true;
+themeSong.preload = 'auto';
+themeSong.volume = THEME_LEVEL;
+let themeOpen = false, themeInIntro = false, themeFade = 0;
+function themeApply() {
+    if (themeInIntro) {
+        if (!musicAllowed())
+            themeSong.pause();
+        else if (themeSong.paused)
+            themeSong.play().catch(() => { });
+        return;
+    }
+    if (themeOpen && !musicNow && musicAllowed() && !document.hidden)
+        themeSong.play().catch(() => { });
+    else
+        themeSong.pause();
+}
+function themeRamp(to, ms, done) {
+    clearInterval(themeFade);
+    const from = themeSong.volume, start = performance.now();
+    themeFade = window.setInterval(() => {
+        const k = Math.min(1, (performance.now() - start) / ms);
+        themeSong.volume = from + (to - from) * k;
+        if (k >= 1) {
+            clearInterval(themeFade);
+            done?.();
+        }
+    }, 40);
+}
+/* The intro gets the loudest part of the song. */
+function themeForIntro() {
+    themeInIntro = true;
+    themeSong.currentTime = THEME_PEAK;
+    themeSong.volume = THEME_LEVEL;
+    return themeSong.play();
+}
+/* When the intro fades, the song fades too, then starts again from the beginning for the website itself. */
+function themeForSite() {
+    const open = () => { themeInIntro = false; themeOpen = true; themeSong.currentTime = 0; themeSong.volume = 0; themeApply(); themeRamp(THEME_LEVEL, 1500); };
+    if (themeInIntro && !themeSong.paused)
+        themeRamp(0, 1200, open);
+    else
+        open();
+}
+/* Browsers keep a page silent until the first tap or key, so the song waits for it if it has to. */
+const themeWake = () => { if (themeInIntro || themeOpen)
+    themeApply(); };
+addEventListener('pointerdown', themeWake);
+addEventListener('keydown', themeWake);
 function musicApply() {
+    themeApply();
     const ac = musicCtx;
     if (!ac || !musicOut)
         return;
@@ -2112,7 +2173,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) {
         musicOut.gain.setTargetAtTime(0, musicCtx.currentTime, .05);
 }
 else
-    musicApply(); });
+    musicApply(); themeApply(); });
 /* ---------- the buttons every game gets ---------- */
 function soundButtons() {
     const music = el('button', { cls: 'chip gametool', type: 'button', 'data-tool': 'music', onclick() { store.set('musicOn', !store.get('musicOn', true)); document.dispatchEvent(new Event('soundchange')); } });
@@ -8272,8 +8333,12 @@ async function saveCardPicture(said) {
 /* ---------- the opening: bats swarm the logo, a web shoots onto it, and the school fades in ---------- */
 (function () {
     const box = document.getElementById('intro');
-    if (!box)
+    document.body.append(themeToggle());
+    if (!box) {
+        themeForSite();
         return;
+    }
+    clearTimeout(window.introSafety);
     const cv = box.querySelector('canvas'), c = cv.getContext('2d');
     const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
     const LOGO_IN = .4, SCATTER = 4, SHOOT = 4.3, LAND = 4.62, WEB_DONE = 5.5, LEAVE = calm ? 1.8 : 6.2;
@@ -8454,22 +8519,58 @@ async function saveCardPicture(said) {
         removeEventListener('resize', fit);
         removeEventListener('keydown', onKey);
         box.classList.add('fade');
+        themeForSite();
         const gone = () => { box.remove(); document.documentElement.classList.remove('introon'); };
         box.addEventListener('transitionend', gone, { once: true });
         window.setTimeout(gone, 1800);
         document.documentElement.classList.remove('introon');
     }
-    const onKey = (e) => { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+    const onKey = (e) => { if (!begun)
+        return; if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         finish();
     } };
     fit();
     addEventListener('resize', fit);
     addEventListener('keydown', onKey);
-    box.addEventListener('click', finish);
-    last = performance.now();
-    raf = requestAnimationFrame(frame);
+    /* The intro starts with the song if the browser allows it. If not, one tap on Enter unlocks the sound. */
+    const enterBox = box.querySelector('.introgate'), enter = box.querySelector('.introenter'), crest = box.querySelector('.introgate img');
+    crest.src = logo.src;
+    let begun = false;
+    function begin() {
+        if (begun)
+            return;
+        begun = true;
+        enterBox.hidden = true;
+        box.classList.add('running');
+        box.addEventListener('click', finish);
+        last = performance.now();
+        raf = requestAnimationFrame(frame);
+    }
+    if (!musicAllowed())
+        begin();
+    else {
+        const wait = window.setTimeout(() => { if (!begun) {
+            themeSong.pause();
+            themeInIntro = false;
+            enterBox.hidden = false;
+            enter.focus();
+        } }, 1500);
+        themeForIntro().then(() => { clearTimeout(wait); if (enterBox.hidden)
+            begin();
+        else
+            themeSong.pause(); }, () => { clearTimeout(wait); themeInIntro = false; enterBox.hidden = false; enter.focus(); });
+        enter.addEventListener('click', e => { e.stopPropagation(); clearTimeout(wait); themeForIntro().catch(() => { themeInIntro = false; }); begin(); });
+    }
 })();
+/* A small switch for the theme song, on every page. */
+function themeToggle() {
+    const btn = el('button', { cls: 'themetoggle', type: 'button', onclick() { store.set('musicOn', !store.get('musicOn', true)); document.dispatchEvent(new Event('soundchange')); } });
+    const draw = () => { const on = store.get('musicOn', true); btn.textContent = on ? 'Music on' : 'Music off'; btn.setAttribute('aria-pressed', String(on)); };
+    draw();
+    document.addEventListener('soundchange', draw);
+    return btn;
+}
 const PAGEANT_ITEMS = {
     top: { glam: ['corset', 'lacetop', 'peplum', 'ruffle', 'kimono', 'blazer'], street: ['hoodie', 'varsity', 'tee', 'jersey', 'biker', 'sweater'], monster: ['bat', 'coat', 'vest', 'bolero', 'stripey'] },
     bottom: { glam: ['maxi', 'mermaid', 'tulle', 'pleatmaxi', 'rufflemaxi', 'gypsy'], street: ['cargo', 'ripped', 'joggers', 'flares', 'straight', 'track'], monster: ['shred', 'batwing', 'chains', 'leather', 'corsetskirt', 'hilow'] },

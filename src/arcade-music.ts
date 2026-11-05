@@ -120,7 +120,39 @@ function musicTick(): void {
     musicStep++; musicNext += stepLong;
   }
 }
+/* ---------- the website's theme song: it plays wherever no game or class has its own music ---------- */
+const THEME_PEAK = 26, THEME_LEVEL = .4;
+const themeSong = new Audio('mixkit-spooky-night-1120.mp3');
+themeSong.loop = true; themeSong.preload = 'auto'; themeSong.volume = THEME_LEVEL;
+let themeOpen = false, themeInIntro = false, themeFade = 0;
+function themeApply(): void {
+  if (themeInIntro) { if (!musicAllowed()) themeSong.pause(); else if (themeSong.paused) themeSong.play().catch(() => {}); return; }
+  if (themeOpen && !musicNow && musicAllowed() && !document.hidden) themeSong.play().catch(() => {}); else themeSong.pause();
+}
+function themeRamp(to: number, ms: number, done?: () => void): void {
+  clearInterval(themeFade);
+  const from = themeSong.volume, start = performance.now();
+  themeFade = window.setInterval(() => {
+    const k = Math.min(1, (performance.now() - start) / ms);
+    themeSong.volume = from + (to - from) * k;
+    if (k >= 1) { clearInterval(themeFade); done?.(); }
+  }, 40);
+}
+/* The intro gets the loudest part of the song. */
+function themeForIntro(): Promise<void> {
+  themeInIntro = true; themeSong.currentTime = THEME_PEAK; themeSong.volume = THEME_LEVEL;
+  return themeSong.play();
+}
+/* When the intro fades, the song fades too, then starts again from the beginning for the website itself. */
+function themeForSite(): void {
+  const open = (): void => { themeInIntro = false; themeOpen = true; themeSong.currentTime = 0; themeSong.volume = 0; themeApply(); themeRamp(THEME_LEVEL, 1500); };
+  if (themeInIntro && !themeSong.paused) themeRamp(0, 1200, open); else open();
+}
+/* Browsers keep a page silent until the first tap or key, so the song waits for it if it has to. */
+const themeWake = (): void => { if (themeInIntro || themeOpen) themeApply(); };
+addEventListener('pointerdown', themeWake); addEventListener('keydown', themeWake);
 function musicApply(): void {
+  themeApply();
   const ac = musicCtx;
   if (!ac || !musicOut) return;
   const on = !!musicNow && !musicHeld && musicAllowed();
@@ -139,7 +171,7 @@ function musicStop(): void { musicNow = ''; musicHeld = false; musicApply(); }
 function musicHold(on: boolean): void { musicHeld = on; musicApply(); }
 /* Browsers only let sound start after a tap or click, so the song waits for the next one if it has to. */
 addEventListener('pointerdown', () => { if (musicNow && musicCtx && musicCtx.state !== 'running') { musicCtx.resume().then(musicApply, () => {}); } });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { clearInterval(musicTimer); if (musicOut && musicCtx) musicOut.gain.setTargetAtTime(0, musicCtx.currentTime, .05); } else musicApply(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { clearInterval(musicTimer); if (musicOut && musicCtx) musicOut.gain.setTargetAtTime(0, musicCtx.currentTime, .05); } else musicApply(); themeApply(); });
 
 /* ---------- the buttons every game gets ---------- */
 function soundButtons(): HTMLElement[] {

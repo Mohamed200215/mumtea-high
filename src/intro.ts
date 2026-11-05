@@ -1,7 +1,9 @@
 /* ---------- the opening: bats swarm the logo, a web shoots onto it, and the school fades in ---------- */
 (function () {
   const box = document.getElementById('intro');
-  if (!box) return;
+  document.body.append(themeToggle());
+  if (!box) { themeForSite(); return; }
+  clearTimeout((window as unknown as { introSafety: number }).introSafety);
   const cv = box.querySelector('canvas') as HTMLCanvasElement, c = cv.getContext('2d') as CanvasRenderingContext2D;
   const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const LOGO_IN = .4, SCATTER = 4, SHOOT = 4.3, LAND = 4.62, WEB_DONE = 5.5, LEAVE = calm ? 1.8 : 6.2;
@@ -137,15 +139,38 @@
     cancelAnimationFrame(raf);
     removeEventListener('resize', fit); removeEventListener('keydown', onKey);
     box!.classList.add('fade');
+    themeForSite();
     const gone = (): void => { box!.remove(); document.documentElement.classList.remove('introon'); };
     box!.addEventListener('transitionend', gone, { once: true });
     window.setTimeout(gone, 1800);
     document.documentElement.classList.remove('introon');
   }
-  const onKey = (e: KeyboardEvent): void => { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); finish(); } };
+  const onKey = (e: KeyboardEvent): void => { if (!begun) return; if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); finish(); } };
   fit();
   addEventListener('resize', fit); addEventListener('keydown', onKey);
-  box.addEventListener('click', finish);
-  last = performance.now();
-  raf = requestAnimationFrame(frame);
+  /* The intro starts with the song if the browser allows it. If not, one tap on Enter unlocks the sound. */
+  const enterBox = box.querySelector('.introgate') as HTMLElement, enter = box.querySelector('.introenter') as HTMLButtonElement, crest = box.querySelector('.introgate img') as HTMLImageElement;
+  crest.src = logo.src;
+  let begun = false;
+  function begin(): void {
+    if (begun) return;
+    begun = true;
+    enterBox.hidden = true; box!.classList.add('running');
+    box!.addEventListener('click', finish);
+    last = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+  if (!musicAllowed()) begin();
+  else {
+    const wait = window.setTimeout(() => { if (!begun) { themeSong.pause(); themeInIntro = false; enterBox.hidden = false; enter.focus(); } }, 1500);
+    themeForIntro().then(() => { clearTimeout(wait); if (enterBox.hidden) begin(); else themeSong.pause(); }, () => { clearTimeout(wait); themeInIntro = false; enterBox.hidden = false; enter.focus(); });
+    enter.addEventListener('click', e => { e.stopPropagation(); clearTimeout(wait); themeForIntro().catch(() => { themeInIntro = false; }); begin(); });
+  }
 })();
+/* A small switch for the theme song, on every page. */
+function themeToggle(): HTMLElement {
+  const btn = el('button', { cls: 'themetoggle', type: 'button', onclick() { store.set('musicOn', !store.get<boolean>('musicOn', true)); document.dispatchEvent(new Event('soundchange')); } });
+  const draw = (): void => { const on = store.get<boolean>('musicOn', true); btn.textContent = on ? 'Music on' : 'Music off'; btn.setAttribute('aria-pressed', String(on)); };
+  draw(); document.addEventListener('soundchange', draw);
+  return btn;
+}
