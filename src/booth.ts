@@ -23,6 +23,7 @@ const CAM_FILTERS: CamFilter[] = [
   { name: 'Prawn Cocktail', group: PICTURES, ops: [['saturate', 1.12]], tint: ['#ff1f8f', 'soft-light', .16], stickers: [['prawnCocktail', .16, .2, .215, -8], ['prawnCocktail', .84, .2, .215, 8], ['prawnCocktail', .16, .8, .215, 7], ['prawnCocktail', .84, .8, .215, -7]] },
   { name: 'Comics', group: PICTURES, ops: [['contrast', 1.15], ['saturate', 1.25]], stickers: [['comicDc', .18, .19, .29, -7], ['comicMarvel', .82, .19, .29, 6], ['comicNight', .18, .81, .29, 6], ['comicX', .82, .81, .29, -6]] },
   { name: 'Kuroko', group: PICTURES, ops: [['contrast', 1.08], ['saturate', 1.2]], tint: ['#19b7e8', 'soft-light', .18], stickers: [['kurokoDisc', .17, .19, .27, -8], ['kurokoLogo', .79, .14, .36, 5], ['kurokoDuo', .19, .8, .31, 5], ['kurokoSeirin', .85, .77, .19, -6]] },
+  { name: 'JJK', group: PICTURES, ops: [['contrast', 1.12], ['saturate', .95]], tint: ['#6a1f86', 'soft-light', .28], vignette: .3, stickers: [['jjkLogo', .21, .15, .38, -4], ['jjkSukuna', .82, .17, .3, 6], ['jjkMaki', .18, .79, .28, 4], ['jjkToji', .86, .75, .17, -4]] },
 ];
 const POLA_W = 640, POLA_H = 780, POLA_X = 72, POLA_Y = 72, POLA_S = 496, MAX_PHOTO = 380000;
 const POST_CARD = '#181019';
